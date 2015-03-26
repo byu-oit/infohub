@@ -1,0 +1,221 @@
+html{ 
+	background-color: #f0f0ee;
+}
+
+a{
+	text-decoration: none;
+	color: #000;
+}
+
+a.red{
+	color: #ff0000;
+}
+
+h2{
+	font-size: 14px;
+	padding: 0xp;
+	margin: 0px 0px 10px 0px;
+	border-bottom: solid 1px #ccc;
+}
+
+.hr{
+	border-bottom: solid 2px #ccc;
+	padding-top: 5px;
+	margin-bottom: 5px;
+}
+
+
+body.cmsWindow{
+	padding: 0px;
+	margin: 0px 3px 3px 3px;
+	font: 10px verdana;
+}
+
+table.form{
+	border-right: solid 1px #ccc;
+	border-bottom: solid 1px #ccc;
+	border-left: solid 1px #ccc;
+	background-color: #fff;
+}
+table.form td{
+	padding: 5px;
+}
+
+table.cms th{
+	background-color: #ccc;
+	font-weight: bold;
+	padding: 5px;
+}
+
+table.cms a.close{
+	color: #666;
+}
+
+table.cms td{
+	padding: 5px;
+}
+
+.cms-addNewItem{
+	border: solid 1px #ccc;
+	padding: 5px;
+	text-align: center;
+}
+
+table.cms-toolbar{
+	width: 100%;
+	background-color: #fffcb6;
+	border-bottom: solid 2px #000;
+}
+table.cms-toolbar td{
+	padding: 6px 10px;
+}
+
+label{
+    display: block;
+    margin-bottom: 2px;
+    font-weight: bold;
+}
+label.inline{
+    display: inline;
+    margin-bottom: 2px;
+    font-weight: bold;
+}
+
+.btn, .btn-cancel{
+	border: solid 1px #666;
+	background-color: #ddd;
+	font-size: 11px;
+	font-weight: bold;
+	padding: 3px 10px;
+}
+.btn-cancel{
+	background-color: #bbb;
+}
+
+.err{
+	padding: 10px;
+	background-color: #fff;
+	border: solid 1px #ff0000;
+	color: #ff0000;
+	font-weight: bold;
+	text-align: center;
+}
+
+.list-tabs{
+	height: 15px;
+	list-style: none;
+	padding: 0px;
+	margin: 5px 0px 10px 0px;
+	border-bottom: solid 1px #ccc;
+}
+.list-tabs li{
+	list-style: none;
+	padding: 5px 0px 3px 0px;
+	margin: 0px;
+	display: inline;
+	background: url(../img/admin/list-tab-right.gif) right top no-repeat;
+}
+.list-tabs li a{
+	border: 0px;
+	outline: none;
+	color: #ccc;
+	margin-right: 4px;
+	padding: 5px 5px 3px 10px;
+	text-decoration: none;
+	background: url(../img/admin/list-tab-left.gif) left top no-repeat;
+}
+.list-tabs li.active{
+	border-bottom: solid 1px #fff;
+}
+.list-tabs li.active a{
+	color: #000;
+}
+
+#pageList, #userList, #groupList{
+	list-style: none;
+	padding: 0px;
+	margin: 0px;
+}
+#pageList li, #userList li, #groupList li{
+	list-style: none;
+	padding: 0px;
+	margin: 0px;
+	border-bottom: solid 1px #efefef;
+}
+#pageList li a{
+	border: 0px;
+	outline: none;
+	color: #000;
+	padding: 5px 10px 5px 20px;
+	display: block;
+	background: url(../img/admin/page_white_text.png) left no-repeat #fff;
+	text-decoration: none;
+}
+#userList li a, #groupList li a{
+	border: 0px;
+	outline: none;
+	color: #000;
+	padding: 5px 10px;
+	display: block;
+	text-decoration: none;
+}
+#userList li img, #groupList li img{
+	float: left;
+	padding-right: 5px;
+}
+#pageList li a:hover, #userList li a:hover, #groupList li a:hover{
+	background-color: #f0f0f0;
+}
+
+.left-subnav{
+    margin: 0;
+    padding: 0;
+	border-top: solid 1px #efefef;
+}
+#pageList li .left-subnav li{
+    margin: 0;
+    padding: 0 0 0 12px;
+}
+
+input.fld, textarea.fld, select.fld{
+	border: solid 1px #ccc;
+	width: 200px;
+}
+
+.cms-no-image-trans{
+	background: url(../img/admin/no-image-trans.gif);
+}
+
+#flashMessage{
+	width: 100%;
+	padding: 1.2% 2%;
+	margin: 0;
+	border: 1px solid;
+	font-size: 14px;
+}
+#flashMessage.info{
+	color: #00529B;
+	background-color: #BDE5F8;
+}
+#flashMessage.message{
+	color: #4F8A10;
+	background-color: #DFF2BF;
+}
+#flashMessage.error, input.error, textarea.error{
+	color: #D8000C;
+	background-color: #FFBABA;
+}
+
+.msg-success{
+	background-color: #fff4f4;
+}
+
+.placeholder {
+	background-color: #FFF5AE; 
+	border: dashed 1px #ccc; 
+	margin-bottom: 10px;
+}
+.ui-nestedSortable-error {
+	background:#fbe3e4;
+	color:#8a1f11;
+}
