@@ -1,0 +1,100 @@
+@import 'variables';
+
+// Box shadows
+// ------------------
+.box-shadow(@args: 0 0 1em lighten(#000, 90%)) {
+	box-shadow: @args;
+	-moz-box-shadow: @args;
+	-webkit-box-shadow: @args;
+}
+
+// Text shadows
+// -----------------
+.text-shadow(@args: 0 0 1px lighten(#000, 50%)) {
+	text-shadow: @args;
+	-moz-text-shadow: @args;
+	-webkit-text-shadow: @args;
+}
+
+.border-box() {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+
+// Gradients
+// -----------------
+.2gradient(@dir: top, @c1: #000, @c2: lighten(#000, 20%), @c1pos: 0%, @c2pos: 100%) {
+	background: @c1;
+	background: -moz-linear-gradient(@dir, @c1 @c1pos, @c2 @c2pos);
+	background: -webkit-linear-gradient(@dir, @c1 @c1pos,@c2 @c2pos);
+	background: -o-linear-gradient(@dir, @c1 @c1pos,@c2 @c2pos);
+	background: -ms-linear-gradient(@dir, @c1 @c1pos,@c2 @c2pos);
+	-pie-background: linear-gradient( @dir, @c1 @c1pos, @c2 @c2pos);
+	background: linear-gradient(@dir, @c1 @c1pos,@c2 @c2pos);
+}
+.3gradient(@dir: top, @c1: #000, @c2: lighten(#000, 20%), @c3: #000, @c1pos: 0%, @c2pos: 50%, @c3pos: 100%) {
+	background: @c1;
+	background: -moz-linear-gradient(@dir, @c1 @c1pos, @c2 @c2pos, @c3 @c3pos);
+	background: -webkit-linear-gradient(@dir, @c1 @c1pos, @c2 @c2pos, @c3 @c3pos);
+	background: -o-linear-gradient(@dir, @c1 @c1pos, @c2 @c2pos, @c3 @c3pos);
+	background: -ms-linear-gradient(@dir, @c1 @c1pos, @c2 @c2pos, @c3 @c3pos);
+	-pie-background: linear-gradient( @dir, @c1 @c1pos, @c2 @c2pos, @c3 @c3pos);
+	background: linear-gradient(@dir, @c1 @c1pos, @c2 @c2pos, @c3 @c3pos);
+}
+
+.transition(@args: all 2s ease-in-out) {
+	transition: @args;
+	-webkit-transition: @args;
+	-ms-transition: @args;
+	-moz-transition: @args;
+	-o-transition: @args;
+}
+
+.rotate(@amount: 1deg) {
+	transform:rotate(@amount);
+	-ms-transform:rotate(@amount);
+	-moz-transform:rotate(@amount);
+	-webkit-transform:rotate(@amount);
+	-o-transform:rotate(@amount);
+}
+
+// ul inline
+// -----------------
+.inline(){
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	.clear;
+
+	li{
+		float: left;
+		margin: 0;
+		padding: 0;
+	}
+}
+
+// Clearfix
+// -----------------
+.clear() {
+    &:before, &:after {
+        content: "";
+        display: table;
+    }
+    &:after { clear: both }
+    *zoom: 1;
+}
+
+// IE7 inline-block
+// -----------------
+.inline-block() {
+	*display: inline;
+	*zoom: 1;
+}
+
+// Placeholder text
+// -------------------------
+.placeholder(@color: #555) {
+	:-moz-placeholder { color: @color }
+	::-webkit-input-placeholder { color: @color }
+}
