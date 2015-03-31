@@ -80,7 +80,6 @@ header {
 					display: none;
 				}
 				#deskTopHelp {
-
 					margin-top: 112px;
 					background-color: #ffa921;
 					text-decoration: none;
@@ -89,7 +88,6 @@ header {
 					line-height: 1em;
 					display: block;
   					padding: 8px 2px 10px 10px;
-  					display: none;
 
   					span {
 						border-top: 6px solid transparent;
@@ -101,11 +99,47 @@ header {
   					}
 				}
 				#nhContent {
-					// display: none;
-					width: 300px;
+					display: none;
+					width: 600px;
 					border: 7px solid #ffa921;
 					border-right: none;
 					background-color: white;
+					padding: 0 40px 48px 30px;
+					position: relative;
+					color: @gt4;
+
+					.close {
+						background-color: #ffa921;
+						padding: 6px 15px;
+						position: absolute;
+						top: 0;
+						right: 15px;
+						color: white;
+						font-size: 11px;
+						cursor: pointer;
+					}
+					#nhLeft {
+						width: 68%;
+						float: left;
+						margin-top: 24px;
+						margin-right: 5px;
+
+						h3 {
+							font-size: 25px; 
+							margin-bottom: 6px;
+							font-family: 'Rokkitt', serif;
+						}
+						p {
+							margin-top: 0;
+							font-size: 12px;
+							line-height: 1.8em;
+						}
+						a {
+							font-size: 13px;
+							color: #103668;
+							display: block;
+						}
+					}
 				}
 			}
 		}
@@ -155,14 +189,91 @@ nav {
 	}
 }
 
+footer {
+	#footerTop {
+		background-color:@grayLight2;
+		color: @gt5;
+		width: 100%;
+		border-bottom: 1px solid #ccc;
+		float: left;
+		padding-bottom: 25px;
+		
+		h4 {
+			border-bottom: 1px solid #c7c7c7;
+			font-size: 1em;
+			line-height: 30px;
+			display: inline-block;
+			margin-bottom: 3px;
+			float: left;
+		}
+		.footerBox {
+			width: 16%; 
+			float: left; 
+			padding-right: 3%;
+			font-size: .8em;
+
+			a {
+				color: @gt5;
+				text-decoration: none;
+
+				&:hover {
+					text-decoration: underline;
+				}
+			}
+			&:first-of-type {
+				clear: left;
+			}
+		}
+	}
+	#footerBottom {
+		background-color: @footerGray;
+		width: 100%;
+		color: @footerText;
+		border-top: 1px solid #fff;
+		text-align: center;
+		clear: left;
+		padding: 15px 0;
+
+		p {
+			margin: 0 0 10px;
+
+			a {
+				display: inline-block;
+				color: @footerText;
+				font-size: .8em;
+				text-decoration: none;
+				padding: .1em 1%;
+
+
+				&:hover {
+					text-decoration: underline;
+				}
+			}
+		}
+	}
+}
+
 
 //========== MEDIA QUERIES ==========//
+
+@media screen and (max-width: 1140px) {
+	.inner {
+		padding: 0 4%;
+	}
+}
+@media screen and (max-width: 650px) {
+
+}
 @media screen and (min-width: 400px) {
 	header {
 		background: url(/img/byu-header-bg.svg);
 		background-size: 100% 96px;
 	}
 }
-@media screen and (max-width: 650px) {
 
+//============= OTHER ============//
+pre.cake-error {
+	width: 90%;
+	margin-left: 5%;
+	white-space: normal;
 }
