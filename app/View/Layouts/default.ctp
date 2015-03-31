@@ -40,9 +40,17 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
 	
 	<script>
+		var headIn;
+		var winOu;
+		var headFor;
+		var headFinal;
+
 		$(document).ready(function(){
+			
+
 			$("#deskTopHelp").click(function() {
 				$(this).hide();
+				widenBorder();
 				$("#nhContent").show("slide", { direction: "right" }, 500);
 			});
 			$(".close").click(function() {
@@ -50,7 +58,49 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 					$("#deskTopHelp").fadeIn("fast");
 				});
 			});
+
+
+			
+
+
 		});
+
+		$(document).ready(resizeFonts, iniVars);	
+		$(window).resize(resizeFonts, iniVars);	
+      		$(window).load(resizeFonts, iniVars);
+      		function iniVars() {
+      			headIn = $("#headerInner").width();
+			winOut = $(window).width();
+			headFor = winOut - headIn;
+			headFinal = headFor / 2;
+      		}
+      		function widenBorder() {
+      			 iniVars();
+      			if (winOut > 1090) {
+				$("#nhContent").css("border-right-width", headFinal);
+			}
+			else {
+				$("#nhContent").css("border-right-width", 0);
+			}
+      		}
+		function resizeFonts(){
+			var defSize = 10;
+			var mobileWidth = 550;
+
+			// reset font size when in mobile view
+			if($(window).width()<=mobileWidth){
+				$('body').css('fontSize', defSize);
+				return false;
+			}
+			
+			var size = $(document).width() / 1230;
+			var maxSize =  10;
+			var minSize = 6.5;
+			size = defSize * size;
+			if(size>maxSize) size=maxSize;
+			if(size<minSize) size=minSize;
+			$('body').css('fontSize', size);
+		}
 	</script>
 
 </head>

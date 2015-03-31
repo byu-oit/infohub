@@ -4,4 +4,76 @@
 
 /*============= HOME TEMPLATE STYLES =============*/
 
+#homeTop {
+	float: left;
+	width: 100%;
+	clear: right;
 
+	#htBack {
+		background: url(/img/homeBG.jpg) no-repeat;
+		background-size: cover;
+		width: 100%; 
+		max-width: 1668px;
+		margin: 0 auto;
+		float: left;
+		padding: 6% 0 8%;
+		background-position: center center;
+
+		#welcomeBox {
+			background-color: rgba(14,50,100,0.85);
+			color: white;
+			padding: 21px 28px;
+			float: left;
+
+			h1 {
+				font: 5.5em 'Rokkitt', serif;
+				margin: 0;
+				line-height: .75em;
+				letter-spacing: -0.02em;
+			}
+			h5 {
+				font-size: 1.8em;
+				margin: 0;
+				line-height: 1em;
+				font-weight: normal;
+			}
+		}
+		#searchBox  {
+			clear: left;
+			float: left;
+			background-color: rgba(255,255,255,0.9);
+			padding: 3% 3% 3%;
+			margin: 40px 0 0;
+			width: 46%;
+
+			input {
+				border: none;
+				padding: 0 0 0 2%;
+				height: 30px;
+				width: 76%;
+				-webkit-box-shadow:-2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+				-moz-box-shadow:   -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+				box-shadow:        -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+			}
+			input[type=submit] {
+				background-color: @blue;
+				color: white;
+				float: right;
+				width: 21%;
+				font-weight: bold;
+				padding: 0 2%;
+			}
+		}
+	}
+}
+#homeQL
+#homeHowTo
+
+//========== MEDIA QUERIES ==========//
+@media screen and (min-width: 1685px)  {
+	#homeTop #htBack {
+		height: 324px;
+		float: none;
+		padding: 80px 100px;
+	}
+}
