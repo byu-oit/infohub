@@ -28,19 +28,51 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 	<?php
 		echo $this->Html->meta('icon');
 
-		echo $this->Html->css('cake.generic');
-
+		// echo $this->Html->css('cake.generic');
+		echo $this->Html->css('styles');
 		echo $this->fetch('meta');
 		echo $this->fetch('css');
 		echo $this->fetch('script');
 	?>
+	<link href='http://fonts.googleapis.com/css?family=Rokkitt:400,700' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700,300' rel='stylesheet' type='text/css'>
 	<script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+	<script>
+		$("#needHelp").click(function() {
+
+		});
+	</script>
 </head>
 <body>
 	<div id="container">
-		<div id="header">
-			<a href="/" id="logo"><img src="/img/logo.gif" alt="BYU"></a>
-		</div>
+		<header>
+			<div id="headerInner" class="inner">
+				<h1><a href="/" id="logo">BYU InfoHub</a></h1>
+				<h2><a href="/" id="site-title">InfoHub</a></h2>
+				<div id="headerLeft">
+					<span class="userInfo">Welcome, Christy</span>
+					<a id="settingsWheel"><img src="/img/icon-settings.png" alt="Settings"></a>
+					<!-- Below is fixed pos. on destop -->
+					<div id="needHelp">
+						<a href="" id="mobileHelp"><img src="/img/icon-question.png" alt="Need Help?"></a>
+						<a href="" id="deskTopHelp">Need <br>Help? <br><span>&nbsp;</span></a>
+						<div id="nhContent">
+							<a class="close">Close X</a>
+							<h3>Have questions? We’re here to help.</h3>
+							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod veniam, quis nostrud exercitation ullamco laboris nisiut aliquip utexa commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur datat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. <br>
+								<a href="">Contact Us</a></p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</header>
+		<nav>
+			<ul class="inner">
+				<li><a href="#">Search</a></li>
+				<li><a href="#">Find People</a></li>
+				<li><a href="#">Resources</a></li>
+			</ul>
+		</nav>
 		<div id="content">
 
 			<?php echo $this->Session->flash(); ?>
