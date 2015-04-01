@@ -14,7 +14,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-$cakeDescription = __d('cake_dev', 'CakePHP: the rapid development php framework');
+$cakeDescription = __d('cake_dev', 'BYU InfoHub');
 $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 ?>
 <!DOCTYPE html>
@@ -46,8 +46,6 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 		var headFinal;
 
 		$(document).ready(function(){
-			
-
 			$("#deskTopHelp").click(function() {
 				$(this).hide();
 				widenBorder();
@@ -58,24 +56,26 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 					$("#deskTopHelp").fadeIn("fast");
 				});
 			});
-
-
-			
-
-
 		});
 
-		$(document).ready(resizeFonts, iniVars);	
-		$(window).resize(resizeFonts, iniVars);	
-      		$(window).load(resizeFonts, iniVars);
+		$(document).ready(resizeFonts);	
+		$(document).ready(iniVars);	
+		$(window).resize(resizeFonts);	
+		$(window).resize(iniVars);	
+      		$(window).load(resizeFonts);
+      		$(window).load(iniVars);
+
+      		//Get values 
       		function iniVars() {
       			headIn = $("#headerInner").width();
 			winOut = $(window).width();
 			headFor = winOut - headIn;
 			headFinal = headFor / 2;
       		}
+
+      		//Sets right border for "Need Help" fly-out on larger screens
       		function widenBorder() {
-      			 iniVars();
+      			iniVars();
       			if (winOut > 1090) {
 				$("#nhContent").css("border-right-width", headFinal);
 			}
@@ -83,6 +83,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 				$("#nhContent").css("border-right-width", 0);
 			}
       		}
+
 		function resizeFonts(){
 			var defSize = 10;
 			var mobileWidth = 550;
@@ -116,7 +117,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 					<!-- Below is fixed pos. on destop -->
 					<div id="needHelp">
 						<a id="mobileHelp"><img src="/img/icon-question.png" alt="Need Help?"></a>
-						<a id="deskTopHelp">Need <br>Help? <br><span>&nbsp;</span></a>
+						<a id="deskTopHelp" class="grow">Need <br>Help? <br><span>&nbsp;</span></a>
 						<div id="nhContent">
 							<a class="close">Close X</a>
 							<div id="nhLeft">

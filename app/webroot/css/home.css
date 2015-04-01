@@ -22,7 +22,7 @@
 #homeTop #htBack #welcomeBox {
   background-color: rgba(14, 50, 100, 0.85);
   color: white;
-  padding: 21px 28px;
+  padding: 21px 3%;
   float: left;
 }
 #homeTop #htBack #welcomeBox h1 {
@@ -41,15 +41,15 @@
   clear: left;
   float: left;
   background-color: rgba(255, 255, 255, 0.9);
-  padding: 3% 3% 3%;
+  padding: 3%;
   margin: 40px 0 0;
-  width: 46%;
+  width: 47%;
 }
 #homeTop #htBack #searchBox input {
   border: none;
   padding: 0 0 0 2%;
   height: 30px;
-  width: 76%;
+  width: 77%;
   -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
@@ -62,10 +62,149 @@
   font-weight: bold;
   padding: 0 2%;
 }
+#homeTop #htBack #catalogLink {
+  width: 15%;
+  margin-left: 3%;
+  margin-top: 8%;
+  display: inline-block;
+}
+#homeTop #htBack #catalogLink img {
+  width: 100%;
+}
+#homeQL {
+  display: table;
+}
+#homeQL h3 {
+  text-align: center;
+  text-transform: uppercase;
+  padding-bottom: 7px;
+  position: relative;
+  width: 100%;
+  float: left;
+  font: 2.3em 'Rokkitt', serif;
+  font-weight: bold;
+  color: #434343;
+}
+#homeQL h3 span {
+  background: white;
+  padding: 0 3%;
+  position: relative;
+  z-index: 5;
+}
+#homeQL h3:before {
+  content: "";
+  display: block;
+  border-top: solid 1px #dbdbdb;
+  width: 100%;
+  height: 1px;
+  position: absolute;
+  top: 36%;
+  z-index: 1;
+}
+#homeQL .qlBox {
+  float: left;
+  padding: 12px 5%;
+  box-sizing: border-box;
+  width: 33.3%;
+}
+#homeQL .qlBox:not(:first-of-type) {
+  border-left: 1px dotted #acacac;
+}
+#homeQL .qlBox .qLicon {
+  width: 37%;
+  display: block;
+  margin: 0 auto;
+}
+#homeQL .qlBox .qLicon img {
+  width: 100%;
+}
+#homeQL .qlBox p {
+  font: bold 1.9em 'Rokkitt', serif;
+  color: #3a3a3a;
+  text-align: center;
+  line-height: 1em;
+  margin: 1em 0;
+}
+#homeQL .qlBox .qlLink {
+  text-align: center;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #353535;
+  font-size: 11px;
+  display: block;
+}
+#homeQL .qlBox .qlLink:hover {
+  text-decoration: underline;
+}
+#homeQL .qlBox .qlLink:after {
+  content: url('/img/rightArrow.gif');
+  padding-left: 5px;
+  position: absolute;
+}
+#homeHowTo {
+  clear: left;
+  background-color: #f4f4f4;
+  padding: 42px 0;
+  margin: 50px auto;
+}
+#homeHowTo h3 {
+  color: #434343;
+  background-color: white;
+  font-size: 2.45em;
+  text-align: center;
+  padding: 10px 3%;
+  margin-bottom: 70px;
+  font-weight: normal;
+  width: 22%;
+  margin: 0 auto 70px;
+}
+#homeHowTo .htBox {
+  float: left;
+}
+#homeHowTo .htBox .htPop {
+  display: none;
+}
+#homeHowTo .htBox h2 {
+  background-color: #5a5a5a;
+  padding: 3%;
+  font: bold 5em 'Rokkitt', serif;
+  text-align: center;
+  color: white;
+}
+#homeHowTo .htBox h2:hover,
+#homeHowTo .htBox h2.active {
+  color: #5a5a5a;
+  background-color: white;
+  padding: 1.5%;
+  border: 5px solid #a9f7f8;
+}
+#homeHowTo .arrow {
+  float: left;
+  width: 20%;
+}
+#homeHowTo .arrow .dt {
+  width: 100%;
+  height: 27px;
+}
+#homeHowTo .arrow .mob {
+  display: none;
+}
 @media screen and (min-width: 1685px) {
   #homeTop #htBack {
     height: 324px;
     float: none;
     padding: 80px 100px;
   }
+}
+@media screen and (max-width: 780px) {
+  #homeTop #htBack #catalogLink {
+    margin-left: 17%;
+    margin-top: 25px;
+    clear: both;
+    float: left;
+    width: 25%;
+  }
+}
+@media screen and (max-width: 710px) {
+  
 }
