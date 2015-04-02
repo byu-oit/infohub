@@ -159,28 +159,76 @@
   margin: 0 auto 70px;
 }
 #homeHowTo .htBox {
-  float: left;
+  display: inline-block;
+  width: 11%;
+  position: relative;
+  vertical-align: top;
 }
 #homeHowTo .htBox .htPop {
   display: none;
+  position: absolute;
+  bottom: 100%;
+  left: -32%;
+  margin-bottom: 10px;
+  background-color: #a9f7f8;
+  padding: 11px 24% 18px;
+  width: 115%;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+#homeHowTo .htBox .htPop p {
+  text-transform: none;
+}
+#homeHowTo .htBox .htPop:after {
+  content: "";
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #a9f7f8;
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  margin-left: -6px;
 }
 #homeHowTo .htBox h2 {
   background-color: #5a5a5a;
-  padding: 3%;
+  padding: 4% 0 0;
   font: bold 5em 'Rokkitt', serif;
   text-align: center;
   color: white;
+  box-sizing: border-box;
+  line-height: 1.1em;
+  border: 7px solid transparent;
+  margin: 0;
+  transition: all 0.2s ease-in-out;
+  display: inherit;
+  margin-left: 20%;
+  width: 60%;
+  cursor: pointer;
 }
 #homeHowTo .htBox h2:hover,
 #homeHowTo .htBox h2.active {
   color: #5a5a5a;
   background-color: white;
-  padding: 1.5%;
-  border: 5px solid #a9f7f8;
+  border: 7px solid #a9f7f8;
+}
+#homeHowTo .htBox p {
+  font-size: 11px;
+  color: black;
+  text-transform: uppercase;
+  text-align: center;
+  font-weight: 600;
+}
+#homeHowTo .htBox:first-of-type {
+  margin-left: 3%;
 }
 #homeHowTo .arrow {
-  float: left;
-  width: 20%;
+  display: inline-block;
+  width: 16.2%;
+  vertical-align: top;
+  margin-top: 24px;
 }
 #homeHowTo .arrow .dt {
   width: 100%;

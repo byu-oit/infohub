@@ -170,29 +170,85 @@
 		width: 22%;
   		margin: 0 auto 70px;
 	}
+
 	.htBox {
-		float: left;
+		display: inline-block;
+		width: 11%;
+		position: relative;
+		vertical-align: top;
+
 		.htPop{
 			display: none;
+			position: absolute;
+			bottom: 100%; 
+			left: -32%;
+			margin-bottom: 10px;
+			background-color: @blueVl;
+			padding: 11px 24% 18px;
+			width: 115%;
+			
+			-webkit-border-radius: 3px;
+			-moz-border-radius: 3px;
+			border-radius: 3px;
+
+
+			p {
+				text-transform: none;
+			}
+
+			&:after {
+				content: "";
+				width: 0; 
+				height: 0; 
+				border-left: 6px solid transparent;
+				border-right: 6px solid transparent;
+				border-top: 6px solid @blueVl;
+				position: absolute;
+				bottom: -6px;
+				left: 50%;
+				margin-left: -6px;
+			}
 		}
 		h2 {
 			background-color: @grayMd;
-			padding: 3%;
+			padding: 4% 0 0;
 			font: bold 5em 'Rokkitt', serif;
 			text-align: center;
 			color: white;
+			box-sizing: border-box;
+			line-height: 1.1em;
+			border: 7px solid transparent;
+			margin: 0;
+			transition: all .2s ease-in-out;
+			display: inherit;
+			margin-left: 20%;
+  			width: 60%;
+  			cursor: pointer;
 
 			&:hover, &.active {
 				color: @grayMd;
 				background-color: #fff;
-				padding: 1.5%;
-				border: 5px solid @blueVl;
+				// padding: 1.5%;
+				border: 7px solid @blueVl;
 			}
 		}
+		p {
+			font-size: 11px;
+			color: black;
+			text-transform: uppercase;
+			text-align: center;
+			font-weight: 600;
+		}
+		&:first-of-type {
+			margin-left: 3%;
+		}
 	}
+
 	 .arrow {
-	 	float: left;
-	 	width: 20%;
+		display: inline-block;
+		width: 16.2%;
+		vertical-align: top;
+		margin-top: 24px;
 
 	 	.dt {
 	 		width: 100%;

@@ -22,6 +22,21 @@ $this->Html->css('home', null, array('inline' => false));
 
  		$('#searchBox').width(boxTarget);
  	}
+ 	$(document).ready(function() {
+ 		$('.htBox h2').on('click, mouseover', function () {
+ 			$(this).siblings('.htPop').fadeIn("fast");
+ 		});
+ 		$('.htBox h2').on('mouseout', function () {
+ 			$(this).siblings('.htPop').fadeOut("fast");
+ 		});
+
+ 		//Trigger Icon scaling when hovering over text link
+ 		$('.qlLink').hover(function() {
+ 			$(this).siblings('.qLicon').addClass('active');
+ 		}, function(){
+ 			$(this).siblings('.qLicon').removeClass('active');
+ 		});
+ 	});
 </script>
 <div id="homeTop">
 	<div id="htBack">

@@ -46,6 +46,12 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 		var headFinal;
 
 		$(document).ready(function(){
+			// Shows mobile menu
+			$('#mob-nav').click(function() {
+				$('#mainNav').toggle("slide", { direction: "left" }, 300);
+			});
+
+			// Help Pop-out functionality
 			$("#deskTopHelp").click(function() {
 				$(this).hide();
 				widenBorder();
@@ -132,7 +138,8 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			</div>
 		</header>
 		<nav>
-			<ul class="inner">
+			<a id="mob-nav" class="box-shadow-menu inner">&nbsp;</a>
+			<ul id="mainNav" class="inner">
 				<li><a href="#">Search</a></li>
 				<li><a href="#">Find People</a></li>
 				<li><a href="#">Resources</a></li>
