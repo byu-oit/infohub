@@ -38,6 +38,20 @@
 				font-weight: normal;
 			}
 		}
+		#mobSearchBox {
+			display: none;
+			background-color: rgba(14, 50, 100, 0.85);
+			color: white;
+			padding: 15px 0;
+			float: left;
+			width: 99%;
+
+			h3 {
+				font: 25px 'Rokkitt', serif;
+				text-align: center;
+				margin: 0;
+			}
+		}
 		#searchBox  {
 			clear: left;
 			float: left;
@@ -276,7 +290,126 @@
 		float: left;
 		width: 25%;
 	}
+	#homeHowTo .htBox h2 {
+		width: 75%;
+	}
 }
 @media screen and (max-width: 710px)  { 
 	
+}
+@media screen and (max-width: 550px) {
+	#homeTop 	{
+		#htBack {
+			padding: 28px 0 35px;
+			background-position: 32%;
+			position: relative;
+			margin-bottom: 150px;
+
+			#welcomeBox {
+				padding: 21px 9% 21px 6%;
+  				width: 84%;
+
+				h1 {
+					font-size: 42px;
+					line-height: .85em;
+					padding-bottom: 8px;
+					letter-spacing: 0;
+				}
+				h5 {
+					font-size: 16px;
+				}
+			}
+			#mobSearchBox {
+				display: block;
+				margin: 40px 0 0;
+			}
+			#searchBox {
+				margin: 0;
+				padding: 7%;
+				width: 85%;
+
+				input {
+					width: 97%;
+				}
+				input[type=submit] {
+					display: block;
+					float: none;
+					width: 35%;
+					margin: 20px auto 0;
+				}
+			}
+			#hbWrap {
+				#catalogLink {
+					position: absolute;
+					bottom: -110px;
+					left: 50%;
+					margin-left: -65px;	
+					width: 130px;
+				}
+			}
+		}
+	}
+	#homeQL {
+		
+		h3{
+			width: 96%;
+			margin-left: 2%;	
+
+			span {
+				padding: 0px 7%;
+			}
+		}
+		.qlBox {
+			width: 100%;
+			border-left: none !important;
+			padding-bottom: 20px;
+
+			.qLicon {
+				width: 100px;
+			}
+		}
+	}
+	#homeHowTo {
+		width: 100%;
+		margin: 0 auto;
+
+		h3 {
+			width: 250px;
+			margin-bottom: 42px;
+		}
+		.htBox {
+			width: 100%;
+			&:first-of-type {
+				margin-left: 0;
+			}
+			h2 {
+				width: 82px;
+				margin: 0 auto;
+				display: block;
+				padding: 2px 0;
+			}
+			.htPop { 
+				left: 40%;
+				padding: 11px 10% 18px;
+				width: 160px;
+				margin-left: -80px;
+				-webkit-box-shadow: 0px -4px 11px -3px rgba(10,10,10,0.7);
+				-moz-box-shadow: 0px -4px 11px -3px rgba(10,10,10,0.7);
+				box-shadow: 0px -4px 11px -3px rgba(10,10,10,0.7);
+			}
+		}
+		.arrow {
+			margin: 6px 0 20px;
+			width: 100%;
+
+			.dt {
+				display: none;
+			}
+			.mob {
+				display: block;
+				width: 27px;
+  				margin: 0 auto;
+			}
+		}
+	}
 }

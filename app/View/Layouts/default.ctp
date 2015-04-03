@@ -33,6 +33,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 		echo $this->fetch('css');
 		echo $this->fetch('script');
 	?>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link href='http://fonts.googleapis.com/css?family=Rokkitt:400,700' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700,300' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/smoothness/jquery-ui.css" />
@@ -58,9 +59,18 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 				$("#nhContent").show("slide", { direction: "right" }, 500);
 			});
 			$(".close").click(function() {
-				$("#nhContent").hide("slide", { direction: "right" }, 500, function() {
-					$("#deskTopHelp").fadeIn("fast");
-				});
+				if ($(window).width() > 750) {
+					$("#nhContent").hide("slide", { direction: "right" }, 500, function() {
+						$("#deskTopHelp").fadeIn("fast");
+					});
+				}
+				else {
+					$("#nhContent").hide("slide", { direction: "right" }, 500);	
+				}
+			});
+
+			$("#mobileHelp").click(function() {
+				$("#nhContent").show("slide", { direction: "right" }, 500);
 			});
 		});
 
@@ -117,9 +127,10 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			<div id="headerInner" class="inner">
 				<h1><a href="/" id="logo">BYU InfoHub</a></h1>
 				<h2><a href="/" id="site-title">InfoHub</a></h2>
-				<div id="headerLeft">
+				<div id="headerRight">
 					<span class="userInfo">Welcome, Christy</span>
 					<a id="settingsWheel"><img src="/img/icon-settings.png" alt="Settings"></a>
+
 					<!-- Below is fixed pos. on destop -->
 					<div id="needHelp">
 						<a id="mobileHelp"><img src="/img/icon-question.png" alt="Need Help?"></a>
@@ -134,6 +145,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 							<img src="/img/questionQuote.gif" alt="Have Questions?">
 						</div>
 					</div>
+
 				</div>
 			</div>
 		</header>

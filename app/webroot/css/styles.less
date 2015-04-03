@@ -47,7 +47,7 @@ header {
   				font-weight: normal;
   			}
 		}
-		#headerLeft {
+		#headerRight {
 			position: absolute;
 			right: 5%;
 			top: 35px;
@@ -175,6 +175,7 @@ nav {
 		border-right: 1px solid #147;
 		width: 0px;
 		padding: 0 19px 7px;
+		z-index: 99;
 	}
 	.box-shadow-menu:before {
 		content: "";
@@ -291,7 +292,76 @@ footer {
 		width: 92%;
 	}
 }
+@media screen and (min-width: 850px) {
+	footer #footerTop .footerBox {
+  		width: 20%;
+  	}
+}
+@media screen and (min-width: 750px) {
+	header {
+		background: url(/img/byu-header-bg.svg);
+		background-size: 100% 96px;
+	}
+}
 @media screen and (max-width: 750px) {
+	header { 
+	background: @bgBlueLight;
+
+		#headerInner {
+			height: 85px;
+
+			h1 a {
+				  background: url(/img/logo-dt.svg) no-repeat scroll 0 6px;
+				  width: 60px;
+				  margin-left: -10px;
+			}
+			h2 {
+				margin-left: 0;
+				a {
+					font-size: 32px;
+				}
+			}
+			#headerRight {
+				top: 14px;
+				
+				.userInfo {
+					padding-right: 0;
+				}
+				#needHelp {
+					border-right: none;
+					position: relative;
+					height: inherit;
+
+					#mobileHelp {
+						display: block;
+						float: right;
+						margin-top: 8px;
+						cursor: pointer;
+
+						img {
+							width: 20px;
+						}
+					}
+					#deskTopHelp {
+						display: none;
+					}
+					#nhContent {
+						width: 90%;
+						padding: 0 6% 50px 4%;
+
+						img {
+							display: none;
+						}
+					}
+				}
+				#settingsWheel {
+					float: right;
+					clear: left;
+					margin: 9px 0 0 13px;
+				}
+			}
+		}
+	}
 	nav #mob-nav {
 		display: block;
 	}
@@ -303,6 +373,13 @@ footer {
 		border: 1px solid #114477;
 		border-left: none;
 		padding: 0;
+		border-top-width: 5px;
+		border-bottom-width: 15px;
+		z-index: 99;
+		margin-bottom: 10px;	
+		-webkit-box-shadow:0px 5px 8px 1px rgba(0, 0, 0, .8);
+  		-moz-box-shadow:0px 5px 8px 1px rgba(0, 0, 0, .8);
+  		box-shadow: 0px 5px 8px 1px rgba(0, 0, 0, .8);
 
 		li {
 			display: list-item;
@@ -326,21 +403,32 @@ footer {
 		}
 	}
 }
-@media screen and (max-width: 650px) {
-
-}
-@media screen and (min-width: 400px) {
-	header {
-		background: url(/img/byu-header-bg.svg);
-		background-size: 100% 96px;
+@media screen and (max-width: 700px) {
+	footer #footerTop {
+		h4 {
+			width: 108%;
+			margin-left: -4%;
+			padding-left: 8%;
+		}
+		.footerBox {
+  			width: 100%;
+  			padding-left: 4%;
+  		}
+  	}
+  	footer #footerBottom p a {
+		display: list-item;
+		list-style-type: none;
+		padding: .2em 0;
 	}
 }
+
 
 //============= OTHER ============//
 pre.cake-error {
 	width: 90%;
 	margin-left: 5%;
 	white-space: normal;
+	display: none;
 }
 
 //Scale on Hover

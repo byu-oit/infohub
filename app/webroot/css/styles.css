@@ -43,12 +43,12 @@ header #headerInner h2 a {
   font-size: 44px;
   font-weight: normal;
 }
-header #headerInner #headerLeft {
+header #headerInner #headerRight {
   position: absolute;
   right: 5%;
   top: 35px;
 }
-header #headerInner #headerLeft .userInfo {
+header #headerInner #headerRight .userInfo {
   color: white;
   font-size: 11px;
   display: block;
@@ -56,15 +56,15 @@ header #headerInner #headerLeft .userInfo {
   padding-right: 10px;
   line-height: 18px;
 }
-header #headerInner #headerLeft #settingsWheel {
+header #headerInner #headerRight #settingsWheel {
   display: block;
   float: left;
   cursor: pointer;
 }
-header #headerInner #headerLeft #settingsWheel img {
+header #headerInner #headerRight #settingsWheel img {
   width: 20px;
 }
-header #headerInner #headerLeft #needHelp {
+header #headerInner #headerRight #needHelp {
   position: fixed;
   right: 0;
   top: 35%;
@@ -72,10 +72,10 @@ header #headerInner #headerLeft #needHelp {
   height: 286px;
   z-index: 99;
 }
-header #headerInner #headerLeft #needHelp #mobileHelp {
+header #headerInner #headerRight #needHelp #mobileHelp {
   display: none;
 }
-header #headerInner #headerLeft #needHelp #deskTopHelp {
+header #headerInner #headerRight #needHelp #deskTopHelp {
   margin-top: 112px;
   background-color: #ffa921;
   text-decoration: none;
@@ -86,7 +86,7 @@ header #headerInner #headerLeft #needHelp #deskTopHelp {
   padding: 8px 2px 10px 10px;
   cursor: pointer;
 }
-header #headerInner #headerLeft #needHelp #deskTopHelp span {
+header #headerInner #headerRight #needHelp #deskTopHelp span {
   border-top: 6px solid transparent;
   border-bottom: 6px solid transparent;
   border-right: 7px solid white;
@@ -94,7 +94,7 @@ header #headerInner #headerLeft #needHelp #deskTopHelp span {
   margin: 9px 13px 0 9px;
   line-height: 0;
 }
-header #headerInner #headerLeft #needHelp #nhContent {
+header #headerInner #headerRight #needHelp #nhContent {
   display: none;
   width: 600px;
   border: 7px solid #ffa921;
@@ -103,7 +103,7 @@ header #headerInner #headerLeft #needHelp #nhContent {
   position: relative;
   color: #444444;
 }
-header #headerInner #headerLeft #needHelp #nhContent .close {
+header #headerInner #headerRight #needHelp #nhContent .close {
   background-color: #ffa921;
   padding: 6px 15px;
   position: absolute;
@@ -113,23 +113,23 @@ header #headerInner #headerLeft #needHelp #nhContent .close {
   font-size: 11px;
   cursor: pointer;
 }
-header #headerInner #headerLeft #needHelp #nhContent #nhLeft {
+header #headerInner #headerRight #needHelp #nhContent #nhLeft {
   width: 68%;
   float: left;
   margin-top: 24px;
   margin-right: 5px;
 }
-header #headerInner #headerLeft #needHelp #nhContent #nhLeft h3 {
+header #headerInner #headerRight #needHelp #nhContent #nhLeft h3 {
   font-size: 25px;
   margin-bottom: 6px;
   font-family: 'Rokkitt', serif;
 }
-header #headerInner #headerLeft #needHelp #nhContent #nhLeft p {
+header #headerInner #headerRight #needHelp #nhContent #nhLeft p {
   margin-top: 0;
   font-size: 12px;
   line-height: 1.8em;
 }
-header #headerInner #headerLeft #needHelp #nhContent #nhLeft a {
+header #headerInner #headerRight #needHelp #nhContent #nhLeft a {
   font-size: 13px;
   color: #103668;
   display: block;
@@ -160,6 +160,7 @@ nav .box-shadow-menu {
   border-right: 1px solid #114477;
   width: 0px;
   padding: 0 19px 7px;
+  z-index: 99;
 }
 nav .box-shadow-menu:before {
   content: "";
@@ -275,7 +276,70 @@ footer #footerBottom p a:hover {
     width: 92%;
   }
 }
+@media screen and (min-width: 850px) {
+  footer #footerTop .footerBox {
+    width: 20%;
+  }
+}
+@media screen and (min-width: 750px) {
+  header {
+    background: url(/img/byu-header-bg.svg);
+    background-size: 100% 96px;
+  }
+}
 @media screen and (max-width: 750px) {
+  header {
+    background: #003366;
+  }
+  header #headerInner {
+    height: 85px;
+  }
+  header #headerInner h1 a {
+    background: url(/img/logo-dt.svg) no-repeat scroll 0 6px;
+    width: 60px;
+    margin-left: -10px;
+  }
+  header #headerInner h2 {
+    margin-left: 0;
+  }
+  header #headerInner h2 a {
+    font-size: 32px;
+  }
+  header #headerInner #headerRight {
+    top: 14px;
+  }
+  header #headerInner #headerRight .userInfo {
+    padding-right: 0;
+  }
+  header #headerInner #headerRight #needHelp {
+    border-right: none;
+    position: relative;
+    height: inherit;
+  }
+  header #headerInner #headerRight #needHelp #mobileHelp {
+    display: block;
+    float: right;
+    margin-top: 8px;
+    cursor: pointer;
+  }
+  header #headerInner #headerRight #needHelp #mobileHelp img {
+    width: 20px;
+  }
+  header #headerInner #headerRight #needHelp #deskTopHelp {
+    display: none;
+  }
+  header #headerInner #headerRight #needHelp #nhContent {
+    width: 90%;
+    padding: 0 6% 50px 4%;
+  }
+  header #headerInner #headerRight #needHelp #nhContent img {
+    display: none;
+  }
+  header #headerInner #headerRight #settingsWheel {
+    float: right;
+    clear: left;
+    margin: 9px 0 0 13px;
+  }
   nav #mob-nav {
     display: block;
   }
@@ -287,6 +351,13 @@ footer #footerBottom p a:hover {
     border: 1px solid #114477;
     border-left: none;
     padding: 0;
+    border-top-width: 5px;
+    border-bottom-width: 15px;
+    z-index: 99;
+    margin-bottom: 10px;
+    -webkit-box-shadow: 0px 5px 8px 1px rgba(0, 0, 0, 0.8);
+    -moz-box-shadow: 0px 5px 8px 1px rgba(0, 0, 0, 0.8);
+    box-shadow: 0px 5px 8px 1px rgba(0, 0, 0, 0.8);
   }
   #mainNav li {
     display: list-item;
@@ -305,19 +376,27 @@ footer #footerBottom p a:hover {
     background-image: none;
   }
 }
-@media screen and (max-width: 650px) {
-  
-}
-@media screen and (min-width: 400px) {
-  header {
-    background: url(/img/byu-header-bg.svg);
-    background-size: 100% 96px;
+@media screen and (max-width: 700px) {
+  footer #footerTop h4 {
+    width: 108%;
+    margin-left: -4%;
+    padding-left: 8%;
+  }
+  footer #footerTop .footerBox {
+    width: 100%;
+    padding-left: 4%;
+  }
+  footer #footerBottom p a {
+    display: list-item;
+    list-style-type: none;
+    padding: .2em 0;
   }
 }
 pre.cake-error {
   width: 90%;
   margin-left: 5%;
   white-space: normal;
+  display: none;
 }
 .shrink {
   transition: all 0.15s ease-in-out;

@@ -19,8 +19,9 @@ $this->Html->css('home', null, array('inline' => false));
 
  	function boxWidth() {
  		var boxTarget = $('#welcomeBox').width();
-
- 		$('#searchBox').width(boxTarget);
+ 		if ($(window).width() > 550) {
+ 			$('#searchBox').width(boxTarget);
+ 		}
  	}
  	$(document).ready(function() {
  		$('.htBox h2').on('click, mouseover', function () {
@@ -40,10 +41,13 @@ $this->Html->css('home', null, array('inline' => false));
 </script>
 <div id="homeTop">
 	<div id="htBack">
-		<div class="inner">
+		<div class="inner" id="hbWrap">
 			<div id="welcomeBox">
 				<h1>Welcome to BYU InfoHub</h1>
 				<h5>Information we can use, trust, and share safely</h5>
+			</div>
+			<div id="mobSearchBox">
+				<h3>Search Information</h3>
 			</div>
 			<div id="searchBox">
 				<input type="text" placeholder="Search keyword, topic, or phrase">
@@ -56,17 +60,17 @@ $this->Html->css('home', null, array('inline' => false));
 <div id="homeQL" class="inner">
 	<h3><span>Quick Links</span></h3>
 	<div class="qlBox">
-		<a href="3" class="qLicon grow"><img src="/img/ql-book.gif" alt="Locate People"></a>
+		<a href="3" class="qLicon grow"><img src="/img/ql-book.png" alt="Locate People"></a>
 		<p>Locate peolpe who <br>can help you find <br>your information.</p>
 		<a href="#" class="qlLink">Find People</a>
 	</div>
 	<div class="qlBox">
-		<a href="3" class="qLicon grow"><img src="/img/ql-list.gif" alt="See policies"></a>
+		<a href="3" class="qLicon grow"><img src="/img/ql-list.png" alt="See policies"></a>
 		<p>Understand policies and <br>procedures for proper <br>information usage</p>
 		<a href="" class="qlLink">See Policies and Procedures.</a>
 	</div>
 	<div class="qlBox">
-		<a href="3" class="qLicon grow"><img src="/img/ql-cogs.gif" alt="Login"></a>
+		<a href="3" class="qLicon grow"><img src="/img/ql-cogs.png" alt="Login"></a>
 		<p>Track your requests, <br>add favorites and <br>customize your alerts.</p>
 		<a href=""  class="qlLink">Log into or Create an Account</a>
 	</div>
@@ -82,7 +86,7 @@ $this->Html->css('home', null, array('inline' => false));
 	</div>
 	<div class="arrow">
 		<img src="/img/dtRightArrow.gif" alt="-->" class="dt">
-		<img src="/img/mobDownArrow" alt="V" class="mob">
+		<img src="/img/mobDownArrow.gif" alt="V" class="mob">
 	</div>
 	<div id="htRequest" class="htBox">
 		<div class="htPop">
@@ -93,7 +97,7 @@ $this->Html->css('home', null, array('inline' => false));
 	</div>
 	<div class="arrow">
 		<img src="/img/dtRightArrow.gif" alt="-->" class="dt">
-		<img src="/img/mobDownArrow" alt="V" class="mob">
+		<img src="/img/mobDownArrow.gif" alt="V" class="mob">
 	</div>
 	<div id="htTrack" class="htBox">
 		<div class="htPop">
@@ -104,7 +108,7 @@ $this->Html->css('home', null, array('inline' => false));
 	</div>
 	<div class="arrow">
 		<img src="/img/dtRightArrow.gif" alt="-->" class="dt">
-		<img src="/img/mobDownArrow" alt="V" class="mob">
+		<img src="/img/mobDownArrow.gif" alt="V" class="mob">
 	</div>
 	<div id="htUse" class="htBox">
 		<div class="htPop">
