@@ -65,12 +65,12 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 					});
 				}
 				else {
-					$("#nhContent").hide("slide", { direction: "right" }, 500);	
+					$("#nhContent").slideUp();	
 				}
 			});
 
 			$("#mobileHelp").click(function() {
-				$("#nhContent").show("slide", { direction: "right" }, 500);
+				$("#nhContent").slideToggle();
 			});
 		});
 

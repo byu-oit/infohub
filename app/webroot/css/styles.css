@@ -160,7 +160,7 @@ nav .box-shadow-menu {
   border-right: 1px solid #114477;
   width: 0px;
   padding: 0 19px 7px;
-  z-index: 99;
+  z-index: 98;
 }
 nav .box-shadow-menu:before {
   content: "";
@@ -329,11 +329,24 @@ footer #footerBottom p a:hover {
     display: none;
   }
   header #headerInner #headerRight #needHelp #nhContent {
-    width: 90%;
+    width: 100%;
     padding: 0 6% 50px 4%;
+    box-sizing: border-box;
+    margin: 0 auto;
+    float: left;
+    position: fixed;
+    right: 0;
+    top: 87px;
+    border: 4px solid #ffa921;
   }
   header #headerInner #headerRight #needHelp #nhContent img {
     display: none;
+  }
+  header #headerInner #headerRight #needHelp #nhContent #nhLeft {
+    width: 100%;
+  }
+  header #headerInner #headerRight #needHelp #nhContent #nhLeft a {
+    float: right;
   }
   header #headerInner #headerRight #settingsWheel {
     float: right;
@@ -378,7 +391,7 @@ footer #footerBottom p a:hover {
 }
 @media screen and (max-width: 700px) {
   footer #footerTop h4 {
-    width: 108%;
+    width: 100%;
     margin-left: -4%;
     padding-left: 8%;
   }

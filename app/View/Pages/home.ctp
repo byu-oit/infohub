@@ -24,15 +24,17 @@ $this->Html->css('home', null, array('inline' => false));
  		}
  	}
  	$(document).ready(function() {
- 		$('.htBox h2').on('click, mouseover', function () {
+
+ 		$('.htBox h2').on('mouseover', function () {
+ 			$('.htBox h2').removeClass('active');
+ 			$('.htPop').fadeOut("fast");
  			$(this).siblings('.htPop').fadeIn("fast");
- 		});
- 		$('.htBox h2').on('mouseout', function () {
- 			$(this).siblings('.htPop').fadeOut("fast");
+ 			$(this).addClass('active');
  		});
 
  		//Trigger Icon scaling when hovering over text link
  		$('.qlLink').hover(function() {
+ 			$('.qLicon').removeClass('active');
  			$(this).siblings('.qLicon').addClass('active');
  		}, function(){
  			$(this).siblings('.qLicon').removeClass('active');
@@ -86,7 +88,7 @@ $this->Html->css('home', null, array('inline' => false));
 	</div>
 	<div class="arrow">
 		<img src="/img/dtRightArrow.gif" alt="-->" class="dt">
-		<img src="/img/mobDownArrow.gif" alt="V" class="mob">
+		<img src="/img/mobDownArrow.png" alt="V" class="mob">
 	</div>
 	<div id="htRequest" class="htBox">
 		<div class="htPop">
@@ -97,7 +99,7 @@ $this->Html->css('home', null, array('inline' => false));
 	</div>
 	<div class="arrow">
 		<img src="/img/dtRightArrow.gif" alt="-->" class="dt">
-		<img src="/img/mobDownArrow.gif" alt="V" class="mob">
+		<img src="/img/mobDownArrow.png" alt="V" class="mob">
 	</div>
 	<div id="htTrack" class="htBox">
 		<div class="htPop">
@@ -108,7 +110,7 @@ $this->Html->css('home', null, array('inline' => false));
 	</div>
 	<div class="arrow">
 		<img src="/img/dtRightArrow.gif" alt="-->" class="dt">
-		<img src="/img/mobDownArrow.gif" alt="V" class="mob">
+		<img src="/img/mobDownArrow.png" alt="V" class="mob">
 	</div>
 	<div id="htUse" class="htBox">
 		<div class="htPop">
