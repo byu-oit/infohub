@@ -13,6 +13,11 @@ body {
   width: 100%;
   margin: 0 auto;
 }
+.innerLower {
+  max-width: 990px;
+  width: 100%;
+  margin: 0 auto;
+}
 header {
   background: #003366;
 }
@@ -99,16 +104,17 @@ header #headerInner #headerRight #needHelp #nhContent {
   width: 600px;
   border: 7px solid #ffa921;
   background-color: white;
-  padding: 0 40px 50px 30px;
+  padding: 0 55px 50px 30px;
   position: relative;
   color: #444444;
 }
 header #headerInner #headerRight #needHelp #nhContent .close {
   background-color: #ffa921;
-  padding: 6px 15px;
+  padding: 18px 6px;
+  text-align: center;
   position: absolute;
-  top: 0;
-  right: 15px;
+  top: 38%;
+  right: 0px;
   color: white;
   font-size: 11px;
   cursor: pointer;
@@ -348,6 +354,11 @@ footer #footerBottom p a:hover {
   header #headerInner #headerRight #needHelp #nhContent #nhLeft a {
     float: right;
   }
+  header #headerInner #headerRight #needHelp #nhContent .close {
+    padding: 6px 15px;
+    top: 0;
+    right: 15px;
+  }
   header #headerInner #headerRight #settingsWheel {
     float: right;
     clear: left;
@@ -398,6 +409,7 @@ footer #footerBottom p a:hover {
   footer #footerTop .footerBox {
     width: 100%;
     padding-left: 4%;
+    padding-right: 0;
   }
   footer #footerBottom p a {
     display: list-item;

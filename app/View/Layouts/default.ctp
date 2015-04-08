@@ -80,6 +80,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 		$(window).resize(iniVars);	
       		$(window).load(resizeFonts);
       		$(window).load(iniVars);
+      		// $(window).resize(function(){location.reload();});
 
       		//Get values 
       		function iniVars() {
@@ -91,13 +92,14 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 
       		//Sets right border for "Need Help" fly-out on larger screens
       		function widenBorder() {
-      			iniVars();
-      			if (winOut > 1090) {
-				$("#nhContent").css("border-right-width", headFinal);
-			}
-			else {
-				$("#nhContent").css("border-right-width", 0);
-			}
+   			//    iniVars();
+   			// 	if (winOut > 1090) {
+			// 	$("#nhContent").css("border-right-width", headFinal);
+			// }
+			// else {
+			// 	$("#nhContent").css("border-right-width", 0);
+			// }
+			$("#nhContent").css("border-right-width", 0);
       		}
 
 		function resizeFonts(){
@@ -136,7 +138,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 						<a id="mobileHelp"><img src="/img/icon-question.png" alt="Need Help?"></a>
 						<a id="deskTopHelp" class="grow">Need <br>Help? <br><span>&nbsp;</span></a>
 						<div id="nhContent">
-							<a class="close">Close X</a>
+							<a class="close">Close <br>X</a>
 							<div id="nhLeft">
 								<h3>Have questions? We’re here to help.</h3>
 								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod veniam, quis nostrud exercitation ullamco laboris nisiut aliquip utexa commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur datat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </p>

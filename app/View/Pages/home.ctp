@@ -55,7 +55,7 @@ $this->Html->css('home', null, array('inline' => false));
 				<input type="text" placeholder="Search keyword, topic, or phrase">
 				<input type="submit" value="Search" >
 			</div>
-			<a href="/catalog" id="catalogLink" class="grow"><img src="/img/catalogLink.png" alt="See full catealog"></a>
+			<a href="/catalog" id="catalogLink" class="grow"><img src="/img/catalogLink2.png" alt="See full catealog"></a>
 		</div>
 	</div>	
 </div>

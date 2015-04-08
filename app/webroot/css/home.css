@@ -10,7 +10,7 @@
   clear: right;
 }
 #homeTop #htBack {
-  background: url(/img/homeBG.jpg) no-repeat;
+  background: url(/img/backgrounds/homeBG.jpg) no-repeat;
   background-size: cover;
   width: 100%;
   max-width: 1668px;
@@ -86,6 +86,7 @@
 }
 #homeQL {
   display: table;
+  clear: left;
 }
 #homeQL h3 {
   text-align: center;
@@ -132,10 +133,11 @@
   width: 100%;
 }
 #homeQL .qlBox p {
-  font: bold 1.9em 'Rokkitt', serif;
+  font-size: 1.4em;
+  font-weight: bold;
   color: #3a3a3a;
   text-align: center;
-  line-height: 1em;
+  line-height: 1.3em;
   margin: 1em 0;
 }
 #homeQL .qlBox .qlLink {

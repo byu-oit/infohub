@@ -1,0 +1,294 @@
+/*============= LOAD LESS FILES =============*/
+
+/*=====Variables====*/
+/*=====Variables====*/
+/*========== SECONDARY PAGE  CLASSES =========*/
+
+.deskBg {
+  background: url(/img/backgrounds/bg-desk.jpg) no-repeat;
+  background-position: right center;
+  width: 100%;
+  max-width: 1668px;
+  background-size: cover;
+  margin: 0 auto;
+  padding: 4% 0 10%;
+  float: left;
+}
+.libOnebg {
+  background: url(/img/backgrounds/bg-lib1.jpg) no-repeat;
+  background-position: right center;
+  width: 100%;
+  max-width: 1668px;
+  background-size: cover;
+  margin: 0 auto;
+  padding: 4% 0 10%;
+  float: left;
+}
+.headerTab {
+  background-color: rgba(14, 50, 100, 0.85);
+  font-family: 'Rokkitt', serif;
+  text-align: center;
+  color: white;
+  margin: 0;
+  padding: 17px 20px;
+}
+.whiteBox {
+  background-color: rgba(255, 255, 255, 0.87);
+}
+.inputShade {
+  border: none;
+  padding: 0 0 0 10px;
+  height: 30px;
+  box-sizing: border-box;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+}
+.inputButton {
+  background-color: #001948;
+  color: white;
+  font-weight: bold;
+  padding: 0 2%;
+  border: none;
+  height: 30px;
+  width: initial !important;
+  padding: 0 25px;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+}
+.clear {
+  clear: both;
+}
+/*============== LOGIN PAGE  ===============*/
+
+#loginBody #loginBox {
+  width: 100%;
+  max-width: 482px;
+  margin: 0 auto;
+}
+#loginBody #loginBox h1 {
+  float: left;
+  font-size: 30px;
+  padding: 12px 36px;
+}
+#loginBody #loginBox #lbLower {
+  clear: left;
+  width: 86%;
+  padding: 20px 7%;
+}
+#loginBody #loginBox #lbLower p {
+  font-size: 16px;
+  color: #333333;
+  text-align: center;
+  margin: 0 0 26px;
+}
+#loginBody #loginBox #lbLower input {
+  width: 100%;
+  margin-bottom: 25px;
+}
+#loginBody #loginBox #lbLower input[type=submit] {
+  width: initial !important;
+  padding: 0 25px;
+  margin-left: 39% !important;
+  float: left;
+}
+#loginBody #loginBox #lbLower a {
+  color: #406a9f;
+  font-size: 10px;
+  margin-left: 13px;
+  white-space: nowrap;
+}
+#loginBody #loginBox #lbLower a:hover {
+  text-decoration: none;
+}
+/*============ MY ACCOUNT PAGE  =============*/
+
+#accountBody {
+  position: absolute;
+  padding: 15% 0 15%;
+  margin: 0;
+}
+#accountMid {
+  position: relative;
+}
+#accountMid #accountTop {
+  width: 100%;
+  max-width: 578px;
+  position: relative;
+  padding: 50px 0;
+}
+#accountMid #accountTop h1 {
+  font-size: 30px;
+  float: left;
+  padding: 12px 36px;
+}
+#accountMid #accountTop #atLower {
+  clear: left;
+  width: 86%;
+  padding: 25px 7% 40px;
+}
+#accountMid #accountTop #atLower h2 {
+  font-size: 30px;
+  color: #30659b;
+  margin: 0 0 7px;
+}
+#accountMid #accountTop #atLower .accountInfo {
+  width: 50%;
+  float: left;
+  font-size: 17px;
+  color: #3e3e3e;
+}
+#accountMid #accountTop #atLower .accountInfo .aiLabel {
+  color: #30659b;
+}
+#accountMid #accountTabs {
+  float: left;
+}
+#accountMid #accountTabs .atTab {
+  float: left;
+  background-color: #22476f;
+  border: 2px solid #22476f;
+}
+#accountMid #accountMain {
+  padding: 20px 2%;
+  float: left;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+}
+#accountMid #accountMain .requestItem {
+  background-color: white;
+  margin-bottom: 20px;
+  padding: 20px 2%;
+  float: left;
+  width: 96%;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+}
+#accountMid #accountMain .requestItem .riLeft {
+  width: 75%;
+  float: left;
+}
+#accountMid #accountMain .requestItem .riLeft .riTitle {
+  color: #114477;
+  font-size: 16px;
+  margin: 0;
+}
+#accountMid #accountMain .requestItem .riLeft .riDate {
+  font-size: 12px;
+  margin: 4px 0;
+}
+#accountMid #accountMain .requestItem .riLeft .riDate span {
+  color: #224d7d;
+}
+#accountMid #accountMain .requestItem .riLeft p {
+  font-size: 14px;
+  color: black;
+  margin: 8px 0 15px;
+}
+#accountMid #accountMain .requestItem .riLeft img {
+  width: 256px;
+  padding-left: 50%;
+  margin-left: -128px;
+  display: block;
+}
+#accountMid #accountMain .requestItem .requestContact {
+  position: relative;
+  float: left;
+  border: 3px solid #b5d45d;
+  padding: 10px 13px;
+  margin-top: 50px;
+  margin-left: 30px;
+  width: 168px;
+  float: right;
+  margin-right: 10px;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+}
+#accountMid #accountMain .requestItem .requestContact:before {
+  content: "";
+  background: url('/img/iconPerson.png') no-repeat;
+  position: absolute;
+  width: 100%;
+  height: 50px;
+  background-size: 88px 51px;
+  left: 58px;
+  top: -53px;
+}
+#accountMid #accountMain .requestItem .requestContact .contactName {
+  font-size: 14px;
+  color: black;
+  text-align: center;
+  display: block;
+}
+#accountMid #accountMain .requestItem .requestContact .contactNumber,
+#accountMid #accountMain .requestItem .requestContact .contactEmail {
+  font-size: 12px;
+  color: #3e3e3e;
+  padding: 10px 0 0;
+}
+#accountMid #accountMain .requestItem .requestContact .contactNumber:before,
+#accountMid #accountMain .requestItem .requestContact .contactEmail:before {
+  content: "";
+  padding: 0 3px 4px;
+  background-position: 0px 0px;
+  margin-top: -2px;
+  display: block;
+  float: left;
+  height: 20px;
+  width: 20px;
+}
+#accountMid #accountMain .requestItem .requestContact .contactNumber:before {
+  background: url('/img/iconPhone.gif') no-repeat;
+  background-size: 20px 20px;
+}
+#accountMid #accountMain .requestItem .requestContact .contactEmail:before {
+  background: url('/img/iconMail.gif') no-repeat;
+  background-size: 20px 20px;
+}
+@media screen and (min-width: 1685px) {
+  .deskBg,
+  .libOnebg {
+    height: 515px;
+    float: none;
+    padding: 80px 100px !important;
+    margin: 0 auto;
+  }
+  #loginBody {
+    padding: 57px 0 0;
+  }
+}
+@media screen and (max-width: 550px) {
+  .deskBg,
+  .libOnebg {
+    background-position: left center;
+  }
+  #loginBody {
+    padding: 35px 0;
+  }
+  #loginBody #loginBox {
+    margin-left: 5%;
+    width: 90%;
+  }
+  #loginBody #loginBox h1 {
+    width: 100%;
+    padding: 12px 0;
+  }
+  #loginBody #loginBox #lbLower p {
+    font-size: 13px;
+  }
+  #loginBody #loginBox #lbLower input[type=submit] {
+    padding: 0 20px;
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+  #loginBody #loginBox #lbLower a {
+    padding-bottom: 0px;
+    display: block;
+    clear: left;
+    margin-left: 0;
+  }
+}

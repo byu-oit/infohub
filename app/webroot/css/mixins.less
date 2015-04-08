@@ -8,6 +8,12 @@
 	-webkit-box-shadow: @args;
 }
 
+.box-shade() {
+	-webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+	-moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+	box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+}
+
 // Text shadows
 // -----------------
 .text-shadow(@args: 0 0 1px lighten(#000, 50%)) {
@@ -99,4 +105,13 @@
 	::-webkit-input-placeholder { color: @color }
 }
 
-
+//Background Image styles 
+.bgStyles() {
+	background-position: right center;
+	width: 100%;
+	max-width: 1668px;
+	background-size: cover;
+	margin: 0 auto;
+	padding: 4% 0 10%;
+	float: left;
+}
