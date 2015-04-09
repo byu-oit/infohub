@@ -23,6 +23,22 @@
   margin: 0 auto;
   padding: 4% 0 10%;
   float: left;
+  height: 506px;
+  background-position: left center;
+  background-size: inherit;
+}
+.lectureBg {
+  background: url(/img/backgrounds/bg-lecture.jpg) no-repeat;
+  background-position: right center;
+  width: 100%;
+  max-width: 1668px;
+  background-size: cover;
+  margin: 0 auto;
+  padding: 4% 0 10%;
+  float: left;
+  height: 506px;
+  background-position: left center;
+  background-size: inherit;
 }
 .headerTab {
   background-color: rgba(14, 50, 100, 0.85);
@@ -59,6 +75,166 @@
 }
 .clear {
   clear: both;
+}
+.contactBox {
+  position: relative;
+  float: left;
+  border: 3px solid #b5d45d;
+  padding: 10px 13px;
+  margin-top: 50px;
+  margin-left: 30px;
+  width: 168px;
+  float: right;
+  margin-right: 10px;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+}
+.contactBox:before {
+  content: "";
+  background: url('/img/iconPerson.png') no-repeat;
+  position: absolute;
+  width: 100%;
+  height: 50px;
+  background-size: 88px 51px;
+  left: 58px;
+  top: -53px;
+}
+.contactBox .contactName {
+  font-size: 14px;
+  color: black;
+  text-align: center;
+  display: block;
+}
+.contactBox .contactNumber,
+.contactBox .contactEmail {
+  font-size: 12px;
+  padding: 10px 0 0;
+}
+.contactBox .contactNumber a,
+.contactBox .contactEmail a {
+  color: #3e3e3e;
+  text-decoration: none;
+}
+.contactBox .contactNumber a:hover,
+.contactBox .contactEmail a:hover {
+  text-decoration: underline;
+}
+.contactBox .contactNumber:before,
+.contactBox .contactEmail:before {
+  content: "";
+  padding: 0 3px 4px;
+  background-position: 0px 0px;
+  margin-top: -2px;
+  display: block;
+  float: left;
+  height: 20px;
+  width: 20px;
+}
+.contactBox .contactNumber:before {
+  background: url('/img/iconPhone.gif') no-repeat;
+  background-size: 20px 20px;
+}
+.contactBox .contactEmail:before {
+  background: url('/img/iconMail.gif') no-repeat;
+  background-size: 20px 20px;
+}
+.contactBox .contactTitle {
+  color: #234e77;
+  text-align: center;
+  display: block;
+  font-size: 12px;
+  clear: left;
+  font-weight: bold;
+}
+.contactOrange {
+  border: 3px solid #ffa900;
+}
+.contactOrange:before {
+  content: "";
+  background: url('/img/iconPersonOrange.png') no-repeat;
+  position: absolute;
+  width: 100%;
+  height: 50px;
+  background-size: 88px 51px;
+  left: 58px;
+  top: -53px;
+}
+.quickLinks {
+  clear: left;
+  padding-top: 50px;
+}
+.quickLinks .qlTab {
+  background-color: #30547f;
+  padding: 15px 16px 9px;
+  float: left;
+}
+.quickLinks .qlTab h3 {
+  color: white;
+  margin: 0;
+  font-family: 'Rokkitt', serif;
+  font-size: 18px;
+}
+.quickLinks .qlTab h3:before {
+  content: "";
+  background: url('/img/iconStar.jpg') no-repeat;
+  padding: 0 3px 4px;
+  background-position: 0px 3px;
+  margin-top: -2px;
+  display: block;
+  float: left;
+  height: 20px;
+  width: 20px;
+  background-size: 17px;
+}
+.quickLinks .qlBody {
+  clear: left;
+  -moz-column-count: 5;
+  -moz-column-gap: 20px;
+  -webkit-column-count: 5;
+  -webkit-column-gap: 20px;
+  column-count: 5;
+  column-gap: 20px;
+  background-color: #f4f4f4;
+  padding: 20px 2.5%;
+  padding: 20px 2.5% 12px;
+  margin-bottom: 50px;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+}
+.quickLinks .qlBody ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  *zoom: 1;
+  clear: both;
+}
+.quickLinks .qlBody ul:before,
+.quickLinks .qlBody ul:after {
+  content: "";
+  display: table;
+}
+.quickLinks .qlBody ul:after {
+  clear: both;
+}
+.quickLinks .qlBody ul li {
+  float: left;
+  margin: 0;
+  padding: 0;
+}
+.quickLinks .qlBody ul li {
+  padding-right: 20px;
+}
+.quickLinks .qlBody ul li a {
+  text-decoration: none;
+  font-size: 12px;
+  color: #336699;
+  display: block;
+  padding: 5px 0;
+}
+.quickLinks .qlBody ul li a:hover {
+  text-decoration: underline;
 }
 /*============== LOGIN PAGE  ===============*/
 
@@ -102,156 +278,8 @@
 #loginBody #loginBox #lbLower a:hover {
   text-decoration: none;
 }
-/*============ MY ACCOUNT PAGE  =============*/
-
-#accountBody {
-  position: absolute;
-  padding: 15% 0 15%;
-  margin: 0;
-}
-#accountMid {
-  position: relative;
-}
-#accountMid #accountTop {
-  width: 100%;
-  max-width: 578px;
-  position: relative;
-  padding: 50px 0;
-}
-#accountMid #accountTop h1 {
-  font-size: 30px;
-  float: left;
-  padding: 12px 36px;
-}
-#accountMid #accountTop #atLower {
-  clear: left;
-  width: 86%;
-  padding: 25px 7% 40px;
-}
-#accountMid #accountTop #atLower h2 {
-  font-size: 30px;
-  color: #30659b;
-  margin: 0 0 7px;
-}
-#accountMid #accountTop #atLower .accountInfo {
-  width: 50%;
-  float: left;
-  font-size: 17px;
-  color: #3e3e3e;
-}
-#accountMid #accountTop #atLower .accountInfo .aiLabel {
-  color: #30659b;
-}
-#accountMid #accountTabs {
-  float: left;
-}
-#accountMid #accountTabs .atTab {
-  float: left;
-  background-color: #22476f;
-  border: 2px solid #22476f;
-}
-#accountMid #accountMain {
-  padding: 20px 2%;
-  float: left;
-  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
-  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
-  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
-}
-#accountMid #accountMain .requestItem {
-  background-color: white;
-  margin-bottom: 20px;
-  padding: 20px 2%;
-  float: left;
-  width: 96%;
-  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
-  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
-  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
-}
-#accountMid #accountMain .requestItem .riLeft {
-  width: 75%;
-  float: left;
-}
-#accountMid #accountMain .requestItem .riLeft .riTitle {
-  color: #114477;
-  font-size: 16px;
-  margin: 0;
-}
-#accountMid #accountMain .requestItem .riLeft .riDate {
-  font-size: 12px;
-  margin: 4px 0;
-}
-#accountMid #accountMain .requestItem .riLeft .riDate span {
-  color: #224d7d;
-}
-#accountMid #accountMain .requestItem .riLeft p {
-  font-size: 14px;
-  color: black;
-  margin: 8px 0 15px;
-}
-#accountMid #accountMain .requestItem .riLeft img {
-  width: 256px;
-  padding-left: 50%;
-  margin-left: -128px;
-  display: block;
-}
-#accountMid #accountMain .requestItem .requestContact {
-  position: relative;
-  float: left;
-  border: 3px solid #b5d45d;
-  padding: 10px 13px;
-  margin-top: 50px;
-  margin-left: 30px;
-  width: 168px;
-  float: right;
-  margin-right: 10px;
-  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
-  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
-  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
-}
-#accountMid #accountMain .requestItem .requestContact:before {
-  content: "";
-  background: url('/img/iconPerson.png') no-repeat;
-  position: absolute;
-  width: 100%;
-  height: 50px;
-  background-size: 88px 51px;
-  left: 58px;
-  top: -53px;
-}
-#accountMid #accountMain .requestItem .requestContact .contactName {
-  font-size: 14px;
-  color: black;
-  text-align: center;
-  display: block;
-}
-#accountMid #accountMain .requestItem .requestContact .contactNumber,
-#accountMid #accountMain .requestItem .requestContact .contactEmail {
-  font-size: 12px;
-  color: #3e3e3e;
-  padding: 10px 0 0;
-}
-#accountMid #accountMain .requestItem .requestContact .contactNumber:before,
-#accountMid #accountMain .requestItem .requestContact .contactEmail:before {
-  content: "";
-  padding: 0 3px 4px;
-  background-position: 0px 0px;
-  margin-top: -2px;
-  display: block;
-  float: left;
-  height: 20px;
-  width: 20px;
-}
-#accountMid #accountMain .requestItem .requestContact .contactNumber:before {
-  background: url('/img/iconPhone.gif') no-repeat;
-  background-size: 20px 20px;
-}
-#accountMid #accountMain .requestItem .requestContact .contactEmail:before {
-  background: url('/img/iconMail.gif') no-repeat;
-  background-size: 20px 20px;
-}
 @media screen and (min-width: 1685px) {
-  .deskBg,
-  .libOnebg {
+  .deskBg {
     height: 515px;
     float: none;
     padding: 80px 100px !important;
@@ -261,9 +289,40 @@
     padding: 57px 0 0;
   }
 }
-@media screen and (max-width: 550px) {
-  .deskBg,
+@media screen and (max-width: 1060px) {
+  .innerLower {
+    width: 94%;
+    margin-left: 3%;
+  }
+}
+@media screen and (max-width: 980px) {
+  .quickLinks .qlBody {
+    -moz-column-count: 4;
+    -webkit-column-count: 4;
+    column-count: 4;
+  }
+}
+@media screen and (max-width: 850px) {
+  .quickLinks .qlBody {
+    -moz-column-count: 3;
+    -webkit-column-count: 3;
+    column-count: 3;
+  }
+}
+@media screen and (max-width: 650px) {
   .libOnebg {
+    background-position: -645px bottom;
+    height: 421px;
+  }
+  .quickLinks .qlBody {
+    -moz-column-count: 2;
+    -webkit-column-count: 2;
+    column-count: 2;
+    padding: 20px 4.5% 12px;
+  }
+}
+@media screen and (max-width: 550px) {
+  .deskBg {
     background-position: left center;
   }
   #loginBody {
@@ -290,5 +349,30 @@
     display: block;
     clear: left;
     margin-left: 0;
+  }
+}
+@media screen and (max-width: 490px) {
+  .innerLower {
+    width: 90%;
+    margin-left: 5%;
+  }
+  .quickLinks .qlTab {
+    width: 100%;
+    padding: 15px 0 9px;
+  }
+  .quickLinks .qlTab h3 {
+    margin: 0 auto;
+    width: 183px;
+  }
+  .quickLinks .qlBody {
+    -moz-column-count: 1;
+    -webkit-column-count: 1;
+    column-count: 1;
+  }
+  .quickLinks .qlBody ul li {
+    width: 100%;
+    padding-right: 0;
+    display: list-item;
+    text-align: center;
   }
 }

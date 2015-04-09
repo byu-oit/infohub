@@ -12,7 +12,18 @@
 .libOnebg {
 	background: url(/img/backgrounds/bg-lib1.jpg) no-repeat;
 	.bgStyles();
+	height: 506px;
+	background-position: left center;
+	background-size: inherit;
 }
+
+.lectureBg {
+	background: url(/img/backgrounds/bg-lecture.jpg) no-repeat;
+	.bgStyles();
+	height: 506px;
+	background-position: left center;
+	background-size: inherit;
+} 
 
 .headerTab {
 	background-color: @transBlue;
@@ -46,10 +57,171 @@
 	padding: 0 25px;
 	.box-shade();
 }
+
 .clear {
     clear: both;
 }
 
+.contactBox {
+	position: relative;
+	float: left;
+	border: 3px solid #b5d45d;
+	padding: 10px 13px;
+	margin-top: 50px;
+	margin-left: 30px;
+	width: 168px;
+	float: right;
+	margin-right: 10px;
+	.box-shade();
+
+	&:before {
+		content: "";
+		background: url('/img/iconPerson.png') no-repeat;
+		position: absolute;
+		width: 100%;
+		height: 50px;
+		background-size: 88px 51px;
+		left: 58px;
+		top: -53px;
+	}
+	.contactName {
+		font-size: 14px;
+		color: #000;
+		text-align: center;
+		display: block;
+	}
+
+	.contactNumber, .contactEmail {
+		font-size: 12px;
+		padding: 10px 0 0;
+
+		a {
+			color: #3e3e3e;
+			text-decoration: none;
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+
+		&:before {
+			content: "";
+			padding: 0 3px 4px;
+			background-position: 0px 0px;
+			margin-top: -2px;
+			display: block;
+			float: left;
+			height: 20px;
+			width: 20px;
+		}
+	}
+	.contactNumber {
+		
+		&:before {
+			background: url('/img/iconPhone.gif') no-repeat;
+			background-size: 20px 20px;
+
+		}
+	}
+	.contactEmail {
+		
+		&:before {
+			background: url('/img/iconMail.gif') no-repeat;
+			background-size: 20px 20px;
+
+		}
+	}
+	.contactTitle {
+		color: #234e77;
+		text-align: center;
+		display: block;
+		font-size: 12px;
+		clear: left;
+		font-weight: bold;
+	}
+}
+
+.contactOrange {
+	border: 3px solid #ffa900;
+
+	&:before {
+		content: "";
+		background: url('/img/iconPersonOrange.png') no-repeat;
+		position: absolute;
+		width: 100%;
+		height: 50px;
+		background-size: 88px 51px;
+		left: 58px;
+		top: -53px;
+	}
+}
+.quickLinks {
+	clear: left;
+	padding-top: 50px;
+
+	.qlTab {
+		background-color: #30547f;
+		padding: 15px 16px 9px;
+		float: left;
+
+		h3 {
+			color: white;
+			margin: 0;
+			font-family: 'Rokkitt', serif;
+			font-size: 18px;
+
+			
+			&:before {
+				content: "";
+				background: url('/img/iconStar.jpg') no-repeat;
+				padding: 0 3px 4px;
+				background-position: 0px 3px;
+				margin-top: -2px;
+				display: block;
+				float: left;
+				height: 20px;
+				width: 20px;
+				background-size: 17px;
+			}
+		}
+	}
+	.qlBody {
+		clear: left;
+		// width: 100%;
+		-moz-column-count: 5;
+		-moz-column-gap: 20px;
+		-webkit-column-count: 5;
+		-webkit-column-gap: 20px;
+		column-count: 5;
+		column-gap: 20px;
+		background-color: @grayLight;
+		padding: 20px 2.5%;
+		padding: 20px 2.5% 12px;
+  		margin-bottom: 50px;
+  		.box-shade();
+
+
+		ul {
+			.inline();
+
+   			li {
+   				padding-right: 20px;
+
+   				a {
+					text-decoration: none;
+					font-size: 12px;
+					color: #336699;
+					display: block;
+  					padding: 5px 0;
+
+					&:hover {
+						text-decoration: underline;
+					}
+   				}
+   			}
+		}
+	}	
+}
 /*============== LOGIN PAGE  ===============*/
 
 #loginBody {
@@ -100,174 +272,10 @@
 	}
 }
 
-/*============ MY ACCOUNT PAGE  =============*/
-#accountBody {
-	position: absolute;
-	padding: 15% 0 15%;
-	margin: 0;
-}
-
-#accountMid {
-	position: relative;
-
-	#accountTop {
-		width: 100%;
-		max-width: 578px;
-		position: relative;
-		padding: 50px 0;
-
-		h1 {
-			font-size: 30px;
-			float: left;
-			padding: 12px 36px;
-		}
-		#atLower {
-			clear: left;
-			width: 86%;
-			padding: 25px 7% 40px;
-
-			h2 {
-				font-size: 30px;
-				color: @headerBlue;
-				margin: 0 0 7px;
-			}
-			.accountInfo {
-				width: 50%;
-				float: left;
-				font-size: 17px;
-				color: #3e3e3e;
-
-				.aiLabel {
-					color: @headerBlue;
-				}
-			}
-		}
-	}
-
-	#accountTabs {
-		float: left;
-
-		.atTab {
-			float: left;
-			background-color: #22476f;
-			border: 2px solid #22476f;
-
-		}
-
-	}
-	#accountMain {
-		padding: 20px 2%;
-		float: left;
-		.box-shade();
-
-		.requestItem {
-			background-color: #fff;
-			margin-bottom: 20px;
-			padding: 20px 2%;
-			float: left;
-  			width: 96%;
-			.box-shade();
-
-			.riLeft {
-				width: 75%;
-				float: left;
-
-				.riTitle {
-					color: @headerBlue2;
-					font-size: 16px;
-					margin: 0;
-				}
-				.riDate {
-					font-size: 12px;
-					margin: 4px 0;
-
-					span {
-						color: #224d7d;
-					}
-				}
-				p {
-					font-size: 14px;
-					color: #000;
-					margin: 8px 0 15px;
-				}
-				img {
-					width: 256px;
-					padding-left: 50%;
-					margin-left: -128px;
-					display: block;
-				}
-			}
-			.requestContact {
-				position: relative;
-				float: left;
-				border: 3px solid #b5d45d;
-				padding: 10px 13px;
-				margin-top: 50px;
-				margin-left: 30px;
-				width: 168px;
-				float: right;
-				margin-right: 10px;
-				.box-shade();
-
-				&:before {
-					content: "";
-					background: url('/img/iconPerson.png') no-repeat;
-					position: absolute;
-					width: 100%;
-					height: 50px;
-					background-size: 88px 51px;
-					left: 58px;
-					top: -53px;
-				}
-				.contactName {
-					font-size: 14px;
-					color: #000;
-					text-align: center;
-					display: block;
-				}
-
-				.contactNumber, .contactEmail {
-					font-size: 12px;
-					color: #3e3e3e;
-					padding: 10px 0 0;
-
-					&:before {
-						content: "";
-						padding: 0 3px 4px;
-						background-position: 0px 0px;
-						margin-top: -2px;
-						display: block;
-						float: left;
-						height: 20px;
-						width: 20px;
-					}
-				}
-				.contactNumber {
-					
-					&:before {
-						background: url('/img/iconPhone.gif') no-repeat;
-						background-size: 20px 20px;
-
-					}
-				}
-				.contactEmail {
-					
-					&:before {
-						background: url('/img/iconMail.gif') no-repeat;
-						background-size: 20px 20px;
-
-					}
-				}
-			}
-		}
-
-	}
-}
-
 //============== MEDIA QUERIES ==============//
 
 @media screen and (min-width: 1685px) {
-	.deskBg, .libOnebg {
+	.deskBg {
 		height: 515px;
 		float: none;
 		padding: 80px 100px !important;
@@ -278,8 +286,44 @@
 	}
 }
 
+@media screen and (max-width: 1060px) {
+	.innerLower {
+		width: 94%;
+		margin-left: 3%;
+	}
+}
+
+@media screen and (max-width: 980px) {
+	.quickLinks .qlBody {
+		-moz-column-count: 4;
+		-webkit-column-count: 4;
+		column-count: 4;
+	}
+}
+
+@media screen and (max-width: 850px) {
+	.quickLinks .qlBody {
+		-moz-column-count: 3;
+		-webkit-column-count: 3;
+		column-count: 3;
+	}
+}
+
+@media screen and (max-width: 650px) {
+	.libOnebg {
+		background-position: -645px bottom;
+		height: 421px;
+	}
+	.quickLinks .qlBody {
+		-moz-column-count: 2;
+		-webkit-column-count: 2;
+		column-count: 2;
+		padding: 20px 4.5% 12px;
+	}
+}
+
 @media screen and (max-width: 550px) {
-	.deskBg, .libOnebg {
+	.deskBg {
 		background-position: left center;
 	}
 
@@ -312,6 +356,36 @@
 				}
 			}
 
+		}
+	}
+}
+
+@media screen and (max-width: 490px) {
+	.innerLower {
+		width: 90%;
+		margin-left: 5%;
+	}
+	.quickLinks {
+		.qlTab {
+			width: 100%;
+			padding: 15px 0 9px;
+
+			h3 {
+				margin: 0 auto;
+  				width: 183px;
+			}
+		}
+		.qlBody {
+			-moz-column-count: 1;
+			-webkit-column-count: 1;
+			column-count: 1;
+
+			ul li {
+				width: 100%;
+				padding-right: 0;
+				display: list-item;
+				text-align: center;
+			}
 		}
 	}
 }

@@ -1,0 +1,179 @@
+/*============= LOAD LESS FILES =============*/
+
+/*=====Variables====*/
+/*=====Variables====*/
+/*============ MY ACCOUNT PAGE  =============*/
+
+#accountBody {
+  position: absolute;
+  padding: 0;
+  margin: 0;
+}
+#accountMid {
+  position: relative;
+}
+#accountMid #accountTop {
+  width: 100%;
+  max-width: 578px;
+  position: relative;
+  padding: 50px 0;
+}
+#accountMid #accountTop h1 {
+  font-size: 30px;
+  float: left;
+  padding: 12px 36px;
+}
+#accountMid #accountTop #atLower {
+  clear: left;
+  width: 86%;
+  padding: 25px 7% 40px;
+}
+#accountMid #accountTop #atLower h2 {
+  font-size: 30px;
+  color: #30659b;
+  margin: 0 0 7px;
+}
+#accountMid #accountTop #atLower .accountInfo {
+  width: 50%;
+  float: left;
+  font-size: 17px;
+  color: #3e3e3e;
+}
+#accountMid #accountTop #atLower .accountInfo .aiLabel {
+  color: #30659b;
+}
+#accountMid .accountTabs {
+  float: left;
+}
+#accountMid .accountTabs .atTab {
+  background-color: rgba(255, 255, 255, 0.87);
+  color: black;
+  float: left;
+  border: 3px solid #22476f;
+  font-size: 14px;
+  padding: 8px 0px;
+  width: 178px;
+  text-align: center;
+  box-sizing: border-box;
+  transition: all 0.2s ease-in-out;
+  -webkit-transition: all 0.2s ease-in-out;
+  -ms-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+}
+#accountMid .accountTabs .atTab.active,
+#accountMid .accountTabs .atTab:hover {
+  color: white;
+  background-color: #22476f;
+}
+#accountMid #accountMain {
+  padding: 20px 2.5%;
+  float: left;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+}
+#accountMid #accountMain .requestItem {
+  background-color: white;
+  margin-bottom: 24px;
+  padding: 20px 2%;
+  float: left;
+  width: 96%;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+}
+#accountMid #accountMain .requestItem .riLeft {
+  width: 75%;
+  float: left;
+}
+#accountMid #accountMain .requestItem .riLeft .riTitle {
+  color: #114477;
+  font-size: 16px;
+  margin: 0;
+}
+#accountMid #accountMain .requestItem .riLeft .riDate {
+  font-size: 12px;
+  margin: 4px 0;
+}
+#accountMid #accountMain .requestItem .riLeft .riDate span {
+  color: #224d7d;
+}
+#accountMid #accountMain .requestItem .riLeft p {
+  font-size: 14px;
+  color: black;
+  margin: 8px 0 15px;
+}
+#accountMid #accountMain .requestItem .riLeft img {
+  width: 256px;
+  padding-left: 50%;
+  margin-left: -128px;
+  display: block;
+}
+@media screen and (max-width: 650px) {
+  #accountMid #accountTop {
+    padding: 25px 0;
+  }
+  #accountMid #accountTop h1 {
+    font-size: 25px;
+    width: 100%;
+    padding: 12px 0;
+  }
+  #accountMid #accountTop #atLower {
+    padding: 11px 7% 16px;
+  }
+  #accountMid #accountTop #atLower h2 {
+    font-size: 21px;
+    text-align: center;
+  }
+  #accountMid #accountTop #atLower .accountInfo {
+    width: 100%;
+    font-size: 14px;
+  }
+  #accountMid .accountTabs {
+    width: 100%;
+  }
+  #accountMid .accountTabs .atTab {
+    width: 50%;
+    padding: 3px 0px;
+  }
+  #accountMid #accountMain {
+    padding: 20px 5%;
+  }
+  #accountMid #accountMain .requestItem {
+    padding: 20px 5%;
+    width: 90%;
+  }
+  #accountMid #accountMain .requestItem .riLeft {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  #accountMid #accountMain .requestItem .riLeft p {
+    font-size: 13px;
+  }
+  #accountMid #accountMain .requestItem .riLeft img {
+    width: 200px;
+    padding: 0;
+    margin: 0 auto;
+  }
+  #accountMid #accountMain .requestItem .contactBox {
+    float: none;
+    margin: 0 auto;
+    clear: left;
+  }
+  #accountMid #accountMain .requestItem .contactBox .contactName {
+    text-align: left;
+  }
+  #accountMid #accountMain .requestItem .contactBox:before {
+    background: none;
+  }
+}
+@media screen and (max-width: 490px) {
+  #accountMid #accountMain {
+    padding: 20px 7%;
+  }
+  #accountMid #accountMain .requestItem {
+    padding: 20px 6%;
+    width: 88%;
+  }
+}

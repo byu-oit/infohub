@@ -179,7 +179,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 						<p>Web: <br><a href="/contact">Contact Us</a></p>
 					</div>
 					<div class="footerBox">
-						<p>Directories: <br><a href="">Google Maps</a></p>
+						<p>Directions: <br><a href="">Google Maps</a></p>
 					</div>
 				</div>
 			</div>

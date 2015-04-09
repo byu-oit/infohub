@@ -1,0 +1,199 @@
+/*============= LOAD LESS FILES =============*/
+@import 'variables';
+@import 'mixins';
+
+/*============ MY ACCOUNT PAGE  =============*/
+#accountBody {
+	position: absolute;
+	padding: 0;
+	margin: 0;
+}
+
+#accountMid {
+	position: relative;
+
+	#accountTop {
+		width: 100%;
+		max-width: 578px;
+		position: relative;
+		padding: 50px 0;
+
+		h1 {
+			font-size: 30px;
+			float: left;
+			padding: 12px 36px;
+		}
+		#atLower {
+			clear: left;
+			width: 86%;
+			padding: 25px 7% 40px;
+
+			h2 {
+				font-size: 30px;
+				color: @headerBlue;
+				margin: 0 0 7px;
+			}
+			.accountInfo {
+				width: 50%;
+				float: left;
+				font-size: 17px;
+				color: #3e3e3e;
+
+				.aiLabel {
+					color: @headerBlue;
+				}
+			}
+		}
+	}
+
+	.accountTabs {
+		float: left;
+
+		.atTab {
+			background-color:  @transWhite;
+			color: black;
+			float: left;
+			border: 3px solid #22476f;
+			font-size: 14px;
+			padding: 8px 0px;
+			width: 178px;
+			text-align: center;
+			box-sizing: border-box;
+			.transition(all .2s ease-in-out);
+			
+			&.active, &:hover {
+				color: white;
+				background-color: #22476f;	
+			}
+			
+		}
+
+	}
+
+	#accountMain {
+		padding: 20px 2.5%;
+		float: left;
+		.box-shade();
+
+		.requestItem {
+			background-color: #fff;
+			margin-bottom: 24px;
+			padding: 20px 2%;
+			float: left;
+  			width: 96%;
+			.box-shade();
+
+			.riLeft {
+				width: 75%;
+				float: left;
+
+				.riTitle {
+					color: @headerBlue2;
+					font-size: 16px;
+					margin: 0;
+				}
+				.riDate {
+					font-size: 12px;
+					margin: 4px 0;
+
+					span {
+						color: #224d7d;
+					}
+				}
+				p {
+					font-size: 14px;
+					color: #000;
+					margin: 8px 0 15px;
+				}
+				img {
+					width: 256px;
+					padding-left: 50%;
+					margin-left: -128px;
+					display: block;
+				}
+			}
+		}
+	}
+}
+
+
+//============== MEDIA QUERIES ==============//
+
+@media screen and (max-width: 650px) {
+	#accountMid {
+		#accountTop {
+			padding: 25px 0;
+
+			h1 {
+				font-size: 25px;
+				width: 100%;
+				padding: 12px 0;
+			}
+			#atLower {
+				padding: 11px 7% 16px;
+
+				h2 {
+					font-size: 21px;
+					text-align: center;
+				}
+				.accountInfo {
+					width: 100%;
+					font-size: 14px;
+				}
+			}
+		}
+		.accountTabs {
+			width: 100%;
+			.atTab {
+				width: 50%;
+				padding: 3px 0px;
+			}
+		}
+		#accountMain {
+			padding: 20px 5%;
+
+			.requestItem {
+				padding: 20px 5%;
+				width: 90%;
+
+				.riLeft {
+					width: 100%;
+					margin-bottom: 20px;
+
+					p { 
+						font-size: 13px; 
+					}
+					img {
+						width: 200px;
+						padding: 0;
+	  					margin: 0 auto;
+					}
+				}
+				.contactBox {
+					float: none;
+					margin: 0 auto;
+					clear: left;
+
+					.contactName {
+						text-align: left;
+					}
+					&:before {
+						background: none;
+
+					}
+				}
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 490px) {
+	#accountMid #accountMain {
+		padding: 20px 7%;
+
+		.requestItem {
+			padding: 20px 6%;
+			width: 88%;
+		}
+	}
+}

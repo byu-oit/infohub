@@ -1,0 +1,193 @@
+/*============= LOAD LESS FILES =============*/
+@import 'variables';
+@import 'mixins';
+
+/*============ FIND PEOPLE PAGE  =============*/
+
+.headerTab {
+	font-size: 30px;
+	padding: 8px 30px;
+	float: left;
+}
+
+#peopleBg {
+	position: absolute;
+	padding: 0;
+	margin: 0;
+}
+
+#peopleBody {
+	position: relative;
+
+	#peopleTop {
+		width: 604px;
+		padding: 82px 0 48px;
+
+		#ptLower {
+			padding: 30px 35px;
+
+			input[type=text] {
+				width: 211px;
+				position: relative;
+				float: left;
+
+				&:first-of-type {
+					margin-right: 20px;
+				}
+			}
+			input[type=submit] {
+				margin-left: -3px;
+			}
+		}
+	}
+	#peopleBottom {
+		#peopleMain {
+			padding: 37px 4%;
+			width: 92%;
+			margin-bottom: 100px;
+			.box-shade();
+
+			#leftCol {
+				width: 24.5%;
+				float: left;
+
+				.subMobMenu {
+					display: none;
+				}
+
+				ul {
+					.inline();
+
+					li {
+						float: none;
+						display: list-item;
+
+						a {
+							color: white;
+							padding: 8px 20px;
+							font-size: 1.8em;
+							text-decoration: none;
+							margin-bottom: 10px;
+							background-color: #234e77;
+							// width: 148px;
+							width: 69%;
+							display: block;
+							clear: both;
+							.box-shade();
+							.transition(all 0.2s ease-in-out);
+						
+							&:hover, &.active {
+								margin-left: 13%;
+								background-color: #10375b;
+							}
+						}
+					}
+					&.mob {
+						display: none;
+					}
+				}
+			}
+			#rightCol {
+				width: 65.5%;
+				float: left;
+				background-color: #fff;
+				padding: 25px 5%;
+				.box-shade();
+
+
+				.deptHeader {
+					font-size: 18px;
+					color: #234e77;
+					width: 100%;
+					border-bottom: 1px solid #acacac;
+					margin: 0 0 10px;
+					clear: both;
+				}
+				.contactBox {
+					float: left;
+					margin-top: 68px;
+					margin-bottom: 25px;
+					margin-left: 0;
+					margin-right: 25px;
+				}
+			}
+		}
+	}
+}
+
+//============== MEDIA QUERIES ==============//
+
+@media screen and (max-width: 750px) {
+	#peopleBody #peopleBottom #peopleMain {
+		#leftCol {
+			position: absolute;
+			background-color: #10375b;
+			z-index: 99;
+			width: 92%;
+			.box-shade();
+
+			#subMobMenu {
+				position: relative;
+				display: block;
+				line-height: 1em;
+				font-size: 35px;
+				margin-left: 18px;
+				cursor: pointer;
+				border-right: 1px solid @blue;
+				width: 0px;
+				padding: 0 19px 7px;
+				z-index: 98;
+				display: block;
+				float: left;
+
+				&:before {
+					content: "";
+					position: absolute;
+					left: 0;
+					top: 12px;
+					width: 21px;
+					height: 0.09em;
+					background: white;
+					-webkit-box-shadow: 0 0.2em 0 0 white, 0 0.4em 0 0 white;
+					-moz-box-shadow: 0 0.2em 0 0 white, 0 0.4em 0 0 white;
+					box-shadow: 0 0.2em 0 0 white, 0 0.4em 0 0 white;
+				}
+			}
+			ul.show, ul.mob {
+				background-color: #10375b;
+				position: absolute;
+				left: 58px;
+				top: 2px;
+				// display: none;
+				.box-shade();
+
+				li {
+					border-right: 2px solid #10375b;
+					border-left: 2px solid #10375b;
+  					a {
+						padding: 9px 0 9px 5%;
+						width: 95%;
+						margin-bottom: 2px;
+						font-size: 15px;
+						
+						&:hover {
+							margin-left: 0;
+						}
+						&.active {
+							display: block;
+							margin-left: 0;
+						}
+					}
+				}
+			}
+			ul.mob {
+				display: block;
+				box-shadow: none;
+			}
+		}
+		#rightCol {
+			width: 90%;
+			padding-top: 62px;
+		}
+	}
+}
