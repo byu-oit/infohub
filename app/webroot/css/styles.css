@@ -61,6 +61,13 @@ header #headerInner #headerRight .userInfo {
   padding-right: 10px;
   line-height: 18px;
 }
+header #headerInner #headerRight .userInfo a {
+  color: white;
+  text-decoration: none;
+}
+header #headerInner #headerRight .userInfo a:hover {
+  text-decoration: underline;
+}
 header #headerInner #headerRight #settingsWheel {
   display: block;
   float: left;
@@ -316,11 +323,13 @@ footer #footerBottom p a:hover {
   }
   header #headerInner #headerRight .userInfo {
     padding-right: 0;
+    float: right;
   }
   header #headerInner #headerRight #needHelp {
     border-right: none;
     position: relative;
     height: inherit;
+    float: right;
   }
   header #headerInner #headerRight #needHelp #mobileHelp {
     display: block;
@@ -361,7 +370,7 @@ footer #footerBottom p a:hover {
   }
   header #headerInner #headerRight #settingsWheel {
     float: right;
-    clear: left;
+    clear: both;
     margin: 9px 0 0 13px;
   }
   nav #mob-nav {

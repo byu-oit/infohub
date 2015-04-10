@@ -17,6 +17,7 @@ body {
 
 .innerLower {
 	max-width: 990px;
+	// max-width: 1015px;
 	width: 100%;
 	margin: 0 auto;
 }
@@ -65,6 +66,15 @@ header {
 				float: left;
 				padding-right: 10px;
 				line-height: 18px;
+
+				a {
+					color: white;
+					text-decoration: none;
+
+					&:hover {
+						text-decoration: underline;
+					}
+				}
 			}
 			#settingsWheel {
 				display: block;
@@ -333,11 +343,13 @@ footer {
 				
 				.userInfo {
 					padding-right: 0;
+					float: right;
 				}
 				#needHelp {
 					border-right: none;
 					position: relative;
 					height: inherit;
+					float: right;
 
 					#mobileHelp {
 						display: block;
@@ -382,7 +394,7 @@ footer {
 				}
 				#settingsWheel {
 					float: right;
-					clear: left;
+					clear: both;
 					margin: 9px 0 0 13px;
 				}
 			}

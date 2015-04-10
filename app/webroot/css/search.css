@@ -1,0 +1,225 @@
+/*============= LOAD LESS FILES =============*/
+
+/*=====Variables====*/
+/*=====Variables====*/
+/*===========  SEARCH PAGE STYLES ============*/
+
+.headerTab {
+  font-size: 30px;
+  padding: 8px 30px;
+  float: left;
+}
+#searchBg {
+  position: absolute;
+  padding: 0;
+  margin: 0;
+  background-position: center;
+  height: 506px;
+  background-position: left center;
+  background-size: inherit;
+}
+#searchBody {
+  position: relative;
+}
+#searchBody #searchTop {
+  width: 560px;
+  padding: 57px 0 47px;
+  float: left;
+}
+#searchBody #searchTop #stLower {
+  padding: 30px 35px;
+}
+#searchBody #searchTop #stLower input[type=text] {
+  width: 400px;
+  position: relative;
+  float: left;
+}
+#searchBody #searchTop #stLower input[type=submit] {
+  margin-left: -3px;
+}
+#searchBody #catalogLink {
+  width: 19%;
+  display: block;
+  float: left;
+  margin: 57px 0 0 3%;
+}
+#searchBody #catalogLink img {
+  width: 100%;
+}
+#searchBody #searchMain {
+  width: 100%;
+}
+#searchBody #searchMain h2 {
+  font-size: 18px;
+  padding: 8px 20px;
+}
+#searchBody #searchMain #smLower {
+  background-color: white;
+  background-color: rgba(255, 255, 255, 0.87);
+  padding: 23px 4% 30px;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+}
+#searchBody #searchMain #smLower ul {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  font-size: 14px;
+}
+#searchBody #searchMain #smLower ul li {
+  list-style-type: none;
+  padding: 5px 0 0;
+}
+#searchBody #searchMain #smLower ul li a {
+  display: block;
+  padding: 5px 12px;
+  background-color: white;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  cursor: pointer;
+  text-decoration: none;
+}
+#searchBody #searchMain #smLower ul li a:hover {
+  text-decoration: underline;
+}
+#searchBody #searchMain #smLower ul li a.hasChildren:before {
+  content: "";
+  padding: 0 3px 4px;
+  background: url('/img/iconRight.png') no-repeat;
+  background-size: 11px;
+  background-position: 6px;
+  margin-top: -2px;
+  display: block;
+  float: left;
+  height: 20px;
+  width: 20px;
+}
+#searchBody #searchMain #smLower ul li a.active:before {
+  background: url('/img/iconDown.png') no-repeat;
+  background-size: 11px;
+  background-position: 6px;
+}
+#searchBody #searchMain #smLower ul.subList {
+  display: none;
+  position: relative;
+}
+#searchBody #searchMain #smLower ul.grandChild:before {
+  content: "";
+  position: absolute;
+  left: -25px;
+  padding: 0 3px 4px;
+  background: url('/img/nestedWrap.png') repeat-y;
+  background-position: 4px;
+  height: 100%;
+  width: 4px;
+}
+#searchBody #searchMain #smLower ul.subList li {
+  padding-left: 25px;
+  position: relative;
+  left: 11px;
+}
+#searchBody #searchMain #smLower ul.subList li:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  padding: 0 3px 4px;
+  background: url('/img/nestedFull.png') no-repeat;
+  background-size: 20px 33px;
+  background-position: 4px;
+  margin-top: -2px;
+  display: block;
+  float: left;
+  height: 33px;
+  width: 20px;
+}
+#searchBody #searchMain #smLower ul.subList li:last-child:before {
+  background: url('/img/nestedLast.png') no-repeat;
+  background-size: 20px 16px;
+  background-position: 4px 0;
+}
+#searchBody #searchResults {
+  width: 100%;
+}
+#searchBody #searchResults h2 {
+  font-size: 18px;
+  padding: 8px 20px;
+}
+#searchBody #searchResults #srLower {
+  background-color: white;
+  background-color: rgba(255, 255, 255, 0.87);
+  padding: 23px 3% 30px;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+}
+#searchBody #searchResults #srLower #searchFilters {
+  margin-bottom: 20px;
+}
+#searchBody #searchResults #srLower #searchFilters label {
+  font-size: 12px;
+  font-weight: bold;
+  color: #224e7d;
+  padding-right: 6px;
+}
+#searchBody #searchResults #srLower #searchFilters select {
+  height: 26px;
+  margin-right: 10px;
+}
+#searchBody #searchResults #srLower .resultItem {
+  background-color: white;
+  padding: 20px 3%;
+  margin-bottom: 15px;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+}
+@media screen and (min-width: 1685px) {
+  #searchBg {
+    left: 50%;
+    margin-left: -834px;
+    height: 355px;
+  }
+}
+@media screen and (max-width: 800px) {
+  #searchBody #catalogLink {
+    width: 135px;
+    clear: both;
+    margin: -25px 0 23px 28%;
+  }
+}
+@media screen and (max-width: 750px) {
+  #searchBg {
+    height: 420px;
+  }
+  .headerTab {
+    width: 90%;
+    padding: 8px 5%;
+  }
+  #searchBody #catalogLink {
+    float: none;
+    margin: 0 auto 30px;
+  }
+  #searchBody #searchTop {
+    width: 100%;
+    padding: 25px 0 13px;
+  }
+  #searchBody #searchTop h1 {
+    font-size: 25px;
+  }
+  #searchBody #searchTop #stLower {
+    padding: 19px 20px;
+  }
+  #searchBody #searchTop #stLower input[type=text] {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  #searchBody #searchTop #stLower input[type=submit] {
+    margin: 0 auto;
+    display: block;
+  }
+  #searchBody #searchMain h2 {
+    padding: 8px 5%;
+  }
+}

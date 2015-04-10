@@ -13,6 +13,7 @@
   position: absolute;
   padding: 0;
   margin: 0;
+  background-position: center;
 }
 #peopleBody {
   position: relative;
@@ -72,6 +73,7 @@
 #peopleBody #peopleBottom #peopleMain #leftCol ul li {
   float: none;
   display: list-item;
+  cursor: pointer;
 }
 #peopleBody #peopleBottom #peopleMain #leftCol ul li a {
   color: white;
@@ -124,7 +126,32 @@
   margin-left: 0;
   margin-right: 25px;
 }
+@media screen and (min-width: 1685px) {
+  #peopleBg {
+    left: 50%;
+    margin-left: -834px;
+  }
+}
 @media screen and (max-width: 750px) {
+  #peopleBg {
+    height: 420px;
+  }
+  .headerTab {
+    width: 90%;
+    padding: 8px 5%;
+  }
+  #peopleBody #peopleTop {
+    width: 100%;
+    padding: 25px 0;
+  }
+  #peopleBody #peopleTop #ptLower input[type=text] {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  #peopleBody #peopleTop #ptLower input[type=submit] {
+    margin: 0 auto;
+    display: block;
+  }
   #peopleBody #peopleBottom #peopleMain #leftCol {
     position: absolute;
     background-color: #10375b;
@@ -164,7 +191,7 @@
     background-color: #10375b;
     position: absolute;
     left: 58px;
-    top: 2px;
+    top: 42px;
     -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
     -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
     box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
@@ -193,9 +220,19 @@
   #peopleBody #peopleBottom #peopleMain #leftCol ul.mob {
     display: block;
     box-shadow: none;
+    top: 2px;
   }
   #peopleBody #peopleBottom #peopleMain #rightCol {
     width: 90%;
     padding-top: 62px;
+  }
+}
+@media screen and (max-width: 590px) {
+  #peopleBody #peopleBottom #peopleMain #rightCol .contactBox {
+    float: none;
+    margin: 30px auto 25px;
+  }
+  #peopleBody #peopleBottom #peopleMain #rightCol .contactBox:before {
+    display: none;
   }
 }

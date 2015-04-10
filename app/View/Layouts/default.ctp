@@ -130,8 +130,15 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 				<h1><a href="/" id="logo">BYU InfoHub</a></h1>
 				<h2><a href="/" id="site-title">InfoHub</a></h2>
 				<div id="headerRight">
-					<span class="userInfo">Welcome, Christy</span>
-					<a id="settingsWheel"><img src="/img/icon-settings.png" alt="Settings"></a>
+					<span class="userInfo">
+						<?php echo $this->Html->link('Login', '/login'); ?>
+					</span>
+					<?php echo $this->Html->link(
+							    $this->Html->image("/img/icon-settings.png", array("alt" => "Settings")),
+							    "/myaccount",
+							    array('escape' => false, 'id' => 'settingsWheel'));
+					?>
+					<!-- <a id="settingsWheel"><img src="" alt="Settings"></a> -->
 
 					<!-- Below is fixed pos. on destop -->
 					<div id="needHelp">
@@ -154,9 +161,9 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 		<nav>
 			<a id="mob-nav" class="box-shadow-menu inner">&nbsp;</a>
 			<ul id="mainNav" class="inner">
-				<li><a href="#">Search</a></li>
-				<li><a href="#">Find People</a></li>
-				<li><a href="#">Resources</a></li>
+				<li><?php echo $this->Html->link('Search', '/search', array('id' => 'searchLink')); ?></li>
+				<li><?php echo $this->Html->link('Find People', '/people', array('id' => 'findLink')); ?></li>
+				<li><a href="/resources" id="resourceLink">Resources</a></li>
 			</ul>
 		</nav>
 		<div id="content">

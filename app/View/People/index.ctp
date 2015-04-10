@@ -3,24 +3,24 @@
 	$this->Html->css('people', null, array('inline' => false));
 ?>
 <script>
-	$(window).load(function() {
-		// $('#leftCol ul li a.active').parents().show();
-		// $('#leftCol ul li a.active').siblings().hide();
-		$("ul.show li a.active").clone().appendTo("ul.mob li");
+	$(document).ready(menuSize);
+	$(document).ready(mobMenu);
+	$(window).resize(menuSize);
+	$(window).resize(menuShow);
 
+	$(document).ready(function() {
+		$("#findLink").addClass('active');
 		
-
-		$("#leftCol ul.show").hide();
+		$(".deptLink").click(function() {
+			$(".deptLink").removeClass('active');
+			$(this).addClass("active");
+			mobMenu();
+		});
 
 		$("#subMobMenu").click(function() {
-			// alert('working');
 			$('#leftCol ul').slideToggle();
-			
 		});
 	});
-	
-	$(document).ready(menuSize);
-	$(window).resize(menuSize);
 
 	function menuSize() {
 		if($(window).width() < 750) {
@@ -28,6 +28,22 @@
 		}
 		else {
 			$('#leftCol ul').css('width', '100%');
+		}
+	}
+
+	function menuShow() {
+		if($(window).width() > 750) {
+			$("ul.show").show();
+			$("ul.mob").hide();
+		}
+	}
+
+	function mobMenu() {
+		if($(window).width() < 750) {
+			$("ul.mob li").empty();
+			$("ul.show li a.active").clone().appendTo("ul.mob li");
+			$("#leftCol ul.show").hide();
+			$("ul.mob").show();
 		}
 	}
 </script>
@@ -58,15 +74,15 @@
 				<a id="subMobMenu" class="inner">&nbsp;</a>
 				<ul class="mob"><li></li></ul>
 				<ul class="show">
-					<li><a href="">A-Z Listing</a></li>
-					<li><a href="" class="active">Academia</a></li>
-					<li><a href="">Advancement</a></li>
-					<li><a href="">Financial</a></li>
-					<li><a href="">Human Resources</a></li>
-					<li><a href="">International</a></li>
-					<li><a href="">Master Data</a></li>
-					<li><a href="">Research</a></li>
-					<li><a href="">Student Life</a></li>
+					<li><a class="deptLink">A-Z Listing</a></li>
+					<li><a class="deptLink active">Academia</a></li>
+					<li><a class="deptLink">Advancement</a></li>
+					<li><a class="deptLink">Financial</a></li>
+					<li><a class="deptLink">Human Resources</a></li>
+					<li><a class="deptLink">International</a></li>
+					<li><a class="deptLink">Master Data</a></li>
+					<li><a class="deptLink">Research</a></li>
+					<li><a class="deptLink">Student Life</a></li>
 				</ul>
 			</div>
 			<div id="rightCol">
