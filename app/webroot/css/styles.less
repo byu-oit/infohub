@@ -470,9 +470,19 @@ pre.cake-error {
 	display: none;
 }
 
-//Scale on Hover
+//Hover effects
 .shrink { transition: all .15s ease-in-out; }
 .shrink:hover { transform: scale(.9); }
 
 .grow { transition: all .15s ease-in-out; }
 .grow:hover, .grow.active { transform: scale(1.1); }
+
+.bumpRight { transition: all .15s ease-in-out; }
+.bumpRight:hover { transform: translate(10px); }
+
+
+// IE IMAGES 
+img {
+	text-decoration: none; 
+	border: 0px
+}

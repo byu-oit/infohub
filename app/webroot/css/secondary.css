@@ -76,6 +76,18 @@
 .clear {
   clear: both;
 }
+.blueText {
+  color: #1b7bdb;
+}
+.greenText {
+  color: #5db154;
+}
+.orangeText {
+  color: #fe8a02;
+}
+.redText {
+  color: #f72525;
+}
 .contactBox {
   position: relative;
   float: left;

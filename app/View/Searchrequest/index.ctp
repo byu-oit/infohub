@@ -33,41 +33,17 @@
 
 <!-- Request list -->
 <div id="searchBody" class="innerLower">
-	<div id="searchTop">
-		<h1 class="headerTab" >Search Information</h1>
-		<div class="clear"></div>
-		<div id="stLower" class="whiteBox">
-			<form action="submit">
-				<input type="text" class="inputShade" placeholder="Search keyword, topic, or phrase">
-				<input type="submit" value="Search" class="inputButton">
-			</form>
-			<div class="clear"></div>
-		</div>
-	</div>
 
-	<a href="/catalog" id="catalogLink" class="grow"><img src="/img/catalogLink2.png" alt="See full catealog"></a>
-	<div class="clear"></div>
+	<div id="requestForm">
+		<h2 class="headerTab" >Request Form</h2>
 
-	<div id="searchResults">
-		<h2 class="headerTab" >Results</h2>
-		<div class="clear"></div>
 		<div id="srLower" class="whiteBox">
-			<div id="searchFilters">
-				<label for="filerBy">Filter By:</label>
-				<select name="filterBy" id="filerBy" class="inputShade">
-					<option value="0" selected>All Results</option>
-					<option value="1">This</option>
-					<option value="2">That</option>
-					<option value="3">The Other</option>
-				</select>
-				<label for="filerBy">Sort By:</label>
-				<select name="filterBy" id="filerBy" class="inputShade">
-					<option value="0" selected>Date Added</option>
-					<option value="1">This</option>
-					<option value="2">That</option>
-					<option value="3">The Other</option>
-				</select>
-			</div>
+			<h3 class="headerTab">Requester</h3>
+			<div class="clear"></div>
+			<div id="requesterInfo"></div>
+
+			<h3 class="headerTab">Information Requested</h3>
+			<div class="clear"></div>
 			<div class="resultItem highlyClassified">
 				<h4>Definition Title</h4>
 				<h5 class="blueText">Acedemic/Lorem/Lorem</h5>
@@ -80,42 +56,56 @@
 						<li><span class="listLabel">Classification: </span><span class="redText">Highly Classified</span></li>
 					</ul>
 					<div class="resultBody">
-						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labare et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, re magna aliqua.Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.Duis aute irure dolor perspiciatis. Sed do eiusmod tempor incididunt ut labare et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco</p>
-						<h5>Also included in this selection (check all that apply to your request).</h5>
-						<form action="submit">
-							<div class="checkCol">
-								<input type="checkbox" name="american-leadership">
-								<label for="american-leadership">American Leadership</label><br>
-								<input type="checkbox" name="curriculum-management">
-								<label for="curriculum-management">Curriculum Management</label>
-							</div>
-							<div class="checkCol">
-								<input type="checkbox" name="ces-admissions">
-								<label for="ces-admissions">CES Admissions</label><br>
-								<input type="checkbox" name="faculty-compensation">
-								<label for="faculty-compensation">Faculty Compensation</label>
-							</div>
-							<div class="checkCol">
-								<input type="checkbox" name="class-scheduling">
-								<label for="class-scheduling">Class Scheduling</label><br>
-								<input type="checkbox" name="faculty-hiring">
-								<label for="faculty-hiring">Faculty Hiring</label>
-							</div>
-							<div class="checkCol">
-								<input type="checkbox" name="ci-rating">
-								<label for="ci-rating">Course and Instructor Rating</label><br>
-								<input type="checkbox" name="faculty-performance">
-								<label for="faculty-performance">Faculty Performance</label>
-							</div>
-							<div class="clear"></div>
-						</form>
+						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labare et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, re magna aliqua.</p>
+						
 					</div>
 				</div>
+				<div class="irLower">
+					<h5>Also included in this selection (check all that apply to your request).</h5>
+					<div class="checkCol">
+						<input type="checkbox" name="american-leadership">
+						<label for="american-leadership">American Leadership</label><br>
+						<input type="checkbox" name="curriculum-management">
+						<label for="curriculum-management">Curriculum Management</label>
+					</div>
+					<div class="checkCol">
+						<input type="checkbox" name="ces-admissions">
+						<label for="ces-admissions">CES Admissions</label><br>
+						<input type="checkbox" name="faculty-compensation">
+						<label for="faculty-compensation">Faculty Compensation</label>
+					</div>
+					<div class="checkCol">
+						<input type="checkbox" name="class-scheduling">
+						<label for="class-scheduling">Class Scheduling</label><br>
+						<input type="checkbox" name="faculty-hiring">
+						<label for="faculty-hiring">Faculty Hiring</label>
+					</div>
+					<div class="checkCol">
+						<input type="checkbox" name="ci-rating">
+						<label for="ci-rating">Course and Instructor Rating</label><br>
+						<input type="checkbox" name="faculty-performance">
+						<label for="faculty-performance">Faculty Performance</label>
+					</div>
+					<div class="clear"></div>
+					<h5>Additional details around information requested:</h5>
+					<textarea name="" id=""  rows="10" class="inputShade"></textarea>
+					<div class="clear"></div>
+				</div>
 				<a href="" class="quickLink grow"><img src="/img/iconStarBlue.gif" alt="Quick Link"></a>
-				<a href="" class="requestAccess grow">Request Access</a>
-				<a class="detailsTab"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a>
 			</div>
-			<div class="resultItem classified">
+
+			<h3 class="headerTab">Description of intended use:</h3>
+			<div class="clear"></div>
+			<h3 class="headerTab">Access Rights (Who will be allowed to acces the information?)</h3>
+			<div class="clear"></div>
+			<h3 class="headerTab">Access Method (How access is expected to be granted and managed to ensure compliance.)</h3>
+			<div class="clear"></div>
+			<h3 class="headerTab">Impact on System (How often the information is expected to be updated.)</h3>
+			<div class="clear"></div>
+			
+
+			
+			<!-- <div class="resultItem classified">
 				<h4>Definition Title</h4>
 				<h5   class="greenText">Financial/Lorem/Lorem</h5>
 				<div class="resultContent">
@@ -128,7 +118,6 @@
 					</ul>
 				</div>
 				<a href="" class="quickLink grow"><img src="/img/iconStarBlue.gif" alt="Quick Link"></a>
-				<a href="" class="requestAccess grow">Request Access</a>
 				<a class="detailsTab"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span> Details</a>
 			</div>
 			<div class="resultItem public">
@@ -159,12 +148,12 @@
 					</ul>
 				</div>
 				<a href="" class="quickLink grow"><img src="/img/iconStarBlue.gif" alt="Quick Link"></a>
-				<a href="" class="requestAccess grow">Request Access</a>
 				<a class="detailsTab"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span> Details</a>
-			</div>
+			</div> -->
 			<div class="clear"></div>
 		</div>
 	</div>
+	<div class="clear"></div>
 </div>
 
 <!-- Quick links -->

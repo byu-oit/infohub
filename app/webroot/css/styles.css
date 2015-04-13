@@ -445,3 +445,13 @@ pre.cake-error {
 .grow.active {
   transform: scale(1.1);
 }
+.bumpRight {
+  transition: all 0.15s ease-in-out;
+}
+.bumpRight:hover {
+  transform: translate(10px);
+}
+img {
+  text-decoration: none;
+  border: 0px;
+}
