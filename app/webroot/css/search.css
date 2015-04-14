@@ -18,6 +18,10 @@
   background-position: left center;
   background-size: inherit;
 }
+#searchBg.scale {
+  background-size: cover;
+  background-position: left top;
+}
 #searchBody {
   position: relative;
 }
@@ -140,42 +144,49 @@
   background-position: 4px 0;
 }
 #searchBody #searchResults,
-#searchBody #requestForm {
+#searchBody #requestForm,
+#searchBody #searchSuccess {
   width: 100%;
 }
 #searchBody #searchResults h2,
-#searchBody #requestForm h2 {
+#searchBody #requestForm h2,
+#searchBody #searchSuccess h2 {
   font-size: 18px;
   padding: 8px 20px;
 }
 #searchBody #searchResults #srLower,
-#searchBody #requestForm #srLower {
+#searchBody #requestForm #srLower,
+#searchBody #searchSuccess #srLower {
   background-color: white;
-  background-color: rgba(255, 255, 255, 0.87);
+  background-color: rgba(243, 243, 243, 0.89);
   padding: 23px 3% 30px;
   -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
 #searchBody #searchResults #srLower #searchFilters,
-#searchBody #requestForm #srLower #searchFilters {
+#searchBody #requestForm #srLower #searchFilters,
+#searchBody #searchSuccess #srLower #searchFilters {
   margin-bottom: 20px;
 }
 #searchBody #searchResults #srLower #searchFilters label,
-#searchBody #requestForm #srLower #searchFilters label {
+#searchBody #requestForm #srLower #searchFilters label,
+#searchBody #searchSuccess #srLower #searchFilters label {
   font-size: 12px;
   font-weight: bold;
   color: #224e7d;
   padding-right: 6px;
 }
 #searchBody #searchResults #srLower #searchFilters select,
-#searchBody #requestForm #srLower #searchFilters select {
+#searchBody #requestForm #srLower #searchFilters select,
+#searchBody #searchSuccess #srLower #searchFilters select {
   height: 26px;
   margin-right: 10px;
   padding-right: 5px;
 }
 #searchBody #searchResults #srLower .resultItem,
-#searchBody #requestForm #srLower .resultItem {
+#searchBody #requestForm #srLower .resultItem,
+#searchBody #searchSuccess #srLower .resultItem {
   background-color: white;
   position: relative;
   padding: 20px 3% 20px 60px;
@@ -185,25 +196,29 @@
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
 #searchBody #searchResults #srLower .resultItem h4,
-#searchBody #requestForm #srLower .resultItem h4 {
+#searchBody #requestForm #srLower .resultItem h4,
+#searchBody #searchSuccess #srLower .resultItem h4 {
   font-size: 16px;
   margin: 0;
   padding: 0;
   color: #114477;
 }
 #searchBody #searchResults #srLower .resultItem h5,
-#searchBody #requestForm #srLower .resultItem h5 {
+#searchBody #requestForm #srLower .resultItem h5,
+#searchBody #searchSuccess #srLower .resultItem h5 {
   font-size: 14px;
   margin: 0;
   padding: 0;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent,
-#searchBody #requestForm #srLower .resultItem .resultContent {
+#searchBody #requestForm #srLower .resultItem .resultContent,
+#searchBody #searchSuccess #srLower .resultItem .resultContent {
   width: 75%;
   padding-right: 5%;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent ul,
-#searchBody #requestForm #srLower .resultItem .resultContent ul {
+#searchBody #requestForm #srLower .resultItem .resultContent ul,
+#searchBody #searchSuccess #srLower .resultItem .resultContent ul {
   margin: 0;
   padding: 0;
   list-style: none;
@@ -211,23 +226,28 @@
 }
 #searchBody #searchResults #srLower .resultItem .resultContent ul:before,
 #searchBody #requestForm #srLower .resultItem .resultContent ul:before,
+#searchBody #searchSuccess #srLower .resultItem .resultContent ul:before,
 #searchBody #searchResults #srLower .resultItem .resultContent ul:after,
-#searchBody #requestForm #srLower .resultItem .resultContent ul:after {
+#searchBody #requestForm #srLower .resultItem .resultContent ul:after,
+#searchBody #searchSuccess #srLower .resultItem .resultContent ul:after {
   content: "";
   display: table;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent ul:after,
-#searchBody #requestForm #srLower .resultItem .resultContent ul:after {
+#searchBody #requestForm #srLower .resultItem .resultContent ul:after,
+#searchBody #searchSuccess #srLower .resultItem .resultContent ul:after {
   clear: both;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent ul li,
-#searchBody #requestForm #srLower .resultItem .resultContent ul li {
+#searchBody #requestForm #srLower .resultItem .resultContent ul li,
+#searchBody #searchSuccess #srLower .resultItem .resultContent ul li {
   float: left;
   margin: 0;
   padding: 0;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent ul li,
-#searchBody #requestForm #srLower .resultItem .resultContent ul li {
+#searchBody #requestForm #srLower .resultItem .resultContent ul li,
+#searchBody #searchSuccess #srLower .resultItem .resultContent ul li {
   display: inline;
   font-size: 12px;
   font-weight: bold;
@@ -235,37 +255,44 @@
   margin-right: 10px;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent ul li .listLabel,
-#searchBody #requestForm #srLower .resultItem .resultContent ul li .listLabel {
+#searchBody #requestForm #srLower .resultItem .resultContent ul li .listLabel,
+#searchBody #searchSuccess #srLower .resultItem .resultContent ul li .listLabel {
   color: #224d7d;
   margin-left: 3px;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody,
-#searchBody #requestForm #srLower .resultItem .resultContent .resultBody {
+#searchBody #requestForm #srLower .resultItem .resultContent .resultBody,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody {
   display: none;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody p,
-#searchBody #requestForm #srLower .resultItem .resultContent .resultBody p {
+#searchBody #requestForm #srLower .resultItem .resultContent .resultBody p,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody p {
   font-size: 14px;
   width: 120%;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody h5,
-#searchBody #requestForm #srLower .resultItem .resultContent .resultBody h5 {
+#searchBody #requestForm #srLower .resultItem .resultContent .resultBody h5,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody h5 {
   font-size: 13px;
   font-weight: bold;
   color: #114477;
   margin-bottom: 4px;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody form,
-#searchBody #requestForm #srLower .resultItem .resultContent .resultBody form {
+#searchBody #requestForm #srLower .resultItem .resultContent .resultBody form,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody form {
   margin-bottom: 5px;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkCol,
-#searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkCol {
+#searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkCol,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkCol {
   width: 154px;
   float: left;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkCol label,
-#searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkCol label {
+#searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkCol label,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkCol label {
   white-space: nowrap;
   font-size: 10px;
   vertical-align: top;
@@ -273,22 +300,26 @@
   display: inline-block;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkCol input,
-#searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkCol input {
+#searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkCol input,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkCol input {
   margin-left: 0;
 }
 #searchBody #searchResults #srLower .resultItem .quickLink,
-#searchBody #requestForm #srLower .resultItem .quickLink {
+#searchBody #requestForm #srLower .resultItem .quickLink,
+#searchBody #searchSuccess #srLower .resultItem .quickLink {
   position: absolute;
   top: 20px;
   right: 3%;
   display: block;
 }
 #searchBody #searchResults #srLower .resultItem .quickLink img,
-#searchBody #requestForm #srLower .resultItem .quickLink img {
+#searchBody #requestForm #srLower .resultItem .quickLink img,
+#searchBody #searchSuccess #srLower .resultItem .quickLink img {
   width: 17px;
 }
 #searchBody #searchResults #srLower .resultItem .requestAccess,
-#searchBody #requestForm #srLower .resultItem .requestAccess {
+#searchBody #requestForm #srLower .resultItem .requestAccess,
+#searchBody #searchSuccess #srLower .resultItem .requestAccess {
   color: white;
   font-size: 12.5px;
   text-decoration: none;
@@ -306,7 +337,8 @@
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
 #searchBody #searchResults #srLower .resultItem .detailsTab,
-#searchBody #requestForm #srLower .resultItem .detailsTab {
+#searchBody #requestForm #srLower .resultItem .detailsTab,
+#searchBody #searchSuccess #srLower .resultItem .detailsTab {
   background-color: #cccaca;
   padding: 4px 30px 5px 12px;
   position: absolute;
@@ -323,7 +355,8 @@
   transition: all 0.2s ease-in-out;
 }
 #searchBody #searchResults #srLower .resultItem .detailsTab:before,
-#searchBody #requestForm #srLower .resultItem .detailsTab:before {
+#searchBody #requestForm #srLower .resultItem .detailsTab:before,
+#searchBody #searchSuccess #srLower .resultItem .detailsTab:before {
   content: '';
   position: absolute;
   width: 100%;
@@ -333,7 +366,8 @@
   left: 0;
 }
 #searchBody #searchResults #srLower .resultItem .detailsTab:after,
-#searchBody #requestForm #srLower .resultItem .detailsTab:after {
+#searchBody #requestForm #srLower .resultItem .detailsTab:after,
+#searchBody #searchSuccess #srLower .resultItem .detailsTab:after {
   content: "";
   position: absolute;
   right: 14px;
@@ -345,45 +379,56 @@
   background-size: 8px;
 }
 #searchBody #searchResults #srLower .resultItem .detailsTab .detailsLess,
-#searchBody #requestForm #srLower .resultItem .detailsTab .detailsLess {
+#searchBody #requestForm #srLower .resultItem .detailsTab .detailsLess,
+#searchBody #searchSuccess #srLower .resultItem .detailsTab .detailsLess {
   display: none;
   float: left;
 }
 #searchBody #searchResults #srLower .resultItem .detailsTab:hover,
-#searchBody #requestForm #srLower .resultItem .detailsTab:hover {
+#searchBody #requestForm #srLower .resultItem .detailsTab:hover,
+#searchBody #searchSuccess #srLower .resultItem .detailsTab:hover {
   padding-top: 9px;
   bottom: -29px;
 }
 #searchBody #searchResults #srLower .resultItem .detailsTab:hover:after,
-#searchBody #requestForm #srLower .resultItem .detailsTab:hover:after {
+#searchBody #requestForm #srLower .resultItem .detailsTab:hover:after,
+#searchBody #searchSuccess #srLower .resultItem .detailsTab:hover:after {
   top: 16px;
 }
 #searchBody #searchResults #srLower .resultItem .detailsTab.active .detailsLess,
-#searchBody #requestForm #srLower .resultItem .detailsTab.active .detailsLess {
+#searchBody #requestForm #srLower .resultItem .detailsTab.active .detailsLess,
+#searchBody #searchSuccess #srLower .resultItem .detailsTab.active .detailsLess {
   display: block;
 }
 #searchBody #searchResults #srLower .resultItem .detailsTab.active .detailsMore,
-#searchBody #requestForm #srLower .resultItem .detailsTab.active .detailsMore {
+#searchBody #requestForm #srLower .resultItem .detailsTab.active .detailsMore,
+#searchBody #searchSuccess #srLower .resultItem .detailsTab.active .detailsMore {
   display: none;
 }
 #searchBody #searchResults #srLower .resultItem .detailsTab.active:after,
-#searchBody #requestForm #srLower .resultItem .detailsTab.active:after {
+#searchBody #requestForm #srLower .resultItem .detailsTab.active:after,
+#searchBody #searchSuccess #srLower .resultItem .detailsTab.active:after {
   background: url('/img/iconUpArrow.png') no-repeat;
   background-size: 8px;
   top: 9px;
 }
 #searchBody #searchResults #srLower .resultItem .detailsTab.active:hover:after,
-#searchBody #requestForm #srLower .resultItem .detailsTab.active:hover:after {
+#searchBody #requestForm #srLower .resultItem .detailsTab.active:hover:after,
+#searchBody #searchSuccess #srLower .resultItem .detailsTab.active:hover:after {
   top: 15px;
 }
 #searchBody #searchResults #srLower .highlyClassified:before,
 #searchBody #requestForm #srLower .highlyClassified:before,
+#searchBody #searchSuccess #srLower .highlyClassified:before,
 #searchBody #searchResults #srLower .classified:before,
 #searchBody #requestForm #srLower .classified:before,
+#searchBody #searchSuccess #srLower .classified:before,
 #searchBody #searchResults #srLower .public:before,
 #searchBody #requestForm #srLower .public:before,
+#searchBody #searchSuccess #srLower .public:before,
 #searchBody #searchResults #srLower .internal:before,
-#searchBody #requestForm #srLower .internal:before {
+#searchBody #requestForm #srLower .internal:before,
+#searchBody #searchSuccess #srLower .internal:before {
   content: "";
   position: absolute;
   left: 20px;
@@ -391,35 +436,43 @@
   width: 26px;
 }
 #searchBody #searchResults #srLower .highlyClassified:before,
-#searchBody #requestForm #srLower .highlyClassified:before {
+#searchBody #requestForm #srLower .highlyClassified:before,
+#searchBody #searchSuccess #srLower .highlyClassified:before {
   background: url('/img/iconHighClassified.png') no-repeat;
   background-size: 26px;
 }
 #searchBody #searchResults #srLower .classified:before,
-#searchBody #requestForm #srLower .classified:before {
+#searchBody #requestForm #srLower .classified:before,
+#searchBody #searchSuccess #srLower .classified:before {
   background: url('/img/iconClassified.png') no-repeat;
   background-size: 26px;
 }
 #searchBody #searchResults #srLower .public:before,
-#searchBody #requestForm #srLower .public:before {
+#searchBody #requestForm #srLower .public:before,
+#searchBody #searchSuccess #srLower .public:before {
   background: url('/img/iconPublic.png') no-repeat;
   background-size: 26px;
 }
 #searchBody #searchResults #srLower .internal:before,
-#searchBody #requestForm #srLower .internal:before {
+#searchBody #requestForm #srLower .internal:before,
+#searchBody #searchSuccess #srLower .internal:before {
   background: url('/img/iconInternal.png') no-repeat;
   background-size: 26px;
 }
-#searchBody #requestForm h2 {
+#searchBody #requestForm h2,
+#searchBody #searchSuccess h2 {
   font-size: 30px;
   padding: 8px 25px;
   margin-top: 75px;
 }
-#searchBody #requestForm #srLower {
+#searchBody #requestForm #srLower,
+#searchBody #searchSuccess #srLower {
   float: left;
   width: 94%;
+  padding: 23px 3% 0;
 }
-#searchBody #requestForm #srLower h3 {
+#searchBody #requestForm #srLower h3,
+#searchBody #searchSuccess #srLower h3 {
   font-size: 18px;
   margin-bottom: 20px;
   padding: 4px 18px;
@@ -428,43 +481,119 @@
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
-#searchBody #requestForm #srLower .resultItem .resultContent .resultBody {
+#searchBody #requestForm #srLower textarea,
+#searchBody #searchSuccess #srLower textarea {
+  width: 100%;
+  height: 8em;
+  padding: 10px;
+  margin-top: 5px;
+  -webkit-box-shadow: 0px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: 0px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: 0px 0px 7px 1px rgba(50, 50, 50, 0.22);
+}
+#searchBody #requestForm #srLower #requesterInfo,
+#searchBody #searchSuccess #srLower #requesterInfo {
+  width: 75%;
+  margin-bottom: 10px;
+}
+#searchBody #requestForm #srLower #requesterInfo input,
+#searchBody #searchSuccess #srLower #requesterInfo input,
+#searchBody #requestForm #srLower #requesterInfo select,
+#searchBody #searchSuccess #srLower #requesterInfo select {
+  width: 47%;
+  margin: 0 2% 12px 0;
+}
+#searchBody #requestForm #srLower .resultItem .resultContent .resultBody,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody {
   display: block;
 }
-#searchBody #requestForm #srLower .resultItem .resultContent .resultBody p {
+#searchBody #requestForm #srLower .resultItem .resultContent .resultBody p,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody p {
   width: 125%;
 }
-#searchBody #requestForm #srLower .resultItem .irLower {
+#searchBody #requestForm #srLower .resultItem .irLower,
+#searchBody #searchSuccess #srLower .resultItem .irLower {
   margin-left: -30px;
 }
-#searchBody #requestForm #srLower .resultItem .irLower h5 {
+#searchBody #requestForm #srLower .resultItem .irLower h5,
+#searchBody #searchSuccess #srLower .resultItem .irLower h5 {
   font-size: 14px;
   margin: 22px 0 7px;
   padding: 0;
   color: #114477;
 }
-#searchBody #requestForm #srLower .resultItem .irLower .checkCol {
+#searchBody #requestForm #srLower .resultItem .irLower .checkCol,
+#searchBody #searchSuccess #srLower .resultItem .irLower .checkCol {
   width: 154px;
   float: left;
 }
-#searchBody #requestForm #srLower .resultItem .irLower .checkCol label {
+#searchBody #requestForm #srLower .resultItem .irLower .checkCol label,
+#searchBody #searchSuccess #srLower .resultItem .irLower .checkCol label {
   white-space: nowrap;
   font-size: 10px;
   vertical-align: top;
   padding-top: 2px;
   display: inline-block;
 }
-#searchBody #requestForm #srLower .resultItem .irLower .checkCol input {
+#searchBody #requestForm #srLower .resultItem .irLower .checkCol input,
+#searchBody #searchSuccess #srLower .resultItem .irLower .checkCol input {
   margin-left: 0;
 }
-#searchBody #requestForm #srLower .resultItem .irLower textarea {
-  width: 100%;
-  height: 9em;
-  padding: 10px;
-  margin-top: 5px;
-  -webkit-box-shadow: -2px 0px 7px 1px rgba(50, 50, 50, 0.22);
-  -moz-box-shadow: -2px 0px 7px 1px rgba(50, 50, 50, 0.22);
-  box-shadow: -2px 0px 7px 1px rgba(50, 50, 50, 0.22);
+#searchBody #requestForm #srLower .taBox,
+#searchBody #searchSuccess #srLower .taBox {
+  background-color: white;
+  position: relative;
+  padding: 20px 3%;
+  margin-bottom: 38px;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+}
+#searchBody #searchSuccess {
+  width: 450px;
+  margin: 0 auto;
+  padding-bottom: 145px;
+}
+#searchBody #searchSuccess #successLower {
+  float: left;
+  padding: 12px 7% 23px 6%;
+  font-size: 16px;
+}
+#searchBody #searchSuccess #successLower a {
+  color: #3d73b0;
+  text-decoration: none;
+}
+#searchBody #searchSuccess #successLower a:hover {
+  text-decoration: underline;
+}
+form#request {
+  position: relative;
+}
+form#request #formSubmit {
+  margin: 30px auto 0;
+}
+form#request #formSubmit #requestSubmit {
+  float: right;
+  margin: 0 6% 0 8px;
+  color: white;
+  font-size: 12.5px;
+  text-decoration: none;
+  padding: 6px 15px;
+  background-color: #ffa900;
+  display: block;
+  text-align: center;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  -webkit-box-shadow: 0px 2px 7px 1px rgba(50, 50, 50, 0.4);
+  -moz-box-shadow: 0px 2px 7px 1px rgba(50, 50, 50, 0.4);
+  box-shadow: 0px 2px 7px 1px rgba(50, 50, 50, 0.4);
+}
+form#request #formSubmit label {
+  float: right;
+}
+form#request #mobileReqd {
+  display: none;
 }
 @media screen and (min-width: 1685px) {
   #searchBg {
@@ -479,6 +608,9 @@
     clear: both;
     margin: -25px 0 23px 28%;
   }
+  #searchBody #requestForm #srLower #requesterInfo {
+    width: 104%;
+  }
 }
 @media screen and (max-width: 750px) {
   #searchBg {
@@ -486,7 +618,7 @@
   }
   .headerTab {
     width: 90%;
-    padding: 8px 5%;
+    padding: 8px 5% !important;
   }
   #searchBody #catalogLink {
     float: none;
@@ -512,6 +644,10 @@
   }
   #searchBody #searchMain h2 {
     padding: 8px 5%;
+  }
+  #searchBody #requestForm #srLower h3 {
+    width: initial;
+    margin-bottom: 15px;
   }
 }
 @media screen and (max-width: 680px) {
@@ -545,6 +681,16 @@
     margin-left: -65px;
   }
 }
+@media screen and (max-width: 650px) {
+  #searchBody #requestForm #srLower #requesterInfo {
+    width: 100%;
+  }
+  #searchBody #requestForm #srLower #requesterInfo input,
+  #searchBody #requestForm #srLower #requesterInfo select {
+    width: 100%;
+    margin: 0 0% 12px 0;
+  }
+}
 @media screen and (max-width: 500px) {
   #searchBody #searchResults #srLower .highlyClassified:before,
   #searchBody #searchResults #srLower .classified:before,
@@ -559,5 +705,53 @@
     margin-left: 35px;
     margin-bottom: 13px;
     margin-top: 3px;
+  }
+  #searchBody #requestForm #srLower {
+    width: 88%;
+    padding: 23px 6% 0;
+  }
+  #searchBody #requestForm #srLower .resultItem {
+    padding: 20px 6%;
+  }
+  #searchBody #requestForm #srLower .resultItem h4 {
+    font-size: 13px;
+  }
+  #searchBody #requestForm #srLower .resultItem h5 {
+    font-size: 12px;
+  }
+  #searchBody #requestForm #srLower .resultItem:before {
+    background: none;
+  }
+  #searchBody #requestForm #srLower .resultItem .resultContent .requestMeta {
+    display: none;
+  }
+  #searchBody #requestForm #srLower .resultItem .resultContent .resultBody p {
+    font-size: 11.5px;
+  }
+  #searchBody #requestForm #srLower .resultItem .irLower {
+    margin-left: 0;
+  }
+  #searchBody #requestForm #srLower .taBox {
+    padding: 20px 6%;
+  }
+  #searchBody #searchSuccess {
+    width: 88%;
+  }
+  #searchBody #searchSuccess #successLower {
+    padding: 5px 7% 16px 7%;
+    font-size: 14px;
+  }
+  .mobileHide {
+    display: none;
+  }
+  form#request #mobileReqd {
+    display: block;
+    float: right;
+    margin-top: -33px;
+    margin-right: 2px;
+  }
+  form#request #formSubmit #requestSubmit {
+    float: none;
+    margin: 0 auto;
   }
 }
