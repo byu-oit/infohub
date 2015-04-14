@@ -552,7 +552,10 @@
 #searchBody #searchSuccess {
   width: 450px;
   margin: 0 auto;
-  padding-bottom: 145px;
+  padding-bottom: 30px;
+}
+#searchBody #searchSuccess h2 {
+  margin-top: 40px;
 }
 #searchBody #searchSuccess #successLower {
   float: left;
