@@ -37,52 +37,17 @@
 		<div class="clear"></div>
 		<div id="stLower" class="whiteBox">
 			<form action="submit">
-				<input type="text" class="inputShade" placeholder="Search keyword, topic, or phrase">
+				<input id="searchInput" type="text" class="inputShade" onkeyup="searchAutoComplete()" placeholder="Search keyword, topic, or phrase">
+				<?php echo $this->element('auto_complete'); ?>
 				<input type="submit" value="Search" class="inputButton">
 			</form>
 			<div class="clear"></div>
 		</div>
 	</div>
 
-	<a href="/catalog" id="catalogLink" class="grow"><img src="/img/catalogLink2.png" alt="See full catealog"></a>
+	<a href="/search/catalog" id="catalogLink" class="grow"><img src="/img/catalogLink2.png" alt="See full catealog"></a>
 	<div class="clear"></div>
 
-	<div id="searchMain">
-		<h2 class="headerTab" >Full Catalog</h2>
-		<div class="clear"></div>
-		<div id="smLower" class="whiteBox">
-			<ul class="catalogParent">
-				<li class="catalogItem">
-					<a class="hasChildren">Academic</a>
-					<ul class="subList catalogChild">
-						<li class="catalogItem">
-							<a class="hasChildren">Academic Leadership</a>
-							<ul class="subList grandChild">
-								<li class="catalogItem"><a>Lorem</a></li>
-								<li class="catalogItem"><a>Ipsum</a></li>
-							</ul>
-						</li>
-						<li class="catalogItem"><a>CES Admissions</a></li>
-						<li class="catalogItem"><a>Class Scheduling</a></li>
-						<li class="catalogItem"><a>Course and Instructor Ratings</a></li>
-					</ul>
-				</li>
-				<li class="catalogItem">
-					<a class="hasChildren">Advancement</a>
-					<ul class="subList catalogChild">
-						<li class="catalogItem"><a>Lorem</a></li>
-						<li class="catalogItem"><a>Ipsum</a></li>
-					</ul>
-				</li>
-				<li class="catalogItem">
-					<a class="hasChildren">Financial</a>
-					<ul class="subList catalogChild">
-						<li class="catalogItem"><a>Lorem</a></li>
-					</ul>
-				</li>
-			</ul>
-		</div>
-	</div>
 </div>
 
 <!-- Quick links -->

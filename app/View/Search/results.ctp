@@ -38,7 +38,8 @@
 		<div class="clear"></div>
 		<div id="stLower" class="whiteBox">
 			<form action="submit">
-				<input type="text" class="inputShade" placeholder="Search keyword, topic, or phrase">
+				<input id="searchInput" type="text" class="inputShade" onkeyup="searchAutoComplete()" placeholder="Search keyword, topic, or phrase">
+				<?php echo $this->element('auto_complete'); ?>
 				<input type="submit" value="Search" class="inputButton">
 			</form>
 			<div class="clear"></div>
@@ -126,6 +127,9 @@
 						<li><span class="listLabel">Expiration Date:&nbsp;</span>1/15/16</li>
 						<li><span class="listLabel">Classification: </span><span class="orangeText">Classified</span></li>
 					</ul>
+					<div class="resultBody">
+						<img class="resultBodyLoading" src="/img/dataLoading.gif" alt="Loading...">
+					</div>
 				</div>
 				<a href="" class="quickLink grow"><img src="/img/iconStarBlue.gif" alt="Quick Link"></a>
 				<a href="" class="requestAccess grow">Request Access</a>
@@ -143,7 +147,7 @@
 						<li><span class="listLabel">Classification: </span><span class="greenText">Public</span></li>
 					</ul>
 				</div>
-				<a href="" class="quickLink grow"><img src="/img/iconStarBlue.gif" alt="Quick Link"></a>
+				<a href="" class="quickLink grow ql-added"><img src="/img/iconStarOrange.gif" alt="Quick Link"></a>
 				<a class="detailsTab"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span> Details</a>
 			</div>
 			<div class="resultItem internal">

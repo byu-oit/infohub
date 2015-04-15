@@ -22,6 +22,13 @@
   background-size: cover;
   background-position: left top;
 }
+img.resultBodyLoading {
+  width: 50px;
+  padding: 20px;
+  margin: 20px auto 40px;
+  display: block;
+  padding-left: 20%;
+}
 #searchBody {
   position: relative;
 }
@@ -33,10 +40,14 @@
 #searchBody #searchTop #stLower {
   padding: 30px 35px;
 }
+#searchBody #searchTop #stLower form {
+  position: relative;
+}
 #searchBody #searchTop #stLower input[type=text] {
   width: 397px;
   position: relative;
   float: left;
+  z-index: 10;
 }
 #searchBody #searchTop #stLower input[type=submit] {
   margin-left: -3px;
@@ -52,6 +63,7 @@
 }
 #searchBody #searchMain {
   width: 100%;
+  clear: left;
 }
 #searchBody #searchMain h2 {
   font-size: 18px;
@@ -637,6 +649,9 @@ form#request #mobileReqd {
   #searchBody #searchTop #stLower {
     padding: 19px 20px;
   }
+  #searchBody #searchTop #stLower .autoComplete {
+    width: 100%;
+  }
   #searchBody #searchTop #stLower input[type=text] {
     width: 100%;
     margin-bottom: 20px;
@@ -743,6 +758,11 @@ form#request #mobileReqd {
   #searchBody #searchSuccess #successLower {
     padding: 5px 7% 16px 7%;
     font-size: 14px;
+  }
+  .mobileSmall {
+    font-size: .7em;
+    clear: both;
+    display: block;
   }
   .mobileHide {
     display: none;

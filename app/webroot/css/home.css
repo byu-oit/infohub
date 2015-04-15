@@ -58,7 +58,15 @@
   margin: 40px 0 0;
   width: 94%;
 }
+#homeTop #htBack #searchBox form {
+  position: relative;
+}
+#homeTop #htBack #searchBox .autoComplete {
+  width: 79%;
+}
 #homeTop #htBack #searchBox input {
+  position: relative;
+  z-index: 10;
   border: none;
   padding: 0 0 0 2%;
   height: 30px;
@@ -302,6 +310,9 @@
     margin: 0;
     padding: 7%;
     width: 85%;
+  }
+  #homeTop #htBack #searchBox .autoComplete {
+    width: 99%;
   }
   #homeTop #htBack #searchBox input {
     width: 97%;

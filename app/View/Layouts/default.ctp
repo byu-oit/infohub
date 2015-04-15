@@ -120,6 +120,30 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			if(size<minSize) size=minSize;
 			$('body').css('fontSize', size);
 		}
+
+		function searchAutoComplete( e ) {
+			if ($.trim($('#searchInput').val()) == ''){
+				$('.autoComplete').hide();
+			}
+			else if  ( e == true ) {
+				$('.autoComplete').hide();
+			}
+			else {
+				$('.autoComplete').show();
+			}
+			
+		}
+		$(document).on( 'click', function ( e ) {
+			if ( $( e.target ).closest('.autoComplete').length === 0 ) {
+				$('.autoComplete').hide();
+			}
+		});
+
+		$(document).on( 'keyup', function ( e ) {
+			if ( e.keyCode === 27 ) { // ESC
+				searchAutoComplete(true);
+			}
+		});
 	</script>
 
 </head>

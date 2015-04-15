@@ -110,25 +110,25 @@
 					<a href="" class="quickLink grow"><img src="/img/iconStarBlue.gif" alt="Quick Link"></a>
 				</div>
 
-				<h3 class="headerTab">Description of intended use:</h3>
+				<h3 class="headerTab">Description of Intended Use</h3>
 				<div class="clear"></div>
 				<div class="taBox">
 					<textarea name="" id=""  class="inputShade"></textarea>
 				</div>
 
-				<h3 class="headerTab">Access Rights <span class="mobileHide">(Who will be allowed to acces the information?)</span></h3>
+				<h3 class="headerTab">Access Rights <span class="mobileSmall">(Who will be allowed to acces the information?)</span></h3>
 				<div class="clear"></div>
 				<div class="taBox">
 					<textarea name="" id=""  class="inputShade"></textarea>
 				</div>
 
-				<h3 class="headerTab">Access Method <span class="mobileHide">(How access is expected to be granted and managed to ensure compliance.)</span></h3>
+				<h3 class="headerTab">Access Method <span class="mobileSmall">(How access is expected to be granted and managed to ensure compliance.)</span></h3>
 				<div class="clear"></div>
 				<div class="taBox">
 					<textarea name="" id=""  class="inputShade"></textarea>
 				</div>
 
-				<h3 class="headerTab">Impact on System <span class="mobileHide">(How often the information is expected to be updated.)</span></h3>
+				<h3 class="headerTab">Impact on System <span class="mobileSmall">(How often the information is expected to be updated.)</span></h3>
 				<div class="clear"></div>
 				<div class="taBox">
 					<textarea name="" id=""  class="inputShade"></textarea>
