@@ -200,6 +200,7 @@
 		}
 	}
 	.qlBody {
+		position: relative;
 		clear: left;
 		// width: 100%;
 		-moz-column-count: 5;
@@ -209,9 +210,9 @@
 		column-count: 5;
 		column-gap: 20px;
 		background-color: @grayLight;
-		padding: 20px 2.5%;
-		padding: 20px 2.5% 12px;
+		padding: 20px 2.5% 10px;
   		margin-bottom: 50px;
+  		border-bottom: 24px solid #f4f4f4;
   		.box-shade();
 
 
@@ -220,6 +221,7 @@
 
    			li {
    				padding-right: 20px;
+   				white-space: nowrap;
 
    				a {
 					text-decoration: none;
@@ -227,14 +229,83 @@
 					color: #336699;
 					display: block;
   					padding: 5px 0;
+  					float: left;
 
 					&:hover {
 						text-decoration: underline;
 					}
+					&.ql-remove {
+						float: left;
+						width: 12px;
+						padding: 7px 5px 0 0;
+						display: none;
+
+						img {
+							width: 100%;
+						}
+					}
+					&.ql-active {
+						display: block;
+					}
+					&.active-link {
+						width: 88%;
+					}
    				}
    			}
 		}
-	}	
+	}
+
+	.ql-edit {
+		float: left;
+		background-color: #4775AB;
+		padding: 5px 10px;
+		position: absolute;
+		bottom: -24px;
+		left: 3%;
+
+		a {
+			text-decoration: none;
+			color: white;
+			font-size: 10px;
+			display: block;
+			cursor: pointer;
+
+			&:after {
+				content: "";
+				background: url("/img/right-arrow.gif") no-repeat;
+				padding: 0px 3px 0 2px;
+				margin-left: 4px;
+				background-position: 0px 3px;
+				background-size: 5px;
+			}
+		}
+		.saveEdit, .resetDefault {
+			display: none;
+		}
+		&.active {
+			background-color: rgba(71, 117, 171, 0.3);
+
+			.editQL, .resetDefault {
+				display: none;
+			}
+
+			.saveEdit, .resetDefault  {	
+				color: #9F0F13;
+				display: block;
+				float: left;
+				font-weight: bold;
+			}
+			.saveEdit:after, 
+			.resetDefault:after {
+				background:none;
+				margin: 0;
+				padding: 0;
+			}
+			&:after {
+				border-left: 10px solid #ffd480;
+			}
+		}
+	}
 }
 /*============== LOGIN PAGE  ===============*/
 

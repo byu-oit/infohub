@@ -57,16 +57,19 @@
 				<label for="filerBy">Filter By:</label>
 				<select name="filterBy" id="filerBy" class="inputShade">
 					<option value="0" selected>All Results</option>
-					<option value="1">This</option>
-					<option value="2">That</option>
-					<option value="3">The Other</option>
+					<option value="academia">Academia</option>
+					<option value="advancement">Advancement</option>
+					<option value="financial">Financial</option>
+					<option value="human Resources">Human Resources</option>
+					<option value="international">International</option>
+					<option value="master-data">Master Data</option>
+					<option value="research">Research</option>
+					<option value="student Life">Student Life</option>
 				</select>
 				<label for="filerBy">Sort By:</label>
 				<select name="filterBy" id="filerBy" class="inputShade">
 					<option value="0" selected>Date Added</option>
-					<option value="1">This</option>
-					<option value="2">That</option>
-					<option value="3">The Other</option>
+					<option value="classification">Classification</option>
 				</select>
 			</div>
 			<div class="resultItem highlyClassified">
@@ -112,7 +115,7 @@
 						</form>
 					</div>
 				</div>
-				<a href="" class="quickLink grow"><img src="/img/iconStarBlue.gif" alt="Quick Link"></a>
+				<a href="" class="addQuickLink grow"><img src="/img/iconStarBlue.gif" alt="Quick Link"></a>
 				<a href="" class="requestAccess grow">Request Access</a>
 				<a class="detailsTab"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a>
 			</div>
@@ -131,7 +134,7 @@
 						<img class="resultBodyLoading" src="/img/dataLoading.gif" alt="Loading...">
 					</div>
 				</div>
-				<a href="" class="quickLink grow"><img src="/img/iconStarBlue.gif" alt="Quick Link"></a>
+				<a href="" class="addQuickLink grow"><img src="/img/iconStarBlue.gif" alt="Quick Link"></a>
 				<a href="" class="requestAccess grow">Request Access</a>
 				<a class="detailsTab"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span> Details</a>
 			</div>
@@ -147,7 +150,7 @@
 						<li><span class="listLabel">Classification: </span><span class="greenText">Public</span></li>
 					</ul>
 				</div>
-				<a href="" class="quickLink grow ql-added"><img src="/img/iconStarOrange.gif" alt="Quick Link"></a>
+				<a href="" class="addQuickLink grow ql-added"><img src="/img/iconStarOrange.gif" alt="Quick Link"></a>
 				<a class="detailsTab"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span> Details</a>
 			</div>
 			<div class="resultItem internal">
@@ -162,7 +165,7 @@
 						<li><span class="listLabel">Classification: </span><span class="blueText">Internal</span></li>
 					</ul>
 				</div>
-				<a href="" class="quickLink grow"><img src="/img/iconStarBlue.gif" alt="Quick Link"></a>
+				<a href="" class="addQuickLink grow"><img src="/img/iconStarBlue.gif" alt="Quick Link"></a>
 				<a href="" class="requestAccess grow">Request Access</a>
 				<a class="detailsTab"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span> Details</a>
 			</div>

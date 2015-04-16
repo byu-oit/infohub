@@ -72,6 +72,17 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			$("#mobileHelp").click(function() {
 				$("#nhContent").slideToggle();
 			});
+
+			$('.editQL').click(function() {
+				$('.ql-edit').addClass('active');
+				$('.ql-list').addClass('ql-active');
+				$('.quickLink').addClass('active-link')
+			});
+			$('.saveEdit').click(function() {
+				$('.ql-edit').removeClass('active');
+				$('.ql-list').removeClass('ql-active');
+				$('.quickLink').removeClass('active-link')
+			});
 		});
 
 		$(document).ready(resizeFonts);	
@@ -131,7 +142,44 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			else {
 				$('.autoComplete').show();
 			}
-			
+		}
+
+		function addQL(inQL) {	
+			var proceed = "0";	
+			// var qlAddText = "Added to MyQuick Links";
+			$.ajax({
+				type: 'GET',
+				url: '/ajax/checkQL.php?QL='+inQL,
+				data: $(this).serialize()
+			})
+			.done(function(data){	
+			    if (data == "1") {		   				   				  			 
+					$.ajax({
+						type: 'GET',
+						url: '/ajax/addQL.php?QL='+inQL,
+						data: $(this).serialize()
+					})
+					.done(function(data){				 
+						// show the response						
+						$('#QLContainer').html(data);
+						// $('.qlText').css('color', '#929292');
+						// $('.addQuickLink .qlText').html(qlAddText);
+						$('.addQuickLink img').attr('src', '/img/iconStarBlue.gif');			 
+					})
+					.fail(function() {			 									 
+					});	 
+					return false;	
+				} else if (data == "2") {											         	
+					// $('.qlText').css('color', '#929292');
+					// $('.addQuickLink .qlText').html(qlAddText);
+					$('.addQuickLink img').attr('src', '/img/iconStarBlue.gif');
+					return false;
+				}else {
+					alert('You may only have up to 9 Quick Links.  Remove 1 or more Quick Links by clicking the "Edit My Quick Links" button below the Quick Links Area before adding new Quick Links.');	
+				}			
+			})
+			.fail(function() {			 							 
+			});										
 		}
 		$(document).on( 'click', function ( e ) {
 			if ( $( e.target ).closest('.autoComplete').length === 0 ) {
@@ -185,9 +233,12 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 		<nav>
 			<a id="mob-nav" class="box-shadow-menu inner">&nbsp;</a>
 			<ul id="mainNav" class="inner">
-				<li><?php echo $this->Html->link('Search', '/search', array('id' => 'searchLink')); ?></li>
+				<!-- <li><?php echo $this->Html->link('Search', '/search', array('id' => 'searchLink')); ?></li>
 				<li><?php echo $this->Html->link('Find People', '/people', array('id' => 'findLink')); ?></li>
-				<li><?php echo $this->Html->link('Resources', '/resource', array('id' => 'resourceLink')); ?></li>
+				<li><?php echo $this->Html->link('Resources', '/resource', array('id' => 'resourceLink')); ?></li> -->
+				<li><a href="/search" id="searchLink">Search</a></li>
+				<li><a href="/people" id="findLink">Find People</a></li>
+				<li><a href="/resource" id="resourceLink">Resources</a></li>
 			</ul>
 		</nav>
 		<div id="content">

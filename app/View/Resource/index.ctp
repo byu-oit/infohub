@@ -29,7 +29,7 @@
 
 	function colHeight() {
 		$('.contentBody').css('height', 'initial');
-		
+
 		var asideHeight = $('aside').height();
 		var contentHeight = $('.contentBody').height();
 
@@ -93,8 +93,6 @@
 			<div class="clear"></div>
 		</div>
 	</div>
-
-
 </div>
 
 <!-- Quick links -->

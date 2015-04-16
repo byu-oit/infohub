@@ -316,17 +316,17 @@ img.resultBodyLoading {
 #searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkCol input {
   margin-left: 0;
 }
-#searchBody #searchResults #srLower .resultItem .quickLink,
-#searchBody #requestForm #srLower .resultItem .quickLink,
-#searchBody #searchSuccess #srLower .resultItem .quickLink {
+#searchBody #searchResults #srLower .resultItem .addQuickLink,
+#searchBody #requestForm #srLower .resultItem .addQuickLink,
+#searchBody #searchSuccess #srLower .resultItem .addQuickLink {
   position: absolute;
   top: 20px;
   right: 3%;
   display: block;
 }
-#searchBody #searchResults #srLower .resultItem .quickLink img,
-#searchBody #requestForm #srLower .resultItem .quickLink img,
-#searchBody #searchSuccess #srLower .resultItem .quickLink img {
+#searchBody #searchResults #srLower .resultItem .addQuickLink img,
+#searchBody #requestForm #srLower .resultItem .addQuickLink img,
+#searchBody #searchSuccess #srLower .resultItem .addQuickLink img {
   width: 17px;
 }
 #searchBody #searchResults #srLower .resultItem .requestAccess,
