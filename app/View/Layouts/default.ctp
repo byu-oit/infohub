@@ -187,7 +187,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			<ul id="mainNav" class="inner">
 				<li><?php echo $this->Html->link('Search', '/search', array('id' => 'searchLink')); ?></li>
 				<li><?php echo $this->Html->link('Find People', '/people', array('id' => 'findLink')); ?></li>
-				<li><a href="/resources" id="resourceLink">Resources</a></li>
+				<li><?php echo $this->Html->link('Resources', '/resource', array('id' => 'resourceLink')); ?></li>
 			</ul>
 		</nav>
 		<div id="content">

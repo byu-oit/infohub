@@ -1,0 +1,147 @@
+/*============= LOAD LESS FILES =============*/
+@import 'variables';
+@import 'mixins';
+
+/*===========  RESOURCE & SEACH-RESULTS STYLES ============*/
+
+.headerTab {
+	font-size: 30px;
+	padding: 8px 30px;
+	float: left;
+}
+
+#resourceBg {
+	position: absolute;
+	padding: 0;
+	margin: 0;
+	background-position: center;
+	height: 506px;
+	background-position: left center;
+	background-size: inherit;
+}
+
+#resourceBody {
+	position: relative;
+
+	#resourceTop {
+		padding: 40px 0 0;
+		float: left;
+		.box-shade();
+
+		#reLower {
+			padding: 30px 3%;
+			
+			aside {
+				width: 25%;
+				float: left;
+				margin-right: 3%;
+				background-color: #fff;
+				padding: 20px 3%;
+				.box-shade();
+
+
+				ul {
+					margin: 0;
+					padding: 0;
+					width: 100%;
+					font-size: 14px;
+
+					li {
+						list-style-type: none;
+						padding: 5px 0 0;
+
+						a {
+							display: block;
+							padding: 5px 12px;
+							background-color: #fff;
+							-webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+							-moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+							box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+							cursor: pointer;
+							text-decoration: none;
+							
+							&.hasChildren:before {
+								content: "";
+								padding: 0 3px 4px;
+								background: url('/img/iconRight.png') no-repeat;
+	  							background-size: 11px;
+								background-position: 6px;
+								margin-top: -2px;
+								display: block;
+								float: left;
+								height: 20px;
+								width: 20px;
+							}
+							&.active:before {
+								background: url('/img/iconDown.png') no-repeat;
+								background-size: 11px;
+								background-position: 6px;
+							}
+							&.active, &:hover {
+								background-color: #183b62;
+								color: white;
+							}
+						}
+					}
+					&.subList {
+						display: none;
+						position: relative;
+					}
+					&.grandChild {
+						&:before  {
+							content: "";
+							position: absolute;
+							left: -25px;
+							padding: 0 3px 4px;
+							background: url('/img/nestedWrap.png') repeat-y;
+							background-position: 4px;
+							height: 100%;
+							width: 4px;
+						}
+					}
+					
+					&.subList li {
+						padding-left: 25px;
+						position: relative;
+						left: 11px;
+
+						&:before {
+							content: "";
+							position: absolute;
+							left: 0;
+							padding: 0 3px 4px;
+							background: url('/img/nestedFull.png') no-repeat;
+							background-size: 20px 33px;
+							background-position: 4px;
+							margin-top: -2px;
+							display: block;
+							float: left;
+							height: 33px;
+							width: 20px;
+						}
+					}
+					&.subList li:last-child:before {
+						background: url('/img/nestedLast.png') no-repeat;
+						background-size: 20px 16px;
+						background-position: 4px 0;
+					}
+				}
+			}
+			.contentBody {
+				width: 58%;
+				background-color: #fff;
+				padding: 20px 3%;
+				float: left;
+				.box-shade();
+
+				
+				h1, h2, h3, h4 {
+					color: @headerBlue2;
+				}
+				p {
+					font-size: 12px;
+				}
+			}
+		}
+	}
+}

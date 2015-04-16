@@ -1,0 +1,141 @@
+/*============= LOAD LESS FILES =============*/
+
+/*=====Variables====*/
+/*=====Variables====*/
+/*===========  RESOURCE & SEACH-RESULTS STYLES ============*/
+
+.headerTab {
+  font-size: 30px;
+  padding: 8px 30px;
+  float: left;
+}
+#resourceBg {
+  position: absolute;
+  padding: 0;
+  margin: 0;
+  background-position: center;
+  height: 506px;
+  background-position: left center;
+  background-size: inherit;
+}
+#resourceBody {
+  position: relative;
+}
+#resourceBody #resourceTop {
+  padding: 40px 0 0;
+  float: left;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+}
+#resourceBody #resourceTop #reLower {
+  padding: 30px 3%;
+}
+#resourceBody #resourceTop #reLower aside {
+  width: 25%;
+  float: left;
+  margin-right: 3%;
+  background-color: white;
+  padding: 20px 3%;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+}
+#resourceBody #resourceTop #reLower aside ul {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  font-size: 14px;
+}
+#resourceBody #resourceTop #reLower aside ul li {
+  list-style-type: none;
+  padding: 5px 0 0;
+}
+#resourceBody #resourceTop #reLower aside ul li a {
+  display: block;
+  padding: 5px 12px;
+  background-color: white;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  cursor: pointer;
+  text-decoration: none;
+}
+#resourceBody #resourceTop #reLower aside ul li a.hasChildren:before {
+  content: "";
+  padding: 0 3px 4px;
+  background: url('/img/iconRight.png') no-repeat;
+  background-size: 11px;
+  background-position: 6px;
+  margin-top: -2px;
+  display: block;
+  float: left;
+  height: 20px;
+  width: 20px;
+}
+#resourceBody #resourceTop #reLower aside ul li a.active:before {
+  background: url('/img/iconDown.png') no-repeat;
+  background-size: 11px;
+  background-position: 6px;
+}
+#resourceBody #resourceTop #reLower aside ul li a.active,
+#resourceBody #resourceTop #reLower aside ul li a:hover {
+  background-color: #183b62;
+  color: white;
+}
+#resourceBody #resourceTop #reLower aside ul.subList {
+  display: none;
+  position: relative;
+}
+#resourceBody #resourceTop #reLower aside ul.grandChild:before {
+  content: "";
+  position: absolute;
+  left: -25px;
+  padding: 0 3px 4px;
+  background: url('/img/nestedWrap.png') repeat-y;
+  background-position: 4px;
+  height: 100%;
+  width: 4px;
+}
+#resourceBody #resourceTop #reLower aside ul.subList li {
+  padding-left: 25px;
+  position: relative;
+  left: 11px;
+}
+#resourceBody #resourceTop #reLower aside ul.subList li:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  padding: 0 3px 4px;
+  background: url('/img/nestedFull.png') no-repeat;
+  background-size: 20px 33px;
+  background-position: 4px;
+  margin-top: -2px;
+  display: block;
+  float: left;
+  height: 33px;
+  width: 20px;
+}
+#resourceBody #resourceTop #reLower aside ul.subList li:last-child:before {
+  background: url('/img/nestedLast.png') no-repeat;
+  background-size: 20px 16px;
+  background-position: 4px 0;
+}
+#resourceBody #resourceTop #reLower .contentBody {
+  width: 58%;
+  background-color: white;
+  padding: 20px 3%;
+  float: left;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+}
+#resourceBody #resourceTop #reLower .contentBody h1,
+#resourceBody #resourceTop #reLower .contentBody h2,
+#resourceBody #resourceTop #reLower .contentBody h3,
+#resourceBody #resourceTop #reLower .contentBody h4 {
+  color: #114477;
+}
+#resourceBody #resourceTop #reLower .contentBody p {
+  font-size: 12px;
+}

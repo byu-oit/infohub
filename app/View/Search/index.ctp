@@ -5,25 +5,7 @@
 <script>
 	$(document).ready(function() {
 		$("#searchLink").addClass('active');
-
-		$('li a').click(function (e) {
-			$(this).toggleClass('active');
-			e.preventDefault();
-			var ullist = $(this).parent().children('ul:first');
-			ullist.slideToggle();
-			listWidth();
-		});
 	});
-
-	$(document).ready(listWidth);
-	$(window).resize(listWidth);
-
-	function listWidth() {
-		$('.catalogChild').css('width', '100%').css('width', '-=11px');
-		$('.grandChild').css('width', '100%').css('width', '-=11px');
-		$('.greatGrandChild').css('width', '100%').css('width', '-=11px');
-	}
-
 </script>
 
 <!-- Background image div -->
