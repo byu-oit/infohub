@@ -10,6 +10,16 @@
 		$('.detailsTab').click(function() {
 			$(this).siblings('.resultContent').children('.resultBody').slideToggle();
 			$(this).toggleClass('active');
+            
+            if($(this).parent().find('.checkBoxes').html() == ''){
+                var thisElem = $(this);
+                var rid = $(this).attr('data-rid');
+                $.get( "/search/getFullVocab", { rid: rid } )
+                    .done(function( data ) {
+                        thisElem.parent().find('.resultBodyLoading').hide()
+                        thisElem.parent().find('.checkBoxes').html(data);
+                });
+            }
 		})
 	});
 
@@ -17,10 +27,10 @@
 
 	function resultsWidth() {
 		if ($(window).width() > 680) {
-			$('.resultContent').css('width', '100%').css('width', '-=200px');	
+			//$('.resultContent').css('width', '100%').css('width', '-=200px');	
 		}	
 		else {
-			$('.resultContent').css('width', '95%').css('width', '-=60px');	
+			//$('.resultContent').css('width', '95%').css('width', '-=60px');	
 		}
 	}
 		
@@ -37,8 +47,8 @@
 		<h1 class="headerTab" >Search Information</h1>
 		<div class="clear"></div>
 		<div id="stLower" class="whiteBox">
-			<form action="submit">
-				<input id="searchInput" type="text" class="inputShade" onkeyup="searchAutoComplete()" placeholder="Search keyword, topic, or phrase">
+			<form action="#" onsubmit="document.location='/search/results/'+this.searchInput.value; return false;" method="post">
+				<input id="searchInput" type="text" class="inputShade" onkeyup="searchAutoComplete()" value="<?php echo $searchInput ?>" placeholder="Search keyword, topic, or phrase" maxlength="50" autocomplete="off" >
 				<?php echo $this->element('auto_complete'); ?>
 				<input type="submit" value="Search" class="inputButton">
 			</form>
@@ -69,9 +79,43 @@
 				<label for="filerBy">Sort By:</label>
 				<select name="filterBy" id="filerBy" class="inputShade">
 					<option value="0" selected>Date Added</option>
-					<option value="classification">Classification</option>
+					<option value="1">This</option>
+					<option value="2">That</option>
+					<option value="3">The Other</option>
 				</select>
 			</div>
+			
+<?php
+    for($i=1; $i<sizeof($terms)-1; $i++){
+        $term = $terms[$i];
+?>
+			<div id="term<?php echo $i?>" class="resultItem highlyClassified">
+			    <form action="submit">
+                    <h4><?php echo $term[2]; ?></h4>
+                    <h5 class="blueText"><?php echo $term[14].'/'.$term[16]; ?></h5>
+                    <div class="resultContent">
+                        <ul>
+                            <li><span class="listLabel">Data Steward:&nbsp;</span><?php echo $term[8].' '.$term[9]; ?></li>
+                            <li><span class="listLabel">Date Created:&nbsp;</span><?php echo $term[0]; ?></li>
+                            <li><span class="listLabel">Classification: </span><span class="redText">Highly Classified</span></li>
+                        </ul>
+                        <div class="resultBody">
+                            <p><?php echo stripslashes(strip_tags($term[4])); ?></p>
+                            <h5>Also included in this selection (check all that apply to your request).</h5>
+                            <img class="resultBodyLoading" src="/img/dataLoading.gif" alt="Loading...">
+                            <div class="checkBoxes"></div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                    <a href="" class="addQuickLink grow"><img src="/img/iconStarBlue.gif" alt="Quick Link"></a>
+                    <a href="" class="requestAccess grow">Request Access</a>
+                    <a class="detailsTab" data-rid="<?php echo $term[17]; ?>"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a>
+				</form>
+			</div>
+<?php
+    }
+            ?>
+			<!--
 			<div class="resultItem highlyClassified">
 				<h4>Definition Title</h4>
 				<h5 class="blueText">Acedemic/Lorem/Lorem</h5>
@@ -168,7 +212,7 @@
 				<a href="" class="addQuickLink grow"><img src="/img/iconStarBlue.gif" alt="Quick Link"></a>
 				<a href="" class="requestAccess grow">Request Access</a>
 				<a class="detailsTab"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span> Details</a>
-			</div>
+			</div>-->
 			<div class="clear"></div>
 		</div>
 	</div>

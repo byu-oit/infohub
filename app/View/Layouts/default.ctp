@@ -133,14 +133,21 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 		}
 
 		function searchAutoComplete( e ) {
-			if ($.trim($('#searchInput').val()) == ''){
+            if ($.trim($('#searchInput').val()) == ''){
 				$('.autoComplete').hide();
-			}
-			else if  ( e == true ) {
+			}else if  ( e == true ) {
 				$('.autoComplete').hide();
-			}
-			else {
-				$('.autoComplete').show();
+			}else {
+				var val = $('#searchInput').val();
+                $.get( "/search/autoCompleteTerm", { q: val } )
+                    .done(function( data ) {
+                        $('.autoComplete .results').html(data);
+                        $('.autoComplete li').click(function(){
+                            $('#searchInput').val($(this).text());
+                            $('.autoComplete').hide();
+                        });
+                        $('.autoComplete').show();
+                });
 			}
 		}
 
