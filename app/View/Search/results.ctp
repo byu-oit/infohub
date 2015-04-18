@@ -65,42 +65,55 @@
 		<div id="srLower" class="whiteBox">
 			<div id="searchFilters">
 				<label for="filerBy">Filter By:</label>
-				<select name="filterBy" id="filerBy" class="inputShade">
-					<option value="0" selected>All Results</option>
-					<option value="academia">Academia</option>
-					<option value="advancement">Advancement</option>
-					<option value="financial">Financial</option>
-					<option value="human Resources">Human Resources</option>
-					<option value="international">International</option>
-					<option value="master-data">Master Data</option>
-					<option value="research">Research</option>
-					<option value="student Life">Student Life</option>
+				<select name="filterBy" id="filerBy" class="inputShade" onchange="document.location='/search/results/<?php echo $searchInput ?>?s=<?php echo $pageNum ?>&f='+this.value">
+				    <option value="">All</option>
+<?php
+    for($i=0; $i<sizeof($communities->communityReference); $i++){
+        $community = $communities->communityReference[$i];
+        $selected = '';
+        if($filter == $community->resourceId){
+            $selected = 'selected';
+        }
+        echo '<option value="'.$community->resourceId.'" '.$selected.'>'.$community->name.'</option>';
+    }
+?>
 				</select>
 				<label for="filerBy">Sort By:</label>
-				<select name="filterBy" id="filerBy" class="inputShade">
-					<option value="0" selected>Date Added</option>
-					<option value="1">This</option>
-					<option value="2">That</option>
-					<option value="3">The Other</option>
+				<select name="filterBy" id="filerBy" class="inputShade" onchange="document.location='/search/results/<?php echo $searchInput ?>?s='+this.value+'&f=<?php echo $filter ?>'">
+					<option value="0" <?php if($sort==0) echo 'selected'; ?>>Alphabetical</option>
+					<option value="1" <?php if($sort==1) echo 'selected'; ?>>Date Added</option>
+					<option value="2" <?php if($sort==2) echo 'selected'; ?>>Classification</option>
 				</select>
 			</div>
 			
 <?php
-    for($i=1; $i<sizeof($terms)-1; $i++){
-        $term = $terms[$i];
+    if(sizeof($terms->aaData)==0){
+        echo '<h1>No results found.</h1><h3>Please try a different search term.</h3>';
+    }else{
+        for($i=0; $i<sizeof($terms->aaData); $i++){
+            $term = $terms->aaData[$i];
+            $createdDate = $term->createdOn/1000;
+            $createdDate = date('m/d/Y', $createdDate);
 ?>
 			<div id="term<?php echo $i?>" class="resultItem highlyClassified">
 			    <form action="submit">
-                    <h4><?php echo $term[2]; ?></h4>
-                    <h5 class="blueText"><?php echo $term[14].'/'.$term[16]; ?></h5>
+                    <h4><?php echo $term->termsignifier; ?></h4>
+                    <h5 class="blueText"><?php echo $term->communityname.'/'.$term->domainname; ?></h5>
                     <div class="resultContent">
                         <ul>
-                            <li><span class="listLabel">Data Steward:&nbsp;</span><?php echo $term[8].' '.$term[9]; ?></li>
-                            <li><span class="listLabel">Date Created:&nbsp;</span><?php echo $term[0]; ?></li>
+                           <?php
+                                if(sizeof($term->Role00000000000000000000000000005016)>0){
+                                    $stewardName = $term->Role00000000000000000000000000005016[0]->userRole00000000000000000000000000005016fn.' '.$term->Role00000000000000000000000000005016[0]->userRole00000000000000000000000000005016fn;
+                            ?>
+                            <li><span class="listLabel">Data Steward:&nbsp;</span><?php echo $stewardName; ?></li>
+                            <?php
+                                }
+                            ?>
+                            <li><span class="listLabel">Date Created:&nbsp;</span><?php echo $createdDate; ?></li>
                             <li><span class="listLabel">Classification: </span><span class="redText">Highly Classified</span></li>
                         </ul>
                         <div class="resultBody">
-                            <p><?php echo stripslashes(strip_tags($term[4])); ?></p>
+                            <p><?php echo stripslashes(strip_tags($term->Attr00000000000000000000000000000202longExpr)); ?></p>
                             <h5>Also included in this selection (check all that apply to your request).</h5>
                             <img class="resultBodyLoading" src="/img/dataLoading.gif" alt="Loading...">
                             <div class="checkBoxes"></div>
@@ -108,11 +121,12 @@
                         </div>
                     </div>
                     <a href="" class="addQuickLink grow"><img src="/img/iconStarBlue.gif" alt="Quick Link"></a>
-                    <a href="" class="requestAccess grow">Request Access</a>
-                    <a class="detailsTab" data-rid="<?php echo $term[17]; ?>"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a>
+                    <a href="/search/request" class="requestAccess grow">Request Access</a>
+                    <a class="detailsTab" data-rid="<?php echo $term->domainrid; ?>"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a>
 				</form>
 			</div>
 <?php
+        }
     }
             ?>
 			<!--
@@ -214,6 +228,17 @@
 				<a class="detailsTab"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span> Details</a>
 			</div>-->
 			<div class="clear"></div>
+			<?php
+                if($totalPages>1){
+                    echo '<ul class="page-nav">';
+                    for($i=0; $i<$totalPages; $i++){
+                        $cssClass = (($i+1) == $pageNum)?'class="active"':'';
+                        echo '<li '.$cssClass.'><a href="/search/results/'.$searchInput.'/'.($i+1).'/?s='.$sort.'&f='.$filter.'">'.($i+1).'</a></li>';   
+                    }
+                    echo '</ul>';
+                }
+            ?>
+            <div class="clear"></div>
 		</div>
 	</div>
 </div>

@@ -144,6 +144,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
                         $('.autoComplete .results').html(data);
                         $('.autoComplete li').click(function(){
                             $('#searchInput').val($(this).text());
+                            $('#searchInput').parent().submit();
                             $('.autoComplete').hide();
                         });
                         $('.autoComplete').show();

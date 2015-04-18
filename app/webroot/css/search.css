@@ -469,6 +469,64 @@ img.resultBodyLoading {
   background: url('/img/iconInternal.png') no-repeat;
   background-size: 26px;
 }
+#searchBody #searchResults .page-nav,
+#searchBody #requestForm .page-nav,
+#searchBody #searchSuccess .page-nav {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  *zoom: 1;
+  margin-top: 10px;
+  float: right;
+}
+#searchBody #searchResults .page-nav:before,
+#searchBody #requestForm .page-nav:before,
+#searchBody #searchSuccess .page-nav:before,
+#searchBody #searchResults .page-nav:after,
+#searchBody #requestForm .page-nav:after,
+#searchBody #searchSuccess .page-nav:after {
+  content: "";
+  display: table;
+}
+#searchBody #searchResults .page-nav:after,
+#searchBody #requestForm .page-nav:after,
+#searchBody #searchSuccess .page-nav:after {
+  clear: both;
+}
+#searchBody #searchResults .page-nav li,
+#searchBody #requestForm .page-nav li,
+#searchBody #searchSuccess .page-nav li {
+  float: left;
+  margin: 0;
+  padding: 0;
+}
+#searchBody #searchResults .page-nav li a,
+#searchBody #requestForm .page-nav li a,
+#searchBody #searchSuccess .page-nav li a {
+  width: 10px;
+  height: 15px;
+  text-align: center;
+  color: #F3F3F3;
+  display: block;
+  padding: 2px 5px;
+  margin: 0 5px 0 0;
+  float: left;
+  background-color: #4775AB;
+  text-decoration: none;
+  -webkit-box-shadow: 3px 3px 6px 0px rgba(50, 50, 50, 0.15);
+  -moz-box-shadow: 3px 3px 6px 0px rgba(50, 50, 50, 0.15);
+  box-shadow: 3px 3px 6px 0px rgba(50, 50, 50, 0.15);
+}
+#searchBody #searchResults .page-nav li.active a,
+#searchBody #requestForm .page-nav li.active a,
+#searchBody #searchSuccess .page-nav li.active a,
+#searchBody #searchResults .page-nav li a:hover,
+#searchBody #requestForm .page-nav li a:hover,
+#searchBody #searchSuccess .page-nav li a:hover {
+  color: #224d7d;
+  font-weight: bold;
+  background-color: #fff;
+}
 #searchBody #requestForm h2,
 #searchBody #searchSuccess h2 {
   font-size: 30px;
