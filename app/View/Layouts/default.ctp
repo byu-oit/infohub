@@ -152,43 +152,6 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			}
 		}
 
-		function addQL(inQL) {	
-			var proceed = "0";	
-			// var qlAddText = "Added to MyQuick Links";
-			$.ajax({
-				type: 'GET',
-				url: '/ajax/checkQL.php?QL='+inQL,
-				data: $(this).serialize()
-			})
-			.done(function(data){	
-			    if (data == "1") {		   				   				  			 
-					$.ajax({
-						type: 'GET',
-						url: '/ajax/addQL.php?QL='+inQL,
-						data: $(this).serialize()
-					})
-					.done(function(data){				 
-						// show the response						
-						$('#QLContainer').html(data);
-						// $('.qlText').css('color', '#929292');
-						// $('.addQuickLink .qlText').html(qlAddText);
-						$('.addQuickLink img').attr('src', '/img/iconStarBlue.gif');			 
-					})
-					.fail(function() {			 									 
-					});	 
-					return false;	
-				} else if (data == "2") {											         	
-					// $('.qlText').css('color', '#929292');
-					// $('.addQuickLink .qlText').html(qlAddText);
-					$('.addQuickLink img').attr('src', '/img/iconStarBlue.gif');
-					return false;
-				}else {
-					alert('You may only have up to 9 Quick Links.  Remove 1 or more Quick Links by clicking the "Edit My Quick Links" button below the Quick Links Area before adding new Quick Links.');	
-				}			
-			})
-			.fail(function() {			 							 
-			});										
-		}
 		$(document).on( 'click', function ( e ) {
 			if ( $( e.target ).closest('.autoComplete').length === 0 ) {
 				$('.autoComplete').hide();

@@ -149,7 +149,7 @@
                     echo '<ul class="page-nav">';
                     for($i=0; $i<$totalPages; $i++){
                         $cssClass = (($i+1) == $pageNum)?'class="active"':'';
-                        echo '<li '.$cssClass.'><a href="/search/results/'.$searchInput.'/'.($i+1).'/?s='.$sort.'&f='.$filter.'">'.($i+1).'</a></li>';   
+                        echo '<li '.$cssClass.'><a href="/search/listTerms/'.$domain.'/'.($i+1).'/?s='.$sort.'&f='.$filter.'">'.($i+1).'</a></li>';   
                     }
                     echo '</ul>';
                 }

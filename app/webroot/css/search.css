@@ -23,9 +23,8 @@
 img.resultBodyLoading {
   width: 50px;
   padding: 20px;
-  margin: 20px auto 40px;
+  margin: 20px auto 40px auto;
   display: block;
-  padding-left: 20%;
 }
 #searchBody {
   position: relative;
@@ -509,7 +508,7 @@ img.resultBodyLoading {
   color: #F3F3F3;
   display: block;
   padding: 2px 5px;
-  margin: 0 5px 0 0;
+  margin: 0 5px 5px 0;
   float: left;
   background-color: #4775AB;
   text-decoration: none;

@@ -30,5 +30,15 @@ App::uses('Controller', 'Controller');
  * @package		app.Controller
  * @link		http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
  */
-class AppController extends Controller {
+class AppController extends Controller {   
+    private $quickLinks;
+    
+    public function beforeFilter() {
+        parent::beforeFilter();
+        
+        App::import('Controller', 'QuickLinks');
+        $objQuickLinks = new QuickLinksController;
+        $quickLinks = $objQuickLinks->load();
+        $this->set('quickLinks', $quickLinks);
+    }
 }

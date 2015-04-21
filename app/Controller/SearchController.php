@@ -4,26 +4,7 @@ class SearchController extends AppController {
     private static function  str_getcsv2($arr){
         $a = str_getcsv($arr, ";", '"');
         $epoch = $a[0]/1000;
-        $a[0] = date('m/d/Y', $epoch);
-        //print_r($a);
-        //echo "\r\n-----------------\r\n";
-        
-        // add all terms in vocabulary to array
-        /////////////////////////////////////////////////
-        /*$obj = new SearchController();
-        $obj->loadModel('CollibraAPI');
-        $objCollibra = new CollibraAPI();
-        if(sizeof($a)>1){
-            $resp = $objCollibra->request(
-                array('url'=>'vocabulary/'.$a[17].'/terms')
-            );
-            $jsonResp = json_decode($resp);
-            if(sizeof($jsonResp->termReference)>0){
-                array_push($a, $jsonResp->termReference);
-            }
-        }*/
-        /////////////////////////////////////////////////
-        
+        $a[0] = date('m/d/Y', $epoch);        
         return $a;
     }
     
@@ -32,7 +13,17 @@ class SearchController extends AppController {
     }
     
     public function catalog() {
+        /*
+        $obj = new SearchController();
+        $obj->loadModel('CollibraAPI');
+        $objCollibra = new CollibraAPI();
+        $resp = $objCollibra->request(
+            array('url'=>'community/99582048-38e3-4149-a301-c6d54d8151c8/sub-communities')
+        );
+        $resp = json_decode($resp);
+        */
         
+        //$this->set('communities', $this->loadCommunityData());
     }
     
     public function success() {
@@ -41,6 +32,47 @@ class SearchController extends AppController {
     
     public function request() {
         
+    }
+    
+    public function term() {
+        if(!isset($this->request->params['pass'][0])){
+            header('location: /search');
+            exit;
+        }
+        $query = $this->request->params['pass'][0];
+        $terms = $this->getTermDetails($query);
+        
+        $this->set('commonSearches', $this->getCommonSearches());
+        $this->set('totalPages', 0);
+        $this->set('pageNum', 0);
+        $this->set('terms', $terms);
+        $this->set('searchInput', '');
+        
+        $this->render('results');
+    }
+    
+    public function listTerms() {
+        if(!isset($this->request->params['pass'][0])){
+            header('location: /search');
+            exit;
+        }
+        
+        App::uses('Helpers', 'Model');
+        $page = 0;
+        if(isset($this->request->params['pass'][1])){
+            $page = Helpers::getInt($this->request->params['pass'][1]);
+        }
+        if($page==0) $page=1;
+        
+        $domainID = $this->request->params['pass'][0];
+        $terms = $this->getDomainTerms($domainID, $page-1, 25);
+        
+        $this->set('commonSearches', $this->getCommonSearches());
+        $this->set('totalPages', ceil($terms->iTotalDisplayRecords/25));
+        $this->set('pageNum', $page);
+        $this->set('terms', $terms);
+        $this->set('searchInput', '');
+        $this->set('domain', $domainID);
     }
     
     public function results() {
@@ -72,12 +104,15 @@ class SearchController extends AppController {
         }
         ///////////////////////////////////////////////////////
         
-        $page = Helpers::getInt($this->request->params['pass'][1]);
+        $page = 0;
+        if(isset($this->request->params['pass'][1])){
+            $page = Helpers::getInt($this->request->params['pass'][1]);
+        }
         if($page==0) $page=1;
         
         // get all terms matching query
-        ///////////////////////////////////////////////////////
         $terms = $this->searchTerms($query, $page-1, 10, $sortField, $sortOrder, $filter);
+        
         // save search and delete anything over 300 entries
         if(sizeof($terms->aaData)>0){
             $this->loadModel('CollibraAPI');
@@ -110,6 +145,50 @@ class SearchController extends AppController {
         $this->set('sort', $sort);
         $this->set('terms', $terms);
         $this->set('searchInput', $query);
+    }
+    
+    public function loadCommunityData($community='99582048-38e3-4149-a301-c6d54d8151c8'){
+        //$community = '99582048-38e3-4149-a301-c6d54d8151c8'
+        $this->autoRender = false;
+        $resp = '';
+        if ($this->request->is('post')) {
+            if(isset($this->request->data['c']) && $this->request->data['c'] != ''){
+                $community = $this->request->data['c'];
+            }
+        }
+            
+        $obj = new SearchController();
+        $obj->loadModel('CollibraAPI');
+        $objCollibra = new CollibraAPI();
+        $resp = $objCollibra->request(
+            array(
+                'url'=>'output/data_table',
+                'post'=>true,
+                'json'=>true,
+                'params'=>'{"TableViewConfig":{"Columns":[{"Community":{"name":"Subcommunities","Columns":[{"Column":{"fieldName":"subcommunityid"}},{"Column":{"fieldName":"subcommunity"}},{"Column":{"fieldName":"hasNonMetaChildren"}},{"Group":{"Columns":[{"Column":{"label":"Admin User ID","fieldId":"00000000-0000-0000-0000-000000005015","fieldName":"userRole00000000000000000000000000005015rid"}},{"Column":{"label":"Admin Gender","fieldName":"userRole00000000000000000000000000005015gender"}},{"Column":{"label":"Admin First Name","fieldName":"userRole00000000000000000000000000005015fn"}},{"Column":{"label":"Admin Last Name","fieldName":"userRole00000000000000000000000000005015ln"}}],"name":"Role00000000000000000000000000005015"}},{"Group":{"Columns":[{"Column":{"label":"Admin Group ID","fieldName":"groupRole00000000000000000000000000005015grid"}},{"Column":{"label":"Admin Group Name","fieldName":"groupRole00000000000000000000000000005015ggn"}}],"name":"Role00000000000000000000000000005015g"}},{"Group":{"Columns":[{"Column":{"label":"Stakeholder User ID","fieldId":"00000000-0000-0000-0000-000000005018","fieldName":"userRole00000000000000000000000000005018rid"}},{"Column":{"label":"Stakeholder Gender","fieldName":"userRole00000000000000000000000000005018gender"}},{"Column":{"label":"Stakeholder First Name","fieldName":"userRole00000000000000000000000000005018fn"}},{"Column":{"label":"Stakeholder Last Name","fieldName":"userRole00000000000000000000000000005018ln"}}],"name":"Role00000000000000000000000000005018"}},{"Group":{"Columns":[{"Column":{"label":"Stakeholder Group ID","fieldName":"groupRole00000000000000000000000000005018grid"}},{"Column":{"label":"Stakeholder Group Name","fieldName":"groupRole00000000000000000000000000005018ggn"}}],"name":"Role00000000000000000000000000005018g"}},{"Group":{"Columns":[{"Column":{"label":"Steward User ID","fieldId":"00000000-0000-0000-0000-000000005016","fieldName":"userRole00000000000000000000000000005016rid"}},{"Column":{"label":"Steward Gender","fieldName":"userRole00000000000000000000000000005016gender"}},{"Column":{"label":"Steward First Name","fieldName":"userRole00000000000000000000000000005016fn"}},{"Column":{"label":"Steward Last Name","fieldName":"userRole00000000000000000000000000005016ln"}}],"name":"Role00000000000000000000000000005016"}},{"Group":{"Columns":[{"Column":{"label":"Steward Group ID","fieldName":"groupRole00000000000000000000000000005016grid"}},{"Column":{"label":"Steward Group Name","fieldName":"groupRole00000000000000000000000000005016ggn"}}],"name":"Role00000000000000000000000000005016g"}}]}},{"Vocabulary":{"name":"Vocabularies","Columns":[{"Column":{"fieldName":"vocabulary"}},{"Column":{"fieldName":"vocabularyid"}},{"Column":{"fieldName":"domainType"}},{"Group":{"Columns":[{"Column":{"label":"Admin User ID","fieldId":"00000000-0000-0000-0000-000000005015","fieldName":"userRole00000000000000000000000000005015VOCSUFFIXrid"}},{"Column":{"label":"Admin Gender","fieldName":"userRole00000000000000000000000000005015VOCSUFFIXgender"}},{"Column":{"label":"Admin First Name","fieldName":"userRole00000000000000000000000000005015VOCSUFFIXfn"}},{"Column":{"label":"Admin Last Name","fieldName":"userRole00000000000000000000000000005015VOCSUFFIXln"}}],"name":"Role00000000000000000000000000005015VOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Admin Group ID","fieldName":"groupRole00000000000000000000000000005015gVOCSUFFIXrid"}},{"Column":{"label":"Admin Group Name","fieldName":"groupRole00000000000000000000000000005015gVOCSUFFIXgn"}}],"name":"Role00000000000000000000000000005015gVOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Stakeholder User ID","fieldId":"00000000-0000-0000-0000-000000005018","fieldName":"userRole00000000000000000000000000005018VOCSUFFIXrid"}},{"Column":{"label":"Stakeholder Gender","fieldName":"userRole00000000000000000000000000005018VOCSUFFIXgender"}},{"Column":{"label":"Stakeholder First Name","fieldName":"userRole00000000000000000000000000005018VOCSUFFIXfn"}},{"Column":{"label":"Stakeholder Last Name","fieldName":"userRole00000000000000000000000000005018VOCSUFFIXln"}}],"name":"Role00000000000000000000000000005018VOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Stakeholder Group ID","fieldName":"groupRole00000000000000000000000000005018gVOCSUFFIXrid"}},{"Column":{"label":"Stakeholder Group Name","fieldName":"groupRole00000000000000000000000000005018gVOCSUFFIXgn"}}],"name":"Role00000000000000000000000000005018gVOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Steward User ID","fieldId":"00000000-0000-0000-0000-000000005016","fieldName":"userRole00000000000000000000000000005016VOCSUFFIXrid"}},{"Column":{"label":"Steward Gender","fieldName":"userRole00000000000000000000000000005016VOCSUFFIXgender"}},{"Column":{"label":"Steward First Name","fieldName":"userRole00000000000000000000000000005016VOCSUFFIXfn"}},{"Column":{"label":"Steward Last Name","fieldName":"userRole00000000000000000000000000005016VOCSUFFIXln"}}],"name":"Role00000000000000000000000000005016VOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Steward Group ID","fieldName":"groupRole00000000000000000000000000005016gVOCSUFFIXrid"}},{"Column":{"label":"Steward Group Name","fieldName":"groupRole00000000000000000000000000005016gVOCSUFFIXgn"}}],"name":"Role00000000000000000000000000005016gVOCSUFFIX"}}]}}],"Resources":{"Community":{"Id":{"name":"subcommunityid"},"Name":{"name":"subcommunity"},"Meta":{"name":"issubmeta"},"hasNonMetaChildren":{"name":"hasNonMetaChildren"},"ParentCommunity":{"Id":{"name":"parentCommunityId"}},"Member":[{"User":{"Gender":{"name":"userRole00000000000000000000000000005015gender"},"FirstName":{"name":"userRole00000000000000000000000000005015fn"},"Id":{"name":"userRole00000000000000000000000000005015rid"},"LastName":{"name":"userRole00000000000000000000000000005015ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005015sig"},"name":"Role00000000000000000000000000005015","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005015rid"}},"roleId":"00000000-0000-0000-0000-000000005015"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005015g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005015grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005015ggn"},"Id":{"name":"groupRole00000000000000000000000000005015grid"}},"roleId":"00000000-0000-0000-0000-000000005015"},{"User":{"Gender":{"name":"userRole00000000000000000000000000005018gender"},"FirstName":{"name":"userRole00000000000000000000000000005018fn"},"Id":{"name":"userRole00000000000000000000000000005018rid"},"LastName":{"name":"userRole00000000000000000000000000005018ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005018sig"},"name":"Role00000000000000000000000000005018","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005018rid"}},"roleId":"00000000-0000-0000-0000-000000005018"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005018g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005018grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005018ggn"},"Id":{"name":"groupRole00000000000000000000000000005018grid"}},"roleId":"00000000-0000-0000-0000-000000005018"},{"User":{"Gender":{"name":"userRole00000000000000000000000000005016gender"},"FirstName":{"name":"userRole00000000000000000000000000005016fn"},"Id":{"name":"userRole00000000000000000000000000005016rid"},"LastName":{"name":"userRole00000000000000000000000000005016ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016sig"},"name":"Role00000000000000000000000000005016","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016rid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005016ggn"},"Id":{"name":"groupRole00000000000000000000000000005016grid"}},"roleId":"00000000-0000-0000-0000-000000005016"}],"Filter":{"AND":[{"AND":[{"Field":{"name":"issubmeta","operator":"EQUALS","value":false}}]},{"AND":[{"Field":{"name":"parentCommunityId","operator":"EQUALS","value":"'.$community.'"}}]}]},"Order":[{"Field":{"name":"subcommunity","order":"ASC"}}]},"Vocabulary":{"Name":{"name":"vocabulary"},"Id":{"name":"vocabularyid"},"Meta":{"name":"isvocmeta"},"Community":{"Id":{"name":"vocabularyParentCommunityId"}},"VocabularyType":{"Signifier":{"name":"domainType"}},"Member":[{"User":{"Gender":{"name":"userRole00000000000000000000000000005015VOCSUFFIXgender"},"FirstName":{"name":"userRole00000000000000000000000000005015VOCSUFFIXfn"},"Id":{"name":"userRole00000000000000000000000000005015VOCSUFFIXrid"},"LastName":{"name":"userRole00000000000000000000000000005015VOCSUFFIXln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005015VOCSUFFIXsig"},"name":"Role00000000000000000000000000005015VOCSUFFIX","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005015VOCSUFFIXrid"}},"roleId":"00000000-0000-0000-0000-000000005015"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005015gVOCSUFFIX"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005015gVOCSUFFIXrid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005015gVOCSUFFIXgn"},"Id":{"name":"groupRole00000000000000000000000000005015gVOCSUFFIXrid"}},"roleId":"00000000-0000-0000-0000-000000005015"},{"User":{"Gender":{"name":"userRole00000000000000000000000000005018VOCSUFFIXgender"},"FirstName":{"name":"userRole00000000000000000000000000005018VOCSUFFIXfn"},"Id":{"name":"userRole00000000000000000000000000005018VOCSUFFIXrid"},"LastName":{"name":"userRole00000000000000000000000000005018VOCSUFFIXln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005018VOCSUFFIXsig"},"name":"Role00000000000000000000000000005018VOCSUFFIX","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005018VOCSUFFIXrid"}},"roleId":"00000000-0000-0000-0000-000000005018"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005018gVOCSUFFIX"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005018gVOCSUFFIXrid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005018gVOCSUFFIXgn"},"Id":{"name":"groupRole00000000000000000000000000005018gVOCSUFFIXrid"}},"roleId":"00000000-0000-0000-0000-000000005018"},{"User":{"Gender":{"name":"userRole00000000000000000000000000005016VOCSUFFIXgender"},"FirstName":{"name":"userRole00000000000000000000000000005016VOCSUFFIXfn"},"Id":{"name":"userRole00000000000000000000000000005016VOCSUFFIXrid"},"LastName":{"name":"userRole00000000000000000000000000005016VOCSUFFIXln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016VOCSUFFIXsig"},"name":"Role00000000000000000000000000005016VOCSUFFIX","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016VOCSUFFIXrid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016gVOCSUFFIX"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016gVOCSUFFIXrid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005016gVOCSUFFIXgn"},"Id":{"name":"groupRole00000000000000000000000000005016gVOCSUFFIXrid"}},"roleId":"00000000-0000-0000-0000-000000005016"}],"Filter":{"AND":[{"AND":[{"Field":{"name":"isvocmeta","operator":"EQUALS","value":false}}]},{"AND":[{"Field":{"name":"vocabularyParentCommunityId","operator":"EQUALS","value":"'.$community.'"}}]}]},"Order":[{"Field":{"name":"vocabulary","order":"ASC"}}]}},"displayStart":0,"displayLength":20,"generalConceptId":"'.$community.'"}}'
+            )
+        );
+
+        //$resp = json_decode($resp);
+        return $resp;
+        //exit;
+    }
+    
+    public function loadChildDomains(){
+        $this->autoRender = false;
+        if ($this->request->is('post')) {
+            $community = '78067114-8ad0-48af-9a46-f50859b280f2';//$this->request->data['c'];;
+            $obj = new SearchController();
+            $obj->loadModel('CollibraAPI');
+            $objCollibra = new CollibraAPI();
+            $resp = $objCollibra->request(
+                array('url'=>'vocabulary/all?community='.$community)
+            );
+
+            //$resp = json_decode($resp);
+            return $resp;
+        }
+        //exit;
     }
     
     public function getFullVocab() {
@@ -181,6 +260,70 @@ class SearchController extends AppController {
         } else {
             return 0;
         }
+    }
+    
+    private function getTermDetails($query){
+        $arrResp = '';
+        $obj = new SearchController();
+        $obj->loadModel('CollibraAPI');
+        $objCollibra = new CollibraAPI();
+        
+        $communityFilter = 'fbe8efa7-6273-475b-8770-bf0efac31752';
+        $commFilter = '{"Field":{"name":"commrid","operator":"EQUALS","value":"'.$communityFilter.'"}},';
+        
+        $requestFilter = '{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"createdOn"}},{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldId":"00000000-0000-0000-0000-000000000202","fieldName":"Attr00000000000000000000000000000202"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202longExpr"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202rid"}},{"Group":{"Columns":[{"Column":{"label":"Steward User ID","fieldId":"00000000-0000-0000-0000-000000005016","fieldName":"userRole00000000000000000000000000005016rid"}},{"Column":{"label":"Steward Gender","fieldName":"userRole00000000000000000000000000005016gender"}},{"Column":{"label":"Steward First Name","fieldName":"userRole00000000000000000000000000005016fn"}},{"Column":{"label":"Steward Last Name","fieldName":"userRole00000000000000000000000000005016ln"}}],"name":"Role00000000000000000000000000005016"}},{"Group":{"Columns":[{"Column":{"label":"Steward Group ID","fieldName":"groupRole00000000000000000000000000005016grid"}},{"Column":{"label":"Steward Group Name","fieldName":"groupRole00000000000000000000000000005016ggn"}}],"name":"Role00000000000000000000000000005016g"}},{"Column":{"fieldName":"statusname"}},{"Column":{"fieldName":"statusrid"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldName":"concepttyperid"}}],'.
+            '"Resources":{"Term":{"CreatedOn":{"name":"createdOn"},"Id":{"name":"termrid"},"Signifier":{"name":"termsignifier"},"StringAttribute":[{"Value":{"name":"Attr00000000000000000000000000000202"},"LongExpression":{"name":"Attr00000000000000000000000000000202longExpr"},"Id":{"name":"Attr00000000000000000000000000000202rid"},"labelId":"00000000-0000-0000-0000-000000000202"}],"Member":[{"User":{"Gender":{"name":"userRole00000000000000000000000000005016gender"},"FirstName":{"name":"userRole00000000000000000000000000005016fn"},"Id":{"name":"userRole00000000000000000000000000005016rid"},"LastName":{"name":"userRole00000000000000000000000000005016ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016sig"},"name":"Role00000000000000000000000000005016","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016rid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005016ggn"},"Id":{"name":"groupRole00000000000000000000000000005016grid"}},"roleId":"00000000-0000-0000-0000-000000005016"}],"Status":{"Signifier":{"name":"statusname"},"Id":{"name":"statusrid"}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"},"Id":{"name":"concepttyperid"}}],'.
+            '"Filter":{'.
+            '   "AND":['.
+            '        {'.
+            '           "OR":['.
+            '              {'.
+            '                 "Field":{'.
+            '                    "name":"termrid",'.
+            '                    "operator":"EQUALS",'.
+            '                    "value":"'.$query.'"'.
+            '                 }'.
+            '              }'.
+            '           ]'.
+            '        }'.
+            '     ]'.
+            '}'.
+            ',"Order":['.
+            '   {"Field":{"name":"termsignifier","order":"ASC"}}'.
+            ']'.
+            '}'.
+            '},"displayStart":0,"displayLength":10}}';
+        
+        $resp = $objCollibra->request(
+            array(
+                'url'=>'output/data_table',
+                //'url'=>'output/csv-raw',
+                'post'=>true,
+                'json'=>true,
+                'params'=>$requestFilter
+            )
+        );
+
+        $resp = json_decode($resp);
+        //$arrResp = array_map('self::str_getcsv2', explode("\n", $resp));
+        
+        // check to see if this terms is stored in user's quick links cookie
+        if(sizeof($resp->aaData)>0 && isset($_COOKIE['QL'])){
+            for($i=0; $i<sizeof($resp->aaData); $i++){
+                $resp->aaData[$i]->saved = '0';
+                $arrQl = unserialize($_COOKIE['QL']);
+                for($i=0; $i<sizeof($arrQl); $i++){
+                    if($arrQl[$i][1] == $resp->aaData[$i]->termrid){
+                        $resp->aaData[$i]->saved = '1';
+                        break;
+                    }
+                }
+            }
+        }
+        
+        //print_r($resp);
+        //exit;
+        return $resp;
     }
     
     private function searchTerms($query, $page=0, $displayLength=20, $sortField='termsignifier', $sortOrder='ASC', $communityFilter='99582048-38e3-4149-a301-c6d54d8151c8', $termOnly=false){
@@ -257,6 +400,78 @@ class SearchController extends AppController {
 
         $resp = json_decode($resp);
         //$arrResp = array_map('self::str_getcsv2', explode("\n", $resp));
+        
+        // check to see if this terms is stored in user's quick links cookie
+        if(sizeof($resp->aaData)>0 && isset($_COOKIE['QL'])){
+            for($i=0; $i<sizeof($resp->aaData); $i++){
+                $resp->aaData[$i]->saved = '0';
+                $arrQl = unserialize($_COOKIE['QL']);
+                for($j=0; $j<sizeof($arrQl); $j++){
+                    if($arrQl[$j][1] == $resp->aaData[$i]->termrid){
+                        $resp->aaData[$i]->saved = '1';
+                        break;
+                    }
+                }
+            }
+        }
+        
+        //print_r($resp);
+        //exit;
+        return $resp;
+    }
+    
+    private function getDomainTerms($domainFilter='', $page=0, $displayLength=20, $sortField='termsignifier', $sortOrder='ASC'){
+        $arrResp = '';
+        $displayStart = $page*$displayLength;
+        
+        $obj = new SearchController();
+        $obj->loadModel('CollibraAPI');
+        $objCollibra = new CollibraAPI();
+        
+        $requestFilter = '{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"createdOn"}},{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldId":"00000000-0000-0000-0000-000000000202","fieldName":"Attr00000000000000000000000000000202"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202longExpr"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202rid"}},{"Group":{"Columns":[{"Column":{"label":"Steward User ID","fieldId":"00000000-0000-0000-0000-000000005016","fieldName":"userRole00000000000000000000000000005016rid"}},{"Column":{"label":"Steward Gender","fieldName":"userRole00000000000000000000000000005016gender"}},{"Column":{"label":"Steward First Name","fieldName":"userRole00000000000000000000000000005016fn"}},{"Column":{"label":"Steward Last Name","fieldName":"userRole00000000000000000000000000005016ln"}}],"name":"Role00000000000000000000000000005016"}},{"Group":{"Columns":[{"Column":{"label":"Steward Group ID","fieldName":"groupRole00000000000000000000000000005016grid"}},{"Column":{"label":"Steward Group Name","fieldName":"groupRole00000000000000000000000000005016ggn"}}],"name":"Role00000000000000000000000000005016g"}},{"Column":{"fieldName":"statusname"}},{"Column":{"fieldName":"statusrid"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldName":"concepttyperid"}}],'.
+            '"Resources":{"Term":{"CreatedOn":{"name":"createdOn"},"Id":{"name":"termrid"},"Signifier":{"name":"termsignifier"},"StringAttribute":[{"Value":{"name":"Attr00000000000000000000000000000202"},"LongExpression":{"name":"Attr00000000000000000000000000000202longExpr"},"Id":{"name":"Attr00000000000000000000000000000202rid"},"labelId":"00000000-0000-0000-0000-000000000202"}],"Member":[{"User":{"Gender":{"name":"userRole00000000000000000000000000005016gender"},"FirstName":{"name":"userRole00000000000000000000000000005016fn"},"Id":{"name":"userRole00000000000000000000000000005016rid"},"LastName":{"name":"userRole00000000000000000000000000005016ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016sig"},"name":"Role00000000000000000000000000005016","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016rid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005016ggn"},"Id":{"name":"groupRole00000000000000000000000000005016grid"}},"roleId":"00000000-0000-0000-0000-000000005016"}],"Status":{"Signifier":{"name":"statusname"},"Id":{"name":"statusrid"}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"},"Id":{"name":"concepttyperid"}}],'.
+            '"Filter":{'.
+            '   "AND":['.
+            '        {'.
+            '           "AND":['.
+            '               {"Field":{"name":"domainrid","operator":"EQUALS","value":"'.$domainFilter.'"}}'.
+            '           ]'.
+            '        }'.
+            '     ]'.
+            '}'.
+            ',"Order":[';
+
+        // set sort options
+        $requestFilter .= '{"Field":{"name":"'.$sortField.'","order":"'.$sortOrder.'"}}';
+        // set paging options
+        $requestFilter .= ']}},"displayStart":'.$displayStart.',"displayLength":'.$displayLength.'}}';
+
+        $resp = $objCollibra->request(
+            array(
+                'url'=>'output/data_table',
+                //'url'=>'output/csv-raw',
+                'post'=>true,
+                'json'=>true,
+                'params'=>$requestFilter
+            )
+        );
+
+        $resp = json_decode($resp);
+        //$arrResp = array_map('self::str_getcsv2', explode("\n", $resp));
+        
+        // check to see if this terms is stored in user's quick links cookie
+        if(sizeof($resp->aaData)>0 && isset($_COOKIE['QL'])){
+            for($i=0; $i<sizeof($resp->aaData); $i++){
+                $resp->aaData[$i]->saved = '0';
+                $arrQl = unserialize($_COOKIE['QL']);
+                for($j=0; $j<sizeof($arrQl); $j++){
+                    if($arrQl[$j][1] == $resp->aaData[$i]->termrid){
+                        $resp->aaData[$i]->saved = '1';
+                        break;
+                    }
+                }
+            }
+        }
         
         //print_r($resp);
         //exit;
