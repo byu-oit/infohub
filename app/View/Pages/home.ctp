@@ -52,11 +52,11 @@ $this->Html->css('home', null, array('inline' => false));
 				<h3>Search Information</h3>
 			</div>
 			<div id="searchBox">
-				<form action="submit">
-					<input id="searchInput" type="text" onkeyup="searchAutoComplete()" placeholder="Search keyword, topic, or phrase">
-					<?php echo $this->element('auto_complete'); ?>
-					<input type="submit" value="Search" >
-				</form>
+				<form action="#" onsubmit="document.location='/search/results/'+this.searchInput.value; return false;" method="post">
+                    <input id="searchInput" name="searchInput" type="text" class="inputShade" onkeyup="searchAutoComplete()" placeholder="Search keyword, topic, or phrase" maxlength="50" autocomplete="off"  />
+                    <?php echo $this->element('auto_complete'); ?>
+                    <input type="submit" value="Search" class="inputButton" />
+                </form>
 			</div>
 			<a href="/search/catalog" id="catalogLink" class="grow"><img src="/img/catalogLink2.png" alt="See full catealog"></a>
 		</div>

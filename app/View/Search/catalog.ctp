@@ -4,23 +4,7 @@
 ?>
 <script>
 	$(document).ready(function() {
-		$("#searchLink").addClass('active');
-
-		$('li a').click(function (e) {
-			$(this).toggleClass('active');
-			e.preventDefault();
-            
-            var community = $(this).attr('data-c');
-            $.post("/search/loadChildDomains", { c:community })
-                .done(function(data) {
-                    var objDomains = JSON.parse(data);
-                    alert(objDomains.vocabularyReference[0].name)
-                    var ullist = $(this).parent().children('ul:first');
-                    ullist.slideToggle();
-                    listWidth();
-            });
-		});
-        
+		$("#searchLink").addClass('active');    
         loadCommunityData(null, 'catalogList0');
 	});
 
@@ -78,7 +62,6 @@
                     ullist.slideToggle();
                     listWidth();
                 });
-                //alert(objDomains.aaData[0].Subcommunities[0].subcommunity)
                 
         });
     }
@@ -94,9 +77,10 @@
 		<h1 class="headerTab" >Search Information</h1>
 		<div class="clear"></div>
 		<div id="stLower" class="whiteBox">
-			<form action="submit">
-				<input type="text" class="inputShade" placeholder="Search keyword, topic, or phrase">
-				<input type="submit" value="Search" class="inputButton">
+			<form action="#" onsubmit="document.location='/search/results/'+this.searchInput.value; return false;" method="post">
+				<input id="searchInput" name="searchInput" type="text" class="inputShade" onkeyup="searchAutoComplete()" placeholder="Search keyword, topic, or phrase" maxlength="50" autocomplete="off"  />
+				<?php echo $this->element('auto_complete'); ?>
+				<input type="submit" value="Search" class="inputButton" />
 			</form>
 			<div class="clear"></div>
 		</div>
@@ -108,48 +92,6 @@
 		<div id="smLower" class="whiteBox">
 			<ul class="catalogParent" id="catalogList0">
                 <a href=""><img src="/img/dataLoading-sm.gif" alt="Loading..."></a>
-			    <?php
-                    /*foreach($communities->communityReference as $c){
-                        echo '<li class="catalogItem">'.
-                            '   <a data-cid="'.$c->resourceId.'" href="#" class="hasChildren">'.$c->name.'</a>'.
-                            '   <ul class="subList catalogChild">'.
-                            '       <li class="catalogItem"><a>Lorem</a></li>'.
-                            '       <li class="catalogItem"><a>Ipsum</a></li>'.
-                            '   </ul>'.
-                            '</li>';   
-                    }*/
-                ?>
-				<!--<li class="catalogItem">
-					<a class="hasChildren">Academic</a>
-					<ul class="subList catalogChild">
-					    <li class="catelogItem">
-					        <a href=""><img src="/img/dataLoading-sm.gif" alt="Loading..."></a>
-					   </li>
-						<li class="catalogItem">
-							<a class="hasChildren">Academic Leadership</a>
-							<ul class="subList grandChild">
-								<li class="catalogItem"><a>Lorem</a></li>
-								<li class="catalogItem"><a>Ipsum</a></li>
-							</ul>
-						</li>
-						<li class="catalogItem"><a>CES Admissions</a></li>
-						<li class="catalogItem"><a>Class Scheduling</a></li>
-						<li class="catalogItem"><a>Course and Instructor Ratings</a></li>
-					</ul>
-				</li>
-				<li class="catalogItem">
-					<a class="hasChildren">Advancement</a>
-					<ul class="subList catalogChild">
-						<li class="catalogItem"><a>Lorem</a></li>
-						<li class="catalogItem"><a>Ipsum</a></li>
-					</ul>
-				</li>
-				<li class="catalogItem">
-					<a class="hasChildren">Financial</a>
-					<ul class="subList catalogChild">
-						<li class="catalogItem"><a>Lorem</a></li>
-					</ul>
-				</li>-->
 			</ul>
 		</div>
 	</div>

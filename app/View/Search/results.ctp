@@ -127,7 +127,7 @@
                     </div>
                     <a href="javascript:addQL('<?php echo $term->termsignifier; ?>', '<?php echo $term->termrid; ?>')" class="addQuickLink grow">
                     <?php
-                        if($term->saved == '1'){
+                        if(isset($term->saved) && $term->saved == '1'){
                             echo '<img src="/img/iconStarOrange.gif" alt="Quick Link">';
                         }else{
                             echo '<img src="/img/iconStarBlue.gif" alt="Quick Link">';
@@ -135,7 +135,7 @@
                     ?>
                             
                     </a>
-                    <a href="/search/request" class="requestAccess grow">Request Access</a>
+                    <a href="/search/request/<?php echo $term->termrid; ?>" class="requestAccess grow">Request Access</a>
                     <a class="detailsTab" data-rid="<?php echo $term->domainrid; ?>"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a>
 				</form>
 			</div>

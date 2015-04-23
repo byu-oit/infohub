@@ -36,6 +36,8 @@ class AppController extends Controller {
     public function beforeFilter() {
         parent::beforeFilter();
         
+        $this->disableCache();
+        
         App::import('Controller', 'QuickLinks');
         $objQuickLinks = new QuickLinksController;
         $quickLinks = $objQuickLinks->load();

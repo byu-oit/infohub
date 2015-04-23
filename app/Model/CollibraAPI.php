@@ -42,6 +42,7 @@ class CollibraAPI extends Model {
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_FRESH_CONNECT, TRUE);
         curl_setopt($ch, CURLOPT_USERPWD, "***REMOVED***:***REMOVED***");
         $response = curl_exec($ch);
         

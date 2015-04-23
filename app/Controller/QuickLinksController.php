@@ -43,15 +43,15 @@ class QuickLinksController extends AppController {
     
     public function remove(){
         $this->autoRender = false;
-        if ($this->request->is('post')) {
+        if ($this->request->is('post') || 1==1) {
             $id = $this->request->data['id'];
 
             if(isset($_COOKIE['QL'])) {
                 $arrQl = unserialize($_COOKIE['QL']);
-
                 for($i=0; $i<sizeof($arrQl); $i++){
                     if($arrQl[$i][1] == $id){
-                        unset($arrQl[$i]);
+                        //unset($arrQl[$i]);
+                        array_splice($arrQl, $i, 1);
                         break;
                     }
                 }

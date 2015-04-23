@@ -58,7 +58,7 @@
 					<!-- </div> -->
 				</div>
 
-				<h3 class="headerTab">Information Requested</h3>
+				<!--<h3 class="headerTab">Information Requested</h3>
 				<div class="clear"></div>
 				<div class="resultItem highlyClassified">
 					<h4>Definition Title</h4>
@@ -108,77 +108,31 @@
 						<div class="clear"></div>
 					</div>
 					<a href="" class="quickLink grow"><img src="/img/iconStarBlue.gif" alt="Quick Link"></a>
-				</div>
-
-				<h3 class="headerTab">Description of Intended Use</h3>
-				<div class="clear"></div>
-				<div class="taBox">
-					<textarea name="" id=""  class="inputShade"></textarea>
-				</div>
-
-				<h3 class="headerTab">Access Rights <span class="mobileSmall">(Who will be allowed to acces the information?)</span></h3>
-				<div class="clear"></div>
-				<div class="taBox">
-					<textarea name="" id=""  class="inputShade"></textarea>
-				</div>
-
-				<h3 class="headerTab">Access Method <span class="mobileSmall">(How access is expected to be granted and managed to ensure compliance.)</span></h3>
-				<div class="clear"></div>
-				<div class="taBox">
-					<textarea name="" id=""  class="inputShade"></textarea>
-				</div>
-
-				<h3 class="headerTab">Impact on System <span class="mobileSmall">(How often the information is expected to be updated.)</span></h3>
-				<div class="clear"></div>
-				<div class="taBox">
-					<textarea name="" id=""  class="inputShade"></textarea>
-				</div>
+				</div>-->
+                <?php
+                    foreach($formFields->formProperties as $field){
+                        echo '<label class="headerTab" for="'.$field->id.'">'.$field->name.'</label>'.
+                            '<div class="clear"></div>'.
+                            '<div class="taBox">';
+                        
+                        if($field->type == 'textarea'){
+                            echo '<textarea name="'.$field->id.'" id="'.$field->id.'"  class="inputShade"></textarea>';
+                        }elseif($field->type == 'user'){
+                            echo '<select name="" id="">';
+                            foreach($sponsors->user as $sponsor){
+                                if($sponsor->enabled==1){
+                                    echo '<option value="'.$sponsor->resourceId.'">'.$sponsor->firstName.' '.$sponsor->lastName.'</option>';
+                                }
+                            }
+                            echo '</select>';
+                        }else{
+                            echo '<input type="text" name="'.$field->id.'" id="'.$field->id.'"  class="inputShade" />';
+                        }
+                        
+                        echo '</div>';
+                    }
+                ?>
 				<label for="requestSubmit" id="mobileReqd">*All Fields Required</label>
-				<!-- <div class="resultItem classified">
-					<h4>Definition Title</h4>
-					<h5   class="greenText">Financial/Lorem/Lorem</h5>
-					<div class="resultContent">
-						<ul>
-							<li><span class="listLabel">Data Steward:&nbsp;</span>Julie Emerson</li>
-							<li><span class="listLabel">Date Created:&nbsp;</span>9/18/14</li>
-							<li><span class="listLabel">DataType:&nbsp;</span>Report</li>
-							<li><span class="listLabel">Expiration Date:&nbsp;</span>1/15/16</li>
-							<li><span class="listLabel">Classification: </span><span class="orangeText">Classified</span></li>
-						</ul>
-					</div>
-					<a href="" class="quickLink grow"><img src="/img/iconStarBlue.gif" alt="Quick Link"></a>
-					<a class="detailsTab"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span> Details</a>
-				</div>
-				<div class="resultItem public">
-					<h4>Definition Title</h4>
-					<h5 class="blueText">Acedemic/Lorem/Lorem</h5>
-					<div class="resultContent">
-						<ul>
-							<li><span class="listLabel">Data Steward:&nbsp;</span>Julie Emerson</li>
-							<li><span class="listLabel">Date Created:&nbsp;</span>9/18/14</li>
-							<li><span class="listLabel">DataType:&nbsp;</span>Report</li>
-							<li><span class="listLabel">Expiration Date:&nbsp;</span>1/15/16</li>
-							<li><span class="listLabel">Classification: </span><span class="greenText">Public</span></li>
-						</ul>
-					</div>
-					<a href="" class="quickLink grow"><img src="/img/iconStarBlue.gif" alt="Quick Link"></a>
-					<a class="detailsTab"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span> Details</a>
-				</div>
-				<div class="resultItem internal">
-					<h4>Definition Title</h4>
-					<h5 class="orangeText">Advancement/Lorem/Lorem</h5>
-					<div class="resultContent">
-						<ul>
-							<li><span class="listLabel">Data Steward:&nbsp;</span>Julie Emerson</li>
-							<li><span class="listLabel">Date Created:&nbsp;</span>9/18/14</li>
-							<li><span class="listLabel">DataType:&nbsp;</span>Report</li>
-							<li><span class="listLabel">Expiration Date:&nbsp;</span>1/15/16</li>
-							<li><span class="listLabel">Classification: </span><span class="blueText">Internal</span></li>
-						</ul>
-					</div>
-					<a href="" class="quickLink grow"><img src="/img/iconStarBlue.gif" alt="Quick Link"></a>
-					<a class="detailsTab"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span> Details</a>
-				</div> -->
 				<div class="clear"></div>
 			</div>
 		</div>

@@ -58,9 +58,9 @@
 		<h2 class="headerTab">Person Look-Up</h2>
 		<div class="clear"></div>
 		<div id="ptLower" class="whiteBox">
-			<form action="">
-				<input type="text" placeholder="First Name" class="inputShade">
-				<input type="text" placeholder="Last Name" class="inputShade">
+			<form action="/people/lookup" method="post">
+				<input type="text" placeholder="First Name" class="inputShade" name="fname" maxlength="50">
+				<input type="text" placeholder="Last Name" class="inputShade" name="lname" maxlength="50">
 				<input type="submit" value="Search" class="inputButton">
 			</form>
 			<div class="clear"></div>
@@ -74,45 +74,64 @@
 				<a id="subMobMenu" class="inner">&nbsp;</a>
 				<ul class="mob"><li></li></ul>
 				<ul class="show">
-					<li><a class="deptLink">A-Z Listing</a></li>
-					<li><a class="deptLink active">Academia</a></li>
-					<li><a class="deptLink">Advancement</a></li>
-					<li><a class="deptLink">Financial</a></li>
-					<li><a class="deptLink">Human Resources</a></li>
-					<li><a class="deptLink">International</a></li>
-					<li><a class="deptLink">Master Data</a></li>
-					<li><a class="deptLink">Research</a></li>
-					<li><a class="deptLink">Student Life</a></li>
+					<li><a href="/people/fulllist" class="deptLink">A-Z Listing</a></li>
+					<?php
+                        foreach($communities->communityReference as $c){
+                            $cssClass = '';
+                            if($c->resourceId == $community){
+                                $cssClass = 'class="active"';
+                            }
+                            echo '<li><a '.$cssClass.' href="/people?c='.$c->resourceId.'" class="deptLink">'.$c->name.'</a></li>';
+                        }
+                    ?>
 				</ul>
 			</div>
 			<div id="rightCol">
-				<h4 class="deptHeader">Trustee</h4>
-				<div class="contactBox contactOrange">
-					<span class="contactName">Brad Gonzales</span>
-					<div class="contactNumber"><a href="tel:8015959845">801.595.9845</a></div>
-					<div class="contactEmail"><a href="mailto:bgonzales@byu.edu">bgonzales@byu.edu</a></div>
-					<span class="contactTitle">Trustee</span>
-				</div>
-				<h4 class="deptHeader">Class Scheduling</h4>
-				<div class="contactBox">
-					<span class="contactName">Brad Gonzales</span>
-					<div class="contactNumber"><a href="tel:8015959845">801.595.9845</a></div>
-					<div class="contactEmail"><a href="mailto:bgonzales@byu.edu">bgonzales@byu.edu</a></div>
-					<span class="contactTitle">Steward</span>
-				</div>
-				<div class="contactBox">
-					<span class="contactName">Brad Gonzales</span>
-					<div class="contactNumber"><a href="tel:8015959845">801.595.9845</a></div>
-					<div class="contactEmail"><a href="mailto:bgonzales@byu.edu">bgonzales@byu.edu</a></div>
-					<span class="contactTitle">Custodian</span>
-				</div>
-				<h4 class="deptHeader">Faculty Leadership</h4>
-				<div class="contactBox">
-					<span class="contactName">Brad Gonzales</span>
-					<div class="contactNumber"><a href="tel:8015959845">801.595.9845</a></div>
-					<div class="contactEmail"><a href="mailto:bgonzales@byu.edu">bgonzales@byu.edu</a></div>
-					<span class="contactTitle">Steward</span>
-				</div>
+			    <?php
+                    foreach($domains->aaData[1]->Vocabularies as $v){
+                        echo '<div class="people-list">'.
+                            '<h4 class="deptHeader">'.$v->vocabulary.'</h4>';
+                        
+                        if(sizeof($v->Role734327ec9eaa41329fea1a4f2b9568ddVOCSUFFIX)>0){
+                            $userrid = $v->Role734327ec9eaa41329fea1a4f2b9568ddVOCSUFFIX[0]->userRole734327ec9eaa41329fea1a4f2b9568ddVOCSUFFIXrid;
+                            $deptTitle = 'Trustee';
+                            $cssClass = 'contactOrange';
+                            $name = $v->Role734327ec9eaa41329fea1a4f2b9568ddVOCSUFFIX[0]->userRole734327ec9eaa41329fea1a4f2b9568ddVOCSUFFIXfn.' '.$v->Role734327ec9eaa41329fea1a4f2b9568ddVOCSUFFIX[0]->userRole734327ec9eaa41329fea1a4f2b9568ddVOCSUFFIXln;
+                            echo '<div class="contactBox '.$cssClass.'">'.
+                                '    <span class="contactName">'.$name.'</span>'.
+                                '    <div class="contactNumber"><a href="tel:'.$users[$userrid]['phone'].'">'.$users[$userrid]['phone'].'</a></div>'.
+                                '    <div class="contactEmail"><a href="mailto:'.$users[$userrid]['email'].'">'.$users[$userrid]['email'].'</a></div>'.
+                                '    <span class="contactTitle">'.$deptTitle.'</span>'.
+                                '</div>';
+                        }
+                        if(sizeof($v->Role615829186613486a9d8261f7d1c0c014VOCSUFFIX)>0){
+                            $userrid = $v->Role615829186613486a9d8261f7d1c0c014VOCSUFFIX[0]->userRole615829186613486a9d8261f7d1c0c014VOCSUFFIXrid;
+                            $deptTitle = 'Steward';
+                            $cssClass = '';
+                            $name = $v->Role615829186613486a9d8261f7d1c0c014VOCSUFFIX[0]->userRole615829186613486a9d8261f7d1c0c014VOCSUFFIXfn.' '.$v->Role615829186613486a9d8261f7d1c0c014VOCSUFFIX[0]->userRole615829186613486a9d8261f7d1c0c014VOCSUFFIXln;
+                            echo '<div class="contactBox '.$cssClass.'">'.
+                                '    <span class="contactName">'.$name.'</span>'.
+                                '    <div class="contactNumber"><a href="tel:'.$users[$userrid]['phone'].'">'.$users[$userrid]['phone'].'</a></div>'.
+                                '    <div class="contactEmail"><a href="mailto:'.$users[$userrid]['email'].'">'.$users[$userrid]['email'].'</a></div>'.
+                                '    <span class="contactTitle">'.$deptTitle.'</span>'.
+                                '</div>';
+                        }
+                        if(sizeof($v->Role7865d2c3405a459db11edf061adec84bVOCSUFFIX)>0){
+                            $userrid = $v->Role7865d2c3405a459db11edf061adec84bVOCSUFFIX[0]->userRole7865d2c3405a459db11edf061adec84bVOCSUFFIXrid;
+                            $deptTitle = 'Custodian';
+                            $cssClass = '';
+                            $name = $v->Role7865d2c3405a459db11edf061adec84bVOCSUFFIX[0]->userRole7865d2c3405a459db11edf061adec84bVOCSUFFIXfn.' '.$v->Role7865d2c3405a459db11edf061adec84bVOCSUFFIX[0]->userRole7865d2c3405a459db11edf061adec84bVOCSUFFIXln;
+                            echo '<div class="contactBox '.$cssClass.'">'.
+                                '    <span class="contactName">'.$name.'</span>'.
+                                '    <div class="contactNumber"><a href="tel:'.$users[$userrid]['phone'].'">'.$users[$userrid]['phone'].'</a></div>'.
+                                '    <div class="contactEmail"><a href="mailto:'.$users[$userrid]['email'].'">'.$users[$userrid]['email'].'</a></div>'.
+                                '    <span class="contactTitle">'.$deptTitle.'</span>'.
+                                '</div>';
+                        }
+                        echo '</div>';
+                        
+                    }
+                ?>
 			</div>
 			<div class="clear"></div>
 		</div>
