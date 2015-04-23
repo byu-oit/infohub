@@ -205,32 +205,40 @@
 		clear: left;
 		// width: 100%;
 		-moz-column-count: 5;
-		-moz-column-gap: 20px;
+		-moz-column-gap: 16px;
 		-webkit-column-count: 5;
-		-webkit-column-gap: 20px;
+		-webkit-column-gap: 16px;
 		column-count: 5;
-		column-gap: 20px;
+		column-gap: 16px;
 		background-color: @grayLight;
 		padding: 20px 2.5% 10px;
   		margin-bottom: 50px;
   		border-bottom: 24px solid #f4f4f4;
   		.box-shade();
-
+		
+		#QLContainer {
+			// border-right: 1px solid #ddd;
+  			padding-right: 12px;
+		}
 
 		ul {
 			.inline();
 
    			li {
-   				padding-right: 20px;
-   				white-space: nowrap;
+   				width: 100%;
+   				-webkit-column-break-inside: avoid; /* Chrome, Safari */
+				page-break-inside: avoid;           /* Theoretically FF 20+ */
+				break-inside: avoid-column;         /* IE 11 */
+				display:table; 
 
    				a {
 					text-decoration: none;
 					font-size: 12px;
 					color: #336699;
 					display: block;
-  					padding: 5px 0;
+  					padding: 6px 0;
   					float: left;
+  					line-height: 1.2em;
 
 					&:hover {
 						text-decoration: underline;

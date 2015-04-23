@@ -16,6 +16,10 @@ $this->Html->css('home', null, array('inline' => false));
 <script>
 	$(window).resize(boxWidth);	
  	$(window).load(boxWidth);
+ 	$(window).load(showHelpFirst);
+ 	$(window).scroll(showHelpFirst);
+
+ 	var setCheck = false;
 
  	function boxWidth() {
  		var boxTarget = $('#welcomeBox').width();
@@ -23,6 +27,27 @@ $this->Html->css('home', null, array('inline' => false));
  			$('#searchBox').width(boxTarget);
  		}
  	}
+
+ 	function isScrolledIntoView(elem) {
+	    var $elem = $(elem);
+	    var $window = $(window);
+
+	    var docViewTop = $window.scrollTop();
+	    var docViewBottom = docViewTop + $window.height();
+
+	    var elemTop = $elem.offset().top;
+	    var elemBottom = elemTop + $elem.height();
+
+	    return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+	}
+
+	function showHelpFirst() {
+		if (isScrolledIntoView("#homeHowTo") && setCheck == false) {
+			$('#htFind .htPop').fadeIn();
+			$('#htFind h2').addClass('active');
+			setCheck = true;
+		}
+	}
  	$(document).ready(function() {
 
  		$('.htBox h2').on('mouseover', function () {
@@ -95,7 +120,7 @@ $this->Html->css('home', null, array('inline' => false));
 	</div>
 	<div id="htRequest" class="htBox">
 		<div class="htPop">
-			<p>Lorem Ipsum bla bla bla Lorem Ipsum bla bla bla Lorem Ipsum bla bla bla</p>
+			<p>Once you’ve found your information, request access from the steward in charge of it. (You’ll need a NetID to request access.)</p>
 		</div>
 		<h2>2</h2>
 		<p>Request Access</p>
@@ -106,7 +131,7 @@ $this->Html->css('home', null, array('inline' => false));
 	</div>
 	<div id="htTrack" class="htBox">
 		<div class="htPop">
-			<p>Lorem Ipsum bla bla bla Lorem Ipsum bla bla bla Lorem Ipsum bla bla bla</p>
+			<p>Go to your account to track the progress of your request. Once your request is approved, the link to your information will be available there. </p>
 		</div>
 		<h2>3</h2>
 		<p>Track Progress</p>
@@ -117,7 +142,7 @@ $this->Html->css('home', null, array('inline' => false));
 	</div>
 	<div id="htUse" class="htBox">
 		<div class="htPop">
-			<p>Lorem Ipsum bla bla bla Lorem Ipsum bla bla bla Lorem Ipsum bla bla bla</p>
+			<p>All information requested through InfoHub is safe to use, with sharing permissions clearly noted. You can also be confident it’s the most accurate and up-to-date information available. </p>
 		</div>
 		<h2>4</h2>
 		<p>Use Confidently</p>
