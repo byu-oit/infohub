@@ -11,6 +11,13 @@
 			$(this).siblings('.resultContent').children('.resultBody').slideToggle();
 			$(this).toggleClass('active');
 		})
+        
+        // populare form fields for testing
+        $('#request input, #request textarea').each(function(i) {
+            if($(this).val()==''){
+                $(this).val('TEST DATA '+i);
+            }
+        })
 	});
 
 	$(window).resize(resultsWidth);
@@ -23,8 +30,19 @@
 			$('.resultContent').css('width', '95%').css('width', '-=60px');	
 		}
 	}
-		
-
+    
+    function validate(){
+        var isValid = true;
+        $('#request input, #request textarea').each(function() {
+            if($(this).val()==''){
+                isValid = false;
+                $(this).focus();
+                return false;
+            }
+        });
+        if(!isValid) alert('All fields are requried.');
+        return isValid;
+    }
 </script>
 
 <!-- Background image div -->
@@ -32,7 +50,7 @@
 </div>
 
 <!-- Request Form -->
-<form action="submit" id="request">
+<form action="/request/submit" method="post" id="request" onsubmit="return validate();">
 	<div id="searchBody" class="innerLower">
 
 		<div id="requestForm">
@@ -43,17 +61,17 @@
 				<div class="clear"></div>
 				<div id="requesterInfo">
 					<!-- <div class="infoCol"> -->
-						<input type="text" id="" class="inputShade" placeholder="First name">
-						<input type="text" id="" class="inputShade" placeholder="Last Name">
-						<input type="text" id="" class="inputShade" placeholder="Phone Number">
+						<input type="text" id="fname" name="fname" class="inputShade" placeholder="First name">
+						<input type="text" id="lname" name="lname" class="inputShade" placeholder="Last Name">
+						<input type="text" id="phone" name="phone" class="inputShade" placeholder="Phone Number">
 					<!-- </div>
 					<div class="infoCol"> -->
-						<input type="text" id="" class="inputShade" placeholder="Email">
-						<input type="text" id="" class="inputShade" placeholder="Company">
-						<select type="text" id="" class="inputShade">
+						<input type="text" id="email" name="email" class="inputShade" placeholder="Email">
+						<input type="text" id="company" name="company" class="inputShade" placeholder="Company">
+						<select type="text" id="supervisor" name="supervisor" class="inputShade">
 							<option value="1" selected disabled style='display:none;'>Your Supervisor</option>
-							<option value="2">Bob Sagget</option>
-							<option value="3">Robert Rancherito</option>
+							<option value="2">John Doe</option>
+							<option value="3">Jane Doe</option>
 						</select>
 					<!-- </div> -->
 				</div>
@@ -130,7 +148,7 @@
                             }
                             echo '<textarea name="'.$field->id.'" id="'.$field->id.'"  class="inputShade">'.$val.'</textarea>';
                         }elseif($field->type == 'user'){
-                            echo '<select name="" id="">';
+                            echo '<select name="'.$field->id.'" id="'.$field->id.'">';
                             foreach($sponsors->user as $sponsor){
                                 if($sponsor->enabled==1){
                                     echo '<option value="'.$sponsor->resourceId.'">'.$sponsor->firstName.' '.$sponsor->lastName.'</option>';

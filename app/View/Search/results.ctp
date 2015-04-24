@@ -101,7 +101,7 @@
             $createdDate = date('m/d/Y', $createdDate);
 ?>
 			<div id="term<?php echo $term->termrid; ?>" class="resultItem highlyClassified">
-			    <form action="submit">
+			    <form action="/request/index/<?php echo $term->termrid; ?>" method="post">
                     <h4><?php echo $term->termsignifier; ?></h4>
                     <h5 class="blueText"><?php echo $term->communityname.'/'.$term->domainname; ?></h5>
                     <div class="resultContent">
@@ -135,7 +135,8 @@
                     ?>
                             
                     </a>
-                    <a href="/search/request/<?php echo $term->termrid; ?>" class="requestAccess grow">Request Access</a>
+                    <input type="submit" class="requestAccess grow" value="Request Access" />
+                    <!--<a href="/search/request/<?php echo $term->termrid; ?>" class="requestAccess grow">Request Access</a>-->
                     <a class="detailsTab" data-rid="<?php echo $term->domainrid; ?>"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a>
 				</form>
 			</div>

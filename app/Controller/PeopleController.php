@@ -91,7 +91,7 @@ class PeopleController extends AppController {
         //exit;
     }
     
-    public function fulllist(){
+    public function index(){
         // get all parent communities for left nav
         $this->loadModel('CollibraAPI');
         $objCollibra = new CollibraAPI();
@@ -153,7 +153,7 @@ class PeopleController extends AppController {
         //exit;
     }
     
-    public function index() {
+    public function dept() {
         // get all parent communities for left nav
         $this->loadModel('CollibraAPI');
         $objCollibra = new CollibraAPI();

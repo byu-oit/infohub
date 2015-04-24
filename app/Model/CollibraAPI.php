@@ -43,6 +43,7 @@ class CollibraAPI extends Model {
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
         curl_setopt($ch, CURLOPT_FRESH_CONNECT, TRUE);
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         curl_setopt($ch, CURLOPT_USERPWD, "***REMOVED***:***REMOVED***");
         $response = curl_exec($ch);
         
@@ -51,6 +52,14 @@ class CollibraAPI extends Model {
         $this->error = curl_error($ch);
         
         curl_close($ch);
+        
+        if($this->code != '200' && $this->code != '201'){
+            echo 'cURL ERROR:<br>'.
+                'code: '. $this->code.'<br>'.
+                'info: '. print_r($this->info).'<br>'.
+                'error: '. $this->error.'<br>';
+            exit;
+        }
         /*
         echo $response;
         exit;

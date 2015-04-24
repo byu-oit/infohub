@@ -336,12 +336,15 @@ img.resultBodyLoading {
   padding: 6px 15px;
   background-color: #ffa900;
   display: block;
-  width: 98px;
+  /*width: 98px;*/
   text-align: center;
   font-weight: bold;
   position: absolute;
   bottom: 20px;
   right: 3%;
+  border: none;
+  outline: none;
+  cursor: pointer;
   -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
@@ -541,8 +544,8 @@ img.resultBodyLoading {
 }
 #searchBody #requestForm #srLower h3,
 #searchBody #searchSuccess #srLower h3,
-#searchBody #requestForm #srLower label,
-#searchBody #searchSuccess #srLower label {
+#searchBody #requestForm #srLower label.headerTab,
+#searchBody #searchSuccess #srLower label.headerTab {
   font-size: 18px;
   margin-bottom: 20px;
   padding: 4px 18px;
@@ -728,7 +731,7 @@ form#request #mobileReqd {
     padding: 8px 5%;
   }
   #searchBody #requestForm #srLower h3,
-  #searchBody #requestForm #srLower label {
+  #searchBody #requestForm #srLower label.headerTab {
     width: initial;
     margin-bottom: 15px;
   }

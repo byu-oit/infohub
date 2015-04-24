@@ -30,14 +30,15 @@
  * ...and connect the rest of 'Pages' controller's URLs.
  */
     //Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
+    
+//Router::connect('/admin/login', array('controller' => 'admin', 'action' => 'login'));
+    //Router::connect('/admin/:action/*', array('action' => 'index'));
 
     Router::connect('/resources/*', array('controller' => 'cmsPages', 'action' => 'index'));
-    Router::connect('/admin/login', array('controller' => 'admin', 'action' => 'login'));
-    Router::connect('/admin/:controller/:action/*', array('controller' => 'admin', 'action' => 'index'));
 
     Router::connect('/search', array('controller' => 'search', 'action' => 'index'));
     Router::connect('/search/:action/*', array('controller' => 'search', 'action' => 'index'));
-    
+
     Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
     //Router::connect('/*', array('controller' => 'pages', 'action' => 'display'));
     

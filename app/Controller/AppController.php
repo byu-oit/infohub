@@ -36,6 +36,9 @@ class AppController extends Controller {
     public function beforeFilter() {
         parent::beforeFilter();
         
+        session_start();
+        $_SESSION['netid'] = '11111';
+        
         $this->disableCache();
         
         App::import('Controller', 'QuickLinks');

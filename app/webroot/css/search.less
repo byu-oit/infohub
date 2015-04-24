@@ -292,12 +292,15 @@ img.resultBodyLoading {
 					padding: 6px 15px;
 					background-color: #ffa900;
 					display: block;
-					width: 98px;
+					/*width: 98px;*/
 					text-align: center;
 					font-weight: bold;
 					position: absolute;
 					bottom: 20px;
 					right: 3%;
+                    border: none;
+                    outline: none;
+                    cursor: pointer;
 					.box-shade();
 				}
 				.detailsTab {
@@ -435,7 +438,7 @@ img.resultBodyLoading {
 			width: 94%;
 			padding: 23px 3% 0;
 
-			h3,label {
+			h3,label.headerTab {
 				font-size: 18px;
 				margin-bottom: 20px;
 				padding: 4px 18px;
@@ -635,7 +638,7 @@ form#request {
 				padding: 8px 5%;
 			}
 		}
-		#requestForm #srLower h3, #requestForm #srLower label {
+		#requestForm #srLower h3, #requestForm #srLower label.headerTab {
 			width: initial;
 			margin-bottom: 15px;
 		}

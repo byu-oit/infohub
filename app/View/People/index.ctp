@@ -74,62 +74,30 @@
 				<a id="subMobMenu" class="inner">&nbsp;</a>
 				<ul class="mob"><li></li></ul>
 				<ul class="show">
-					<li><a href="/people/fulllist" class="deptLink">A-Z Listing</a></li>
+					<li><a href="/people" class="deptLink active">A-Z Listing</a></li>
 					<?php
                         foreach($communities->communityReference as $c){
-                            $cssClass = '';
-                            if($c->resourceId == $community){
-                                $cssClass = 'class="active"';
-                            }
-                            echo '<li><a '.$cssClass.' href="/people?c='.$c->resourceId.'" class="deptLink">'.$c->name.'</a></li>';
+                            echo '<li><a href="/people/dept?c='.$c->resourceId.'" class="deptLink">'.$c->name.'</a></li>';
                         }
                     ?>
 				</ul>
 			</div>
 			<div id="rightCol">
 			    <?php
-                    foreach($domains->aaData[1]->Vocabularies as $v){
+                    // loop through user groups
+                    foreach($userData as $key => $val){
                         echo '<div class="people-list">'.
-                            '<h4 class="deptHeader">'.$v->vocabulary.'</h4>';
-                        
-                        if(sizeof($v->Role734327ec9eaa41329fea1a4f2b9568ddVOCSUFFIX)>0){
-                            $userrid = $v->Role734327ec9eaa41329fea1a4f2b9568ddVOCSUFFIX[0]->userRole734327ec9eaa41329fea1a4f2b9568ddVOCSUFFIXrid;
-                            $deptTitle = 'Trustee';
-                            $cssClass = 'contactOrange';
-                            $name = $v->Role734327ec9eaa41329fea1a4f2b9568ddVOCSUFFIX[0]->userRole734327ec9eaa41329fea1a4f2b9568ddVOCSUFFIXfn.' '.$v->Role734327ec9eaa41329fea1a4f2b9568ddVOCSUFFIX[0]->userRole734327ec9eaa41329fea1a4f2b9568ddVOCSUFFIXln;
-                            echo '<div class="contactBox '.$cssClass.'">'.
-                                '    <span class="contactName">'.$name.'</span>'.
-                                '    <div class="contactNumber"><a href="tel:'.$users[$userrid]['phone'].'">'.$users[$userrid]['phone'].'</a></div>'.
-                                '    <div class="contactEmail"><a href="mailto:'.$users[$userrid]['email'].'">'.$users[$userrid]['email'].'</a></div>'.
-                                '    <span class="contactTitle">'.$deptTitle.'</span>'.
-                                '</div>';
-                        }
-                        if(sizeof($v->Role615829186613486a9d8261f7d1c0c014VOCSUFFIX)>0){
-                            $userrid = $v->Role615829186613486a9d8261f7d1c0c014VOCSUFFIX[0]->userRole615829186613486a9d8261f7d1c0c014VOCSUFFIXrid;
-                            $deptTitle = 'Steward';
-                            $cssClass = '';
-                            $name = $v->Role615829186613486a9d8261f7d1c0c014VOCSUFFIX[0]->userRole615829186613486a9d8261f7d1c0c014VOCSUFFIXfn.' '.$v->Role615829186613486a9d8261f7d1c0c014VOCSUFFIX[0]->userRole615829186613486a9d8261f7d1c0c014VOCSUFFIXln;
-                            echo '<div class="contactBox '.$cssClass.'">'.
-                                '    <span class="contactName">'.$name.'</span>'.
-                                '    <div class="contactNumber"><a href="tel:'.$users[$userrid]['phone'].'">'.$users[$userrid]['phone'].'</a></div>'.
-                                '    <div class="contactEmail"><a href="mailto:'.$users[$userrid]['email'].'">'.$users[$userrid]['email'].'</a></div>'.
-                                '    <span class="contactTitle">'.$deptTitle.'</span>'.
-                                '</div>';
-                        }
-                        if(sizeof($v->Role7865d2c3405a459db11edf061adec84bVOCSUFFIX)>0){
-                            $userrid = $v->Role7865d2c3405a459db11edf061adec84bVOCSUFFIX[0]->userRole7865d2c3405a459db11edf061adec84bVOCSUFFIXrid;
-                            $deptTitle = 'Custodian';
-                            $cssClass = '';
-                            $name = $v->Role7865d2c3405a459db11edf061adec84bVOCSUFFIX[0]->userRole7865d2c3405a459db11edf061adec84bVOCSUFFIXfn.' '.$v->Role7865d2c3405a459db11edf061adec84bVOCSUFFIX[0]->userRole7865d2c3405a459db11edf061adec84bVOCSUFFIXln;
-                            echo '<div class="contactBox '.$cssClass.'">'.
-                                '    <span class="contactName">'.$name.'</span>'.
-                                '    <div class="contactNumber"><a href="tel:'.$users[$userrid]['phone'].'">'.$users[$userrid]['phone'].'</a></div>'.
-                                '    <div class="contactEmail"><a href="mailto:'.$users[$userrid]['email'].'">'.$users[$userrid]['email'].'</a></div>'.
-                                '    <span class="contactTitle">'.$deptTitle.'</span>'.
-                                '</div>';
+                            '<h4 class="deptHeader">'.$key.'</h4>';
+                        // display eac user in group
+                        foreach($val as $key2 => $val2){
+                            $user = $val[$key2];
+                            echo '<div class="contactBox">'.
+                                '    <span class="contactName">'.$user['fname'].' '.$user['lname'].'</span>'.
+                                '    <div class="contactNumber"><a href="tel:'.$user['phone'].'">'.$user['phone'].'</a></div>'.
+                                '    <div class="contactEmail"><a href="mailto:'.$user[email]['email'].'">'.$user['email'].'</a></div>'.
+                                '</div>'; 
                         }
                         echo '</div>';
-                        
                     }
                 ?>
 			</div>
