@@ -225,6 +225,7 @@ img.resultBodyLoading {
 #searchBody #searchSuccess #srLower .resultItem .resultContent {
   width: 100%;
   padding-right: 5%;
+  margin-bottom: 40px;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent ul,
 #searchBody #requestForm #srLower .resultItem .resultContent ul,
@@ -294,25 +295,54 @@ img.resultBodyLoading {
 #searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody form {
   margin-bottom: 5px;
 }
-#searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkCol,
-#searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkCol,
-#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkCol {
+#searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes,
+#searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes {
+  max-height: 400px;
+  overflow: auto;
+  *zoom: 1;
+}
+#searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes:before,
+#searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes:before,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes:before,
+#searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes:after,
+#searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes:after,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes:after {
+  content: "";
+  display: table;
+}
+#searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes:after,
+#searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes:after,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes:after {
+  clear: both;
+}
+#searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol,
+#searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol {
   width: 400px;
   float: left;
 }
-#searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkCol label,
-#searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkCol label,
-#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkCol label {
+#searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol label,
+#searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol label,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol label {
+  max-width: 92%;
+  overflow: hidden;
   white-space: nowrap;
   font-size: 10px;
   vertical-align: top;
   padding-top: 2px;
   display: inline-block;
 }
-#searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkCol input,
-#searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkCol input,
-#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkCol input {
+#searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol input,
+#searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol input,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol input {
   margin-left: 0;
+}
+#searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol .info,
+#searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol .info,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol .info {
+  display: inline;
+  margin-left: 5px;
 }
 #searchBody #searchResults #srLower .resultItem .addQuickLink,
 #searchBody #requestForm #srLower .resultItem .addQuickLink,
@@ -593,6 +623,23 @@ img.resultBodyLoading {
 #searchBody #requestForm #srLower .resultItem .irLower,
 #searchBody #searchSuccess #srLower .resultItem .irLower {
   margin-left: -30px;
+}
+#searchBody #requestForm #srLower .resultItem .irLower .checkBoxes,
+#searchBody #searchSuccess #srLower .resultItem .irLower .checkBoxes {
+  max-height: 400px;
+  overflow: auto;
+  *zoom: 1;
+}
+#searchBody #requestForm #srLower .resultItem .irLower .checkBoxes:before,
+#searchBody #searchSuccess #srLower .resultItem .irLower .checkBoxes:before,
+#searchBody #requestForm #srLower .resultItem .irLower .checkBoxes:after,
+#searchBody #searchSuccess #srLower .resultItem .irLower .checkBoxes:after {
+  content: "";
+  display: table;
+}
+#searchBody #requestForm #srLower .resultItem .irLower .checkBoxes:after,
+#searchBody #searchSuccess #srLower .resultItem .irLower .checkBoxes:after {
+  clear: both;
 }
 #searchBody #requestForm #srLower .resultItem .irLower h5,
 #searchBody #searchSuccess #srLower .resultItem .irLower h5 {

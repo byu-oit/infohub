@@ -110,10 +110,10 @@ class PeopleController extends AppController {
                 'json'=>true,
                 'params'=>'{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"userrid"}},{"Column":{"fieldName":"userenabled"}},{"Column":{"fieldName":"userfirstname"}},{"Group":{"name":"groupname","Columns":[{"Column":{"fieldName":"groupgroupname"}},{"Column":{"fieldName":"grouprid"}}]}},{"Column":{"fieldName":"userlastname"}},{"Column":{"fieldName":"emailemailaddress"}},{"Group":{"name":"phonenumber","Columns":[{"Column":{"fieldName":"phonephonenumber"}},{"Column":{"fieldName":"phonerid"}}]}},{"Column":{"fieldName":"useractivated"}},{"Column":{"fieldName":"isuserldap"}}],"Resources":{"User":{"Enabled":{"name":"userenabled"},"UserName":{"name":"userusername"},"FirstName":{"name":"userfirstname"},"LastName":{"name":"userlastname"},"Emailaddress":{"name":"emailemailaddress"},"Phone":{"Phonenumber":{"name":"phonephonenumber"},"Id":{"name":"phonerid"}},"Group":{"Groupname":{"name":"groupgroupname"},"Id":{"name":"grouprid"},"Filter":{"AND":[{"FIELD":{"name":"grouprid","operator":"NOT_EQUALS","value":"00000000-0000-0000-0000-000001000001"}},{"FIELD":{"name":"grouprid","operator":"NOT_EQUALS","value":"00000000-0000-0000-0000-000001000002"}}]}},"Activated":{"name":"useractivated"},"LDAPUser":{"name":"isuserldap"},"Id":{"name":"userrid"},"Filter":{"AND":['.
                     '{"OR":['.
-                        '{"Field":{"name":"grouprid","operator":"EQUALS","value":"6c4fd1f0-aee0-4635-8d8c-9047be385370"}},'.    //Info Trustees group
+                        //'{"Field":{"name":"grouprid","operator":"EQUALS","value":"6c4fd1f0-aee0-4635-8d8c-9047be385370"}},'.    //Info Trustees group
                         '{"Field":{"name":"grouprid","operator":"EQUALS","value":"e39aea6e-f25c-4917-acba-dfa9270555f1"}},'.    //Info Custodians group
                         '{"Field":{"name":"grouprid","operator":"EQUALS","value":"f1323abe-c668-465b-8677-8ff881119028"}},'.    //Info Stewards group
-                        //'{"Field":{"name":"grouprid","operator":"EQUALS","value":"44b9f82a-043b-433f-82f1-7192e5b17f27"}}'.
+                        //'{"Field":{"name":"grouprid","operator":"EQUALS","value":"44b9f82a-043b-433f-82f1-7192e5b17f27"}}'.   // All users - for testing
                     ']},'.
                     '{"AND":['.
                         '{"Field":{"name":"userenabled","operator":"EQUALS","value":"true"}}'. // make sure user is active

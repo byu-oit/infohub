@@ -151,6 +151,39 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
                 });
 			}
 		}
+        
+        // intiate info links
+        var infowinTimer;
+        var infowinTargetElem;
+        function initShowTermDef(elem){
+            clearTimeout(infowinTimer);
+            infowinTargetElem = elem;
+            infowinTimer = setTimeout('showTermDef(null)', 500);
+        }
+        function showTermDef(elem){
+            if(!elem) elem = infowinTargetElem;
+            var pos = $(elem).offset();
+            clearTimeout(infowinTimer);
+            var rid = $(elem).attr('data-termID');
+            $('#info-win .info-win-content').html('<img src="/img/dataLoading-sm.gif">');
+            $('#info-win').fadeIn();
+            var winLeft = pos.left - $('#info-win').outerWidth()/2 + 5;
+            var winTop = pos.top - $('#info-win').outerHeight() - 5;
+            $('#info-win').css('top',winTop).css('left',winLeft);
+            $.get( "/search/getTermDefinition", { rid: rid } )
+                .done(function(data) {
+                    var pos = $(elem).offset();
+                    data = data.replace(/(\r\n|\n|\r)/gm, '');
+                    $('#info-win .info-win-content').text(data);
+                    var winLeft = pos.left - $('#info-win').outerWidth()/2 + 5;
+                    var winTop = pos.top - $('#info-win').outerHeight() - 5;
+                    $('#info-win').css('top',winTop).css('left',winLeft);
+            });
+        }
+        function hideTermDef(){
+            clearTimeout(infowinTimer);
+            $('#info-win').hide();
+        }
 
 		$(document).on( 'click', function ( e ) {
 			if ( $( e.target ).closest('.autoComplete').length === 0 ) {
@@ -167,6 +200,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 
 </head>
 <body>
+    <div id="info-win"><div class="info-win-content"></div><div class="info-win-arrow"></div></div>
 	<div id="container">
 		<header>
 			<div id="headerInner" class="inner">

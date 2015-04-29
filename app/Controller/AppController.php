@@ -38,6 +38,9 @@ class AppController extends Controller {
         
         session_start();
         $_SESSION['netid'] = '11111';
+        $_SESSION['username'] = 'Christy Whitehouse';
+        $_SESSION['dept'] = 'Business';
+        $_SESSION['role'] = 'Information Steward';
         
         $this->disableCache();
         

@@ -64,7 +64,7 @@
 		<div class="clear"></div>
 		<div id="srLower" class="whiteBox">
 <?php
-    if(is_array($communities)){
+    if(sizeof($communities->communityReference)>0){
 ?>
 			<div id="searchFilters">
 				<label for="filerBy">Filter By:</label>
@@ -108,7 +108,7 @@
                         <ul>
                            <?php
                                 if(sizeof($term->Role00000000000000000000000000005016)>0){
-                                    $stewardName = $term->Role00000000000000000000000000005016[0]->userRole00000000000000000000000000005016fn.' '.$term->Role00000000000000000000000000005016[0]->userRole00000000000000000000000000005016fn;
+                                    $stewardName = $term->Role00000000000000000000000000005016[0]->userRole00000000000000000000000000005016fn.' '.$term->Role00000000000000000000000000005016[0]->userRole00000000000000000000000000005016ln;
                             ?>
                             <li><span class="listLabel">Data Steward:&nbsp;</span><?php echo $stewardName; ?></li>
                             <?php

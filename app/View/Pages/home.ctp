@@ -78,17 +78,17 @@
 <div id="homeQL" class="inner">
 	<h3><span>Quick Links</span></h3>
 	<div class="qlBox">
-		<a href="3" class="qLicon grow"><img src="/img/ql-book.png" alt="Locate People"></a>
+		<a href="/people" class="qLicon grow"><img src="/img/ql-book.png" alt="Locate People"></a>
 		<p>Locate peolpe who <br>can help you find <br>your information.</p>
 		<a href="#" class="qlLink">Find People</a>
 	</div>
 	<div class="qlBox">
-		<a href="3" class="qLicon grow"><img src="/img/ql-list.png" alt="See policies"></a>
+		<a href="#" class="qLicon grow"><img src="/img/ql-list.png" alt="See policies"></a>
 		<p>Understand policies and <br>procedures for proper <br>information usage</p>
 		<a href="" class="qlLink">See Policies and Procedures.</a>
 	</div>
 	<div class="qlBox">
-		<a href="3" class="qLicon grow"><img src="/img/ql-cogs.png" alt="Login"></a>
+		<a href="/myaccount" class="qLicon grow"><img src="/img/ql-cogs.png" alt="Login"></a>
 		<p>Track your requests, <br>add favorites and <br>customize your alerts.</p>
 		<a href=""  class="qlLink">Log into or Create an Account</a>
 	</div>

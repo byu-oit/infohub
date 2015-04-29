@@ -222,6 +222,7 @@ img.resultBodyLoading {
 					//width: 75%;
                     width: 100%;
 					padding-right: 5%;
+                    margin-bottom: 40px;
 
 					ul {
 						margin: 0;
@@ -258,22 +259,34 @@ img.resultBodyLoading {
 						form {
 							margin-bottom: 5px;
 						}
-						.checkCol {
-							//width: 154px;
-                            width: 400px;
-							float: left;
+                        .checkBoxes{
+                            max-height: 400px;
+                            overflow: auto;
+                            .clear;
+                            
+                            .checkCol {
+                                //width: 154px;
+                                width: 400px;
+                                float: left;
 
-							label {
-								white-space: nowrap;
-								font-size: 10px;
-								vertical-align: top;
-								padding-top: 2px;
-								display: inline-block;
-							}
-							input {
-								margin-left: 0;
-							}
-						}
+                                label {
+                                    max-width: 92%;
+                                    overflow: hidden;
+                                    white-space: nowrap;
+                                    font-size: 10px;
+                                    vertical-align: top;
+                                    padding-top: 2px;
+                                    display: inline-block;
+                                }
+                                input {
+                                    margin-left: 0;
+                                }
+                                .info{
+                                    display: inline;
+                                    margin-left: 5px;
+                                }
+                            }
+                        }
 					}
 				}
 				.addQuickLink {
@@ -485,6 +498,11 @@ img.resultBodyLoading {
 				}
 				.irLower {
 					margin-left: -30px;
+                    .checkBoxes{
+                        max-height: 400px;
+                        overflow: auto;
+                        .clear;
+                    }
 
 					h5 {
 						font-size: 14px;

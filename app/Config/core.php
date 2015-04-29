@@ -18,6 +18,8 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
+    Configure::write('byuCommunity', '4e756e1e-11ee-4d1e-bfaa-fb0ada974fc5');
+
 /**
  * CakePHP Debug Level:
  *

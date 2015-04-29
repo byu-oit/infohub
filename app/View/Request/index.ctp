@@ -6,18 +6,13 @@
 	$(document).ready(function() {
 		$("#searchLink").addClass('active');
 		resultsWidth();
-
-		$('.detailsTab').click(function() {
-			$(this).siblings('.resultContent').children('.resultBody').slideToggle();
-			$(this).toggleClass('active');
-		})
-        
         // populare form fields for testing
         $('#request input, #request textarea').each(function(i) {
             if($(this).val()==''){
                 $(this).val('TEST DATA '+i);
             }
         })
+        $('#request select').val('7c04c361-7a87-4f25-8238-ee50f0afa377');
 	});
 
 	$(window).resize(resultsWidth);
@@ -43,6 +38,18 @@
         if(!isValid) alert('All fields are requried.');
         return isValid;
     }
+    
+    function toggleDataNeeded(chk){
+        var arrDataNeeded = $('#dataNeeded').val();
+        var term = $(chk).val();
+        if($(chk).prop('checked')){
+            if(arrDataNeeded != '') arrDataNeeded += ', ';
+            $('#dataNeeded').val(arrDataNeeded + term);
+        }else{
+            arrDataNeeded = arrDataNeeded.replace(', ' + term, '').replace(term, '');
+            $('#dataNeeded').val(arrDataNeeded);
+        }
+    }
 </script>
 
 <!-- Background image div -->
@@ -61,15 +68,15 @@
 				<div class="clear"></div>
 				<div id="requesterInfo">
 					<!-- <div class="infoCol"> -->
-						<input type="text" id="fname" name="fname" class="inputShade" placeholder="First name">
-						<input type="text" id="lname" name="lname" class="inputShade" placeholder="Last Name">
-						<input type="text" id="phone" name="phone" class="inputShade" placeholder="Phone Number">
+						<input type="text" id="fname" name="fname" class="inputShade" placeholder="First name" value="Alfredo">
+						<input type="text" id="lname" name="lname" class="inputShade" placeholder="Last Name" value="Nava">
+						<input type="text" id="phone" name="phone" class="inputShade" placeholder="Phone Number" value="801-990-1176">
 					<!-- </div>
 					<div class="infoCol"> -->
-						<input type="text" id="email" name="email" class="inputShade" placeholder="Email">
-						<input type="text" id="company" name="company" class="inputShade" placeholder="Company">
+						<input type="text" id="email" name="email" class="inputShade" placeholder="Email" value="anava@summitslc.com">
+						<input type="text" id="company" name="company" class="inputShade" placeholder="Company" value="TSG">
 						<select type="text" id="supervisor" name="supervisor" class="inputShade">
-							<option value="1" selected disabled style='display:none;'>Your Supervisor</option>
+							<option value="1" selected disabled>Your Supervisor</option>
 							<option value="2">John Doe</option>
 							<option value="3">Jane Doe</option>
 						</select>
@@ -90,7 +97,8 @@
                         <ul>
                            <?php
                                 if(sizeof($term->Role00000000000000000000000000005016)>0){
-                                    $stewardName = $term->Role00000000000000000000000000005016[0]->userRole00000000000000000000000000005016fn.' '.$term->Role00000000000000000000000000005016[0]->userRole00000000000000000000000000005016fn;
+                                    $stewardName = $term->Role00000000000000000000000000005016[0]->userRole00000000000000000000000000005016fn.' '.$term->Role00000000000000000000000000005016[0]->userRole00000000000000000000000000005016ln;
+                                    $stewardID = $term->Role00000000000000000000000000005016[0]->userRole00000000000000000000000000005016rid;
                             ?>
                             <li><span class="listLabel">Data Steward:&nbsp;</span><?php echo $stewardName; ?></li>
                             <?php
@@ -119,7 +127,7 @@
                                 if(isset($termsSelected[$siblingID])){
                                     $checked = 'checked';
                                 }
-                                echo '    <input type="checkbox" name="terms[]" id="'.$siblingID.'" '.$checked.'>'.
+                                echo '    <input type="checkbox" onclick="toggleDataNeeded(this)" value="'.$sibling.'" name="terms[]" id="'.$siblingID.'" '.$checked.'>'.
                                     '    <label for="'.$siblingID.'">'.$sibling.'</label>';
                                 if($i%2==0){
                                     echo '<br/>';
@@ -144,7 +152,7 @@
                         if($field->type == 'textarea'){
                             $val = '';
                             if($field->id == 'dataNeeded'){
-                                $val = $dataNeeded;
+                                $val = $communityPath.': '.$dataNeeded;
                             }
                             echo '<textarea name="'.$field->id.'" id="'.$field->id.'"  class="inputShade">'.$val.'</textarea>';
                         }elseif($field->type == 'user'){
@@ -169,7 +177,8 @@
 		<div class="clear"></div>
 	</div>
 	<div id="formSubmit" class="innerLower">
-		<input type="submit" value="Place Request" id="requestSubmit" name="requestSubmit" class="grow">
+	    <input type="hidden" name="collibraUser" value="<?php echo $stewardID; ?>" />
+		<input type="submit" value="Submit Request" id="requestSubmit" name="requestSubmit" class="grow">
 		<label for="requestSubmit" class="mobileHide">*All Fields Required</label>
 		<div class="clear"></div>
 	</div>

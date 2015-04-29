@@ -92,7 +92,7 @@
                         echo '<div class="people-list">'.
                             '<h4 class="deptHeader">'.$v->vocabulary.'</h4>';
                         
-                        if(sizeof($v->Role734327ec9eaa41329fea1a4f2b9568ddVOCSUFFIX)>0){
+                        /*if(sizeof($v->Role734327ec9eaa41329fea1a4f2b9568ddVOCSUFFIX)>0){
                             $userrid = $v->Role734327ec9eaa41329fea1a4f2b9568ddVOCSUFFIX[0]->userRole734327ec9eaa41329fea1a4f2b9568ddVOCSUFFIXrid;
                             $deptTitle = 'Trustee';
                             $cssClass = 'contactOrange';
@@ -103,7 +103,7 @@
                                 '    <div class="contactEmail"><a href="mailto:'.$users[$userrid]['email'].'">'.$users[$userrid]['email'].'</a></div>'.
                                 '    <span class="contactTitle">'.$deptTitle.'</span>'.
                                 '</div>';
-                        }
+                        }*/
                         if(sizeof($v->Role615829186613486a9d8261f7d1c0c014VOCSUFFIX)>0){
                             $userrid = $v->Role615829186613486a9d8261f7d1c0c014VOCSUFFIX[0]->userRole615829186613486a9d8261f7d1c0c014VOCSUFFIXrid;
                             $deptTitle = 'Steward';
@@ -119,7 +119,7 @@
                         if(sizeof($v->Role7865d2c3405a459db11edf061adec84bVOCSUFFIX)>0){
                             $userrid = $v->Role7865d2c3405a459db11edf061adec84bVOCSUFFIX[0]->userRole7865d2c3405a459db11edf061adec84bVOCSUFFIXrid;
                             $deptTitle = 'Custodian';
-                            $cssClass = '';
+                            $cssClass = 'contactOrange';
                             $name = $v->Role7865d2c3405a459db11edf061adec84bVOCSUFFIX[0]->userRole7865d2c3405a459db11edf061adec84bVOCSUFFIXfn.' '.$v->Role7865d2c3405a459db11edf061adec84bVOCSUFFIX[0]->userRole7865d2c3405a459db11edf061adec84bVOCSUFFIXln;
                             echo '<div class="contactBox '.$cssClass.'">'.
                                 '    <span class="contactName">'.$name.'</span>'.

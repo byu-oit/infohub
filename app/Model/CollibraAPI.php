@@ -7,9 +7,12 @@ class CollibraAPI extends Model {
     private $code;
     private $info;
     private $error;
+    private $requestTries = 0;
     
     private $settings = array(
-        'url'   =>  'https://byu.collibra.com/rest/1.0/'
+        'url'       =>  'https://byu-dev.collibra.com/rest/latest/',
+        'username'  => 'Admin', //***REMOVED***:***REMOVED***
+        'password'  => 'ey6Rourpkwxwe5G'
     );
     
     private static function cmp($a, $b){
@@ -44,7 +47,7 @@ class CollibraAPI extends Model {
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
         curl_setopt($ch, CURLOPT_FRESH_CONNECT, TRUE);
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-        curl_setopt($ch, CURLOPT_USERPWD, "***REMOVED***:***REMOVED***");
+        curl_setopt($ch, CURLOPT_USERPWD, $this->settings['username'].":".$this->settings['password']);
         $response = curl_exec($ch);
         
         $this->code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -59,6 +62,16 @@ class CollibraAPI extends Model {
                 'info: '. print_r($this->info).'<br>'.
                 'error: '. $this->error.'<br>';
             exit;
+        }
+        
+        // if given a 401 error, retry submitting a max of 3 times
+        if($this->code != '200' && $this->code != '201'){//$this->code == '401'){
+            echo $this->code;
+            $this->requestTries++;
+            if($this->requestTries<4){
+                sleep(2);
+                //$this->request($options);
+            }
         }
         /*
         echo $response;

@@ -30,7 +30,6 @@
             data: {'id':id}
         });
         $(li).parent().fadeOut();
-        return false;
     }
 
     function addQL(t, id) {
@@ -48,7 +47,6 @@
                     '</li>';
                 $('#QLContainer ul').append(html);
             }
-        });	 						
-        return false;	
+        });
     }
 </script>

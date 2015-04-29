@@ -47,7 +47,7 @@ class RequestController extends AppController {
         //print_r($this->request->data);
         $postData = 'user='.$guestID;
         foreach($this->request->data as $key => $val){
-            if($key!='fname' && $key!='lname' && $key!='phone' && $key!='email' && $key!='company' && $key!='terms' && $key!='requestSubmit')
+            if($key!='fname' && $key!='lname' && $key!='phone' && $key!='email' && $key!='company' && $key!='terms' && $key!='requestSubmit' && $key!='collibraUser')
             $postData .= '&'.$key.'='.$val;
         }
         
@@ -60,7 +60,15 @@ class RequestController extends AppController {
         $processID = $formResp->startWorkflowResponses[0]->processInstanceId;
         
         // store user's request
-        $objCollibra->query("INSERT INTO requests (netid, processid) VALUES('".$_SESSION['netid']."', '".$processID."')");
+        $this->loadModel('ISARequests');
+        $isaReq = new ISARequests();
+        $isaReq->create();
+        $isaReq->set('netid', $_SESSION['netid']);
+        $isaReq->set('processid', $processID);
+        $isaReq->set('request', $this->request->data['dataNeeded']);
+        $isaReq->set('collibraUser', $this->request->data['collibraUser']);
+        $isaReq->save();
+        //$objCollibra->query("INSERT INTO isarequests (netid, processid, request) VALUES('".$_SESSION['netid']."', '".$processID."', '".$."')");
         
         header('location: /request/success');
         exit;
@@ -114,19 +122,23 @@ class RequestController extends AppController {
         );
         $termResp = json_decode($termResp);
         
+        // load form fields for ISA workflow
         $formResp = $objCollibra->request(array('url'=>'workflow/c9b528d6-67a8-458a-902a-d072e09fea19/form/start'));
         $formResp = json_decode($formResp);
         
+        // load all collibra users for sponsor drop down
         $userResp = $objCollibra->request(array('url'=>'user/all'));
         $userResp = json_decode($userResp);
         usort($userResp->user, 'self::sortUsers');
         
+        // load all sibling terms
         $siblingTerms = $objCollibra->request(array('url'=>'vocabulary/'.$termResp->aaData[0]->domainrid.'/terms'));
         $siblingTerms = json_decode($siblingTerms);
         usort($siblingTerms->termReference, 'self::sortTerms');
         
         // start building description of terms needed
-        $dataNeeded = $termResp->aaData[0]->communityname.'/'.$termResp->aaData[0]->domainname.': '.$termResp->aaData[0]->termsignifier.', ';
+        $communityPath = $termResp->aaData[0]->communityname.'/'.$termResp->aaData[0]->domainname;
+        $dataNeeded = $termResp->aaData[0]->termsignifier.', ';
         
         // get all terms selected from search page
         $arrTermsSelected = array();
@@ -152,6 +164,7 @@ class RequestController extends AppController {
         $this->set('termDeatils', $termResp);
         $this->set('siblingTerms', $siblingTerms);
         $this->set('termsSelected', $arrTermsSelected);
+        $this->set('communityPath', $communityPath);
         $this->set('dataNeeded', $dataNeeded);
     }
 }

@@ -6,7 +6,7 @@
 	$(document).ready(function() {
 		$("#resourceLink").addClass('active');
 
-		$('li a').click(function (e) {
+		$('.catalogParent li a').click(function (e) {
 			$(this).toggleClass('active');
 			e.preventDefault();
 			var ullist = $(this).parent().children('ul:first');
