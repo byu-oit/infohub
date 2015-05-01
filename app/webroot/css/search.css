@@ -478,11 +478,21 @@ img.resultBodyLoading {
   height: 26px;
   width: 26px;
 }
+#searchBody #searchResults #srLower .highlyClassified .classificationTitle,
+#searchBody #requestForm #srLower .highlyClassified .classificationTitle,
+#searchBody #searchSuccess #srLower .highlyClassified .classificationTitle {
+  color: #f72525;
+}
 #searchBody #searchResults #srLower .highlyClassified:before,
 #searchBody #requestForm #srLower .highlyClassified:before,
 #searchBody #searchSuccess #srLower .highlyClassified:before {
   background: url('/img/iconHighClassified.png') no-repeat;
   background-size: 26px;
+}
+#searchBody #searchResults #srLower .classified .classificationTitle,
+#searchBody #requestForm #srLower .classified .classificationTitle,
+#searchBody #searchSuccess #srLower .classified .classificationTitle {
+  color: #fe8a02;
 }
 #searchBody #searchResults #srLower .classified:before,
 #searchBody #requestForm #srLower .classified:before,
@@ -490,11 +500,21 @@ img.resultBodyLoading {
   background: url('/img/iconClassified.png') no-repeat;
   background-size: 26px;
 }
+#searchBody #searchResults #srLower .public .classificationTitle,
+#searchBody #requestForm #srLower .public .classificationTitle,
+#searchBody #searchSuccess #srLower .public .classificationTitle {
+  color: #5db154;
+}
 #searchBody #searchResults #srLower .public:before,
 #searchBody #requestForm #srLower .public:before,
 #searchBody #searchSuccess #srLower .public:before {
   background: url('/img/iconPublic.png') no-repeat;
   background-size: 26px;
+}
+#searchBody #searchResults #srLower .internal .classificationTitle,
+#searchBody #requestForm #srLower .internal .classificationTitle,
+#searchBody #searchSuccess #srLower .internal .classificationTitle {
+  color: #1b7bdb;
 }
 #searchBody #searchResults #srLower .internal:before,
 #searchBody #requestForm #srLower .internal:before,

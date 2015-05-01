@@ -32,7 +32,7 @@
                             '       <li><a href=""><img src="/img/dataLoading-sm.gif" alt="Loading..."></a></li>'+
                             '   </ul>';
                     }else{
-                        
+                        html += '   <a href="#">'+comm.subcommunity+'</a>';
                     }
                     html += '</li>';
                 }

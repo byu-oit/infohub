@@ -391,21 +391,41 @@ img.resultBodyLoading {
 				height: 26px;
 				width: 26px;
 			}
-			.highlyClassified:before {
-				background: url('/img/iconHighClassified.png') no-repeat;
-				background-size: 26px;
+			.highlyClassified{
+                .classificationTitle{
+                    color: @redText;   
+                }
+                &:before {
+                    background: url('/img/iconHighClassified.png') no-repeat;
+                    background-size: 26px;
+                }
 			}
-			.classified:before {
-				background: url('/img/iconClassified.png') no-repeat;
-				background-size: 26px;
+			.classified{
+                .classificationTitle{
+                    color: @orangeText;   
+                }
+                &:before {
+                    background: url('/img/iconClassified.png') no-repeat;
+                    background-size: 26px;
+                }
 			}
-			.public:before {
-				background: url('/img/iconPublic.png') no-repeat;
-				background-size: 26px;
+			.public{
+                .classificationTitle{
+                    color: @greenText;   
+                }
+                &:before {
+                    background: url('/img/iconPublic.png') no-repeat;
+                    background-size: 26px;
+                }
 			}
-			.internal:before {
-				background: url('/img/iconInternal.png') no-repeat;
-				background-size: 26px;
+			.internal{
+                .classificationTitle{
+                    color: @blueTextSearch;   
+                }
+                &:before {
+                    background: url('/img/iconInternal.png') no-repeat;
+                    background-size: 26px;
+                }
 			}
 		}
         

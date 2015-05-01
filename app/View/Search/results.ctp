@@ -99,8 +99,29 @@
             $term = $terms->aaData[$i];
             $createdDate = $term->createdOn/1000;
             $createdDate = date('m/d/Y', $createdDate);
+            $classification = $term->Attre0937764544a4d2198cedc0c1936b465;
+            $classificationTitle = '';
+            switch($classification){
+                case '1 - Public':
+                    $classificationTitle = 'Public';
+                    $classification = 'public';
+                    break;
+                case '2 - Internal':
+                    $classificationTitle = 'Internal';
+                    $classification = 'internal';
+                    break;
+                case '3 - Confidential':
+                    $classificationTitle = 'Confidential';
+                    $classification = 'classified';
+                    break;
+                case '4 - Highly Confidential':
+                    $classificationTitle = 'Highly Confidential';
+                    $classification = 'highlyClassified';
+                    break;
+            }
+            
 ?>
-			<div id="term<?php echo $term->termrid; ?>" class="resultItem highlyClassified">
+			<div id="term<?php echo $term->termrid; ?>" class="resultItem <?php echo $classification ?>">
 			    <form action="/request/index/<?php echo $term->termrid; ?>" method="post">
                     <h4><?php echo $term->termsignifier; ?></h4>
                     <h5 class="blueText"><?php echo $term->communityname.'/'.$term->domainname; ?></h5>
@@ -115,7 +136,7 @@
                                 }
                             ?>
                             <li><span class="listLabel">Date Created:&nbsp;</span><?php echo $createdDate; ?></li>
-                            <li><span class="listLabel">Classification: </span><span class="redText">Highly Classified</span></li>
+                            <li><span class="listLabel">Classification: </span><span class="classificationTitle"><?php echo $classificationTitle ?></span></li>
                         </ul>
                         <div class="resultBody">
                             <p><?php echo stripslashes(strip_tags($term->Attr00000000000000000000000000000202longExpr)); ?></p>
@@ -146,11 +167,18 @@
 ?>
 			<div class="clear"></div>
 			<?php
+                $urlParts = parse_url($_SERVER['REQUEST_URI']);
+                $urlParts = explode("/", $urlParts['path']);
+
                 if($totalPages>1){
                     echo '<ul class="page-nav">';
                     for($i=0; $i<$totalPages; $i++){
                         $cssClass = (($i+1) == $pageNum)?'class="active"':'';
-                        echo '<li '.$cssClass.'><a href="/search/results/'.$searchInput.'/'.($i+1).'/?s='.$sort.'&f='.$filter.'">'.($i+1).'</a></li>';   
+                        if($urlParts[2] == 'listTerms'){
+                            echo '<li '.$cssClass.'><a href="/search/listTerms/'.$domain.'/'.($i+1).'/?s='.$sort.'&f='.$filter.'">'.($i+1).'</a></li>';
+                        }else{
+                            echo '<li '.$cssClass.'><a href="/search/results/'.$searchInput.'/'.($i+1).'/?s='.$sort.'&f='.$filter.'">'.($i+1).'</a></li>';
+                        }
                     }
                     echo '</ul>';
                 }
