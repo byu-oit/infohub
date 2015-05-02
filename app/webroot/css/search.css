@@ -338,12 +338,6 @@ img.resultBodyLoading {
 #searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol input {
   margin-left: 0;
 }
-#searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol .info,
-#searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol .info,
-#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol .info {
-  display: inline;
-  margin-left: 5px;
-}
 #searchBody #searchResults #srLower .resultItem .addQuickLink,
 #searchBody #requestForm #srLower .resultItem .addQuickLink,
 #searchBody #searchSuccess #srLower .resultItem .addQuickLink {
