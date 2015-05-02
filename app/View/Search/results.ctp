@@ -139,7 +139,7 @@
                             <li><span class="listLabel">Classification: </span><span class="classificationTitle"><?php echo $classificationTitle ?></span></li>
                         </ul>
                         <div class="resultBody">
-                            <p><?php echo stripslashes(strip_tags($term->Attr00000000000000000000000000000202longExpr)); ?></p>
+                            <p><?php echo str_replace($searchInput,'<span class="highlight">'.$searchInput.'</span>',stripslashes(strip_tags($term->Attr00000000000000000000000000000202longExpr))); ?></p>
                             <h5>Also included in this selection (check all that apply to your request).</h5>
                             <img class="resultBodyLoading" src="/img/dataLoading.gif" alt="Loading...">
                             <div class="checkBoxes"></div>

@@ -38,6 +38,9 @@ body {
   display: inline;
   margin-left: 5px;
 }
+.highlight {
+  background-color: #ffe778;
+}
 header {
   background: #003366;
 }
