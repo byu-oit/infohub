@@ -36,7 +36,18 @@ class AppController extends Controller {
     public function beforeFilter() {
         parent::beforeFilter();
         
-        session_start();
+        require_once $_SERVER['DOCUMENT_ROOT'].'/CAS-1.3.3/config.php';
+        require_once $phpcas_path.'/CAS.php';
+        phpCAS::client(CAS_VERSION_2_0, $cas_host, $cas_port, $cas_context);
+        // phpCAS::setCasServerCACert($cas_server_ca_cert_path);
+        phpCAS::setNoCasServerValidation();
+        if(phpCAS::isAuthenticated()){
+            $this->set('casAuthenticated', true);
+        }else{
+            $this->set('casAuthenticated', false);
+        }
+        
+        if (session_id()== '') session_start();
         $_SESSION['netid'] = '11111';
         $_SESSION['username'] = 'Christy Whitehouse';
         $_SESSION['dept'] = 'Business';

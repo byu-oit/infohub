@@ -188,14 +188,23 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 				<h2><a href="/" id="site-title">InfoHub</a></h2>
 				<div id="headerRight">
 					<span class="userInfo">
-						<?php echo $this->Html->link('Login', '/login'); ?>
+						<?php if(!$casAuthenticated) echo $this->Html->link('Login', '/login'); ?>
 					</span>
-					<?php echo $this->Html->link(
-							    $this->Html->image("/img/icon-settings.png", array("alt" => "Settings")),
-							    "/myaccount",
-							    array('escape' => false, 'id' => 'settingsWheel'));
-					?>
-					<!-- <a id="settingsWheel"><img src="" alt="Settings"></a> -->
+					<div id="request-queue">
+					    <div class="request-num">1</div><img src="/img/icon-cart.png" alt="Requests">
+                        <div id="request-popup">
+                           <h3>Request Queue</h3>
+                            <div class="arrow"></div>
+                            <ul>
+                                <li>Information Domain</li>
+                                <li>Custodian</li>
+                            </ul>
+                            <a class="btn-orange" href="">Submit Request</a>
+                        </div>
+                    </div>
+                    <?php if($casAuthenticated){ ?>
+                    <a id="settingsWheel" href="/myaccount"><img src="/img/icon-settings.png" alt="My Account" /></a>
+                    <?php } ?>
 
 					<!-- Below is fixed pos. on destop -->
 					<div id="needHelp">

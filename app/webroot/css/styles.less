@@ -51,6 +51,23 @@ body {
     background-color: #ffe778;
 }
 
+.btn-orange{
+    color: #fff;
+    font-size: 12.5px;
+    text-decoration: none;
+    padding: 6px 15px;
+    background-color: #ffa900;
+    display: block;
+    width: 50%;
+    margin: 15px auto 0 auto;
+    text-align: center;
+    font-weight: bold;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    .box-shade();
+}
+
 header {
 	background: @bgBlueLight;
 
@@ -114,6 +131,60 @@ header {
 					width: 20px;
 				}
 			}
+            #request-queue {
+				display: block;
+                position: relative;
+				float: left;
+                margin-right: 10px;
+
+				img {
+					width: 20px;
+				}
+                
+                .request-num{
+                    margin: -7px 0 0 2px;
+                    min-width: 13px;
+                    height: 13px;
+                    text-align: center;
+                    font-weight: bold;
+                    position: absolute;
+                    background-color: #fff;
+                    border-radius: 10px;
+                    border: solid 2px #FFA921;
+                }
+			}
+            #request-popup{
+                //display: none;
+                position: absolute;
+                right: 0;
+                top: 25px;
+                width: 200px;
+                background-color: #fff;
+                border: solid 2px #FFA921;
+                color: @blue;
+                padding: 15px;
+                z-index: 99;
+                
+                h3{
+                    margin: 0;
+                }
+                
+                ul{
+                    margin: 0;
+                    padding: 0 0 0 15px;
+                }
+                
+                .arrow{
+                    position: absolute;
+                    top: -7px;
+                    right: 2px;
+                    margin-left: -7px;
+                    width: 14px;
+                    height: 7px;
+                    background: url(../img/request-arrow.png) no-repeat;
+                }
+            }
+            
 			#needHelp {
 				position: fixed;
 				right: 0;

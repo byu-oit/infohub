@@ -66,7 +66,11 @@ class AdminController extends AppController {
         $objCmsPage = new CmsPage();
         if($pageID!=0){
             $page = $objCmsPage->loadPage($pageID);
-            $cmsPage = $page['CmsPage'];
+            if(!$page){
+                header('location: /admin/managepages');
+            }else{
+                $cmsPage = $page['CmsPage'];
+            }
         }else{
             $page = null;
             $cmsPage = null;
@@ -152,7 +156,7 @@ class AdminController extends AppController {
             );
         }
 
-        return $this->redirect(array('action' => 'index'));
+        return $this->redirect(array('action' => 'managepages'));
     }
     
     private function getNextRank($parentID){

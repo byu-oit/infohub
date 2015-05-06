@@ -137,6 +137,7 @@ label.inline{
 	margin: 0px;
 }
 #pageList li, #userList li, #groupList li{
+    position: relative;
 	list-style: none;
 	padding: 0px;
 	margin: 0px;
@@ -150,6 +151,21 @@ label.inline{
 	display: block;
 	background: url(../img/admin/page_white_text.png) left no-repeat #fff;
 	text-decoration: none;
+}
+#pageList a.add-page{
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: none;
+    background-color: #002D60;
+    border-radius: 6px;
+    color: #fff;
+    margin: 2px 0 2px 0;
+    padding: 3px 10px;
+    width: 60px;
+}
+#pageList a.add-page:hover{
+    background-color: #4272A2;
 }
 #userList li a, #groupList li a{
 	border: 0px;

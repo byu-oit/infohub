@@ -3,6 +3,10 @@
 class RequestController extends AppController {
     public $helpers = array('Html', 'Form');
     
+    function beforeFilter() {
+
+    }
+    
     private static function sortUsers($a, $b){
         return strcmp($a->firstName, $b->firstName);
     }
@@ -34,14 +38,11 @@ class RequestController extends AppController {
             array(
                 'url'=>'user/guest',
                 'post'=>true,
-                'params'=>'firstName=Jon&lastName=Doe&email=anava@summitslc.com'
+                'params'=>'firstName='.$this->request->data['fname'].'&lastName='.$this->request->data['lname'].'&email='.$this->request->data['email'].''
             )
         );
         $guestUserResp = json_decode($guestUserResp);
         $guestID = $guestUserResp->resourceId;
-        //echo ($guestID);
-        //exit;
-        
         
         $guestID = '';
         //print_r($this->request->data);
@@ -52,11 +53,13 @@ class RequestController extends AppController {
         }
         
         $formResp = $objCollibra->request(array(
-            'url'=>'workflow/c9b528d6-67a8-458a-902a-d072e09fea19/start',
+            'url'=>'workflow/'.Configure::read('isaWorkflow').'/start',
             'post'=>true,
             'params'=>$postData
         ));
-        $formResp = json_decode($formResp);
+        //$formResp = json_decode($formResp);
+        print_r($formResp);
+        exit;
         $processID = $formResp->startWorkflowResponses[0]->processInstanceId;
         
         // store user's request
@@ -75,9 +78,17 @@ class RequestController extends AppController {
     }
     
     public function index() {
-        ///////////////////////////////////////////////////
-        // TO DO: make sure user is logged in via BYU API
-        ///////////////////////////////////////////////////
+        // make sure user is logged in via BYU API
+        require_once $_SERVER['DOCUMENT_ROOT'].'/CAS-1.3.3/config.php';
+        require_once $phpcas_path.'/CAS.php';
+        phpCAS::client(CAS_VERSION_2_0, $cas_host, $cas_port, $cas_context);
+        // phpCAS::setCasServerCACert($cas_server_ca_cert_path);
+        phpCAS::setNoCasServerValidation();
+        if(phpCAS::isAuthenticated()){
+            $this->set('casAuthenticated', true);
+        }else{
+            phpCAS::forceAuthentication();
+        }
         
         // make sure a term has been passed to this page
         if(!isset($this->request->params['pass'][0])){
@@ -123,7 +134,7 @@ class RequestController extends AppController {
         $termResp = json_decode($termResp);
         
         // load form fields for ISA workflow
-        $formResp = $objCollibra->request(array('url'=>'workflow/994549b0-2323-494d-8fef-5f8a39b31392/form/start'));
+        $formResp = $objCollibra->request(array('url'=>'workflow/'.Configure::read('isaWorkflow').'/form/start'));
         $formResp = json_decode($formResp);
         
         // load all collibra users for sponsor drop down

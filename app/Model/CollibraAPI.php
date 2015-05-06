@@ -10,9 +10,14 @@ class CollibraAPI extends Model {
     private $requestTries = 0;
     
     private $settings = array(
+        // DEV SERVER
         'url'       =>  'https://byu-dev.collibra.com/rest/latest/',
-        'username'  => 'Admin', //***REMOVED***:***REMOVED***
+        'username'  => 'Admin',
         'password'  => 'ey6Rourpkwxwe5G'
+        // NON-DEV SERVER
+        //'url'       =>  'https://byu.collibra.com/rest/latest/',
+        //'username'  => '***REMOVED***', 
+        //'password'  => '***REMOVED***'
     );
     
     private static function cmp($a, $b){
@@ -61,18 +66,19 @@ class CollibraAPI extends Model {
                 'code: '. $this->code.'<br>'.
                 'info: '. print_r($this->info).'<br>'.
                 'error: '. $this->error.'<br>';
-            exit;
+            //exit;
+            echo $url.'<br>';
         }
         
         // if given a 401 error, retry submitting a max of 3 times
-        if($this->code != '200' && $this->code != '201'){//$this->code == '401'){
+        /*if($this->code != '200' && $this->code != '201'){//$this->code == '401'){
             echo $this->code;
             $this->requestTries++;
             if($this->requestTries<4){
                 sleep(2);
                 //$this->request($options);
             }
-        }
+        }*/
         /*
         echo $response;
         exit;

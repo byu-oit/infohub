@@ -18,7 +18,13 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
+    // DEV SERVER
     Configure::write('byuCommunity', '4e756e1e-11ee-4d1e-bfaa-fb0ada974fc5');
+    Configure::write('isaWorkflow', '994549b0-2323-494d-8fef-5f8a39b31392');
+    
+    // NON-DEV SERVER
+    //Configure::write('byuCommunity', '99582048-38e3-4149-a301-c6d54d8151c8');
+    //Configure::write('isaWorkflow', 'c9b528d6-67a8-458a-902a-d072e09fea19');
 
 /**
  * CakePHP Debug Level:

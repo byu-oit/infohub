@@ -156,7 +156,7 @@
                     ?>
                             
                     </a>
-                    <input type="submit" class="requestAccess grow" value="Request Access" />
+                    <input type="submit" class="requestAccess grow" value="Add To Request" />
                     <!--<a href="/search/request/<?php echo $term->termrid; ?>" class="requestAccess grow">Request Access</a>-->
                     <a class="detailsTab" data-rid="<?php echo $term->domainrid; ?>"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a>
 				</form>

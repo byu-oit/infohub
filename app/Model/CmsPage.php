@@ -55,8 +55,11 @@ class CmsPage extends AppModel {
 				$cssClass = $cssClass . " active";
 			}
             
-            $this->listPageHtml .= '<li class="'.$cssClass.'" id="'.$page['id'].'_'.$page['parentID'].'"><a href="/admin/pagemanager/editpage/'.$page["id"].'#pg'.$page["id"].'" name="pg'.$page["id"].'">'.$pageTitle.'</a>';
+            $this->listPageHtml .= '<li class="'.$cssClass.'" id="'.$page['id'].'_'.$page['parentID'].'"><a href="/admin/editpage/'.$page["id"].'#pg'.$page["id"].'" name="pg'.$page["id"].'">'.$pageTitle.'</a>';
 			if($hasSubpages){
+                if($page['id']==1){
+                    $this->listPageHtml .= '<a class="add-page" href="/admin/addpage/1">+ Add Page</a>';
+                }
                 $this->listPageHtml .=  "<ul class='left-subnav'>\r\n";
                 //$this->listPageHtml = $html.$this->listPages($pageID, $page['id'], $level+1, $html);
                 $this->listPages($pageID, $page['id'], $level+1, $html);
