@@ -4,6 +4,21 @@
 
 /*===========  RESOURCE & SEACH-RESULTS STYLES ============*/
 
+.videoWrapper {
+	position: relative;
+	padding-bottom: 56.25%; /* 16:9 */
+	padding-top: 25px;
+	height: 0;
+}
+.videoWrapper iframe {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+    border: none;
+}
+
 .headerTab {
 	font-size: 30px;
 	padding: 8px 30px;
@@ -24,6 +39,7 @@
 	position: relative;
 
 	#resourceTop {
+        width: 100%;
 		padding: 40px 0 0;
 		float: left;
 		.box-shade();
@@ -51,6 +67,7 @@
 						padding: 5px 0 0;
 
 						a {
+                            color: @grayText;
 							display: block;
 							padding: 5px 12px;
 							background-color: #fff;
@@ -132,6 +149,7 @@
 				background-color: #fff;
 				padding: 20px 3%;
 				float: left;
+                font-size: 12px;
 				.box-shade();
 
 				

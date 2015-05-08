@@ -66,6 +66,7 @@
     });
 </script>
 
+<h2>Pages</h2>
 <ul id="pageList">
     <?php echo $pageList ?>
 </ul>

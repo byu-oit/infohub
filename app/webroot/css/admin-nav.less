@@ -1,0 +1,66 @@
+/*============= LOAD LESS FILES =============*/
+@import 'variables';
+@import 'mixins';
+
+/*============= SITE STYLES =============*/
+
+.login-form{
+    font-size: 12px;
+    margin: 50px auto;
+    width: 200px;
+    
+    label{
+        float: left;
+        width: 100%;
+    }
+    input{
+        width: 100%;
+        margin-bottom: 8px;
+    }
+    .submit input{
+        float: right;
+        width: auto;
+    }
+}
+
+#cms-preview-container{
+    display: none;
+}
+
+#admin-top {
+	position: relative;
+    //background-color: #4272A2;
+    .2gradient(top, #4272A2, darken(#4272A2, 10%), 0%, 100%);
+    padding: 0 10px;
+    .clear;
+    
+    ul{
+        .inline;
+        float: left;
+        
+        &.right{
+            float: right;
+            li:last-child{
+                border: none;
+            }
+        }
+        
+        li{
+            color: #fff;
+            padding: 0;
+            border-right: solid 1px lighten(#4272A2, 5%);
+            
+            a{
+                font-size: 11px;
+                display: block;
+                color: #fff;
+                text-decoration: none;
+                padding: 15px 10px;
+            }
+            a:hover{
+                background-color: darken(#4272A2, 20%); 
+            }
+        }
+    }
+}
+	

@@ -29,6 +29,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 		echo $this->Html->meta('icon');
 		// echo $this->Html->css('cake.generic');
 		echo $this->Html->css('styles');
+        echo $this->Html->css('admin-nav');
 		echo $this->fetch('meta');
 		echo $this->fetch('css');
 		echo $this->fetch('script');
@@ -180,6 +181,22 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 
 </head>
 <body>
+<?php
+    if($isAdmin){
+?>
+   <div id="admin-top">
+        <ul id="admin-top-nav">
+            <li><a href="/admin/managepages">Manage Pages</a></li>
+            <li><a href="/admin/manageusers">Manage Users</a></li>
+            <?php if($controllerName=='cmsPages'){ ?>
+            <li><a href="javascript:togglePreview()">Preview Page</a></li>
+            <?php } ?>
+        </ul>
+        <ul id="admin-top-nav" class="right">
+            <li><a href="/admin/logout">Logout</a></li>
+        </ul>
+    </div>
+<?php } ?>    
     <div id="info-win"><div class="info-win-content"></div><div class="info-win-arrow"></div></div>
 	<div id="container">
 		<header>
@@ -227,12 +244,9 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 		<nav>
 			<a id="mob-nav" class="box-shadow-menu inner">&nbsp;</a>
 			<ul id="mainNav" class="inner">
-				<!-- <li><?php echo $this->Html->link('Search', '/search', array('id' => 'searchLink')); ?></li>
-				<li><?php echo $this->Html->link('Find People', '/people', array('id' => 'findLink')); ?></li>
-				<li><?php echo $this->Html->link('Resources', '/resource', array('id' => 'resourceLink')); ?></li> -->
 				<li><a href="/search" id="searchLink">Search</a></li>
 				<li><a href="/people" id="findLink">Find People</a></li>
-				<li><a href="/resource" id="resourceLink">Resources</a></li>
+				<li><a href="/resources" id="resourceLink">Resources</a></li>
 			</ul>
 		</nav>
 		<div id="content">

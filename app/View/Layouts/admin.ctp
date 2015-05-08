@@ -24,6 +24,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 	<title>Admin</title>
 	<?php
 		echo $this->Html->css('popup-styles');
+        echo $this->Html->css('admin-nav');
 	?>
 	<script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
 	<script  type="text/javascript">
@@ -49,6 +50,16 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 </head>
 
 <body class="cmsWindow">
+    <div id="admin-top">
+        <ul id="admin-top-nav">
+            <li><a href="/">Return to InfoHub</a></li>
+            <li><a href="/admin/managepages">Manage Pages</a></li>
+            <li><a href="/admin/manageusers">Manage Users</a></li>
+        </ul>
+        <ul id="admin-top-nav" class="right">
+            <li><a href="/admin/logout">Logout</a></li>
+        </ul>
+    </div>
     <div id="header">
 
     </div>

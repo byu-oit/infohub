@@ -6,33 +6,53 @@ class AdminController extends AppController {
     function beforeFilter() {
         parent::beforeFilter();
         $this->layout = 'admin';
-        if(!$this->Session->read('netid') && $this->request->params['action'] != 'login'){
-            header('location: /admin/login');
-            exit;
+        if(!$this->Session->read('userID') || $this->Session->read('userIP')!=$_SERVER["REMOTE_ADDR"]){
+            if($this->request->params['action'] != 'login'){
+                header('location: /admin/login');
+                exit;
+            }
         }
     }
     
     public function index(){
-        $this->layout = 'default';
+        /*$this->layout = 'default';
+        $this->render('login');*/
+        header('Location: /admin/login');
+        exit;
     }
     
     public function login(){
         if ($this->request->is('post')) {
             $username = $this->request->data['login']['Username'];
             $pass = $this->request->data['login']['Password'];
-            // BYU API
-            $this->Session->delete('netid');
-            $this->Session->write('netid', '1111');
-            header('location: /');
-            exit;
+            
+            $this->loadModel('CmsUsers');
+            $objCmsUser = new CmsUsers();
+            $user = $objCmsUser->authUser($username, $pass);
+            if(sizeof($user)>0){
+                $this->Session->write('userID', $user['CmsUsers']['id']);
+                $this->Session->write('userIP', $_SERVER["REMOTE_ADDR"]);
+                header('location: /');
+                exit;
+            }else{
+                $this->Session->setFlash('Incorrect Login', 'default', array('class' => 'error'));
+                $this->Session->delete('userID');
+            }
         }
         $this->layout = 'default';
+    }
+    
+    public function logout(){
+        $this->Session->delete('userID');
+        $this->Session->delete('userIP');
+        header('location: /admin/login');
+        exit;
     }
     
     public function managepages(){
         $this->loadModel('CmsPage');
         $objCmsPage = new CmsPage();
-        $this->set('pageList', $objCmsPage->listPages());
+        $this->set('pageList', $objCmsPage->listAdminPages());
     }
     
     public function editpage($id=null){
@@ -79,7 +99,7 @@ class AdminController extends AppController {
         //$this->loadModel('CmsTemplate');
         //$objCmsTemplate = new CmsTemplate();        
 
-        $this->set('pageList', $objCmsPage->listPages());
+        $this->set('pageList', $objCmsPage->listAdminPages());
         $this->set('page', $cmsPage);
         //$this->set('templates', $objCmsTemplate->find('all'));
         $this->request->data = $page;
@@ -112,10 +132,133 @@ class AdminController extends AppController {
             }
         }
         
-        $this->set('pageList', $objCmsPage->listPages());
+        $this->set('pageList', $objCmsPage->listAdminPages());
         $this->set('page', $cmsPage);
         $this->set('parentID', $pageID);
         $this->set('rank', $this->getNextRank($pageID));
+    }
+    
+    public function deletepage($id = null) {
+        $this->loadModel('CmsPage');
+        $objCmsPage = new CmsPage();
+        if ($objCmsPage->delete($id) && $id!=1) {
+            $this->Session->setFlash(
+                __('The page has been deleted.', h($id))
+            );
+        } else {
+            $this->Session->setFlash(
+                __('The page could not be deleted.', h($id))
+            );
+        }
+
+        return $this->redirect(array('action' => 'managepages'));
+    }
+    
+    public function manageusers(){
+        $this->loadModel('CmsUsers');
+        $objCmsUsers = new CmsUsers();
+        $this->set('users', $objCmsUsers->listAdminUsers());
+    }
+    
+    public function edituser($id=null){
+        $this->loadModel('CmsUsers');
+        
+        // update page data
+        if ($this->request->data) {
+            $objCmsUser = new CmsUsers();
+            $user = $objCmsUser->findById($id);
+            
+            if (!$user) {
+                throw new NotFoundException(__('Invalid user'));
+            }else{
+                if ($this->request->is(array('post', 'put'))) {
+                    $data = $this->request['data']['CmsUsers'];
+                    $newUsername = $data['username'];
+                    $newPassword = $data['password'];
+                    $newActive = $data['active'];
+                        
+                    if($newUsername!=$user['CmsUsers']['username'] && $objCmsUser->userExists($this->request['data']['CmsUsers']['username'])){
+                        $this->Session->setFlash('This user already exists.', 'default', array('class' => 'error'));
+                    }else{
+                        App::uses('Bcrypt', 'Model');
+                        $objCmsUser->id = $id;
+                        $objCmsUser->set('username', $newUsername);
+                        $objCmsUser->set('active', $newActive);
+                        if($newPassword != 'p#uphukuD-3aP4a&e#hU'){
+                            $objCmsUser->set('password', Bcrypt::hash($newPassword));
+                        }
+                        if ($objCmsUser->save()) {
+                            $this->Session->setFlash(__('This user has been updated.'));
+                        }else{
+                            $this->Session->setFlash('Unable to update this user.', 'default', array('class' => 'error'));
+                        }
+                    }
+                }
+            }
+        }
+        
+        App::uses('Helpers', 'Model');
+        $userID = 0;
+        if(sizeof($this->request->params['pass'])>0){
+            $userID = Helpers::getInt($this->request->params['pass'][0]);
+        }
+
+        $objCmsUser = new CmsUsers();
+        if($userID!=0){
+            $user = $objCmsUser->findById($id);
+            if(!$user){
+                header('location: /admin/manageusers');
+            }else{
+                $cmsUser = $user['CmsUsers'];
+            }
+        }else{
+            $user = null;
+            $cmsUser = null;
+        }
+    
+        $this->set('users', $objCmsUser->listAdminUsers());
+        $this->set('user', $cmsUser);
+        $this->request->data = $user;
+    }
+    
+    public function adduser(){
+        App::uses('Helpers', 'Model');
+        App::uses('Bcrypt', 'Model');
+        $this->loadModel('CmsUsers');
+        $objCmsUser = new CmsUsers();
+        
+        // update user data
+        if ($this->request->is('post')) {
+            if($objCmsUser->userExists($this->request['data']['CmsUsers']['username'])){
+                $this->Session->setFlash('This user already exists.', 'default', array('class' => 'error'));
+            }else{
+                $data = $this->request['data'];
+                $data['CmsUsers']['password'] = Bcrypt::hash($data['CmsUsers']['password']);
+                if ($objCmsUser->save($data)) {
+                    $this->Session->setFlash(__('The user has been added.'));
+                }else{
+                    $this->Session->setFlash('Unable to save user.', 'default', array('class' => 'error'));
+                }
+            }
+        }
+        
+        $this->set('users', $objCmsUser->listAdminUsers());
+    }
+    
+    public function deleteuser($id = null) {
+        $this->loadModel('CmsUsers');
+        $objCmsUser = new CmsUsers();
+        if ($objCmsUser->delete($id)) {
+            $this->Session->setFlash(
+                __('The user has been deleted.', h($id))
+            );
+        } else {
+            $this->Session->setFlash(
+                __('The user could not be deleted.', h($id))
+            );
+        }
+
+        return $this->redirect(array('action' => 'manageusers'));
     }
     
     public function changerank(){
@@ -133,30 +276,14 @@ class AdminController extends AppController {
                 $arrPageIDs = explode("::", $page);
                 $parentID = Helpers::getInt($arrPageIDs[2]);
                 $pageID = Helpers::getInt($arrPageIDs[0]);
-                $objCmsPage->query("UPDATE CMS_Pages SET ParentID=".$parentID.",Rank=".$rank." WHERE ID=".$pageID);
+                $objCmsPage->query("UPDATE cms_pages SET parentID=".$parentID.",rank=".$rank." WHERE id=".$pageID);
                 $rank++;
             }
 
             //update home page's rank to 1
-            $objCmsPage->query("UPDATE CMS_Pages SET Rank=1 WHERE ID=1");
+            $objCmsPage->query("UPDATE cms_pages SET rank=1 WHERE id=1");
         }
         exit;
-    }
-    
-    public function deletepage($id = null) {
-        $this->loadModel('CmsPage');
-        $objCmsPage = new CmsPage();
-        if ($objCmsPage->delete($id) && $id!=1) {
-            $this->Session->setFlash(
-                __('The page has been deleted.', h($id))
-            );
-        } else {
-            $this->Session->setFlash(
-                __('The page could not be deleted.', h($id))
-            );
-        }
-
-        return $this->redirect(array('action' => 'managepages'));
     }
     
     private function getNextRank($parentID){

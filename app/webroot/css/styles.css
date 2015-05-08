@@ -520,6 +520,27 @@ pre.cake-error {
   white-space: normal;
   display: none;
 }
+#flashMessage {
+  width: 100%;
+  padding: 1.2% 2%;
+  margin: 0;
+  border: 1px solid;
+  font-size: 14px;
+}
+#flashMessage.info {
+  color: #00529B;
+  background-color: #BDE5F8;
+}
+#flashMessage.message {
+  color: #4F8A10;
+  background-color: #DFF2BF;
+}
+#flashMessage.error,
+input.error,
+textarea.error {
+  color: #D8000C;
+  background-color: #FFBABA;
+}
 .shrink {
   transition: all 0.15s ease-in-out;
 }

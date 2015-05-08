@@ -4,11 +4,6 @@ class CmsPagesController extends AppController {
     //public $helpers = array('Html', 'Form');
     
     public function index() {
-        
-        App::uses('Cms', 'Model');
-        $objCms = new Cms();
-        $objCms->listPages();
-        
         if(sizeof($this->request->params['pass'])>0){
             $pageSlug = $this->request->params['pass'][0];
         }else{
@@ -39,14 +34,13 @@ class CmsPagesController extends AppController {
         ));
         $templateFile = str_replace('.ctp', '', $templateResults[0]['CmsTemplate']['file']);
         
-        //print_r($templateFile);
-        //echo '<hr>';
-        //echo $page[0]['CmsPage']['title'];
-        //exit;
-        
-        
+        $this->loadModel('CmsPage');
+        $objCms = new CmsPage();
+        $pageNav = $objCms->listPages(0,1);
+        $page['body'] = $objCms->loadCmsBody($page['id'], $page['body'], $this->viewVars['isAdmin']);
         
         $this->set('page', $page);
+        $this->set('pageNav', $pageNav);
         $this -> render('/Cmspages/'.$templateFile);
             
         //$this->set('posts', $this->CmsPage->find('all'));
@@ -66,15 +60,26 @@ class CmsPagesController extends AppController {
         $this->set('post', $post);
     }
     
-    public function add() {
-        if ($this->request->is('post')) {
-            $this->Post->create();
-            if ($this->Post->save($this->request->data)) {
-                $this->Session->setFlash(__('Your post has been saved.'));
-                return $this->redirect(array('action' => 'index'));
+    public function updatePage(){
+        if ($this->request->data) {
+            App::uses('Helpers', 'Model');
+            $pgID = Helpers::getInt($this->request->data['pgID']);
+            $pgBody = $this->request->data['pgBody'];
+            
+            $this->loadModel('CmsPage');
+            $objCmsPage = new CmsPage();
+            $page = $objCmsPage->findById($pgID);
+            //print_r($page['CmsPage']['body']);
+            //print_r($page);exit;
+            if (!$page) {
+                throw new NotFoundException(__('Invalid page'));
+            }else{
+                $objCmsPage->id = $pgID;
+                $objCmsPage->set('body', $pgBody);
+                $objCmsPage->save();
             }
-            $this->Session->setFlash(__('Unable to add your post.'));
         }
+        exit;
     }
     
     public function update($id = null) {

@@ -36,7 +36,7 @@ class AppController extends Controller {
     public function beforeFilter() {
         parent::beforeFilter();
         
-        require_once $_SERVER['DOCUMENT_ROOT'].'/CAS-1.3.3/config.php';
+        /*require_once $_SERVER['DOCUMENT_ROOT'].'/CAS-1.3.3/config.php';
         require_once $phpcas_path.'/CAS.php';
         phpCAS::client(CAS_VERSION_2_0, $cas_host, $cas_port, $cas_context);
         // phpCAS::setCasServerCACert($cas_server_ca_cert_path);
@@ -45,7 +45,8 @@ class AppController extends Controller {
             $this->set('casAuthenticated', true);
         }else{
             $this->set('casAuthenticated', false);
-        }
+        }*/
+        $this->set('casAuthenticated', true);
         
         if (session_id()== '') session_start();
         $_SESSION['netid'] = '11111';
@@ -53,11 +54,18 @@ class AppController extends Controller {
         $_SESSION['dept'] = 'Business';
         $_SESSION['role'] = 'Information Steward';
         
+        $isAdmin = false;
+        if($this->Session->read('userID') != '' && $this->Session->read('userIP')==$_SERVER["REMOTE_ADDR"]){
+            $isAdmin = true;
+        }
+        
         $this->disableCache();
         
         App::import('Controller', 'QuickLinks');
         $objQuickLinks = new QuickLinksController;
         $quickLinks = $objQuickLinks->load();
         $this->set('quickLinks', $quickLinks);
+        $this->set('isAdmin', $isAdmin);
+        $this->set('controllerName', $controllerName = $this->request->params['controller']);
     }
 }

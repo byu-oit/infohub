@@ -27,7 +27,7 @@
     echo $this->Form->create('CmsPage');
     $pgID = $page['id'];
 ?>
-            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <table border="0" cellpadding="0" cellspacing="0">
                 <tr>
                     <td colspan="2">
                         <h2>Add Page Under <?php echo $page['title'] ?></h2>
@@ -35,15 +35,15 @@
                 </tr>
                 <tr>
                     <td style="padding-bottom: 10px;">
-                        <?php echo $this->Form->input('title', array('label'=>'Page Title', 'maxlength'=>'50', 'onblur'=>'setPageURL(this)')); ?>
+                        <?php echo $this->Form->input('title', array('label'=>'Page Title', 'maxlength'=>'50', 'class'=>'fld', 'onblur'=>'setPageURL(this)')); ?>
                     </td>
                     <td style="padding-bottom: 10px;">
-                        <?php echo $this->Form->input('slug', array('label'=>'Page URL', 'maxlength'=>'50', 'onblur'=>'checkPageURL(this)')); ?>
+                        <?php echo $this->Form->input('slug', array('label'=>'Page URL', 'maxlength'=>'50', 'class'=>'fld', 'onblur'=>'checkPageURL(this)')); ?>
                     </td>
                 </tr>	
                 <tr>
                     <td style="padding-bottom: 10px;" valign="top">
-                        <?php echo $this->Form->input('redirectURL', array('label'=>'Redirect URL')); ?>
+                        <?php echo $this->Form->input('redirectURL', array('label'=>'Redirect URL', 'class'=>'fld')); ?>
                     </td>
                     <td style="padding-bottom: 10px;">
                         <?php echo $this->Form->checkbox('active'); ?>
