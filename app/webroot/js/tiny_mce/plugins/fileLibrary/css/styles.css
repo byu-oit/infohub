@@ -1,0 +1,17 @@
+.panel_wrapper div.current { height: 180px; overflow: auto }
+.text{
+	width: 150px;
+}
+.shortText{
+	width: 50px;
+}
+textarea{
+	width: 250px;
+	height: 100px;
+}
+tr.even{
+	background-color: #f5f5f5;
+}
+th{
+	text-align: left;
+}
