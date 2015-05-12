@@ -71,7 +71,7 @@
                     <input type="submit" value="Search" class="inputButton" />
                 </form>
 			</div>
-			<a href="/search/catalog" id="catalogLink" class="grow"><img src="/img/catalogLink2.png" alt="See full catealog"></a>
+			<a href="/search" id="catalogLink" class="grow"><img src="/img/catalogLink2.png" alt="See full catealog"></a>
 		</div>
 	</div>	
 </div>

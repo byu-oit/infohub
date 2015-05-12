@@ -15,7 +15,34 @@ class RequestController extends AppController {
         return strcmp($a->signifier, $b->signifier);
     }
     
-    public function success() {
+    public function addToQueue() {
+        $this->autoRender = false;
+        if($this->request->is('post')){
+            $term = $this->request->data['t'];
+            $termID = $this->request->data['id'];
+            
+            $arrQueue = array();
+            if(isset($_COOKIE['queue'])) {
+                $arrQueue = unserialize($_COOKIE['queue']);
+            }
+
+            $exists = false;
+            for($i=0; $i<sizeof($arrQueue); $i++){
+                if($arrQueue[$i][1] == $termID){
+                    $exists = true;
+                    break;
+                }
+            }
+
+            if(!$exists){
+                array_push($arrQueue, array($term, $termID));
+                echo '1';
+            }else{
+                echo '0';
+            }
+        
+            setcookie('queue', serialize($arrQueue), time() + (60*60*24*90), "/"); // 90 days
+        }
     }
     
     public function submit() {
