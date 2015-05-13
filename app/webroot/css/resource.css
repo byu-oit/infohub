@@ -57,6 +57,32 @@
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
+#resourceBody #resourceTop #reLower aside #asideMobile {
+  display: none;
+}
+#resourceBody #resourceTop #reLower aside #asideMobile #resourceNav {
+  position: relative;
+  display: block;
+  line-height: 1em;
+  font-size: 35px;
+  margin-left: 18px;
+  cursor: pointer;
+  width: 0px;
+  padding: 0 19px 7px;
+  z-index: 98;
+}
+#resourceBody #resourceTop #reLower aside #asideMobile #resourceNav:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 12px;
+  width: 21px;
+  height: 0.09em;
+  background: #001948;
+  -webkit-box-shadow: 0 0.2em 0 0 #001948, 0 0.4em 0 0 #001948;
+  -moz-box-shadow: 0 0.2em 0 0 #001948, 0 0.4em 0 0 #001948;
+  box-shadow: 0 0.2em 0 0 #001948, 0 0.4em 0 0 #001948;
+}
 #resourceBody #resourceTop #reLower aside ul {
   margin: 0;
   padding: 0;
@@ -156,4 +182,35 @@
 }
 #resourceBody #resourceTop #reLower .contentBody p {
   font-size: 12px;
+}
+/*===========  RESPONSIVE ============*/
+
+@media screen and (max-width: 750px) {
+  #resourceBody #resourceTop #reLower aside {
+    width: 100%;
+    padding: 0;
+  }
+  #resourceBody #resourceTop #reLower aside #asideMobile {
+    display: block;
+  }
+  #resourceBody #resourceTop #reLower aside ul {
+    display: none;
+    padding: 0 3% 20px;
+    width: 94%;
+  }
+  #resourceBody #resourceTop #reLower aside ul li {
+    padding-top: 1px;
+  }
+  #resourceBody #resourceTop #reLower aside ul li a {
+    box-shadow: none;
+    padding: 8px 12px;
+    background-color: #234e77;
+    color: white;
+    text-transform: capitalize;
+  }
+  #resourceBody #resourceTop #reLower .contentBody {
+    width: 94%;
+    padding-top: 0;
+    margin-top: 20px;
+  }
 }

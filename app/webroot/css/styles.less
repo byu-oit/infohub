@@ -133,28 +133,28 @@ header {
 			}
             #request-queue {
 				display: block;
-                position: relative;
+                		position: relative;
 				float: left;
-                margin-right: 10px;
+                		margin-right: 10px;
 
 				img {
 					width: 20px;
 				}
                 
-                .request-num{
-                    margin: -7px 0 0 2px;
-                    min-width: 13px;
-                    height: 13px;
-                    text-align: center;
-                    font-weight: bold;
-                    position: absolute;
-                    background-color: #fff;
-                    border-radius: 10px;
-                    border: solid 2px #FFA921;
-                }
+				.request-num{
+				    margin: -7px 0 0 2px;
+				    min-width: 13px;
+				    height: 13px;
+				    text-align: center;
+				    font-weight: bold;
+				    position: absolute;
+				    background-color: #fff;
+				    border-radius: 10px;
+				    border: solid 2px #FFA921;
+				}
 			}
             #request-popup{
-                //display: none;
+                // display: none;
                 position: absolute;
                 right: 0;
                 top: 25px;
@@ -163,7 +163,7 @@ header {
                 border: solid 2px #FFA921;
                 color: @blue;
                 padding: 15px;
-                z-index: 99;
+                z-index: 100;
                 
                 h3{
                     margin: 0;
@@ -441,6 +441,10 @@ footer {
 			#headerRight {
 				top: 14px;
 				
+				#request-queue {
+					float: right;
+					margin-right: 0;
+				}
 				.userInfo {
 					padding-right: 0;
 					float: right;

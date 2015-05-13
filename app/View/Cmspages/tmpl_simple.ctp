@@ -12,7 +12,11 @@
 			ullist.slideToggle();
 			listWidth();
 		});
+		$('#asideMobile').click(function() {
+			$('aside ul').slideToggle('fast');
+		})
 	});
+
 
 	$(document).ready(listWidth);
 	$(window).resize(listWidth);
@@ -23,16 +27,35 @@
 		$('.greatGrandChild').css('width', '100%').css('width', '-=11px');
 	}
 
-	$(document).ready(colHeight);
-	$(window).resize(colHeight);
+	$(document).ready(function() {
+		if($(window).width() > 750) {
+			colHeight();
+		}
+		else {
+			$('.contentBody, .aside').css('height', 'initial');
+			$('aside').css('height', 'initial');
+		}
+		
+	});
+		
+	$(window).resize(function() {
+		if($(window).width() > 750) {
+			$('.contentBody, .aside').css('height', 'initial');
+			$('aside').css('height', 'initial');
+			setTimeout(function() {colHeight();}, 100);
+		}
+		else {
+			$('.contentBody, .aside').css('height', 'initial');
+			$('aside').css('height', 'initial');
+		}
+		
+	});
 
 	function colHeight() {
-		$('.contentBody').css('height', 'initial');
 
-		var asideHeight = $('aside').height();
-		var contentHeight = $('.contentBody').height();
-
-		var heighest = Math.max(asideHeight,contentHeight)+20;
+		var asideHeight = $('aside').outerHeight();
+		var contentHeight = $('.contentBody').outerHeight();
+		var heighest = Math.max(asideHeight,contentHeight) -30;
 
 		$('aside').height(heighest);
 		$('.contentBody').height(heighest);
@@ -50,6 +73,9 @@
 		<div class="clear"></div>
 		<div id="reLower" class="whiteBox">
 			<aside>
+				<div id="asideMobile">
+					<a id="resourceNav">&nbsp;</a>
+				</div>
 				<ul class="catalogParent">
                    <?php echo $pageNav ?>
                 </ul>

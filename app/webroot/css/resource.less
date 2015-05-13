@@ -55,7 +55,33 @@
 				padding: 20px 3%;
 				.box-shade();
 
+				#asideMobile {
+					display: none;
 
+					#resourceNav {
+						position: relative;
+						display: block;
+						line-height: 1em;
+						font-size: 35px;
+						margin-left: 18px;
+						cursor: pointer;
+						width: 0px;
+						padding: 0 19px 7px;
+						z-index: 98;
+						&:before {
+							content: "";
+							position: absolute;
+							left: 0;
+							top: 12px;
+							width: 21px;
+							height: 0.09em;
+							background: @blue;
+							-webkit-box-shadow: 0 0.2em 0 0 @blue, 0 0.4em 0 0 @blue;
+							-moz-box-shadow: 0 0.2em 0 0 @blue, 0 0.4em 0 0 @blue;
+							box-shadow: 0 0.2em 0 0 @blue, 0 0.4em 0 0 @blue;
+						}
+					}
+				}
 				ul {
 					margin: 0;
 					padding: 0;
@@ -160,6 +186,44 @@
 					font-size: 12px;
 				}
 			}
+		}
+	}
+}
+
+/*===========  RESPONSIVE ============*/
+@media screen and (max-width: 750px) {
+
+	#resourceBody #resourceTop #reLower {
+	 	aside {
+			width: 100%;
+			padding: 0;
+
+			#asideMobile {
+				display: block;
+
+			}
+			ul {
+				display: none;
+				padding: 0 3% 20px;
+				width: 94%;
+
+				li {
+					padding-top: 1px;
+					
+					a {
+						box-shadow: none;
+						padding: 8px 12px;
+						background-color: #234e77;
+						color: white;
+						text-transform: capitalize;
+					}
+				}
+			}
+		}
+		.contentBody {
+			width: 94%;
+			padding-top: 0;
+			margin-top: 20px;
 		}
 	}
 }
