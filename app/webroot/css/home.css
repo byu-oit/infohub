@@ -53,7 +53,7 @@
 #homeTop #htBack #searchBox {
   clear: left;
   float: left;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.83);
   padding: 3%;
   margin: 40px 0 0;
   width: 94%;
@@ -83,14 +83,26 @@
   font-weight: bold;
   padding: 0 2%;
 }
-#homeTop #htBack #catalogLink {
-  width: 15%;
-  margin-left: 3%;
-  margin-top: 8%;
-  display: inline-block;
+#homeTop #htBack #searchBox p {
+  font: 16px 'Rokkitt', serif;
+  font-weight: bold;
+  margin: 13px 0 0;
 }
-#homeTop #htBack #catalogLink img {
-  width: 100%;
+#homeTop #htBack #searchBox p #catalogLink {
+  color: #fe8a02;
+  text-decoration: none;
+}
+#homeTop #htBack #searchBox p #catalogLink:after {
+  content: "";
+  background: url(/img/doubleRight.png) no-repeat;
+  background-size: 23px;
+  background-position-x: 12px;
+  background-position-y: 3px;
+  padding: 0px 20px 0 20px;
+  transition: all .2s;
+}
+#homeTop #htBack #searchBox p #catalogLink:hover:after {
+  background-position-x: 16px;
 }
 #homeQL {
   display: table;
@@ -268,13 +280,6 @@
   }
 }
 @media screen and (max-width: 780px) {
-  #homeTop #htBack #catalogLink {
-    margin-left: 17%;
-    margin-top: 25px;
-    clear: both;
-    float: left;
-    width: 25%;
-  }
   #homeHowTo .htBox h2 {
     width: 75%;
   }
@@ -323,12 +328,8 @@
     width: 35%;
     margin: 20px auto 0;
   }
-  #homeTop #htBack #hbWrap #catalogLink {
-    position: absolute;
-    bottom: -110px;
-    left: 50%;
-    margin-left: -65px;
-    width: 130px;
+  #homeTop #htBack #searchBox p {
+    text-align: center;
   }
   #homeQL h3 {
     width: 96%;

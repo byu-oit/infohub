@@ -55,7 +55,7 @@
 		#searchBox  {
 			clear: left;
 			float: left;
-			background-color: rgba(255,255,255,0.9);
+			background-color: rgba(255,255,255,0.83);
 			padding: 3%;
 			margin: 40px 0 0;
 			width: 94%;
@@ -85,15 +85,30 @@
 				font-weight: bold;
 				padding: 0 2%;
 			}
-		}
-		#catalogLink {
-			width: 15%;
-			margin-left: 3%;
-			margin-top: 8%;	
-			display: inline-block;
+			p {
+				font: 16px 'Rokkitt', serif;
+				font-weight: bold;
+				margin: 13px 0 0;
 
-			img {
-				width: 100%;
+				#catalogLink {
+					color: @orange;
+					text-decoration: none;
+
+					&:after {
+						content: "";
+						background: url(/img/doubleRight.png) no-repeat;
+						background-size: 23px;
+						background-position-x: 12px;
+						background-position-y: 3px;
+						padding: 0px 20px 0 20px;
+						transition: all .2s;
+					}
+					&:hover {
+						&:after {
+							background-position-x: 16px;
+						}
+					}
+				}
 			}
 		}
 	}
@@ -296,13 +311,6 @@
 	}
 }
 @media screen and (max-width: 780px)  {
-	#homeTop #htBack #catalogLink {
-		margin-left: 17%;
-		margin-top: 25px;
-		clear: both;
-		float: left;
-		width: 25%;
-	}
 	#homeHowTo .htBox h2 {
 		width: 75%;
 	}
@@ -353,14 +361,8 @@
 					width: 35%;
 					margin: 20px auto 0;
 				}
-			}
-			#hbWrap {
-				#catalogLink {
-					position: absolute;
-					bottom: -110px;
-					left: 50%;
-					margin-left: -65px;	
-					width: 130px;
+				p {
+					text-align: center;
 				}
 			}
 		}
