@@ -84,9 +84,9 @@
 		<a href="/people" class="qlLink">Find People</a>
 	</div>
 	<div class="qlBox">
-		<a href="#" class="qLicon grow"><img src="/img/ql-list.png" alt="See policies"></a>
+		<a href="/resources" class="qLicon grow"><img src="/img/ql-list.png" alt="See policies"></a>
 		<p>Understand policies and <br>procedures for proper <br>information usage</p>
-		<a href="#" class="qlLink">See Policies and Procedures.</a>
+		<a href="/resources" class="qlLink">See Policies and Procedures.</a>
 	</div>
 	<div class="qlBox">
 		<a href="/myaccount" class="qLicon grow"><img src="/img/ql-cogs.png" alt="Login"></a>
