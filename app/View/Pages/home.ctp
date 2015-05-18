@@ -81,24 +81,24 @@
 	<div class="qlBox">
 		<a href="/people" class="qLicon grow"><img src="/img/ql-book.png" alt="Locate People"></a>
 		<p>Locate peolpe who <br>can help you find <br>your information.</p>
-		<a href="#" class="qlLink">Find People</a>
+		<a href="/people" class="qlLink">Find People</a>
 	</div>
 	<div class="qlBox">
 		<a href="#" class="qLicon grow"><img src="/img/ql-list.png" alt="See policies"></a>
 		<p>Understand policies and <br>procedures for proper <br>information usage</p>
-		<a href="" class="qlLink">See Policies and Procedures.</a>
+		<a href="#" class="qlLink">See Policies and Procedures.</a>
 	</div>
 	<div class="qlBox">
 		<a href="/myaccount" class="qLicon grow"><img src="/img/ql-cogs.png" alt="Login"></a>
 		<p>Track your requests, <br>add favorites and <br>customize your alerts.</p>
-		<a href=""  class="qlLink">Log into or Create an Account</a>
+		<a href="/myaccount"  class="qlLink">Log into or Create an Account</a>
 	</div>
 </div>
 <div id="homeHowTo" class="inner">
 	<h3>How to Use InfoHub</h3>
 	<div id="htFind" class="htBox">
 		<div class="htPop">
-			<p>Search by keyword, topic or phrase to find the information you need, or browse the full catalog. </p>
+			<p><a href="/search">Search</a> by keyword, topic or phrase to find the information you need, or browse the full catalog. </p>
 		</div>
 		<h2>1</h2>
 		<p>Find Information</p>
@@ -109,7 +109,7 @@
 	</div>
 	<div id="htRequest" class="htBox">
 		<div class="htPop">
-			<p>Once you’ve found your information, request access from the steward in charge of it. (You’ll need a NetID to request access.)</p>
+			<p>Once you’ve found your information, request access (NetID required).</p>
 		</div>
 		<h2>2</h2>
 		<p>Request Access</p>
@@ -120,7 +120,7 @@
 	</div>
 	<div id="htTrack" class="htBox">
 		<div class="htPop">
-			<p>Go to your account to track the progress of your request. Once your request is approved, the link to your information will be available there. </p>
+			<p>Track the progress of your request in <a href="/myaccount">your account.</a></p>
 		</div>
 		<h2>3</h2>
 		<p>Track Progress</p>
@@ -131,7 +131,7 @@
 	</div>
 	<div id="htUse" class="htBox">
 		<div class="htPop">
-			<p>All information requested through InfoHub is safe to use, with sharing permissions clearly noted. You can also be confident it’s the most accurate and up-to-date information available. </p>
+			<p>All information requested through InfoHub is safe to use, with sharing permissions clearly noted. You can also be confident it’s the most accurate and up-to-date information available.</p>
 		</div>
 		<h2>4</h2>
 		<p>Use Confidently</p>

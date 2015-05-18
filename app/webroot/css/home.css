@@ -215,6 +215,9 @@
 #homeHowTo .htBox .htPop p {
   text-transform: none;
 }
+#homeHowTo .htBox .htPop a {
+  color: #001948;
+}
 #homeHowTo .htBox .htPop:after {
   content: "";
   width: 0;
