@@ -133,14 +133,25 @@ header {
 			}
             #request-queue {
 				display: block;
-                		position: relative;
+        		position: relative;
 				float: left;
-                		margin-right: 10px;
-
-				img {
-					width: 20px;
-				}
+        		margin-right: 10px;
                 
+                img.icon{
+                    width: 20px;
+                }
+
+                li{
+                    a.delete {
+                        display: block;
+                        width: 11px;
+                        float: right;
+                    }
+                }
+                
+                .request-hidden{
+                    display: none;
+                }
 				.request-num{
 				    margin: -7px 0 0 2px;
 				    min-width: 13px;
@@ -154,7 +165,7 @@ header {
 				}
 			}
             #request-popup{
-                // display: none;
+                display: none;
                 position: absolute;
                 right: 0;
                 top: 25px;
@@ -166,7 +177,7 @@ header {
                 z-index: 100;
                 
                 h3{
-                    margin: 0;
+                    margin: 0 0 5px 0;
                 }
                 
                 ul{
@@ -182,6 +193,21 @@ header {
                     width: 14px;
                     height: 7px;
                     background: url(../img/request-arrow.png) no-repeat;
+                }
+                
+                .close{
+                    position: absolute;
+                    top: 10px;
+                    right: 10px;
+                    color: #fff;
+                    text-decoration: none;
+                    font-weight: bold;
+                    font-size: 8px;
+                    background-color: @blue;
+                    width: 14px;
+                    line-height: 14px;
+                    text-align: center;
+                    border-radius: 7px;
                 }
             }
             

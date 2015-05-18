@@ -373,6 +373,11 @@ img.resultBodyLoading {
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
+#searchBody #searchResults #srLower .resultItem .inactive,
+#searchBody #requestForm #srLower .resultItem .inactive,
+#searchBody #searchSuccess #srLower .resultItem .inactive {
+  background-color: #cccaca;
+}
 #searchBody #searchResults #srLower .resultItem .detailsTab,
 #searchBody #requestForm #srLower .resultItem .detailsTab,
 #searchBody #searchSuccess #srLower .resultItem .detailsTab {
@@ -601,7 +606,9 @@ img.resultBodyLoading {
 #searchBody #requestForm #srLower textarea,
 #searchBody #searchSuccess #srLower textarea,
 #searchBody #requestForm #srLower select,
-#searchBody #searchSuccess #srLower select {
+#searchBody #searchSuccess #srLower select,
+#searchBody #requestForm #srLower input.full,
+#searchBody #searchSuccess #srLower input.full {
   width: 100%;
   height: 8em;
   padding: 10px;
@@ -611,7 +618,9 @@ img.resultBodyLoading {
   box-shadow: 0px 0px 7px 1px rgba(50, 50, 50, 0.22);
 }
 #searchBody #requestForm #srLower select,
-#searchBody #searchSuccess #srLower select {
+#searchBody #searchSuccess #srLower select,
+#searchBody #requestForm #srLower input.full,
+#searchBody #searchSuccess #srLower input.full {
   height: auto;
 }
 #searchBody #requestForm #srLower #requesterInfo,

@@ -82,57 +82,33 @@
 						</select>
 					<!-- </div> -->
 				</div>
-            <?php
-                if(sizeof($termDeatils->aaData)>0){
-                    $term = $termDeatils->aaData[0];
-                    $createdDate = $term->createdOn/1000;
-                    $createdDate = date('m/d/Y', $createdDate);
-            ?>
+                
                 <h3 class="headerTab">Information Requested</h3>
 				<div class="clear"></div>
-				<div class="resultItem highlyClassified">
-					<h4><?php echo $term->termsignifier; ?></h4>
-                    <h5 class="blueText"><?php echo $term->communityname.'/'.$term->domainname; ?></h5>
-                    <div class="resultContent">
-                        <ul>
-                           <?php
-                                if(sizeof($term->Role00000000000000000000000000005016)>0){
-                                    $stewardName = $term->Role00000000000000000000000000005016[0]->userRole00000000000000000000000000005016fn.' '.$term->Role00000000000000000000000000005016[0]->userRole00000000000000000000000000005016ln;
-                                    $stewardID = $term->Role00000000000000000000000000005016[0]->userRole00000000000000000000000000005016rid;
-                            ?>
-                            <li><span class="listLabel">Data Steward:&nbsp;</span><?php echo $stewardName; ?></li>
-                            <?php
-                                }
-                            ?>
-                            <li><span class="listLabel">Date Created:&nbsp;</span><?php echo $createdDate; ?></li>
-                            <li><span class="listLabel">Classification: </span><span class="redText">Highly Classified</span></li>
-                        </ul>
-                        <div class="resultBody">
-                            <p><?php echo stripslashes(strip_tags($term->Attr00000000000000000000000000000202longExpr)); ?></p>
-                        </div>
-					</div>
+				<div class="resultItem">
 					<div class="irLower">
-						<h5>Also included in this selection (check all that apply to your request).</h5>
-                        <div class="checkBoxes">
+						<div class="checkBoxes">
                             <div class="checkCol">
                         <?php 
-                            for($i=0; $i<sizeof($siblingTerms->termReference)-1; $i++){
-                                $sibling = $siblingTerms->termReference[$i]->signifier;
-                                $siblingID = $siblingTerms->termReference[$i]->resourceId;
+                            //for($i=0; $i<sizeof($siblingTerms->termReference)-1; $i++){
+                            $i = 0;
+                            foreach($termDetails->aaData as $term){
+                                $termName = $term->termsignifier;
+                                $termID = $term->termrid;
+                                $community = $term->communityname;
+                                $domain = $term->domainname;
+                                $termID = $term->termrid;
+                                $termDef = addslashes(strip_tags($term->Attr00000000000000000000000000000202));
                                 if($i>0 && $i%2==0){
                                     echo '</div>';
                                     echo '<div class="checkCol">';
                                 }
-                                $checked = '';
-                                if(isset($termsSelected[$siblingID])){
-                                    $checked = 'checked';
-                                }
-                                echo '    <input type="checkbox" onclick="toggleDataNeeded(this)" value="'.$sibling.'" name="terms[]" id="'.$siblingID.'" '.$checked.'>'.
-                                    '    <label for="'.$siblingID.'">'.$sibling.'</label>';
+                                echo '    <input type="checkbox" onclick="toggleDataNeeded(this)" value="'.$termName.'" name="terms[]" id="'.$termID.'" checked="checked">'.
+                                    '    <label for="'.$termID.'">'.$domain.'/'.$termName.'</label><div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$termDef.'" class="info"><img src="/img/iconInfo.png"></div>';
                                 if($i%2==0){
                                     echo '<br/>';
                                 }
-
+                                $i++;
                             }
                         ?>
                             </div>
@@ -140,9 +116,7 @@
                         </div>
 					</div>
 				</div>
-            <?php
-                }
-            ?>
+                
                 <?php
                     foreach($formFields->formProperties as $field){
                         echo '<label class="headerTab" for="'.$field->id.'">'.$field->name.'</label>'.
@@ -151,9 +125,9 @@
                         
                         if($field->type == 'textarea'){
                             $val = '';
-                            if($field->id == 'dataNeeded'){
+                            /*if($field->id == 'dataNeeded'){
                                 $val = $communityPath.': '.$dataNeeded;
-                            }
+                            }*/
                             echo '<textarea name="'.$field->id.'" id="'.$field->id.'"  class="inputShade">'.$val.'</textarea>';
                         }elseif($field->type == 'user'){
                             echo '<select name="'.$field->id.'" id="'.$field->id.'">';
@@ -164,7 +138,7 @@
                             }
                             echo '</select>';
                         }else{
-                            echo '<input type="text" name="'.$field->id.'" id="'.$field->id.'"  class="inputShade" />';
+                            echo '<input type="text" name="'.$field->id.'" id="'.$field->id.'"  class="inputShade full" />';
                         }
                         
                         echo '</div>';
@@ -177,7 +151,6 @@
 		<div class="clear"></div>
 	</div>
 	<div id="formSubmit" class="innerLower">
-	    <input type="hidden" name="collibraUser" value="<?php echo $stewardID; ?>" />
 		<input type="submit" value="Submit Request" id="requestSubmit" name="requestSubmit" class="grow">
 		<label for="requestSubmit" class="mobileHide">*All Fields Required</label>
 		<div class="clear"></div>

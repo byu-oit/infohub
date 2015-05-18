@@ -33,10 +33,8 @@ App::uses('Controller', 'Controller');
 class AppController extends Controller {   
     private $quickLinks;
     
-    public function beforeFilter() {
-        parent::beforeFilter();
-        
-        /*require_once $_SERVER['DOCUMENT_ROOT'].'/CAS-1.3.3/config.php';
+    public function initBeforeFilter(){
+        require_once $_SERVER['DOCUMENT_ROOT'].'/CAS-1.3.3/config.php';
         require_once $phpcas_path.'/CAS.php';
         phpCAS::client(CAS_VERSION_2_0, $cas_host, $cas_port, $cas_context);
         // phpCAS::setCasServerCACert($cas_server_ca_cert_path);
@@ -45,27 +43,41 @@ class AppController extends Controller {
             $this->set('casAuthenticated', true);
         }else{
             $this->set('casAuthenticated', false);
-        }*/
-        $this->set('casAuthenticated', true);
+        }
+        //$this->set('casAuthenticated', true);
         
-        if (session_id()== '') session_start();
         $_SESSION['netid'] = '11111';
         $_SESSION['username'] = 'Christy Whitehouse';
         $_SESSION['dept'] = 'Business';
         $_SESSION['role'] = 'Information Steward';
-        
-        $isAdmin = false;
-        if($this->Session->read('userID') != '' && $this->Session->read('userIP')==$_SERVER["REMOTE_ADDR"]){
-            $isAdmin = true;
-        }
         
         $this->disableCache();
         
         App::import('Controller', 'QuickLinks');
         $objQuickLinks = new QuickLinksController;
         $quickLinks = $objQuickLinks->load();
+        
+        $requestedTermCount = 0;
+        if(isset($_COOKIE['queue'])) {
+            $arrQueue = unserialize($_COOKIE['queue']);
+            $requestedTermCount = sizeof($arrQueue);
+        }
+        
         $this->set('quickLinks', $quickLinks);
-        $this->set('isAdmin', $isAdmin);
+        $this->set('requestedTermCount', $requestedTermCount);
         $this->set('controllerName', $controllerName = $this->request->params['controller']);
+    }
+    
+    public function beforeFilter() {
+        parent::beforeFilter();
+        
+        //if (session_id()== '') session_start();
+        $this->initBeforeFilter();
+        
+        $isAdmin = false;
+        if($this->Session->read('userID') != '' && $this->Session->read('userIP')==$_SERVER["REMOTE_ADDR"]){
+            $isAdmin = true;
+        }
+        $this->set('isAdmin', $isAdmin);
     }
 }

@@ -165,6 +165,28 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
         function hideTermDef(){
             $('#info-win').hide();
         }
+        
+        function showRequestQueue(){
+            $.get("/request/listQueue")
+                .done(function(data){
+                    $('#request-popup').show().html(data);
+            });
+        }
+        function hideRequestQueue(){
+            $('#request-popup').hide();
+        }
+        function removeFromRequestQueue(id){
+            $.post("/request/removeFromQueue", {id:arrTitles})
+                .done(function(data){
+                    $(elem).attr('value', 'Added to Queue').removeClass('grow').addClass('inactive').removeAttr('onclick');
+                    var oldCount = parseInt($('#request-queue .request-num').text());
+                    if(oldCount-1 >= 1){
+                        $('#request-queue .request-num').text(oldCount+1).removeClass('request-hidden');
+                    }else{
+                        $('#request-queue .request-num').text('0').addClass('request-hidden');
+                    }
+            });
+        }
 
 		$(document).on( 'click', function ( e ) {
 			if ( $( e.target ).closest('.autoComplete').length === 0 ) {
@@ -208,19 +230,20 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 						<?php if(!$casAuthenticated) echo $this->Html->link('Login', '/login'); ?>
 					</span>
 					<div id="request-queue">
-					    <div class="request-num">1</div><img src="/img/icon-cart.png" alt="Requests">
-                        <div id="request-popup">
-                           <h3>Request Queue</h3>
-                            <div class="arrow"></div>
-                            <ul>
-                                <li>Information Domain</li>
-                                <li>Custodian</li>
-                            </ul>
-                            <a class="btn-orange" href="">Submit Request</a>
-                        </div>
+                        <?php
+                            $reqHiddenClass = '';
+                            if($requestedTermCount==0){
+                                $reqHiddenClass = 'request-hidden';
+                            }
+                        ?>
+					    <a href="javascript: showRequestQueue()" title="Request Queue">
+                            <div class="request-num <?php echo $reqHiddenClass ?>"><?php echo $requestedTermCount ?></div>
+                            <img class="icon" src="/img/icon-cart.png" alt="Request Queue" title="Request Queue">
+                        </a>
+                        <div id="request-popup"></div>
                     </div>
                     <?php if($casAuthenticated){ ?>
-                    <a id="settingsWheel" href="/myaccount"><img src="/img/icon-settings.png" alt="My Account" /></a>
+                    <a id="settingsWheel" href="/myaccount"><img src="/img/icon-settings.png" alt="My Account" title="My Account" /></a>
                     <?php } ?>
 
 					<!-- Below is fixed pos. on destop -->

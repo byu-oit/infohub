@@ -205,7 +205,7 @@ return <<<HTML
 	}
 </script>
 <div id="cms-edit-container">
-	<form action="/cmspages/updatepage" method="post">
+	<form action="/cmsPages/updatepage" method="post">
 		<textarea style="width: 100%; height: 500px" id="mcePGBody" class="mcePGBody" name="pgBody">$pageBody</textarea>
 		<input type="hidden" name="pgID" value="$pageID" />
 	</form>

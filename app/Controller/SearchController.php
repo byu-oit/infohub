@@ -216,7 +216,7 @@ class SearchController extends AppController {
                 echo '</div>';echo '</div>';
                 echo '<div class="checkCol">';
             }
-            echo '    <input type="checkbox" name="terms[]" value="'.$termID.'" id="'.$termID.'">'.
+            echo '    <input type="checkbox" name="terms[]" data-title="'.$termName.'" value="'.$termID.'" id="'.$termID.'">'.
                 '    <label for="'.$termID.'">'.$termName.'</label><div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$termDef.'" class="info"><img src="/img/iconInfo.png"></div>';
             if($i%2==0){
                 echo '<br/>';

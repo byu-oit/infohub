@@ -52,13 +52,12 @@
 	});
 
 	function colHeight() {
-
+        /*$('aside, .contentBody').css('height','auto');
 		var asideHeight = $('aside').outerHeight();
 		var contentHeight = $('.contentBody').outerHeight();
 		var heighest = Math.max(asideHeight,contentHeight) -30;
-
 		$('aside').height(heighest);
-		$('.contentBody').height(heighest);
+		$('.contentBody').height(heighest);*/
 	}
 </script>
 

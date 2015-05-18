@@ -4,7 +4,7 @@ class RequestController extends AppController {
     public $helpers = array('Html', 'Form');
     
     function beforeFilter() {
-
+        $this->initBeforeFilter();
     }
     
     private static function sortUsers($a, $b){
@@ -15,34 +15,88 @@ class RequestController extends AppController {
         return strcmp($a->signifier, $b->signifier);
     }
     
+    private static function sortTermsByDomain($a, $b){
+        return strcmp($a->domainname, $b->domainname);
+    }
+    
     public function addToQueue() {
         $this->autoRender = false;
         if($this->request->is('post')){
-            $term = $this->request->data['t'];
-            $termID = $this->request->data['id'];
+            $newTermsAdded = 0;
+            $arrTerms = $this->request->data['t'];
+            $arrTermIDs = $this->request->data['id'];
             
             $arrQueue = array();
             if(isset($_COOKIE['queue'])) {
                 $arrQueue = unserialize($_COOKIE['queue']);
             }
-
-            $exists = false;
-            for($i=0; $i<sizeof($arrQueue); $i++){
-                if($arrQueue[$i][1] == $termID){
-                    $exists = true;
-                    break;
+            
+            for($i=0; $i<sizeof($arrTerms); $i++){
+                $term = $arrTerms[$i];
+                $termID = $arrTermIDs[$i];
+                $exists = false;
+                
+                for($j=0; $j<sizeof($arrQueue); $j++){
+                    if($arrQueue[$j][1] == $termID){
+                        $exists = true;
+                        break;
+                    }
                 }
-            }
 
-            if(!$exists){
-                array_push($arrQueue, array($term, $termID));
-                echo '1';
-            }else{
-                echo '0';
+                if(!$exists){
+                    $newTermsAdded++;
+                    array_push($arrQueue, array($term, $termID));
+                }
             }
         
             setcookie('queue', serialize($arrQueue), time() + (60*60*24*90), "/"); // 90 days
+            echo $newTermsAdded;
         }
+    }
+    
+    /*public function removeFromQueue() {
+        $this->autoRender = false;
+        if($this->request->is('post')){
+            $termID = $this->request->data['id'];
+            if(isset($_COOKIE['queue'])) {
+                $arrQueue = unserialize($_COOKIE['queue']);
+                for($i=0; $i<sizeof($arrQueue); $i++){
+                    if($arrQueue[$i][1] == $termID){
+                        array_splice($arrQueue, $i, 1);
+                        break;
+                    }
+                }
+
+                setcookie('queue', serialize($arrQueue), time() + (60*60*24*90), "/"); // 90 days
+            }
+        }
+    }*/
+    
+    public function listQueue() {
+        $this->autoRender = false;
+        $listHTML = '';
+        $responseHTML = '';
+        $emptyQueue = true;
+        
+        if(isset($_COOKIE['queue'])) {
+            $emptyQueue = false;
+            $arrQueue = unserialize($_COOKIE['queue']);
+            for($j=0; $j<sizeof($arrQueue); $j++){
+                $listHTML .= '<li>'.$arrQueue[$j][0].'</li>';
+            }
+        }else{
+            $listHTML = 'Your queue is empty.';
+        }
+        $responseHTML=  '<h3>Request Queue</h3>'.
+            '<a class="close" href="javascript: hideRequestQueue()">X</a>'.
+            '<div class="arrow"></div>'.
+            '<ul>'.
+            $listHTML.//'    <li>Information Domain </li>'.//<a class="delete" href=""><img src="/img/icon-delete.gif" width="11" /></a>
+            '</ul>';
+        if(!$emptyQueue){
+            $responseHTML .= '<a class="btn-orange" href="/request">Submit Request</a>';
+        }
+        echo $responseHTML;
     }
     
     public function submit() {
@@ -106,9 +160,9 @@ class RequestController extends AppController {
     
     public function index() {
         // make sure user is logged in via BYU API
-        require_once $_SERVER['DOCUMENT_ROOT'].'/CAS-1.3.3/config.php';
-        require_once $phpcas_path.'/CAS.php';
-        phpCAS::client(CAS_VERSION_2_0, $cas_host, $cas_port, $cas_context);
+        //require_once $_SERVER['DOCUMENT_ROOT'].'/CAS-1.3.3/config.php';
+        //require_once $phpcas_path.'/CAS.php';
+        //phpCAS::client(CAS_VERSION_2_0, $cas_host, $cas_port, $cas_context);
         // phpCAS::setCasServerCACert($cas_server_ca_cert_path);
         phpCAS::setNoCasServerValidation();
         if(phpCAS::isAuthenticated()){
@@ -117,13 +171,13 @@ class RequestController extends AppController {
             phpCAS::forceAuthentication();
         }
         
-        // make sure a term has been passed to this page
-        if(!isset($this->request->params['pass'][0])){
+        // make sure terms have been added to the users's queue
+        if(!isset($_COOKIE['queue'])) {
             header('location: /search');
             exit;
         }
         
-        $termID = $this->request->params['pass'][0];
+        //$termID = $this->request->params['pass'][0];
         $this->loadModel('CollibraAPI');
         $objCollibra = new CollibraAPI();
         
@@ -132,15 +186,19 @@ class RequestController extends AppController {
             '"Filter":{'.
             '   "AND":['.
             '        {'.
-            '           "OR":['.
-            '              {'.
-            '                 "Field":{'.
-            '                    "name":"termrid",'.
-            '                    "operator":"EQUALS",'.
-            '                    "value":"'.$termID.'"'.
-            '                 }'.
-            '              }'.
-            '           ]'.
+            '           "OR":[';
+        
+        $arrQueue = unserialize($_COOKIE['queue']);
+        for($i=0; $i<sizeof($arrQueue); $i++){
+            $requestFilter .= '{"Field":{'.
+                '   "name":"termrid",'.
+                '   "operator":"EQUALS",'.
+                '   "value":"'.$arrQueue[$i][1].'"'.
+                '}},';
+        }
+        $requestFilter = substr($requestFilter, 0, strlen($requestFilter)-1);
+        
+        $requestFilter .= ']'.
             '        }'.
             '     ]'.
             '}'.
@@ -149,6 +207,7 @@ class RequestController extends AppController {
             ']'.
             '}'.
             '},"displayStart":0,"displayLength":10}}';
+        
         $termResp = $objCollibra->request(
             array(
                 'url'=>'output/data_table',
@@ -159,6 +218,13 @@ class RequestController extends AppController {
             )
         );
         $termResp = json_decode($termResp);
+        //usort($termResp->aaData, 'self::sortTermsByDomain');
+        foreach ($termResp->aaData as $term) {
+            $domains[]  = $term->domainname;
+            $termNames[] = $term->termsignifier;
+        }
+        array_multisort($domains, SORT_ASC, $termNames, SORT_ASC, $termResp->aaData);
+        //print_r($termResp);exit;
         
         // load form fields for ISA workflow
         $formResp = $objCollibra->request(array('url'=>'workflow/'.Configure::read('isaWorkflow').'/form/start'));
@@ -170,16 +236,16 @@ class RequestController extends AppController {
         usort($userResp->user, 'self::sortUsers');
         
         // load all sibling terms
-        $siblingTerms = $objCollibra->request(array('url'=>'vocabulary/'.$termResp->aaData[0]->domainrid.'/terms'));
-        $siblingTerms = json_decode($siblingTerms);
-        usort($siblingTerms->termReference, 'self::sortTerms');
+        //$siblingTerms = $objCollibra->request(array('url'=>'vocabulary/'.$termResp->aaData[0]->domainrid.'/terms'));
+        //$siblingTerms = json_decode($siblingTerms);
+        //usort($siblingTerms->termReference, 'self::sortTerms');
         
         // start building description of terms needed
-        $communityPath = $termResp->aaData[0]->communityname.'/'.$termResp->aaData[0]->domainname;
-        $dataNeeded = $termResp->aaData[0]->termsignifier.', ';
+        //$communityPath = $termResp->aaData[0]->communityname.'/'.$termResp->aaData[0]->domainname;
+        //$dataNeeded = $termResp->aaData[0]->termsignifier.', ';
         
         // get all terms selected from search page
-        $arrTermsSelected = array();
+        /*$arrTermsSelected = array();
         if(isset($this->request->data['terms'])){
             $termsSelected = $this->request->data['terms'];
             for($i=0; $i<sizeof($termsSelected); $i++){
@@ -195,14 +261,14 @@ class RequestController extends AppController {
         }
         if($dataNeeded != ''){
             $dataNeeded = substr($dataNeeded, 0, strlen($dataNeeded)-2);
-        }
+        }*/
         
         $this->set('formFields', $formResp);
         $this->set('sponsors', $userResp);
-        $this->set('termDeatils', $termResp);
-        $this->set('siblingTerms', $siblingTerms);
-        $this->set('termsSelected', $arrTermsSelected);
-        $this->set('communityPath', $communityPath);
-        $this->set('dataNeeded', $dataNeeded);
+        $this->set('termDetails', $termResp);
+        //$this->set('siblingTerms', $siblingTerms);
+        //$this->set('termsSelected', $arrTermsSelected);
+        //$this->set('communityPath', $communityPath);
+        //$this->set('dataNeeded', $dataNeeded);
     }
 }

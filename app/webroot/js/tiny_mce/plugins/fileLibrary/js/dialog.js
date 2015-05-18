@@ -42,7 +42,7 @@ function insertImage(){
     var desc = f.imgDesc.value;
     var imgW = f.width.value;
     var imgH = f.height.value;
-	var html = '<img src="'+src+'" width="100%" alt="'+desc+'" />';
+	var html = '<img src="'+src+'" width="'+imgW+'" alt="'+desc+'" />';
 	
 	tinyMCEPopup.editor.execCommand('mceInsertContent', false, html);
 	tinyMCEPopup.editor.addVisual()

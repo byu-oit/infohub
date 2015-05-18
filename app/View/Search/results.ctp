@@ -34,10 +34,24 @@
 		}
 	}
     
-    function addToQueue(term, id){
-       $.post("/request/addToQueue", {t:term, id:id})
+    function addToQueue(elem){
+        var arrTitles = new Array($(elem).attr('data-title'));
+        var arrIDs = new Array($(elem).attr('data-rid'));
+        $(elem).parent().find('.checkBoxes').find('input').each(function(){
+            if($(this).prop( "checked")){
+                arrTitles.push($(this).attr('data-title'));
+                arrIDs.push($(this).val());
+            }
+        });
+        $.post("/request/addToQueue", {t:arrTitles, id:arrIDs})
             .done(function(data){
-                alert(data)
+                $(elem).attr('value', 'Added to Queue').removeClass('grow').addClass('inactive');
+                var oldCount = parseInt($('#request-queue .request-num').text());
+                data = parseInt(data);
+                if(oldCount+data>0){
+                    $('#request-queue .request-num').text(oldCount+data).removeClass('request-hidden');
+                    showRequestQueue();
+                }
         });
     }
 		
@@ -63,7 +77,7 @@
 		</div>
 	</div>
 
-	<a href="/search/catalog" id="catalogLink" class="grow"><img src="/img/catalogLink2.png" alt="See full catealog"></a>
+	<!--<a href="/search/catalog" id="catalogLink" class="grow"><img src="/img/catalogLink2.png" alt="See full catealog"></a>-->
 	<div class="clear"></div>
 
 	<div id="searchResults">
@@ -163,7 +177,7 @@
                     ?>
                             
                     </a>
-                    <input type="button" onclick="addToQueue('<?php echo $term->termsignifier; ?>', '<?php echo $term->termrid; ?>')" class="requestAccess grow" value="Add To Request" />
+                    <input type="button" onclick="addToQueue(this)" data-title="<?php echo $term->termsignifier; ?>" data-rid="<?php echo $term->termrid; ?>" class="requestAccess grow" value="Add To Request" />
                     <!--<a href="/search/request/<?php echo $term->termrid; ?>" class="requestAccess grow">Request Access</a>-->
                     <a class="detailsTab" data-rid="<?php echo $term->domainrid; ?>"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a>
 				</form>

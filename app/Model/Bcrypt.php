@@ -5,7 +5,7 @@ App::uses('Model', 'Model');
 class Bcrypt extends Model {
 	public static function hash($password, $salt='', $work_factor = '12'){
     	if($salt == '') $salt = Bcrypt::generateSalt();
-        if (version_compare(PHP_VERSION, '5.3') < 0){
+        if (version_compare(PHP_VERSION, '53') < 0){
         	return $salt.md5(md5($password));
         }else{
         	 // using blowfish
@@ -15,7 +15,7 @@ class Bcrypt extends Model {
     }
 
     public static function check($password, $hash){
-    	if (version_compare(PHP_VERSION, '5.3') < 0){
+    	if (version_compare(PHP_VERSION, '53') < 0){
     		$startChar = 0;
     	}else{
     		$startChar = 7; // using blowfish
