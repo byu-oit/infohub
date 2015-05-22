@@ -23,6 +23,9 @@
 			float: left;
 			padding: 12px 36px;
 		}
+        a{
+            color: @blue;
+        }
 		#atLower {
 			clear: left;
 			width: 86%;
@@ -34,8 +37,8 @@
 				margin: 0 0 7px;
 			}
 			.accountInfo {
-				width: 50%;
-				float: left;
+				//width: 50%;
+				//float: left;
 				font-size: 17px;
 				color: #3e3e3e;
 
@@ -71,9 +74,11 @@
 	}
 
 	#accountMain {
+        //width: 94%;
 		padding: 20px 2.5%;
-		float: left;
+		//float: left;
 		.box-shade();
+        .clear;
 
 		.requestItem {
 			background-color: #fff;
@@ -82,6 +87,14 @@
 			float: left;
   			width: 96%;
 			.box-shade();
+            
+            .terms{
+                .inline();
+                li{
+                    list-style: disc;
+                    margin-right: 10px;
+                }
+            }
 
 			.riLeft {
 				width: 75%;

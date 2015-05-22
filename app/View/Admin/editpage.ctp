@@ -26,12 +26,13 @@
 <?php
     echo $this->Form->create('CmsPage');
     $pgID = $page['id'];
+    $parentPgID = $page['parentID'];
 ?>
             <table border="0" cellpadding="0" cellspacing="0">
                 <tr>
                     <td colspan="2">
                         <h2>Edit <?php echo $page['title'] ?></h2>
-                        <?php if($pgID==1){ ?>
+                        <?php if($parentPgID==1 || $pgID==1){ ?>
                         <a href="/admin/addpage/<?php echo $pgID ?>"><img src="/img/admin/page_white_add.png" title="Add Subpage" border="0" /> Add Subpage</a>
                         <?php }?>
                         <?php if($pgID!=1){ ?>
@@ -66,6 +67,7 @@
             </table>
 <?php
     echo $this->Form->input('id', array('type' => 'hidden'));
+    echo $this->Form->input('templateID', array('type' => 'hidden', 'value'=>'1'));
     echo $this->Form->end();
 ?>
         </td>

@@ -4,13 +4,10 @@ class ISARequests extends AppModel{
     public $useTable = 'isarequests';
     
     public $validate = array(
-        'netid' => array(
+        'personId' => array(
             'rule' => 'notEmpty'
         ),
-        'processid' => array(
-            'rule' => 'notEmpty'
-        ),
-        'request' => array(
+        'processId' => array(
             'rule' => 'notEmpty'
         ),
         'collibraUser' => array(
@@ -18,12 +15,12 @@ class ISARequests extends AppModel{
         )
     );
     
-    public function loadRequestsByUser($netID){
+    public function loadRequestsByUser($personID){
         App::uses('Helpers', 'Model');
-        $netID = Helpers::getInt($netID);
+        $personID = Helpers::getInt($personID);
         $requests = '';
         $requests = $this->find('all', array(
-            'conditions'=>array('netid'=>$netID),
+            'conditions'=>array('personId'=>$personID),
             'order'=>array('date'=>'DESC')
         ));
         return $requests;

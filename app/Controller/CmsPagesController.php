@@ -4,8 +4,9 @@ class CmsPagesController extends AppController {
     //public $helpers = array('Html', 'Form');
     
     public function index() {
-        if(sizeof($this->request->params['pass'])>0){
-            $pageSlug = $this->request->params['pass'][0];
+        $urlSize = sizeof($this->request->params['pass']);
+        if($urlSize>0){
+            $pageSlug = $this->request->params['pass'][$urlSize-1];
         }else{
             $pageSlug = 'index';
         }
@@ -23,6 +24,10 @@ class CmsPagesController extends AppController {
         }else{
             // put page into variable to be passed on to view
             $page = $page[0]['CmsPage'];
+            if($page['redirectURL'] != ''){
+                header('location: '.$page['redirectURL']);
+                exit;
+            }
         }
         
         // load template file
@@ -48,7 +53,7 @@ class CmsPagesController extends AppController {
         //exit;
     }
 
-    public function view($id = null) {
+    /*public function view($id = null) {
         if (!$id) {
             throw new NotFoundException(__('Invalid post'));
         }
@@ -58,7 +63,7 @@ class CmsPagesController extends AppController {
             throw new NotFoundException(__('Invalid post'));
         }
         $this->set('post', $post);
-    }
+    }*/
     
     public function updatePage(){
         if ($this->request->data) {
@@ -82,7 +87,7 @@ class CmsPagesController extends AppController {
         exit;
     }
     
-    public function update($id = null) {
+    /*public function update($id = null) {
         if (!$id) {
             throw new NotFoundException(__('Invalid post'));
         }
@@ -104,7 +109,7 @@ class CmsPagesController extends AppController {
         if (!$this->request->data) {
             $this->request->data = $page;
         }
-    }
+    }*/
     
     /*public function edit($id = null) {
         if (!$id) {

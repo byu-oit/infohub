@@ -45,7 +45,7 @@ class CollibraAPI extends Model {
         
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
+        //curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
@@ -61,36 +61,14 @@ class CollibraAPI extends Model {
         
         curl_close($ch);
         
-        if($this->code != '200' && $this->code != '201'){
+        /*if($this->code != '200' && $this->code != '201'){
             echo 'cURL ERROR:<br>'.
                 'code: '. $this->code.'<br>'.
                 'info: '. print_r($this->info).'<br>'.
                 'error: '. $this->error.'<br>';
             //exit;
             echo $url.'<br>';
-        }
-        
-        // if given a 401 error, retry submitting a max of 3 times
-        /*if($this->code != '200' && $this->code != '201'){//$this->code == '401'){
-            echo $this->code;
-            $this->requestTries++;
-            if($this->requestTries<4){
-                sleep(2);
-                //$this->request($options);
-            }
         }*/
-        /*
-        echo $response;
-        exit;
-        
-        $arrResponse = json_decode($response);
-        //usort($arrResponse->communityReference, 'self::cmp');
-        //print_r($arrResponse->communityReference[0]->name);
-        echo "\r\n--------------------------\r\n";
-        print_r($arrResponse);
-                
-        exit;
-        */
         return $response;
     }
 }

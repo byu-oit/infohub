@@ -1,7 +1,11 @@
 <?php
 	$this->Html->css('secondary', null, array('inline' => false));
 ?>
-
+<script>
+    $(document).ready(function(){
+        $('#loginUsername').focus();
+    });
+</script>
 <div class="innerLower">
     <div class="login-form">
         <?php echo $this->Form->create('login'); ?>

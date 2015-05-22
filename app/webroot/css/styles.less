@@ -176,6 +176,11 @@ header {
                 padding: 15px;
                 z-index: 100;
                 
+                &.fixed{
+                    position: fixed;
+                    top: 7px;
+                }
+                
                 h3{
                     margin: 0 0 5px 0;
                 }
@@ -183,6 +188,13 @@ header {
                 ul{
                     margin: 0;
                     padding: 0 0 0 15px;
+                    
+                    li{
+                        padding: 2px;
+                    }
+                    li:hover{
+                        background-color: @grayLight;
+                    }
                 }
                 
                 .arrow{

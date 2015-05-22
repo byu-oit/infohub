@@ -494,10 +494,23 @@ img.resultBodyLoading {
 			#requesterInfo {
 				width: 75%;
 				margin-bottom: 10px;
+                .clear;
+                
+                .field-continer{
+                    float: left;
+                    width: 47%;
+  					margin: 0 3% 0 0;
+                }
+                
+                label{
+                    display: block;
+                    font-size: bold;
+                    font-size: 11px;
+                }
 
 				input, select {
-					width: 47%;
-  					margin: 0 2% 12px 0;
+					width: 100%;
+  					margin: 0 0 12px 0;
 
 				}
 				.infoCol {
@@ -727,6 +740,12 @@ form#request {
 @media screen and (max-width: 650px) {
 	#searchBody #requestForm #srLower #requesterInfo {
 		width: 100%;
+        
+        .field-continer{
+            float: none;
+            width: 100%;
+            margin: 0;
+        }
 		input, select {
 			width: 100%;
   			margin: 0 0% 12px 0;

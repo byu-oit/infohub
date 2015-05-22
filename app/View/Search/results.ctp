@@ -5,34 +5,39 @@
 <script>
 	$(document).ready(function() {
 		$("#searchLink").addClass('active');
-		resultsWidth();
 
 		$('.detailsTab').click(function() {
 			$(this).siblings('.resultContent').children('.resultBody').slideToggle();
 			$(this).toggleClass('active');
             
-            if($(this).parent().find('.checkBoxes').html() == ''){
-                var thisElem = $(this);
-                var rid = $(this).attr('data-rid');
-                $.get( "/search/getFullVocab", { rid: rid } )
-                    .done(function( data ) {
-                        thisElem.parent().find('.resultBodyLoading').hide()
-                        thisElem.parent().find('.checkBoxes').html(data);
-                });
-            }
-		})
+            if($(this).hasClass('active')){
+                if($(this).parent().find('.checkBoxes').html() == ''){
+                    var thisElem = $(this);
+                    var rid = $(this).attr('data-rid');
+                    $.get( "/search/getFullVocab", { rid: rid } )
+                        .done(function( data ) {
+                            thisElem.parent().find('.resultBodyLoading').hide()
+                            thisElem.parent().find('.checkBoxes').html(data);
+                            getCurrentRequestTerms();
+                    });
+                }else{
+                    getCurrentRequestTerms();
+                }
+        }
+		});
 	});
-
-	$(window).resize(resultsWidth);
-
-	function resultsWidth() {
-		if ($(window).width() > 680) {
-			//$('.resultContent').css('width', '100%').css('width', '-=200px');	
-		}	
-		else {
-			//$('.resultContent').css('width', '95%').css('width', '-=60px');	
-		}
-	}
+    
+    function getCurrentRequestTerms(){
+        $.get("/request/getQueueJSArray")
+            .done(function(data){
+                data = data.split(',');
+                $('input[type=checkbox]').prop('checked', false);
+            
+                for(i=0; i<data.length; i++){
+                    $('.chk'+data[i]).prop('checked', true);
+                }
+        });
+    }
     
     function addToQueue(elem){
         var arrTitles = new Array($(elem).attr('data-title'));
@@ -45,12 +50,13 @@
         });
         $.post("/request/addToQueue", {t:arrTitles, id:arrIDs})
             .done(function(data){
-                $(elem).attr('value', 'Added to Queue').removeClass('grow').addClass('inactive');
+                $(elem).attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
                 var oldCount = parseInt($('#request-queue .request-num').text());
                 data = parseInt(data);
                 if(oldCount+data>0){
                     $('#request-queue .request-num').text(oldCount+data).removeClass('request-hidden');
                     showRequestQueue();
+                    getCurrentRequestTerms();
                 }
         });
     }
@@ -142,10 +148,11 @@
             }
             
 ?>
-			<div id="term<?php echo $term->termrid; ?>" class="resultItem <?php echo $classification ?>">
+			<div id="term<?php echo $term->termrid; ?>" class="resultItem">
+                <div class="<?php echo $classification ?>" title="<?php echo $classificationTitle ?>"></div>
 			    <form action="/request/index/<?php echo $term->termrid; ?>" method="post">
                     <h4><?php echo $term->termsignifier; ?></h4>
-                    <h5 class="blueText"><?php echo $term->communityname.'/'.$term->domainname; ?></h5>
+                    <h5 class="blueText"><?php echo $term->communityname.' > '.$term->domainname; ?></h5>
                     <div class="resultContent">
                         <ul>
                            <?php

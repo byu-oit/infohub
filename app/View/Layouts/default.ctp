@@ -166,27 +166,32 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
             $('#info-win').hide();
         }
         
+        // Request functions
+        ///////////////////////////////
         function showRequestQueue(){
             $.get("/request/listQueue")
                 .done(function(data){
-                    $('#request-popup').show().html(data);
+                    if($(window).scrollTop()>50){
+                        var requestIconPos = $('#request-queue .request-num').offset();
+                        var left = requestIconPos.left - $('#request-popup').width() - 16;
+                        $('#request-popup').addClass('fixed').css('left', left);
+                    }else{
+                        $('#request-popup').removeClass('fixed').css('left', 'auto');
+                    }
+                    $('#request-popup').html(data).slideDown('fast');
             });
         }
         function hideRequestQueue(){
             $('#request-popup').hide();
         }
         function removeFromRequestQueue(id){
-            $.post("/request/removeFromQueue", {id:arrTitles})
+            $.post("/request/removeFromQueue", {id:id})
                 .done(function(data){
-                    $(elem).attr('value', 'Added to Queue').removeClass('grow').addClass('inactive').removeAttr('onclick');
-                    var oldCount = parseInt($('#request-queue .request-num').text());
-                    if(oldCount-1 >= 1){
-                        $('#request-queue .request-num').text(oldCount+1).removeClass('request-hidden');
-                    }else{
-                        $('#request-queue .request-num').text('0').addClass('request-hidden');
-                    }
+                    $('#requestItem'+id).remove();
+                    getCurrentRequestTerms();
             });
         }
+        /////////////////////////////
 
 		$(document).on( 'click', function ( e ) {
 			if ( $( e.target ).closest('.autoComplete').length === 0 ) {
@@ -198,6 +203,15 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			if ( e.keyCode === 27 ) { // ESC
 				searchAutoComplete(true);
 			}
+		});
+        $(window).scroll(function(){
+            if($(this).scrollTop()>50){
+                var requestIconPos = $('#request-queue .request-num').offset();
+                var left = requestIconPos.left - $('#request-popup').width() - 16;
+                $('#request-popup').addClass('fixed').css('left', left);
+            }else{
+                $('#request-popup').removeClass('fixed').css('left', 'auto');
+            }
 		});
 	</script>
 
@@ -238,7 +252,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
                         ?>
 					    <a href="javascript: showRequestQueue()" title="Request Queue">
                             <div class="request-num <?php echo $reqHiddenClass ?>"><?php echo $requestedTermCount ?></div>
-                            <img class="icon" src="/img/icon-cart.png" alt="Request Queue" title="Request Queue">
+                            <img class="icon" src="/img/icon-cart.png" alt="Request Queue" title="Your Request">
                         </a>
                         <div id="request-popup"></div>
                     </div>

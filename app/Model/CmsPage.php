@@ -40,6 +40,16 @@ class CmsPage extends AppModel {
         $pageID = Helpers::getInt($pageID);
         $hasSubpages = false;
         
+        $parentTitle = "";
+        $urlStr = "";
+        if($parentID!=1){
+            $results = $this->query("SELECT * FROM cms_pages WHERE id=$parentID ORDER BY rank");
+            foreach($results as $result){
+                $parentTitle = $result["cms_pages"]["slug"];
+            }
+            $urlStr .= "/".strToLower($parentTitle);
+        }
+        
         $activeFilter = "";
         App::uses('CakeSession', 'Model/Datasource');
         if(CakeSession::read('userID') == null){
@@ -69,7 +79,7 @@ class CmsPage extends AppModel {
             if($result['P']["redirectURL"]){
                 $link = $result['P']["redirectURL"].'" target="_blank"';
             }else{
-                $link = '/resources/'.$page["slug"];
+                $link = '/resources'.$urlStr.'/'.$page["slug"];
             }
             
             $this->listPageHtml .= '<li class="catalogItem"><a class="'.$cssClass.'" href="'.$link.'">'.$page['title'].'</a>';
@@ -110,7 +120,7 @@ class CmsPage extends AppModel {
             $this->listPageHtml .= '<li class="'.$cssClass.'" id="'.$page['id'].'_'.$page['parentID'].'"><a href="/admin/editpage/'.$page["id"].'#pg'.$page["id"].'" name="pg'.$page["id"].'">'.$pageTitle.'</a>';
 			if($hasSubpages){
                 if($page['id']==1){
-                    $this->listPageHtml .= '<a class="add-record" href="/admin/addpage/1">+ Add Page</a>';
+                    //$this->listPageHtml .= '<a class="add-record" href="/admin/addpage/1">+ Add Page</a>';
                 }
                 $this->listPageHtml .=  "<ul class='left-subnav'>\r\n";
                 //$this->listPageHtml = $html.$this->listPages($pageID, $page['id'], $level+1, $html);

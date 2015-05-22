@@ -20,7 +20,7 @@
 
     // DEV SERVER
     Configure::write('byuCommunity', '4e756e1e-11ee-4d1e-bfaa-fb0ada974fc5');
-    Configure::write('isaWorkflow', '994549b0-2323-494d-8fef-5f8a39b31392');
+    Configure::write('isaWorkflow', '62d6b6a4-0fa6-4335-89c7-e822beb920d6');
     
     // NON-DEV SERVER
     //Configure::write('byuCommunity', '99582048-38e3-4149-a301-c6d54d8151c8');

@@ -627,13 +627,37 @@ img.resultBodyLoading {
 #searchBody #searchSuccess #srLower #requesterInfo {
   width: 75%;
   margin-bottom: 10px;
+  *zoom: 1;
+}
+#searchBody #requestForm #srLower #requesterInfo:before,
+#searchBody #searchSuccess #srLower #requesterInfo:before,
+#searchBody #requestForm #srLower #requesterInfo:after,
+#searchBody #searchSuccess #srLower #requesterInfo:after {
+  content: "";
+  display: table;
+}
+#searchBody #requestForm #srLower #requesterInfo:after,
+#searchBody #searchSuccess #srLower #requesterInfo:after {
+  clear: both;
+}
+#searchBody #requestForm #srLower #requesterInfo .field-continer,
+#searchBody #searchSuccess #srLower #requesterInfo .field-continer {
+  float: left;
+  width: 47%;
+  margin: 0 3% 0 0;
+}
+#searchBody #requestForm #srLower #requesterInfo label,
+#searchBody #searchSuccess #srLower #requesterInfo label {
+  display: block;
+  font-size: bold;
+  font-size: 11px;
 }
 #searchBody #requestForm #srLower #requesterInfo input,
 #searchBody #searchSuccess #srLower #requesterInfo input,
 #searchBody #requestForm #srLower #requesterInfo select,
 #searchBody #searchSuccess #srLower #requesterInfo select {
-  width: 47%;
-  margin: 0 2% 12px 0;
+  width: 100%;
+  margin: 0 0 12px 0;
 }
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody,
 #searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody {
@@ -840,6 +864,11 @@ form#request #mobileReqd {
 @media screen and (max-width: 650px) {
   #searchBody #requestForm #srLower #requesterInfo {
     width: 100%;
+  }
+  #searchBody #requestForm #srLower #requesterInfo .field-continer {
+    float: none;
+    width: 100%;
+    margin: 0;
   }
   #searchBody #requestForm #srLower #requesterInfo input,
   #searchBody #requestForm #srLower #requesterInfo select {

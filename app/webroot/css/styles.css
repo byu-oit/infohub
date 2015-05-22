@@ -157,12 +157,22 @@ header #headerInner #headerRight #request-popup {
   padding: 15px;
   z-index: 100;
 }
+header #headerInner #headerRight #request-popup.fixed {
+  position: fixed;
+  top: 7px;
+}
 header #headerInner #headerRight #request-popup h3 {
   margin: 0 0 5px 0;
 }
 header #headerInner #headerRight #request-popup ul {
   margin: 0;
   padding: 0 0 0 15px;
+}
+header #headerInner #headerRight #request-popup ul li {
+  padding: 2px;
+}
+header #headerInner #headerRight #request-popup ul li:hover {
+  background-color: #f4f4f4;
 }
 header #headerInner #headerRight #request-popup .arrow {
   position: absolute;

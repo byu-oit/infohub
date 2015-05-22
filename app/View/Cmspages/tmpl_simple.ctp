@@ -5,13 +5,6 @@
 <script>
 	$(document).ready(function() {
 		$("#resourceLink").addClass('active');
-
-		$('.catalogParent li a').click(function (e) {
-			$(this).toggleClass('active');
-			var ullist = $(this).parent().children('ul:first');
-			ullist.slideToggle();
-			listWidth();
-		});
 		$('#asideMobile').click(function() {
 			$('aside ul').slideToggle('fast');
 		})

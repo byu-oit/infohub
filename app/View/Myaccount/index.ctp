@@ -25,35 +25,52 @@
 	<div id="accountTop">
 		<h1 class="headerTab">My Account</h1>
 		<div id="atLower" class="whiteBox">
-			<h2><?php echo $username ?></h2>
-			<div id="aiDept" class="accountInfo"><span class="aiLabel">Department:&nbsp;</span><?php echo $dept ?></div>
-			<div id="aiRole" class="accountInfo"><span class="aiLabel">Role:&nbsp;</span><?php echo $role ?></div>
+			<h2><?php echo $psName ?></h2>
+			<div id="aiDept" class="accountInfo"><span class="aiLabel">Department:&nbsp;</span><?php echo $psDepartment ?></div>
+			<div id="aiRole" class="accountInfo"><span class="aiLabel">Role:&nbsp;</span><?php echo $psRole ?></div>
+			<a href="/myaccount/logout">Logout</a>
 			<div class="clear"></div>
 		</div>
 	</div>
 	<div class="accountTabs">
-		<a href="/myaccount"><div id="tabLeft" class="atTab active">Current Requests</div></a>
-		<a href="/myaccount/past"><div id="tabright" class="atTab">Past Requests</div></a>
+		<a href="/myaccount"><div id="tabLeft" class="atTab <?php if($page=='current') echo 'active' ?>">Current Requests</div></a>
+		<a href="/myaccount/?s=2"><div id="tabright" class="atTab <?php if($page=='past') echo 'active' ?>">Past Requests</div></a>
 	</div>
 	<div class="clear"></div>
 	<div id="accountMain" class="whiteBox">
 <?php
-    foreach($requests as $req){
-        $req = $req['ISARequests'];
-        echo '<div class="requestItem">'.
-            '    <div class="riLeft">'.
-            '        <h4 class="riTitle">ISA Request</h4>'.
-            '        <p class="riDate"><span>Date Created:&nbsp;</span>'.date('m/d/Y', strtotime($req['date'])).'</p>'.
-            '        <p>'.$req['request'].'</p>'.
-            '        <img src="/img/iconReview.png" alt="Request in review">'.
-            '    </div>'.
-            '    <div class="contactBox">'.
-            '        <span class="contactName">Brad Gonzales</span>'.
-            '        <div class="contactNumber"><a href="tel:8015959845">801.595.9845</a></div>'.
-            '        <div class="contactEmail"><a href="mailto:bgonzales@byu.edu">bgonzales@byu.edu</a></div>'.
-            '    </div>'.
-            '</div>';
-        
+    if(sizeof($requests)==0){
+        echo '<div class="requestItem"><div class="riLeft"><h4 class="riTitle">No Requests Found</h4></div></div>';
+    }else{
+        foreach($requests as $req){
+            echo '<div class="requestItem">'.
+                '    <div class="riLeft">'.
+                '        <h4 class="riTitle">'.$req->signifier.'</h4>'.
+                '        <p class="riDate"><span>Date Created:&nbsp;</span>'.date('n/j/Y', ($req->createdOn)/1000).'</p>'.
+                '        <p class="riDate"><strong>Requested Data:</strong><br>';
+            $termCount = 0;
+            foreach($req->terms->aaData as $term){
+                echo $term->termsignifier;
+                $termCount++;
+                if($termCount < sizeof($req->terms->aaData)){
+                    echo ',&nbsp;&nbsp;';
+                }
+            }
+            echo '</p>';
+            if($page=='current'){
+                echo '<img src="/img/iconReview.png" alt="Request in review">';
+            }else{
+                echo '<img src="/img/iconApproved.png" alt="Approved requests">';
+            }
+            echo '    </div>'.
+                '    <div class="contactBox">'.
+                '        <span class="contactName">Brad Gonzales</span>'.
+                '        <div class="contactNumber"><a href="tel:8015959845">801.595.9845</a></div>'.
+                '        <div class="contactEmail"><a href="mailto:bgonzales@byu.edu">bgonzales@byu.edu</a></div>'.
+                '    </div>'.
+                '</div>';
+
+        }
     }
 ?>
 		<!--<div class="requestItem">

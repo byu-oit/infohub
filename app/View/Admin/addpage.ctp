@@ -58,6 +58,7 @@
                 </tr>
             </table>
 <?php
+    echo $this->Form->input('templateID', array('type' => 'hidden', 'value'=>'1'));
     echo $this->Form->input('parentID', array('type' => 'hidden', 'value'=>$parentID));
     echo $this->Form->input('rank', array('type' => 'hidden', 'value'=>$rank));
     echo $this->Form->end();

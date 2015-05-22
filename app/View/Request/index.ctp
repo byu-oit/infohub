@@ -13,6 +13,12 @@
             }
         })
         $('#request select').val('7c04c361-7a87-4f25-8238-ee50f0afa377');
+        
+        <?php
+            if($submitErr){
+                echo "alert('An error occured with your request. Please try again.');";
+            }
+        ?>
 	});
 
 	$(window).resize(resultsWidth);
@@ -68,18 +74,25 @@
 				<div class="clear"></div>
 				<div id="requesterInfo">
 					<!-- <div class="infoCol"> -->
-						<input type="text" id="fname" name="fname" class="inputShade" placeholder="First name" value="Alfredo">
-						<input type="text" id="lname" name="lname" class="inputShade" placeholder="Last Name" value="Nava">
-						<input type="text" id="phone" name="phone" class="inputShade" placeholder="Phone Number" value="801-990-1176">
+					    <div class="field-continer">
+					        <label for="name">Name</label>
+						    <input type="text" id="name" name="name" class="inputShade" placeholder="Name" value="<?php echo $psName ?>">
+					    </div>
+					    <div class="field-continer">
+					        <label for="phone">Phone Number</label>
+						    <input type="text" id="phone" name="phone" class="inputShade" placeholder="Phone Number" value="<?php echo $psPhone ?>">
+					    </div>
 					<!-- </div>
 					<div class="infoCol"> -->
-						<input type="text" id="email" name="email" class="inputShade" placeholder="Email" value="anava@summitslc.com">
-						<input type="text" id="company" name="company" class="inputShade" placeholder="Company" value="TSG">
-						<select type="text" id="supervisor" name="supervisor" class="inputShade">
-							<option value="1" selected disabled>Your Supervisor</option>
-							<option value="2">John Doe</option>
-							<option value="3">Jane Doe</option>
-						</select>
+					    <div class="field-continer">
+					        <label for="email">Email</label>
+						    <input type="text" id="email" name="email" class="inputShade" placeholder="Email" value="<?php echo $psEmail ?>">
+					    </div>
+						<div class="field-continer">
+					        <label for="role">Role</label>
+						    <input type="text" id="role" name="role" class="inputShade" placeholder="Role" value="<?php echo $psRole ?>">
+					    </div>
+					    <input type="hidden" name="requesterPersonId" value="<?php echo $psPersonID ?>" />
 					<!-- </div> -->
 				</div>
                 
@@ -103,8 +116,8 @@
                                     echo '</div>';
                                     echo '<div class="checkCol">';
                                 }
-                                echo '    <input type="checkbox" onclick="toggleDataNeeded(this)" value="'.$termName.'" name="terms[]" id="'.$termID.'" checked="checked">'.
-                                    '    <label for="'.$termID.'">'.$domain.'/'.$termName.'</label><div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$termDef.'" class="info"><img src="/img/iconInfo.png"></div>';
+                                echo '    <input type="checkbox" onclick="toggleDataNeeded(this)" value="'.$termID.'" name="terms[]" id="'.$termID.'" checked="checked">'.
+                                    '    <label for="'.$termID.'">'.$domain.' > '.$termName.'</label><div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$termDef.'" class="info"><img src="/img/iconInfo.png"></div>';
                                 if($i%2==0){
                                     echo '<br/>';
                                 }
@@ -119,29 +132,33 @@
                 
                 <?php
                     foreach($formFields->formProperties as $field){
-                        echo '<label class="headerTab" for="'.$field->id.'">'.$field->name.'</label>'.
-                            '<div class="clear"></div>'.
-                            '<div class="taBox">';
-                        
-                        if($field->type == 'textarea'){
+                        $arrNonDisplay = array("requesterName", "requesterEmail", "requesterPhone", "informationElements", "requesterRole", "requesterPersonId");
+                        if(!in_array($field->id, $arrNonDisplay)){
+                            echo '<label class="headerTab" for="'.$field->id.'">'.$field->name.'</label>'.
+                                '<div class="clear"></div>'.
+                                '<div class="taBox">';
+                            
                             $val = '';
-                            /*if($field->id == 'dataNeeded'){
-                                $val = $communityPath.': '.$dataNeeded;
-                            }*/
-                            echo '<textarea name="'.$field->id.'" id="'.$field->id.'"  class="inputShade">'.$val.'</textarea>';
-                        }elseif($field->type == 'user'){
-                            echo '<select name="'.$field->id.'" id="'.$field->id.'">';
-                            foreach($sponsors->user as $sponsor){
-                                if($sponsor->enabled==1){
-                                    echo '<option value="'.$sponsor->resourceId.'">'.$sponsor->firstName.' '.$sponsor->lastName.'</option>';
-                                }
+                            if($field->id == 'requestingOrganization'){
+                                $val = $psDepartment;
                             }
-                            echo '</select>';
-                        }else{
-                            echo '<input type="text" name="'.$field->id.'" id="'.$field->id.'"  class="inputShade full" />';
+                            
+                            if($field->type == 'textarea'){
+                                echo '<textarea name="'.$field->id.'" id="'.$field->id.'"  class="inputShade">'.$val.'</textarea>';
+                            }elseif($field->type == 'user'){
+                                echo '<select name="'.$field->id.'" id="'.$field->id.'">';
+                                foreach($sponsors->user as $sponsor){
+                                    if($sponsor->enabled==1){
+                                        echo '<option value="'.$sponsor->resourceId.'">'.$sponsor->firstName.' '.$sponsor->lastName.'</option>';
+                                    }
+                                }
+                                echo '</select>';
+                            }else{
+                                echo '<input type="text" name="'.$field->id.'" id="'.$field->id.'" val="'.$val.'" class="inputShade full" />';
+                            }
+
+                            echo '</div>';
                         }
-                        
-                        echo '</div>';
                     }
                 ?>
 				<label for="requestSubmit" id="mobileReqd">*All Fields Required</label>
