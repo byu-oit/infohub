@@ -12,8 +12,8 @@ class CollibraAPI extends Model {
     private $settings = array(
         // DEV SERVER
         'url'       =>  'https://byu-dev.collibra.com/rest/latest/',
-        'username'  => 'Admin',
-        'password'  => 'ey6Rourpkwxwe5G'
+        'username'  => '***REMOVED***',//'Admin',
+        'password'  => '***REMOVED***'//'ey6Rourpkwxwe5G'
         // NON-DEV SERVER
         //'url'       =>  'https://byu.collibra.com/rest/latest/',
         //'username'  => '***REMOVED***', 

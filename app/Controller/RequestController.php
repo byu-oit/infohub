@@ -197,6 +197,15 @@ class RequestController extends AppController {
         if(isset($formResp->startWorkflowResponses[0]->successmessage)){
             $processID = $formResp->startWorkflowResponses[0]->processInstanceId;
             
+            // attempt to reindex source to make sure latest requests are displayed
+            $objCollibra = new CollibraAPI();
+            $resp = $objCollibra->request(
+                array(
+                    'url'=>'search/re-index',
+                    'post'=>true
+                )
+            );
+            
             // store user's request
             $this->loadModel('ISARequests');
             $isaReq = new ISARequests();

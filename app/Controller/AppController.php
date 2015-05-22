@@ -46,11 +46,6 @@ class AppController extends Controller {
         }
         //$this->set('casAuthenticated', true);
         
-        $_SESSION['netid'] = '11111';
-        $_SESSION['username'] = 'Christy Whitehouse';
-        $_SESSION['dept'] = 'Business';
-        $_SESSION['role'] = 'Information Steward';
-        
         $this->disableCache();
         
         App::import('Controller', 'QuickLinks');
