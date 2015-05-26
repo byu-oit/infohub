@@ -132,26 +132,72 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			if(size<minSize) size=minSize;
 			$('body').css('fontSize', size);
 		}
+		
+		$(document).ready(function(){
+			var index = -1;
+			$('#searchInput').keypress(function(event) { return event.keyCode != 13; });
+			$('#searchInput').on({
+			    	keyup: function(e){
 
-		function searchAutoComplete( e ) {
-            if ($.trim($('#searchInput').val()) == ''){
-				$('.autoComplete').hide();
-			}else if  ( e == true ) {
-				$('.autoComplete').hide();
-			}else {
-				var val = $('#searchInput').val();
-                $.get( "/search/autoCompleteTerm", { q: val } )
-                    .done(function( data ) {
-                        $('.autoComplete .results').html(data);
-                        $('.autoComplete li').click(function(){
-                            $('#searchInput').val($(this).text());
-                            $('#searchInput').parent().submit();
-                            $('.autoComplete').hide();
-                        });
-                        $('.autoComplete').show();
-                });
-			}
-		}
+			    		if ($.trim($('#searchInput').val()) == ''){
+						$('.autoComplete').hide();
+					}else if  ( e == true ) {
+						$('.autoComplete').hide();
+					}
+					else if  ( e.which == 27 ) {
+						$('.autoComplete').hide();
+						index = -1;
+					}
+					else if(e.which == 13) {
+                  				$('#searchInput').val($('.autoComplete li.active').text());
+                      			$('#searchInput').parent().submit();
+                      			$('.autoComplete').hide();
+                  			}
+					else {
+						var val = $('#searchInput').val();
+
+                				$.get( "/search/autoCompleteTerm", { q: val } )
+                    			.done(function( data ) {
+	                        			$('.autoComplete .results').html(data);
+	                        			$('.autoComplete li').click(function(){
+	                            			$('#searchInput').val($(this).text());
+	                            			$('#searchInput').parent().submit();
+	                            			$('.autoComplete').hide();
+	                        			});
+
+	                        			$('.autoComplete').show();
+	                        			var m;
+
+	                        			if(e.which === 40){
+	                        				e.preventDefault();
+	                        				if(index >= $('.autoComplete li').length -1){
+							    		index = 0;
+							    	}
+							    	else{
+							    		index++;
+							    	}
+							    	
+							    	m = true;
+							}
+							else if(e.which == 38){
+								e.preventDefault();
+								if(index == -1){index = $('.autoComplete li').length - 1;}
+							    	else {index--;}
+							    	if(index > $('.autoComplete li').length ){
+							        	index = $('.autoComplete li').length + 1;
+							    	}
+							    	m = true;
+							}
+
+							if(m){
+							    $('.autoComplete li.active').removeClass('active');
+							    $('.autoComplete li').eq(index).addClass('active');
+							} 
+                				});
+					}
+			    	}
+			});
+		});
         
         function showTermDef(elem){
             var pos = $(elem).offset();
@@ -199,11 +245,6 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			}
 		});
 
-		$(document).on( 'keyup', function ( e ) {
-			if ( e.keyCode === 27 ) { // ESC
-				searchAutoComplete(true);
-			}
-		});
         $(window).scroll(function(){
             if($(this).scrollTop()>50){
                 var requestIconPos = $('#request-queue .request-num').offset();

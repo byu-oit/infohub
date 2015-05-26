@@ -66,11 +66,11 @@
 			</div>
 			<div id="searchBox">
 				<form action="#" onsubmit="document.location='/search/results/'+this.searchInput.value; return false;" method="post">
-                    <input id="searchInput" name="searchInput" type="text" class="inputShade" onkeyup="searchAutoComplete()" placeholder="Search keyword, topic, or phrase" maxlength="50" autocomplete="off"  />
-                    <?php echo $this->element('auto_complete'); ?>
-                    <input type="submit" value="Search" class="inputButton" />
-                    <p>or <a href="/search" id="catalogLink" >Browse our full catalog</a></p>
-                </form>
+                    		<input id="searchInput" name="searchInput" type="text" class="inputShade" placeholder="Search keyword, topic, or phrase" maxlength="50" autocomplete="off"  />
+                    		<?php echo $this->element('auto_complete'); ?>
+                    		<input type="submit" value="Search" class="inputButton" />
+                    		<p>or <a href="/search" id="catalogLink" >Browse our full catalog</a></p>
+                		</form>
 			</div>
 			<!-- <a href="/search" id="catalogLink" class="grow"><img src="/img/catalogLink2.png" alt="See full catealog"></a> -->
 		</div>
