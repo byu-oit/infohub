@@ -137,65 +137,62 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			var index = -1;
 			$('#searchInput').keypress(function(event) { return event.keyCode != 13; });
 			$('#searchInput').on({
-			    	keyup: function(e){
+                keyup: function(e){
+                    var m;
 
-			    		if ($.trim($('#searchInput').val()) == ''){
-						$('.autoComplete').hide();
-					}else if  ( e == true ) {
-						$('.autoComplete').hide();
-					}
-					else if  ( e.which == 27 ) {
-						$('.autoComplete').hide();
-						index = -1;
-					}
-					else if(e.which == 13) {
-                  				$('#searchInput').val($('.autoComplete li.active').text());
-                      			$('#searchInput').parent().submit();
-                      			$('.autoComplete').hide();
-                  			}
-					else {
-						var val = $('#searchInput').val();
+                    if ($.trim($('#searchInput').val()) == ''){
+                        $('.autoComplete').hide();
+                    }else if  ( e == true ) {
+                        $('.autoComplete').hide();
+                    }
+                    else if  ( e.which == 27 ) {
+                        $('.autoComplete').hide();
+                        index = -1;
+                    }
+                    else if(e.which == 13) {
+                        $('#searchInput').val($('.autoComplete li.active').text());
+                        $('#searchInput').parent().submit();
+                        $('.autoComplete').hide();
+                    }else if(e.which == 38){
+                        e.preventDefault();
+                        if(index == -1){
+                            index = $('.autoComplete li').length - 1;
+                        }else {
+                            index--;
+                        }
+                        
+                        if(index > $('.autoComplete li').length ){
+                            index = $('.autoComplete li').length + 1;
+                        }
+                        m = true;
+                    }else if(e.which === 40){
+                        e.preventDefault();
+                        if(index >= $('.autoComplete li').length -1){
+                            index = 0;
+                        }else{
+                            index++;
+                        }
+                        m = true;
+                    }else{
+                        var val = $('#searchInput').val();
+                        $.get( "/search/autoCompleteTerm", { q: val } )
+                            .done(function( data ) {
+                                $('.autoComplete .results').html(data);
+                                $('.autoComplete li').click(function(){
+                                    $('#searchInput').val($(this).text());
+                                    $('#searchInput').parent().submit();
+                                    $('.autoComplete').hide();
+                                });
+                         });
 
-                				$.get( "/search/autoCompleteTerm", { q: val } )
-                    			.done(function( data ) {
-	                        			$('.autoComplete .results').html(data);
-	                        			$('.autoComplete li').click(function(){
-	                            			$('#searchInput').val($(this).text());
-	                            			$('#searchInput').parent().submit();
-	                            			$('.autoComplete').hide();
-	                        			});
+                        $('.autoComplete').show();
+                    }
 
-	                        			$('.autoComplete').show();
-	                        			var m;
-
-	                        			if(e.which === 40){
-	                        				e.preventDefault();
-	                        				if(index >= $('.autoComplete li').length -1){
-							    		index = 0;
-							    	}
-							    	else{
-							    		index++;
-							    	}
-							    	
-							    	m = true;
-							}
-							else if(e.which == 38){
-								e.preventDefault();
-								if(index == -1){index = $('.autoComplete li').length - 1;}
-							    	else {index--;}
-							    	if(index > $('.autoComplete li').length ){
-							        	index = $('.autoComplete li').length + 1;
-							    	}
-							    	m = true;
-							}
-
-							if(m){
-							    $('.autoComplete li.active').removeClass('active');
-							    $('.autoComplete li').eq(index).addClass('active');
-							} 
-                				});
-					}
-			    	}
+                    if(m){
+                        $('.autoComplete li.active').removeClass('active');
+                        $('.autoComplete li').eq(index).addClass('active');
+                    }
+                }
 			});
 		});
         

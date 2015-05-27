@@ -5,6 +5,10 @@ class MyaccountController extends AppController {
         return strcmp($a->firstName, $b->firstName);
     }
     
+    private static function sortRequests($a, $b){
+        return strcmp($a->createdOn, $b->createdOn);
+    }
+    
     public function logout() {
         phpCAS::logout(array('url'=>'http://'.$_SERVER['SERVER_NAME']));
     }
@@ -86,6 +90,9 @@ class MyaccountController extends AppController {
                 array_push($arrRequests, $request);
             }
         }
+        // sort results by date added
+        usort($arrRequests, 'self::sortRequests');
+        //print_r($arrRequests);exit;
         
         $psName = '';
         $psRole = '';
