@@ -4,7 +4,7 @@
 ?>
 
 <!-- Background image div -->
-<div class="deskBg">
+<div class="searchBg">
 
 	<div id="searchBody" class="innerLower">
 

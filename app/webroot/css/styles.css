@@ -447,10 +447,17 @@ footer #footerBottom p a:hover {
   header #headerInner #headerRight #request-queue {
     float: right;
     margin-right: 0;
+    margin-left: 15px;
+    margin-top: 6px;
+  }
+  header #headerInner #headerRight #request-queue.loggedIn {
+    margin-top: 0;
   }
   header #headerInner #headerRight .userInfo {
     padding-right: 0;
-    float: right;
+    float: none;
+    text-align: right;
+    margin-bottom: 7px;
   }
   header #headerInner #headerRight #needHelp {
     border-right: none;

@@ -137,62 +137,68 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			var index = -1;
 			$('#searchInput').keypress(function(event) { return event.keyCode != 13; });
 			$('#searchInput').on({
-                keyup: function(e){
-                    var m;
+                		keyup: function(e){
+                    		var m;
 
-                    if ($.trim($('#searchInput').val()) == ''){
-                        $('.autoComplete').hide();
-                    }else if  ( e == true ) {
-                        $('.autoComplete').hide();
-                    }
-                    else if  ( e.which == 27 ) {
-                        $('.autoComplete').hide();
-                        index = -1;
-                    }
-                    else if(e.which == 13) {
-                        $('#searchInput').val($('.autoComplete li.active').text());
-                        $('#searchInput').parent().submit();
-                        $('.autoComplete').hide();
-                    }else if(e.which == 38){
-                        e.preventDefault();
-                        if(index == -1){
-                            index = $('.autoComplete li').length - 1;
-                        }else {
-                            index--;
-                        }
+                   			if ($.trim($('#searchInput').val()) == ''){
+                        			$('.autoComplete').hide();
+                    		}
+                    		else if  ( e == true ) {
+                        			$('.autoComplete').hide();
+                    		}
+                    		else if  ( e.which == 27 ) {
+                        			$('.autoComplete').hide();
+                        			index = -1;
+                    		}
+                    		else if(e.which == 13) {
+                        			$('#searchInput').val($('.autoComplete li.active').text());
+                        			$('#searchInput').parent().submit();
+                        			$('.autoComplete').hide();
+                    		}
+                    		else if(e.which == 38){
+                        			e.preventDefault();
+                        			if(index == -1){
+                            			index = $('.autoComplete li').length - 1;
+                        			}
+                        			else {
+                            			index--;
+                        			}
                         
-                        if(index > $('.autoComplete li').length ){
-                            index = $('.autoComplete li').length + 1;
-                        }
-                        m = true;
-                    }else if(e.which === 40){
-                        e.preventDefault();
-                        if(index >= $('.autoComplete li').length -1){
-                            index = 0;
-                        }else{
-                            index++;
-                        }
-                        m = true;
-                    }else{
-                        var val = $('#searchInput').val();
-                        $.get( "/search/autoCompleteTerm", { q: val } )
-                            .done(function( data ) {
-                                $('.autoComplete .results').html(data);
-                                $('.autoComplete li').click(function(){
-                                    $('#searchInput').val($(this).text());
-                                    $('#searchInput').parent().submit();
-                                    $('.autoComplete').hide();
-                                });
-                         });
+                        			if(index > $('.autoComplete li').length ){
+                            			index = $('.autoComplete li').length + 1;
+                        			}
+                        			m = true;
+                    		}
+                    		else if(e.which === 40){
+                        			e.preventDefault();
+                        			if(index >= $('.autoComplete li').length -1){
+                            			index = 0;
+                        			}
+                        			else{
+                            			index++;
+                        			}
+                        			m = true;
+                    		}
+                    		else{
+                        			var val = $('#searchInput').val();
+                        			$.get( "/search/autoCompleteTerm", { q: val } )
+                            		.done(function( data ) {
+                                			$('.autoComplete .results').html(data);
+                                			$('.autoComplete li').click(function(){
+                                    			$('#searchInput').val($(this).text());
+                                    			$('#searchInput').parent().submit();
+                                    			$('.autoComplete').hide();
+                                			});
+                         			});
 
-                        $('.autoComplete').show();
-                    }
+                        			$('.autoComplete').show();
+                    		}
 
-                    if(m){
-                        $('.autoComplete li.active').removeClass('active');
-                        $('.autoComplete li').eq(index).addClass('active');
-                    }
-                }
+		                  	if(m){
+		                        	$('.autoComplete li.active').removeClass('active');
+		                        	$('.autoComplete li').eq(index).addClass('active');
+		                   }
+                		}
 			});
 		});
         
@@ -281,22 +287,22 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 					<span class="userInfo">
 						<?php if(!$casAuthenticated) echo $this->Html->link('Login', '/login'); ?>
 					</span>
-					<div id="request-queue">
-                        <?php
-                            $reqHiddenClass = '';
-                            if($requestedTermCount==0){
-                                $reqHiddenClass = 'request-hidden';
-                            }
-                        ?>
-					    <a href="javascript: showRequestQueue()" title="Request Queue">
-                            <div class="request-num <?php echo $reqHiddenClass ?>"><?php echo $requestedTermCount ?></div>
-                            <img class="icon" src="/img/icon-cart.png" alt="Request Queue" title="Your Request">
-                        </a>
-                        <div id="request-popup"></div>
-                    </div>
-                    <?php if($casAuthenticated){ ?>
-                    <a id="settingsWheel" href="/myaccount"><img src="/img/icon-settings.png" alt="My Account" title="My Account" /></a>
-                    <?php } ?>
+					<div id="request-queue" <?php if($casAuthenticated)  echo "class=loggedIn"; ?> >
+						<?php
+						    $reqHiddenClass = '';
+						    if($requestedTermCount==0){
+						        $reqHiddenClass = 'request-hidden';
+						    }
+						?>
+					    	<a href="javascript: showRequestQueue()" title="Request Queue">
+                            			<div class="request-num <?php echo $reqHiddenClass ?>"><?php echo $requestedTermCount ?></div>
+                           		 	<img class="icon" src="/img/icon-cart.png" alt="Request Queue" title="Your Request">
+                        			</a>
+                        			<div id="request-popup"></div>
+                    		</div>
+		                    <?php if($casAuthenticated){ ?>
+		                    <a id="settingsWheel" href="/myaccount"><img src="/img/icon-settings.png" alt="My Account" title="My Account" /></a>
+		                    <?php } ?>
 
 					<!-- Below is fixed pos. on destop -->
 					<div id="needHelp">

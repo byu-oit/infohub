@@ -59,7 +59,7 @@
 </script>
 
 <!-- Background image div -->
-<div id="searchBg" class="deskBg">
+<div id="searchBg" class="searchBg">
 </div>
 
 <!-- Request Form -->
