@@ -75,7 +75,7 @@
 		<div class="clear"></div>
 		<div id="stLower" class="whiteBox">
 			<form action="#" onsubmit="document.location='/search/results/'+this.searchInput.value; return false;" method="post">
-				<input id="searchInput" type="text" class="inputShade" onkeyup="searchAutoComplete()" value="<?php echo $searchInput ?>" placeholder="Search keyword, topic, or phrase" maxlength="50" autocomplete="off" >
+				<input id="searchInput" type="text" class="inputShade" value="<?php echo $searchInput ?>" placeholder="Search keyword, topic, or phrase" maxlength="50" autocomplete="off" >
 				<?php echo $this->element('auto_complete'); ?>
 				<input type="submit" value="Search" class="inputButton">
 			</form>
