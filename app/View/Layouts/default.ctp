@@ -151,8 +151,13 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
                         			index = -1;
                     		}
                     		else if(e.which == 13) {
-                        			$('#searchInput').val($('.autoComplete li.active').text());
-                        			$('#searchInput').parent().submit();
+                    			if($('.autoComplete li').hasClass('active')){
+                    				$('#searchInput').val($('.autoComplete li.active').text());
+                    				$('#searchInput').parent().submit();
+                    			}
+                        			else {
+                        				$('#searchInput').parent().submit();
+                        			}
                         			$('.autoComplete').hide();
                     		}
                     		else if(e.which == 38){
@@ -202,34 +207,34 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			});
 		});
         
-        function showTermDef(elem){
-            var pos = $(elem).offset();
-            var data = $(elem).attr('data-definition');
-            $('#info-win .info-win-content').text(data);
-            $('#info-win').show();
-            var winLeft = pos.left - $('#info-win').outerWidth()/2 + 5;
-            var winTop = pos.top - $('#info-win').outerHeight() - 5;
-            $('#info-win').css('top',winTop).css('left',winLeft);
-        }
-        function hideTermDef(){
-            $('#info-win').hide();
-        }
+		function showTermDef(elem){
+			var pos = $(elem).offset();
+			var data = $(elem).attr('data-definition');
+			$('#info-win .info-win-content').text(data);
+			$('#info-win').show();
+			var winLeft = pos.left - $('#info-win').outerWidth()/2 + 5;
+			var winTop = pos.top - $('#info-win').outerHeight() - 5;
+			$('#info-win').css('top',winTop).css('left',winLeft);
+		}
+        	function hideTermDef(){
+            		$('#info-win').hide();
+        	}
         
-        // Request functions
-        ///////////////////////////////
-        function showRequestQueue(){
-            $.get("/request/listQueue")
-                .done(function(data){
-                    if($(window).scrollTop()>50){
-                        var requestIconPos = $('#request-queue .request-num').offset();
-                        var left = requestIconPos.left - $('#request-popup').width() - 16;
-                        $('#request-popup').addClass('fixed').css('left', left);
-                    }else{
-                        $('#request-popup').removeClass('fixed').css('left', 'auto');
-                    }
-                    $('#request-popup').html(data).slideDown('fast');
-            });
-        }
+        	// Request functions
+        	///////////////////////////////
+        	function showRequestQueue(){
+	            $.get("/request/listQueue")
+                	.done(function(data){
+                   		if($(window).scrollTop()>50){
+                   			var requestIconPos = $('#request-queue .request-num').offset();
+                   			var left = requestIconPos.left - $('#request-popup').width() - 16;
+                   			$('#request-popup').addClass('fixed').css('left', left);
+                   		}else{
+                   			$('#request-popup').removeClass('fixed').css('left', 'auto');
+                   		}
+                   		$('#request-popup').html(data).slideDown('fast');
+            		});
+        	}
         function hideRequestQueue(){
             $('#request-popup').hide();
         }
@@ -257,6 +262,32 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
                 $('#request-popup').removeClass('fixed').css('left', 'auto');
             }
 		});
+
+		$(function() {
+			if(!$.support.placeholder) {
+				var active = document.activeElement;
+				$('textarea').each(function(index, element) {
+					if($(this).val().length == 0) {
+						$(this).html($(this).attr('id')).addClass('hasPlaceholder');
+					}
+				});
+				$('input, textarea').focus(function () {
+					if ($(this).attr('placeholder') != '' && $(this).val() == $(this).attr('placeholder')) {
+						$(this).val('').removeClass('hasPlaceholder');
+					}
+				}).blur(function () {
+					if (($(this).attr('placeholder') != '' && ($(this).val() == '' || $(this).val() == $(this).attr('placeholder')))) {
+						$(this).val($(this).attr('placeholder')).addClass('hasPlaceholder');
+						//$(this).css('background', 'red');
+					}
+				});
+				$(':text').blur();
+				$(active).focus();
+				$('form').submit(function () {
+					$(this).find('.hasPlaceholder').each(function() { $(this).val(''); });
+				});
+			}
+		}); 
 	</script>
 
 </head>
@@ -312,7 +343,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 							<a class="close">Close <br>X</a>
 							<div id="nhLeft">
 								<h3>Have questions? We’re here to help.</h3>
-								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod veniam, quis nostrud exercitation ullamco laboris nisiut aliquip utexa commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur datat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </p>
+								<p>If you need any help with your search, just complete the “Contact Us” form and an information steward will get back to you within 24 hours.</p>
 								<a href="">Contact Us</a>
 							</div>
 							<img src="/img/questionQuote.gif" alt="Have Questions?">
@@ -344,13 +375,13 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 						<p>Mailing address: <br>Brigham Young University <br> Provo, UT 84602</p>
 					</div>
 					<div class="footerBox">
-						<p>Telephone: <br>801-422-4636 or <br>801-422-1211</p>
+						<p>Telephone: <br><a href="tel:801-422-4636">801-422-4636</a> or <br><a href="tel:801-422-1211">801-422-1211</a></p>
 					</div>
 					<div class="footerBox">
 						<p>Web: <br><a href="/contact">Contact Us</a></p>
 					</div>
 					<div class="footerBox">
-						<p>Directions: <br><a href="">Google Maps</a></p>
+						<p>Directions: <br><a href="https://www.google.com/maps/place/Brigham+Young+University/@40.251844,-111.649316,17z/data=!3m1!4b1!4m2!3m1!1s0x874d90bc4aa0b68d:0xbf3eb3a3f30fdc4c" target="_blank">Google Maps</a></p>
 					</div>
 				</div>
 			</div>
