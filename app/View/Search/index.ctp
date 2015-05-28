@@ -22,13 +22,21 @@
             .done(function(data) {
                 var objDomains = JSON.parse(data);
                 var html = '';
+                var level = 0;
+                var grandChildClass = '';
+                if($('#'+listID).size()){
+                    level = parseInt($('#'+listID).attr('data-level'))+1;
+                }
+                if(level > 1){
+                    grandChildClass = 'grandChild';            
+                }
                 // create community elements
                 for(i=0; i<objDomains.aaData[0].Subcommunities.length; i++){
                     var comm = objDomains.aaData[0].Subcommunities[i];
                     html += '<li class="catalogItem" id="c'+comm.subcommunityid+'">';
                     if(comm.hasNonMetaChildren=='true'){
                         html += '   <a href="#" class="hasChildren">'+comm.subcommunity+'</a>'+
-                            '   <ul id="categoryList'+comm.subcommunityid+'" class="subList catalogChild">'+
+                            '   <ul data-level="'+level+'" id="categoryList'+comm.subcommunityid+'" class="subList catalogChild '+grandChildClass+'">'+
                             '       <li><a href=""><img src="/img/dataLoading-sm.gif" alt="Loading..."></a></li>'+
                             '   </ul>';
                     }else{
@@ -90,7 +98,7 @@
 		<h2 class="headerTab" >Full Catalog</h2>
 		<div class="clear"></div>
 		<div id="smLower" class="whiteBox">
-			<ul class="catalogParent" id="catalogList0">
+			<ul class="catalogParent" id="catalogList0" data-level="0">
                 <a href=""><img src="/img/dataLoading-sm.gif" alt="Loading..."></a>
 			</ul>
 		</div>
