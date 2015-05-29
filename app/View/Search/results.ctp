@@ -26,42 +26,6 @@
         }
 		});
 	});
-    
-    function getCurrentRequestTerms(){
-        $.get("/request/getQueueJSArray")
-            .done(function(data){
-                data = data.split(',');
-                $('input[type=checkbox]').prop('checked', false);
-            
-                for(i=0; i<data.length; i++){
-                    $('.chk'+data[i]).prop('checked', true);
-                }
-        });
-    }
-    
-    function addToQueue(elem){
-        var arrTitles = new Array($(elem).attr('data-title'));
-        var arrIDs = new Array($(elem).attr('data-rid'));
-        $(elem).parent().find('.checkBoxes').find('input').each(function(){
-            if($(this).prop( "checked")){
-                arrTitles.push($(this).attr('data-title'));
-                arrIDs.push($(this).val());
-            }
-        });
-        $.post("/request/addToQueue", {t:arrTitles, id:arrIDs})
-            .done(function(data){
-                $(elem).attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
-                var oldCount = parseInt($('#request-queue .request-num').text());
-                data = parseInt(data);
-                if(oldCount+data>0){
-                    $('#request-queue .request-num').text(oldCount+data).removeClass('request-hidden');
-                    showRequestQueue();
-                    getCurrentRequestTerms();
-                }
-        });
-    }
-		
-
 </script>
 
 <!-- Background image div -->

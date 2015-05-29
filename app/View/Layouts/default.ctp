@@ -220,21 +220,21 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
             		$('#info-win').hide();
         	}
         
-        	// Request functions
-        	///////////////////////////////
-        	function showRequestQueue(){
-	            $.get("/request/listQueue")
-                	.done(function(data){
-                   		if($(window).scrollTop()>50){
-                   			var requestIconPos = $('#request-queue .request-num').offset();
-                   			var left = requestIconPos.left - $('#request-popup').width() - 16;
-                   			$('#request-popup').addClass('fixed').css('left', left);
-                   		}else{
-                   			$('#request-popup').removeClass('fixed').css('left', 'auto');
-                   		}
-                   		$('#request-popup').html(data).slideDown('fast');
-            		});
-        	}
+        // Request functions
+        ///////////////////////////////
+        function showRequestQueue(){
+            $.get("/request/listQueue")
+                .done(function(data){
+                    if($(window).scrollTop()>50){
+                        var requestIconPos = $('#request-queue .request-num').offset();
+                        var left = requestIconPos.left - $('#request-popup').width() - 16;
+                        $('#request-popup').addClass('fixed').css('left', left);
+                    }else{
+                        $('#request-popup').removeClass('fixed').css('left', 'auto');
+                    }
+                    $('#request-popup').html(data).slideDown('fast');
+                });
+        }
         function hideRequestQueue(){
             $('#request-popup').hide();
         }
@@ -243,6 +243,43 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
                 .done(function(data){
                     $('#requestItem'+id).remove();
                     getCurrentRequestTerms();
+            });
+        }
+        function getCurrentRequestTerms(){
+            $.get("/request/getQueueJSArray")
+                .done(function(data){
+                    data = data.split(',');
+                    $('input[type=checkbox]').prop('checked', false);
+
+                    for(i=0; i<data.length; i++){
+                        $('.chk'+data[i]).prop('checked', true);
+                    }
+                    $('#request-queue .request-num').text(data.length-1);
+                    if(data.length-1 <= 0){
+                        $('#request-queue .request-num').addClass('request-hidden');
+                        hideRequestQueue();
+                    }
+            });
+        }
+        function addToQueue(elem){
+            var arrTitles = new Array($(elem).attr('data-title'));
+            var arrIDs = new Array($(elem).attr('data-rid'));
+            $(elem).parent().find('.checkBoxes').find('input').each(function(){
+                if($(this).prop( "checked")){
+                    arrTitles.push($(this).attr('data-title'));
+                    arrIDs.push($(this).val());
+                }
+            });
+            $.post("/request/addToQueue", {t:arrTitles, id:arrIDs})
+                .done(function(data){
+                    $(elem).attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
+                    var oldCount = parseInt($('#request-queue .request-num').text());
+                    data = parseInt(data);
+                    if(oldCount+data>0){
+                        $('#request-queue .request-num').text(oldCount+data).removeClass('request-hidden');
+                        showRequestQueue();
+                        getCurrentRequestTerms();
+                    }
             });
         }
         /////////////////////////////
