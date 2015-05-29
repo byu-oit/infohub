@@ -281,6 +281,7 @@ class SearchController extends AppController {
         }
         return $commonSearches;
     }
+    /////////////////////////////////////////////////////////
     
     private function getTermDetails($query){
         $arrResp = '';

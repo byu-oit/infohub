@@ -94,8 +94,13 @@ class RequestController extends AppController {
         if(isset($_COOKIE['queue'])) {
             $emptyQueue = false;
             $arrQueue = unserialize($_COOKIE['queue']);
-            for($j=0; $j<sizeof($arrQueue); $j++){
-                $listHTML .= '<li id="requestItem'.$arrQueue[$j][1].'">'.$arrQueue[$j][0].'<a class="delete" onclick="return confirm(\'Are you sure you want to delete this item?\')" href="javascript:removeFromRequestQueue(\''.$arrQueue[$j][1].'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a></li>';
+            if(sizeof($arrQueue)>=1){
+                for($j=0; $j<sizeof($arrQueue); $j++){
+                    $listHTML .= '<li id="requestItem'.$arrQueue[$j][1].'">'.$arrQueue[$j][0].'<a class="delete" onclick="return confirm(\'Are you sure you want to delete this item?\')" href="javascript:removeFromRequestQueue(\''.$arrQueue[$j][1].'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a></li>';
+                }
+            }else{
+                $emptyQueue = true;
+                $listHTML = 'No request items found.';   
             }
         }else{
             $listHTML = 'No request items found.';
@@ -254,6 +259,13 @@ class RequestController extends AppController {
             exit;
         }
         
+        // redirect if cookie is set but not empty
+        $arrQueue = unserialize($_COOKIE['queue']);
+        if(sizeof($arrQueue)<=0){
+            header('location: /search');
+            exit;
+        }
+        
         //$termID = $this->request->params['pass'][0];
         $this->loadModel('CollibraAPI');
         $objCollibra = new CollibraAPI();
@@ -265,7 +277,6 @@ class RequestController extends AppController {
             '        {'.
             '           "OR":[';
         
-        $arrQueue = unserialize($_COOKIE['queue']);
         for($i=0; $i<sizeof($arrQueue); $i++){
             $requestFilter .= '{"Field":{'.
                 '   "name":"termrid",'.
