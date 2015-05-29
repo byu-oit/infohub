@@ -63,11 +63,11 @@
                 echo '<img src="/img/iconApproved.png" alt="Approved requests">';
             }
             echo '    </div>'.
-                '    <div class="contactBox">'.
+                '    <!--<div class="contactBox">'.
                 '        <span class="contactName">Brad Gonzales</span>'.
                 '        <div class="contactNumber"><a href="tel:8015959845">801.595.9845</a></div>'.
                 '        <div class="contactEmail"><a href="mailto:bgonzales@byu.edu">bgonzales@byu.edu</a></div>'.
-                '    </div>'.
+                '    </div>-->'.
                 '</div>';
 
         }
