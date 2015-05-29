@@ -370,7 +370,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 		<footer>
 			<div id="footerTop">
 				<div class="inner">
-					<h4>Univerisity Contact&nbsp;&nbsp;&nbsp;</h4>
+					<h4>University Contact&nbsp;&nbsp;&nbsp;</h4>
 					<div class="footerBox">
 						<p>Mailing address: <br>Brigham Young University <br> Provo, UT 84602</p>
 					</div>
