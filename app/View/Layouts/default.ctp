@@ -378,7 +378,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 						<p>Telephone: <br><a href="tel:801-422-4636">801-422-4636</a> or <br><a href="tel:801-422-1211">801-422-1211</a></p>
 					</div>
 					<div class="footerBox">
-						<p>Web: <br><a href="/contact">Contact Us</a></p>
+						<p>Web: <br><a href="mailto:infogov@byu.edu">Contact Us</a></p>
 					</div>
 					<div class="footerBox">
 						<p>Directions: <br><a href="https://www.google.com/maps/place/Brigham+Young+University/@40.251844,-111.649316,17z/data=!3m1!4b1!4m2!3m1!1s0x874d90bc4aa0b68d:0xbf3eb3a3f30fdc4c" target="_blank">Google Maps</a></p>
