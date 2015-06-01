@@ -83,6 +83,14 @@
   font-weight: bold;
   padding: 0 2%;
 }
+#homeTop #htBack #searchBox input.text,
+#homeTop #htBack #searchBox input[type="text"],
+#homeTop #htBack #searchBox input[type="button"],
+#homeTop #htBack #searchBox input[type="submit"],
+#homeTop #htBack #searchBox .input-checkbox {
+  -webkit-appearance: none;
+  border-radius: 0;
+}
 #homeTop #htBack #searchBox p {
   font: 16px 'Rokkitt', serif;
   font-weight: bold;

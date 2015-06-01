@@ -56,6 +56,14 @@ img.resultBodyLoading {
 			input[type=submit] {
 				margin-left: -3px;
 			}
+			input.text,
+			input[type="text"],
+			input[type="button"],
+			input[type="submit"],
+			.input-checkbox {
+				-webkit-appearance: none;
+				border-radius: 0;
+			}
 		}
 	}
 	#catalogLink {
@@ -266,8 +274,9 @@ img.resultBodyLoading {
                             
                             .checkCol {
                                 //width: 154px;
-                                width: 400px;
+                                width: 395px;
                                 float: left;
+                                padding-left: 5px;
 
                                 label {
                                     max-width: 92%;

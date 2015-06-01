@@ -36,6 +36,14 @@
 #peopleBody #peopleTop #ptLower input[type=submit] {
   margin-left: -3px;
 }
+#peopleBody #peopleTop #ptLower input.text,
+#peopleBody #peopleTop #ptLower input[type="text"],
+#peopleBody #peopleTop #ptLower input[type="button"],
+#peopleBody #peopleTop #ptLower input[type="submit"],
+#peopleBody #peopleTop #ptLower .input-checkbox {
+  -webkit-appearance: none;
+  border-radius: 0;
+}
 #peopleBody #peopleBottom #peopleMain {
   padding: 37px 4%;
   width: 92%;
