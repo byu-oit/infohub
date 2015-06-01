@@ -48,9 +48,9 @@ class CollibraAPI extends Model {
         //curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
-        curl_setopt($ch, CURLOPT_FRESH_CONNECT, TRUE);
+        //curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        //curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+        //curl_setopt($ch, CURLOPT_FRESH_CONNECT, TRUE);
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         curl_setopt($ch, CURLOPT_USERPWD, $this->settings['username'].":".$this->settings['password']);
         $response = curl_exec($ch);
