@@ -380,8 +380,8 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 							<a class="close">Close <br>X</a>
 							<div id="nhLeft">
 								<h3>Have questions? We’re here to help.</h3>
-								<p>If you need any help with your search, just complete the “Contact Us” form and an information steward will get back to you within 24 hours.</p>
-								<a href="">Contact Us</a>
+								<p>If you need any help with your search, please <a href="mailto:infogov@byu.edu">Contact Us</a> and an information steward will get back to you within 24 hours.</p>
+								
 							</div>
 							<img src="/img/questionQuote.gif" alt="Have Questions?">
 						</div>
