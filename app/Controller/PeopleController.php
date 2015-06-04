@@ -25,10 +25,10 @@ class PeopleController extends AppController {
         
         if ($this->request->is('post')) {
             if(isset($this->request->data['fname'])){
-                $fname = $this->request->data['fname'];
+                $fname = htmlspecialchars($this->request->data['fname'], ENT_QUOTES, 'UTF-8');
             }
             if(isset($this->request->data['lname'])){
-                $lname = $this->request->data['lname'];
+                $lname = htmlspecialchars($this->request->data['lname'], ENT_QUOTES, 'UTF-8');
             }
             
             // get user data for specified user groups
@@ -170,7 +170,7 @@ class PeopleController extends AppController {
         
         // get community from querystring or set as first community from array above
         if(isset($this->request->query['c']) && $this->request->query['c'] != ''){
-            $community = $this->request->query['c'];
+            $community = htmlspecialchars($this->request->query['c']);
         }else{
             $community = $parentCommunities->communityReference[0]->resourceId;
         }

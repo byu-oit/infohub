@@ -35,7 +35,7 @@ class AppController extends Controller {
     
     public function initBeforeFilter(){
         require_once $_SERVER['DOCUMENT_ROOT'].'/CAS-1.3.3/config.php';
-        require_once $phpcas_path.'/CAS.php';
+        require_once $_SERVER['DOCUMENT_ROOT'].'/CAS-1.3.3/CAS.php';
         phpCAS::client(CAS_VERSION_2_0, $cas_host, $cas_port, $cas_context);
         // phpCAS::setCasServerCACert($cas_server_ca_cert_path);
         phpCAS::setNoCasServerValidation();
@@ -46,7 +46,7 @@ class AppController extends Controller {
         }
         //$this->set('casAuthenticated', true);
         
-        $this->disableCache();
+        //$this->disableCache();
         
         App::import('Controller', 'QuickLinks');
         $objQuickLinks = new QuickLinksController;
@@ -66,8 +66,9 @@ class AppController extends Controller {
     public function beforeFilter() {
         parent::beforeFilter();
         
-        //if (session_id()== '') session_start();
-        $this->initBeforeFilter();
+        if($this->name != 'CakeError'){
+            $this->initBeforeFilter();
+        }
         
         $isAdmin = false;
         if($this->Session->read('userID') != '' && $this->Session->read('userIP')==$_SERVER["REMOTE_ADDR"]){
