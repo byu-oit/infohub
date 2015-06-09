@@ -75,7 +75,7 @@
 				<label for="filerBy">Sort By:</label>
 				<select name="filterBy" id="filerBy" class="inputShade" onchange="document.location='/search/results/<?php echo $searchInput ?>?s='+this.value+'&f=<?php echo $filter ?>'">
 					<option value="0" <?php if($sort==0) echo 'selected'; ?>>Alphabetical</option>
-					<option value="1" <?php if($sort==1) echo 'selected'; ?>>Date Added</option>
+					<option value="1" <?php if($sort==1) echo 'selected'; ?>>Last Modified</option>
 					<option value="2" <?php if($sort==2) echo 'selected'; ?>>Classification</option>
 				</select>
 			</div>
@@ -88,8 +88,8 @@
     }else{
         for($i=0; $i<sizeof($terms->aaData); $i++){
             $term = $terms->aaData[$i];
-            $createdDate = $term->createdOn/1000;
-            $createdDate = date('m/d/Y', $createdDate);
+            $lastModified = $term->lastModified/1000;
+            $lastModified = date('m/d/Y', $lastModified);
             $classification = $term->Attre0937764544a4d2198cedc0c1936b465;
             $classificationTitle = '';
             switch($classification){
@@ -127,7 +127,7 @@
                             <?php
                                 }
                             ?>
-                            <li><span class="listLabel">Date Created:&nbsp;</span><?php echo $createdDate; ?></li>
+                            <li><span class="listLabel">Last Updated:&nbsp;</span><?php echo $lastModified; ?></li>
                             <li><span class="listLabel">Classification: </span><span class="classificationTitle"><?php echo $classificationTitle ?></span></li>
                         </ul>
                         <div class="resultBody">
