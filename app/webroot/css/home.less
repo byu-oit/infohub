@@ -76,6 +76,10 @@
 				-webkit-box-shadow:-2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 				-moz-box-shadow:   -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 				box-shadow:        -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+				float: left;
+			}
+			input[type=text] {
+				margin-bottom: 20px;
 			}
 			input[type=submit] {
 				background-color: @blue;
@@ -84,6 +88,7 @@
 				width: 21%;
 				font-weight: bold;
 				padding: 0 2%;
+				display: inline-block;
 			}
 			input.text,
 			input[type="text"],
@@ -97,6 +102,7 @@
 				font: 16px 'Rokkitt', serif;
 				font-weight: bold;
 				margin: 13px 0 0;
+				clear: both;
 
 				#catalogLink {
 					color: @orange;
@@ -326,11 +332,19 @@
 		width: 75%;
 	}
 }
-@media screen and (max-width: 710px)  { 
-	
+@media screen and (max-width: 567px)  { 
+	#homeTop #htBack #searchBox {
+		width: 94% !important;
+	}
 }
+@media screen and (min-width: 551px)  {
+	#homeTop #htBack #searchBox input[type=submit] {
+		float: right;
+	}
+}
+
 @media screen and (max-width: 550px) {
-	#homeTop 	{
+	#homeTop {
 		#htBack {
 			padding: 28px 0 35px;
 			background-position: 32%;
@@ -358,7 +372,7 @@
 			#searchBox {
 				margin: 0;
 				padding: 7%;
-				width: 85%;
+				width: 85%  !important;
 				
 				.autoComplete {
 					width: 99%;
