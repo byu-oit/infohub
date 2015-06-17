@@ -288,6 +288,12 @@ class SearchController extends AppController {
         $obj = new SearchController();
         $obj->loadModel('CollibraAPI');
         $objCollibra = new CollibraAPI();
+
+        // get all communities to use for bread crumbs in results page
+        $resp = $objCollibra->request(
+            array('url'=>'community/all')
+        );
+        $jsonAllCommunities = json_decode($resp);
         
         $requestFilter = '{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"createdOn"}},{"Column":{"fieldName":"lastModified"}},{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldId":"e0937764-544a-4d21-98ce-dc0c1936b465", "fieldName":"Attre0937764544a4d2198cedc0c1936b465"}},{"Column":{"fieldName":"Attre0937764544a4d2198cedc0c1936b465rid"}},{"Column":{"fieldId":"00000000-0000-0000-0000-000000000202","fieldName":"Attr00000000000000000000000000000202"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202longExpr"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202rid"}},{"Group":{"Columns":[{"Column":{"label":"Steward User ID","fieldId":"00000000-0000-0000-0000-000000005016","fieldName":"userRole00000000000000000000000000005016rid"}},{"Column":{"label":"Steward Gender","fieldName":"userRole00000000000000000000000000005016gender"}},{"Column":{"label":"Steward First Name","fieldName":"userRole00000000000000000000000000005016fn"}},{"Column":{"label":"Steward Last Name","fieldName":"userRole00000000000000000000000000005016ln"}}],"name":"Role00000000000000000000000000005016"}},{"Group":{"Columns":[{"Column":{"label":"Steward Group ID","fieldName":"groupRole00000000000000000000000000005016grid"}},{"Column":{"label":"Steward Group Name","fieldName":"groupRole00000000000000000000000000005016ggn"}}],"name":"Role00000000000000000000000000005016g"}},{"Column":{"fieldName":"statusname"}},{"Column":{"fieldName":"statusrid"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldName":"concepttyperid"}}],'.
             '"Resources":{"Term":{"CreatedOn":{"name":"createdOn"},"LastModified":{"name":"lastModified"},"Id":{"name":"termrid"}, "SingleValueListAttribute":[{"Value":{"name":"Attre0937764544a4d2198cedc0c1936b465"}, "Id":{"name":"Attre0937764544a4d2198cedc0c1936b465rid"}, "labelId":"e0937764-544a-4d21-98ce-dc0c1936b465"}],"Signifier":{"name":"termsignifier"},"StringAttribute":[{"Value":{"name":"Attr00000000000000000000000000000202"},"LongExpression":{"name":"Attr00000000000000000000000000000202longExpr"},"Id":{"name":"Attr00000000000000000000000000000202rid"},"labelId":"00000000-0000-0000-0000-000000000202"}],"Member":[{"User":{"Gender":{"name":"userRole00000000000000000000000000005016gender"},"FirstName":{"name":"userRole00000000000000000000000000005016fn"},"Id":{"name":"userRole00000000000000000000000000005016rid"},"LastName":{"name":"userRole00000000000000000000000000005016ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016sig"},"name":"Role00000000000000000000000000005016","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016rid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005016ggn"},"Id":{"name":"groupRole00000000000000000000000000005016grid"}},"roleId":"00000000-0000-0000-0000-000000005016"}],"Status":{"Signifier":{"name":"statusname"},"Id":{"name":"statusrid"}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"},"Id":{"name":"concepttyperid"}}],'.
@@ -323,20 +329,39 @@ class SearchController extends AppController {
         );
         $resp = json_decode($resp);
         
-        // check to see if this terms is stored in user's quick links cookie
-        if(sizeof($resp->aaData)>0 && isset($_COOKIE['QL'])){
+        // loop through terms to check for quick links and also to build domain breadcrumb
+        if(sizeof($resp->aaData)>0){
             for($i=0; $i<sizeof($resp->aaData); $i++){
-                $resp->aaData[$i]->saved = '0';
-                $arrQl = unserialize($_COOKIE['QL']);
-                for($j=0; $j<sizeof($arrQl); $j++){
-                    if($arrQl[$j][1] == $resp->aaData[$i]->termrid){
-                        $resp->aaData[$i]->saved = '1';
-                        break;
+                // add parent community names to breadcrumb
+                $fullCommunityName = '';
+                for($j=0; $j<sizeof($jsonAllCommunities->communityReference); $j++){
+                    $parentObj = $jsonAllCommunities->communityReference[$j];
+                    if($parentObj->resourceId == $resp->aaData[$i]->commrid){
+                        while(isset($parentObj->parentReference)){
+                            $parentObj = $parentObj->parentReference;
+                            if($parentObj->name != "BYU"){
+                                $fullCommunityName = $parentObj->name.' > '.$fullCommunityName;
+                            }
+                        }
+                    }
+                }
+                $fullCommunityName .= $resp->aaData[$i]->communityname;
+                $resp->aaData[$i]->communityname = $fullCommunityName;
+
+                // check to see if this terms is stored in user's quick links cookie
+                if(isset($_COOKIE['QL'])){
+                    $resp->aaData[$i]->saved = '0';
+                    $arrQl = unserialize($_COOKIE['QL']);
+                    for($j=0; $j<sizeof($arrQl); $j++){
+                        if($arrQl[$j][1] == $resp->aaData[$i]->termrid){
+                            $resp->aaData[$i]->saved = '1';
+                            break;
+                        }
                     }
                 }
             }
         }
-        
+
         return $resp;
     }
     
@@ -348,16 +373,18 @@ class SearchController extends AppController {
         $obj->loadModel('CollibraAPI');
         $objCollibra = new CollibraAPI();
         
+        // get all communities to use for search filtering and bread crumbs in results page
+        $resp = $objCollibra->request(
+            array('url'=>'community/all')
+        );
+        $jsonAllCommunities = json_decode($resp);
+        
         // get all communities to search within if no community filter is applied
         ///////////////////////////////////////////
         $commFilter = '';
         if($communityFilter == ''){ // get all communities if communityFilter is not provided
-            $resp = $objCollibra->request(
-                array('url'=>'community/all')
-            );
-            $jsonResp = json_decode($resp);
-            for($i=0; $i<sizeof($jsonResp->communityReference); $i++){
-                $parentObj = $jsonResp->communityReference[$i];
+            for($i=0; $i<sizeof($jsonAllCommunities->communityReference); $i++){
+                $parentObj = $jsonAllCommunities->communityReference[$i];
                 // only add reference id if not in current list
                 if(strpos($commFilter, $parentObj->resourceId)===false) $commFilter .= '{"Field":{"name":"commrid","operator":"EQUALS","value":"'.$parentObj->resourceId.'"}},';
                 while(isset($parentObj->parentReference)){
@@ -378,6 +405,10 @@ class SearchController extends AppController {
         }
         if($commFilter!='') $commFilter = substr($commFilter, 0, strlen($commFilter)-1);
         ///////////////////////////////////////////
+
+        $resp = $objCollibra->request(
+            array('url'=>'community/all')
+        );
 
         $requestFilter = '{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"lastModified"}},{"Column":{"fieldName":"createdOn"}},{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldId":"00000000-0000-0000-0000-000000000202","fieldName":"Attr00000000000000000000000000000202"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202longExpr"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202rid"}},{"Column":{"fieldId":"e0937764-544a-4d21-98ce-dc0c1936b465","fieldName":"Attre0937764544a4d2198cedc0c1936b465"}},{"Column":{"fieldName":"Attre0937764544a4d2198cedc0c1936b465rid"}},{"Group":{"Columns":[{"Column":{"label":"Steward User ID","fieldId":"00000000-0000-0000-0000-000000005016","fieldName":"userRole00000000000000000000000000005016rid"}},{"Column":{"label":"Steward Gender","fieldName":"userRole00000000000000000000000000005016gender"}},{"Column":{"label":"Steward First Name","fieldName":"userRole00000000000000000000000000005016fn"}},{"Column":{"label":"Steward Last Name","fieldName":"userRole00000000000000000000000000005016ln"}}],"name":"Role00000000000000000000000000005016"}},{"Group":{"Columns":[{"Column":{"label":"Steward Group ID","fieldName":"groupRole00000000000000000000000000005016grid"}},{"Column":{"label":"Steward Group Name","fieldName":"groupRole00000000000000000000000000005016ggn"}}],"name":"Role00000000000000000000000000005016g"}},{"Column":{"fieldName":"statusname"}},{"Column":{"fieldName":"statusrid"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldName":"concepttyperid"}}],'.
             '"Resources":{"Term":{"CreatedOn":{"name":"createdOn"},"LastModified":{"name":"lastModified"},"Id":{"name":"termrid"},"Signifier":{"name":"termsignifier"},"StringAttribute":[{"Value":{"name":"Attr00000000000000000000000000000202"},"LongExpression":{"name":"Attr00000000000000000000000000000202longExpr"},"Id":{"name":"Attr00000000000000000000000000000202rid"},"labelId":"00000000-0000-0000-0000-000000000202"}],"Member":[{"User":{"Gender":{"name":"userRole00000000000000000000000000005016gender"},"FirstName":{"name":"userRole00000000000000000000000000005016fn"},"Id":{"name":"userRole00000000000000000000000000005016rid"},"LastName":{"name":"userRole00000000000000000000000000005016ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016sig"},"name":"Role00000000000000000000000000005016","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016rid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005016ggn"},"Id":{"name":"groupRole00000000000000000000000000005016grid"}},"roleId":"00000000-0000-0000-0000-000000005016"}],"SingleValueListAttribute":[{"Value":{"name":"Attre0937764544a4d2198cedc0c1936b465"},"Id":{"name":"Attre0937764544a4d2198cedc0c1936b465rid"},"labelId":"e0937764-544a-4d21-98ce-dc0c1936b465"}],"Status":{"Signifier":{"name":"statusname"},"Id":{"name":"statusrid"}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"},"Id":{"name":"concepttyperid"}}],'.
@@ -432,21 +463,43 @@ class SearchController extends AppController {
             )
         );
         $resp = json_decode($resp);
+        //print_r($resp);exit;
         
-        // check to see if this terms is stored in user's quick links cookie
-        if(sizeof($resp->aaData)>0 && isset($_COOKIE['QL'])){
+
+        // loop through terms to check for quick links and also to build domain breadcrumb
+        if(sizeof($resp->aaData)>0){
             for($i=0; $i<sizeof($resp->aaData); $i++){
-                $resp->aaData[$i]->saved = '0';
-                $arrQl = unserialize($_COOKIE['QL']);
-                for($j=0; $j<sizeof($arrQl); $j++){
-                    if($arrQl[$j][1] == $resp->aaData[$i]->termrid){
-                        $resp->aaData[$i]->saved = '1';
-                        break;
+                // add parent community names to breadcrumb
+                $fullCommunityName = '';
+                for($j=0; $j<sizeof($jsonAllCommunities->communityReference); $j++){
+                    $parentObj = $jsonAllCommunities->communityReference[$j];
+                    if($parentObj->resourceId == $resp->aaData[$i]->commrid){
+                        while(isset($parentObj->parentReference)){
+                            $parentObj = $parentObj->parentReference;
+                            if($parentObj->name != "BYU"){
+                                $fullCommunityName = $parentObj->name.' > '.$fullCommunityName;
+                            }
+                        }
+                    }
+                }
+                $fullCommunityName .= $resp->aaData[$i]->communityname;
+                $resp->aaData[$i]->communityname = $fullCommunityName;
+
+                // check to see if this terms is stored in user's quick links cookie
+                if(isset($_COOKIE['QL'])){
+                    $resp->aaData[$i]->saved = '0';
+                    $arrQl = unserialize($_COOKIE['QL']);
+                    for($j=0; $j<sizeof($arrQl); $j++){
+                        if($arrQl[$j][1] == $resp->aaData[$i]->termrid){
+                            $resp->aaData[$i]->saved = '1';
+                            break;
+                        }
                     }
                 }
             }
         }
-        
+
+        //print_r($resp);exit;
         return $resp;
     }
     
@@ -457,6 +510,12 @@ class SearchController extends AppController {
         $obj = new SearchController();
         $obj->loadModel('CollibraAPI');
         $objCollibra = new CollibraAPI();
+
+        // get all communities to use for bread crumbs in results page
+        $resp = $objCollibra->request(
+            array('url'=>'community/all')
+        );
+        $jsonAllCommunities = json_decode($resp);
         
         $requestFilter = '{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"createdOn"}},{"Column":{"fieldName":"lastModified"}},{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldId":"e0937764-544a-4d21-98ce-dc0c1936b465", "fieldName":"Attre0937764544a4d2198cedc0c1936b465"}},{"Column":{"fieldName":"Attre0937764544a4d2198cedc0c1936b465rid"}},{"Column":{"fieldId":"00000000-0000-0000-0000-000000000202","fieldName":"Attr00000000000000000000000000000202"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202longExpr"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202rid"}},{"Group":{"Columns":[{"Column":{"label":"Steward User ID","fieldId":"00000000-0000-0000-0000-000000005016","fieldName":"userRole00000000000000000000000000005016rid"}},{"Column":{"label":"Steward Gender","fieldName":"userRole00000000000000000000000000005016gender"}},{"Column":{"label":"Steward First Name","fieldName":"userRole00000000000000000000000000005016fn"}},{"Column":{"label":"Steward Last Name","fieldName":"userRole00000000000000000000000000005016ln"}}],"name":"Role00000000000000000000000000005016"}},{"Group":{"Columns":[{"Column":{"label":"Steward Group ID","fieldName":"groupRole00000000000000000000000000005016grid"}},{"Column":{"label":"Steward Group Name","fieldName":"groupRole00000000000000000000000000005016ggn"}}],"name":"Role00000000000000000000000000005016g"}},{"Column":{"fieldName":"statusname"}},{"Column":{"fieldName":"statusrid"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldName":"concepttyperid"}}],'.
             '"Resources":{"Term":{"CreatedOn":{"name":"createdOn"},"LastModified":{"name":"lastModified"},"Id":{"name":"termrid"},"Signifier":{"name":"termsignifier"},"StringAttribute":[{"Value":{"name":"Attr00000000000000000000000000000202"},"LongExpression":{"name":"Attr00000000000000000000000000000202longExpr"},"Id":{"name":"Attr00000000000000000000000000000202rid"},"labelId":"00000000-0000-0000-0000-000000000202"}],"Member":[{"User":{"Gender":{"name":"userRole00000000000000000000000000005016gender"},"FirstName":{"name":"userRole00000000000000000000000000005016fn"},"Id":{"name":"userRole00000000000000000000000000005016rid"},"LastName":{"name":"userRole00000000000000000000000000005016ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016sig"},"name":"Role00000000000000000000000000005016","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016rid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005016ggn"},"Id":{"name":"groupRole00000000000000000000000000005016grid"}},"roleId":"00000000-0000-0000-0000-000000005016"}], "SingleValueListAttribute":[{"Value":{"name":"Attre0937764544a4d2198cedc0c1936b465"}, "Id":{"name":"Attre0937764544a4d2198cedc0c1936b465rid"}, "labelId":"e0937764-544a-4d21-98ce-dc0c1936b465"}],"Status":{"Signifier":{"name":"statusname"},"Id":{"name":"statusrid"}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"},"Id":{"name":"concepttyperid"}}],'.
@@ -488,15 +547,34 @@ class SearchController extends AppController {
         );
         $resp = json_decode($resp);
         
-        // check to see if this terms is stored in user's quick links cookie
-        if(sizeof($resp->aaData)>0 && isset($_COOKIE['QL'])){
+        // loop through terms to check for quick links and also to build domain breadcrumb
+        if(sizeof($resp->aaData)>0){
             for($i=0; $i<sizeof($resp->aaData); $i++){
-                $resp->aaData[$i]->saved = '0';
-                $arrQl = unserialize($_COOKIE['QL']);
-                for($j=0; $j<sizeof($arrQl); $j++){
-                    if($arrQl[$j][1] == $resp->aaData[$i]->termrid){
-                        $resp->aaData[$i]->saved = '1';
-                        break;
+                // add parent community names to breadcrumb
+                $fullCommunityName = '';
+                for($j=0; $j<sizeof($jsonAllCommunities->communityReference); $j++){
+                    $parentObj = $jsonAllCommunities->communityReference[$j];
+                    if($parentObj->resourceId == $resp->aaData[$i]->commrid){
+                        while(isset($parentObj->parentReference)){
+                            $parentObj = $parentObj->parentReference;
+                            if($parentObj->name != "BYU"){
+                                $fullCommunityName = $parentObj->name.' > '.$fullCommunityName;
+                            }
+                        }
+                    }
+                }
+                $fullCommunityName .= $resp->aaData[$i]->communityname;
+                $resp->aaData[$i]->communityname = $fullCommunityName;
+
+                // check to see if this terms is stored in user's quick links cookie
+                if(isset($_COOKIE['QL'])){
+                    $resp->aaData[$i]->saved = '0';
+                    $arrQl = unserialize($_COOKIE['QL']);
+                    for($j=0; $j<sizeof($arrQl); $j++){
+                        if($arrQl[$j][1] == $resp->aaData[$i]->termrid){
+                            $resp->aaData[$i]->saved = '1';
+                            break;
+                        }
                     }
                 }
             }

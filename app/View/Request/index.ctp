@@ -7,12 +7,12 @@
 		$("#searchLink").addClass('active');
 		resultsWidth();
         // populare form fields for testing
-        $('#request input, #request textarea').each(function(i) {
+        /*$('#request input, #request textarea').each(function(i) {
             if($(this).val()==''){
                 $(this).val('TEST DATA '+i);
             }
         })
-        $('#request select').val('7c04c361-7a87-4f25-8238-ee50f0afa377');
+        $('#request select').val('7c04c361-7a87-4f25-8238-ee50f0afa377');*/
         
         <?php
             if($submitErr){
@@ -76,21 +76,21 @@
 					<!-- <div class="infoCol"> -->
 					    <div class="field-continer">
 					        <label for="name">Name</label>
-						    <input type="text" id="name" name="name" class="inputShade" placeholder="Name" value="<?php echo $psName ?>">
+						    <input type="text" id="name" name="name" class="inputShade noPlaceHolder" value="<?php echo $psName ?>">
 					    </div>
 					    <div class="field-continer">
 					        <label for="phone">Phone Number</label>
-						    <input type="text" id="phone" name="phone" class="inputShade" placeholder="Phone Number" value="<?php echo $psPhone ?>">
+						    <input type="text" id="phone" name="phone" class="inputShade noPlaceHolder" value="<?php echo $psPhone ?>">
 					    </div>
 					<!-- </div>
 					<div class="infoCol"> -->
 					    <div class="field-continer">
 					        <label for="email">Email</label>
-						    <input type="text" id="email" name="email" class="inputShade" placeholder="Email" value="<?php echo $psEmail ?>">
+						    <input type="text" id="email" name="email" class="inputShade noPlaceHolder" value="<?php echo $psEmail ?>">
 					    </div>
 						<div class="field-continer">
 					        <label for="role">Role</label>
-						    <input type="text" id="role" name="role" class="inputShade" placeholder="Role" value="<?php echo $psRole ?>">
+						    <input type="text" id="role" name="role" class="inputShade noPlaceHolder" value="<?php echo $psRole ?>">
 					    </div>
 					    <input type="hidden" name="requesterPersonId" value="<?php echo $psPersonID ?>" />
 					<!-- </div> -->
@@ -117,7 +117,7 @@
                                     echo '<div class="checkCol">';
                                 }
                                 echo '    <input type="checkbox" onclick="toggleDataNeeded(this)" value="'.$termID.'" name="terms[]" id="'.$termID.'" checked="checked">'.
-                                    '    <label for="'.$termID.'">'.$domain.' > '.$termName.'</label><div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$termDef.'" class="info"><img src="/img/iconInfo.png"></div>';
+                                    '    <label for="'.$termID.'">'.$community.' > '.$domain.' > '.$termName.'</label><div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$termDef.'" class="info"><img src="/img/iconInfo.png"></div>';
                                 if($i%2==0){
                                     echo '<br/>';
                                 }
@@ -139,12 +139,17 @@
                                 '<div class="taBox">';
                             
                             $val = '';
-                            if($field->id == 'requestingOrganization'){
-                                $val = $psDepartment;
+                            switch($field->id){
+                                case 'requestingOrganization':
+                                    $val = $psDepartment;
+                                    break;
+                                case 'sponsorName':
+                                    $val = $psReportsToName;
+                                    break;
                             }
                             
                             if($field->type == 'textarea'){
-                                echo '<textarea name="'.$field->id.'" id="'.$field->id.'"  class="inputShade">'.$val.'</textarea>';
+                                echo '<textarea name="'.$field->id.'" id="'.$field->id.'"  class="inputShade noPlaceHolder">'.$val.'</textarea>';
                             }elseif($field->type == 'user'){
                                 echo '<select name="'.$field->id.'" id="'.$field->id.'">';
                                 foreach($sponsors->user as $sponsor){
@@ -154,7 +159,7 @@
                                 }
                                 echo '</select>';
                             }else{
-                                echo '<input type="text" name="'.$field->id.'" id="'.$field->id.'" val="'.$val.'" class="inputShade full" />';
+                                echo '<input type="text" name="'.$field->id.'" id="'.$field->id.'" value="'.$val.'" class="inputShade full noPlaceHolder" />';
                             }
 
                             echo '</div>';

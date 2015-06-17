@@ -21,11 +21,6 @@ class MyaccountController extends AppController {
             $page = 'past';
         }
         
-        /*require_once $_SERVER['DOCUMENT_ROOT'].'/CAS-1.3.3/config.php';
-        require_once $phpcas_path.'/CAS.php';
-        phpCAS::client(CAS_VERSION_2_0, $cas_host, $cas_port, $cas_context);
-        // phpCAS::setCasServerCACert($cas_server_ca_cert_path);
-        phpCAS::setNoCasServerValidation();*/
         if(!phpCAS::isAuthenticated()){
             phpCAS::forceAuthentication();
         }else{
@@ -95,14 +90,14 @@ class MyaccountController extends AppController {
         //print_r($arrRequests);exit;
         
         $psName = '';
-        $psRole = '';
+        $psRole = 'N/A';
         $psDepartment = 'N/A';
         $psPersonID = $byuUser->identifiers->person_id;
         if(isset($byuUser->names->preferred_name)){
             $psName = $byuUser->names->preferred_name;
         }
-        if(isset($byuUser->employee_information->employee_role)){
-            $psRole = $byuUser->employee_information->employee_role;
+        if(isset($byuUser->employee_information->job_title)){
+            $psRole = $byuUser->employee_information->job_title;
         }
         if(isset($byuUser->employee_information->department)){
             $psDepartment = $byuUser->employee_information->department;

@@ -127,26 +127,10 @@ class RequestController extends AppController {
             header('location: /search');
             exit;
         }
-        
-        /*// make sure user is logged in via BYU API
-        require_once $_SERVER['DOCUMENT_ROOT'].'/CAS-1.3.3/config.php';
-        require_once $phpcas_path.'/CAS.php';
-        phpCAS::client(CAS_VERSION_2_0, $cas_host, $cas_port, $cas_context);
-        // phpCAS::setCasServerCACert($cas_server_ca_cert_path);
-        phpCAS::setNoCasServerValidation();
-        if(phpCAS::isAuthenticated()){
-            $this->set('casAuthenticated', true);
-            $netID = phpCAS::getUser();
-        }else{
-            phpCAS::forceAuthentication();
-        }*/
+
         if(!phpCAS::isAuthenticated()){
             phpCAS::forceAuthentication();
         }
-        
-        ////////////////////////////////////////////////
-        // TO DO: validate post data
-        ////////////////////////////////////////////////
         
         $this->loadModel('CollibraAPI');
         $objCollibra = new CollibraAPI();
@@ -230,20 +214,7 @@ class RequestController extends AppController {
         exit;
     }
     
-    public function index() {
-        /*// make sure user is logged in via BYU API
-        require_once $_SERVER['DOCUMENT_ROOT'].'/CAS-1.3.3/config.php';
-        require_once $phpcas_path.'/CAS.php';
-        phpCAS::client(CAS_VERSION_2_0, $cas_host, $cas_port, $cas_context);
-        // phpCAS::setCasServerCACert($cas_server_ca_cert_path);
-        phpCAS::setNoCasServerValidation();
-        if(phpCAS::isAuthenticated()){
-            $this->set('casAuthenticated', true);
-            $netID = phpCAS::getUser();
-        }else{
-            phpCAS::forceAuthentication();
-        }*/
-        
+    public function index() {        
         if(!phpCAS::isAuthenticated()){
             phpCAS::forceAuthentication();
         }else{
@@ -314,6 +285,33 @@ class RequestController extends AppController {
         array_multisort($domains, SORT_ASC, $termNames, SORT_ASC, $termResp->aaData);
         //print_r($termResp);exit;
         
+        // get all communities to use for bread crumbs in results page
+        $communityResp = $objCollibra->request(
+            array('url'=>'community/all')
+        );
+        $jsonAllCommunities = json_decode($communityResp);
+        // loop through terms to build domain breadcrumb
+        if(sizeof($termResp->aaData)>0){
+            for($i=0; $i<sizeof($termResp->aaData); $i++){
+                // add parent community names to breadcrumb
+                $fullCommunityName = '';
+                for($j=0; $j<sizeof($jsonAllCommunities->communityReference); $j++){
+                    $parentObj = $jsonAllCommunities->communityReference[$j];
+                    if($parentObj->resourceId == $termResp->aaData[$i]->commrid){
+                        while(isset($parentObj->parentReference)){
+                            $parentObj = $parentObj->parentReference;
+                            if($parentObj->name != "BYU"){
+                                $fullCommunityName = $parentObj->name.' > '.$fullCommunityName;
+                            }
+                        }
+                    }
+                }
+                $fullCommunityName .= $termResp->aaData[$i]->communityname;
+                $termResp->aaData[$i]->communityname = $fullCommunityName;
+            }
+        }
+        //print_r($termResp);exit;
+        
         // load form fields for ISA workflow
         $formResp = $objCollibra->request(array('url'=>'workflow/'.Configure::read('isaWorkflow').'/form/start'));
         $formResp = json_decode($formResp);
@@ -333,6 +331,7 @@ class RequestController extends AppController {
         $psEmail = '';
         $psRole = '';
         $psDepartment = '';
+        $psReportsToName = '';
         $psPersonID = $byuUser->identifiers->person_id;
         if(isset($byuUser->names->preferred_name)){
             $psName = $byuUser->names->preferred_name;
@@ -343,18 +342,20 @@ class RequestController extends AppController {
         if(isset($byuUser->contact_information->email)){
             $psEmail = $byuUser->contact_information->email;
         }
-        if(isset($byuUser->employee_information->employee_role)){
-            $psRole = $byuUser->employee_information->employee_role;
+        if(isset($byuUser->employee_information->job_title)){
+            $psRole = $byuUser->employee_information->job_title;
         }
-        if(isset($byuUser->employee_information->department)){
-            $psDepartment = $byuUser->employee_information->department;
+        if(isset($byuUser->employee_information->reportsToName)){
+            $psReportsToName = $byuUser->employee_information->reportsToName;
         }
+        
         $this->set('psName', $psName);
         $this->set('psPhone', $psPhone);
         $this->set('psEmail', $psEmail);
         $this->set('psRole', $psRole);
         $this->set('psDepartment', $psDepartment);
         $this->set('psPersonID', $psPersonID);
+        $this->set('psReportsToName', $psReportsToName);
         $this->set('submitErr', isset($this->request->query['err']));
     }
 }

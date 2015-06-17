@@ -28,7 +28,7 @@
 			<h2><?php echo $psName ?></h2>
 			<div id="aiDept" class="accountInfo"><span class="aiLabel">Department:&nbsp;</span><?php echo $psDepartment ?></div>
 			<div id="aiRole" class="accountInfo"><span class="aiLabel">Role:&nbsp;</span><?php echo $psRole ?></div>
-			<a href="/myaccount/logout">Logout</a>
+			<a class="logout" href="/myaccount/logout">Logout</a>
 			<div class="clear"></div>
 		</div>
 	</div>

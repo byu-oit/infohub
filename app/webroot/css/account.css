@@ -27,6 +27,9 @@
   color: #001948;
   font-size: 15px;
 }
+#accountMid #accountTop a.logout {
+  font-size: 12px;
+}
 #accountMid #accountTop #atLower {
   clear: left;
   width: 86%;

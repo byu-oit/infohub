@@ -92,23 +92,36 @@
             $lastModified = date('m/d/Y', $lastModified);
             $classification = $term->Attre0937764544a4d2198cedc0c1936b465;
             $classificationTitle = '';
+            $txtColor = 'blueText';
             switch($classification){
                 case '1 - Public':
                     $classificationTitle = 'Public';
                     $classification = 'public';
+                    $txtColor = 'greenText';
                     break;
                 case '2 - Internal':
                     $classificationTitle = 'Internal';
                     $classification = 'internal';
+                    $txtColor = 'blueText';
                     break;
                 case '3 - Confidential':
                     $classificationTitle = 'Confidential';
                     $classification = 'classified';
+                    $txtColor = 'orangeText';
                     break;
                 case '4 - Highly Confidential':
                     $classificationTitle = 'Highly Confidential';
                     $classification = 'highlyClassified';
+                    $txtColor = 'redText';
                     break;
+            }
+
+            // add div around searched words 
+            if($searchInput != ''){
+                $termDesc = stripslashes(strip_tags($term->Attr00000000000000000000000000000202longExpr));
+                $wrapBefore = '<span class="highlight">';
+                $wrapAfter  = '</span>';
+                $termDesc = preg_replace("/(".$searchInput.")/i", "$wrapBefore$1$wrapAfter", $termDesc);
             }
             
 ?>
@@ -116,7 +129,7 @@
                 <div class="<?php echo $classification ?>" title="<?php echo $classificationTitle ?>"></div>
 			    <form action="/request/index/<?php echo $term->termrid; ?>" method="post">
                     <h4><?php echo $term->termsignifier; ?></h4>
-                    <h5 class="blueText"><?php echo $term->communityname.' > '.$term->domainname; ?></h5>
+                    <h5 class="<?php echo $txtColor ?>"><?php echo $term->communityname.' > '.$term->domainname; ?></h5>
                     <div class="resultContent">
                         <ul>
                            <?php
@@ -131,7 +144,7 @@
                             <li><span class="listLabel">Classification: </span><span class="classificationTitle"><?php echo $classificationTitle ?></span></li>
                         </ul>
                         <div class="resultBody">
-                            <p><?php echo str_replace($searchInput,'<span class="highlight">'.$searchInput.'</span>',stripslashes(strip_tags($term->Attr00000000000000000000000000000202longExpr))); ?></p>
+                            <p><?php echo $termDesc ?></p>
                             <h5>Also included in this selection (check all that apply to your request).</h5>
                             <img class="resultBodyLoading" src="/img/dataLoading.gif" alt="Loading...">
                             <div class="checkBoxes"></div>
