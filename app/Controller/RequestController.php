@@ -196,13 +196,13 @@ class RequestController extends AppController {
             );
             
             // store user's request
-            $this->loadModel('ISARequests');
+            /*$this->loadModel('ISARequests');
             $isaReq = new ISARequests();
             $isaReq->create();
             $isaReq->set('processId', $processID);
             $isaReq->set('request', $dataRequested);
             $isaReq->set('personId', $this->request->data['requesterPersonId']);
-            $isaReq->save();
+            $isaReq->save();*/
             
             // clear items in queue
             setcookie('queue', '', time()-3600, "/");
