@@ -74,6 +74,10 @@
   -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  float: left;
+}
+#homeTop #htBack #searchBox input[type=text] {
+  margin-bottom: 20px;
 }
 #homeTop #htBack #searchBox input[type=submit] {
   background-color: #001948;
@@ -82,6 +86,7 @@
   width: 21%;
   font-weight: bold;
   padding: 0 2%;
+  display: inline-block;
 }
 #homeTop #htBack #searchBox input.text,
 #homeTop #htBack #searchBox input[type="text"],
@@ -95,6 +100,7 @@
   font: 16px 'Rokkitt', serif;
   font-weight: bold;
   margin: 13px 0 0;
+  clear: both;
 }
 #homeTop #htBack #searchBox p #catalogLink {
   color: #fe8a02;
@@ -294,8 +300,15 @@
     width: 75%;
   }
 }
-@media screen and (max-width: 710px) {
-  
+@media screen and (max-width: 567px) {
+  #homeTop #htBack #searchBox {
+    width: 94% !important;
+  }
+}
+@media screen and (min-width: 551px) {
+  #homeTop #htBack #searchBox input[type=submit] {
+    float: right;
+  }
 }
 @media screen and (max-width: 550px) {
   #homeTop #htBack {
@@ -324,7 +337,7 @@
   #homeTop #htBack #searchBox {
     margin: 0;
     padding: 7%;
-    width: 85%;
+    width: 85%  !important;
   }
   #homeTop #htBack #searchBox .autoComplete {
     width: 99%;
