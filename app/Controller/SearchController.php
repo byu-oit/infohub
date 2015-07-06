@@ -258,8 +258,8 @@ class SearchController extends AppController {
                         'url'=>'search',
                         'post'=>true,
                         'json'=>true,
-                        //'params'=>'{ "query": "'.$query.'*", "filter": { "community": ["'.Configure::read('byuCommunity').'"], "category": ["TE"], "vocabulary": ["fbe8efa7-6273-475b-8770-bf0efac31752"], "type": { "asset":[], "domain":[] }, "status": ["00000000-0000-0000-0000-000000005009"], "includeMeta": true }, "fields": ["name"], "order": { "by": "score", "sort": "desc" }, "limit": 5, "offset": 0, "highlight": false, "relativeUrl": true, "withParents": true }'
-                        'params'=>'{ "query": "'.$query.'*", "filter": { "community": ["'.Configure::read('byuCommunity').'"], "category": ["TE"], "vocabulary": ["fbe8efa7-6273-475b-8770-bf0efac31752"], "type": { "asset":[], "domain":[] }, "includeMeta": true }, "fields": ["name"], "order": { "by": "score", "sort": "desc" }, "limit": 5, "offset": 0, "highlight": false, "relativeUrl": true, "withParents": true }'
+                        'params'=>'{ "query": "'.$query.'*", "filter": { "community": ["'.Configure::read('byuCommunity').'"], "category": ["TE"], "vocabulary": ["fbe8efa7-6273-475b-8770-bf0efac31752"], "type": { "asset":[], "domain":[] }, "status": ["00000000-0000-0000-0000-000000005009"], "includeMeta": true }, "fields": ["name"], "order": { "by": "score", "sort": "desc" }, "limit": 5, "offset": 0, "highlight": false, "relativeUrl": true, "withParents": true }'
+                        //'params'=>'{ "query": "'.$query.'*", "filter": { "community": ["'.Configure::read('byuCommunity').'"], "category": ["TE"], "vocabulary": ["fbe8efa7-6273-475b-8770-bf0efac31752"], "type": { "asset":[], "domain":[] }, "includeMeta": true }, "fields": ["name"], "order": { "by": "score", "sort": "desc" }, "limit": 5, "offset": 0, "highlight": false, "relativeUrl": true, "withParents": true }'
                     )
             );
             $jsonResp = json_decode($resp);
@@ -378,19 +378,30 @@ class SearchController extends AppController {
             array('url'=>'community/all')
         );
         $jsonAllCommunities = json_decode($resp);
+
+        //print_r($jsonAllCommunities);exit;
         
         // get all communities to search within if no community filter is applied
         ///////////////////////////////////////////
         $commFilter = '';
         if($communityFilter == ''){ // get all communities if communityFilter is not provided
             for($i=0; $i<sizeof($jsonAllCommunities->communityReference); $i++){
+                $commFilterTmp = '';
                 $parentObj = $jsonAllCommunities->communityReference[$i];
                 // only add reference id if not in current list
-                if(strpos($commFilter, $parentObj->resourceId)===false) $commFilter .= '{"Field":{"name":"commrid","operator":"EQUALS","value":"'.$parentObj->resourceId.'"}},';
+                if(strpos($commFilter, $parentObj->resourceId)===false){
+                    $commFilterTmp .= '{"Field":{"name":"commrid","operator":"EQUALS","value":"'.$parentObj->resourceId.'"}},';
+                }
                 while(isset($parentObj->parentReference)){
                     // only add reference id if not in current list
-                    if(strpos($commFilter, $parentObj->parentReference->resourceId)==false) $commFilter .= '{"Field":{"name":"commrid","operator":"EQUALS","value":"'.$parentObj->parentReference->resourceId.'"}},';
+                    if(strpos($commFilter, $parentObj->parentReference->resourceId)==false){
+                        $commFilterTmp .= '{"Field":{"name":"commrid","operator":"EQUALS","value":"'.$parentObj->parentReference->resourceId.'"}},';
+                    }
                     $parentObj = $parentObj->parentReference;
+                }
+
+                if($parentObj->resourceId === Configure::read('byuCommunity')){
+                    $commFilter .= $commFilterTmp;
                 }
             }
         }else{ // search sub communities if communityFilter is provided
@@ -428,11 +439,18 @@ class SearchController extends AppController {
         if(!$termOnly){
             $requestFilter .= ',{'.
                 '                 "Field":{'.
-                '                    "name":"Attr00000000000000000000000000000202",'.
+                '                    "name":"Attr00000000000000000000000000000202longExpr",'.
                 '                    "operator":"INCLUDES",'.
                 '                    "value":"'.$query.'"'.
                 '                 }'.
                 '               }';
+                /*'               ,{'.
+                '                 "Field":{'.
+                '                    "name":"Attr00000000000000000000000000000202",'.
+                '                    "operator":"INCLUDES",'.
+                '                    "value":"'.$query.'"'.
+                '                 }'.
+                '               }';*/
         }
 
         $requestFilter .= ']'.

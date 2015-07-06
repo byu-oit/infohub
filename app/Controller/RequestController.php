@@ -285,6 +285,7 @@ class RequestController extends AppController {
         array_multisort($domains, SORT_ASC, $termNames, SORT_ASC, $termResp->aaData);
         //print_r($termResp);exit;
         
+        /*
         // get all communities to use for bread crumbs in results page
         $communityResp = $objCollibra->request(
             array('url'=>'community/all')
@@ -309,7 +310,7 @@ class RequestController extends AppController {
                 $fullCommunityName .= $termResp->aaData[$i]->communityname;
                 $termResp->aaData[$i]->communityname = $fullCommunityName;
             }
-        }
+        }*/
         //print_r($termResp);exit;
         
         // load form fields for ISA workflow
