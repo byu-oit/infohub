@@ -258,7 +258,8 @@ class SearchController extends AppController {
                         'url'=>'search',
                         'post'=>true,
                         'json'=>true,
-                        'params'=>'{ "query": "'.$query.'*", "filter": { "community": ["'.Configure::read('byuCommunity').'"], "category": ["TE"], "vocabulary": ["fbe8efa7-6273-475b-8770-bf0efac31752"], "type": { "asset":[], "domain":[] }, "status": ["00000000-0000-0000-0000-000000005009"], "includeMeta": true }, "fields": ["name"], "order": { "by": "score", "sort": "desc" }, "limit": 5, "offset": 0, "highlight": false, "relativeUrl": true, "withParents": true }'
+                        'params'=>'{ "query": "'.$query.'*", "filter": { "community": ["'.Configure::read('byuCommunity').'"], "category": ["TE"], "vocabulary": [], "type": { "asset":[], "domain":[] }, "includeMeta": true }, "fields": ["name"], "order": { "by": "score", "sort": "desc" }, "limit": 5, "offset": 0, "highlight": false, "relativeUrl": true, "withParents": true }'
+                        //'params'=>'{ "query": "'.$query.'*", "filter": { "community": ["'.Configure::read('byuCommunity').'"], "category": ["TE"], "vocabulary": ["fbe8efa7-6273-475b-8770-bf0efac31752"], "type": { "asset":[], "domain":[] }, "status": ["00000000-0000-0000-0000-000000005009"], "includeMeta": true }, "fields": ["name"], "order": { "by": "score", "sort": "desc" }, "limit": 5, "offset": 0, "highlight": false, "relativeUrl": true, "withParents": true }'
                         //'params'=>'{ "query": "'.$query.'*", "filter": { "community": ["'.Configure::read('byuCommunity').'"], "category": ["TE"], "vocabulary": ["fbe8efa7-6273-475b-8770-bf0efac31752"], "type": { "asset":[], "domain":[] }, "includeMeta": true }, "fields": ["name"], "order": { "by": "score", "sort": "desc" }, "limit": 5, "offset": 0, "highlight": false, "relativeUrl": true, "withParents": true }'
                     )
             );
