@@ -29,7 +29,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 		echo $this->Html->meta('icon');
 		// echo $this->Html->css('cake.generic');
 		echo $this->Html->css('styles');
-        echo $this->Html->css('admin-nav');
+		echo $this->Html->css('admin-nav');
 		echo $this->fetch('meta');
 		echo $this->fetch('css');
 		echo $this->fetch('script');
@@ -90,29 +90,29 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 		$(document).ready(iniVars);	
 		$(window).resize(resizeFonts);	
 		$(window).resize(iniVars);	
-      		$(window).load(resizeFonts);
-      		$(window).load(iniVars);
-      		// $(window).resize(function(){location.reload();});
+			$(window).load(resizeFonts);
+			$(window).load(iniVars);
+			// $(window).resize(function(){location.reload();});
 
-      		//Get values 
-      		function iniVars() {
-      			headIn = $("#headerInner").width();
+			//Get values 
+			function iniVars() {
+				headIn = $("#headerInner").width();
 			winOut = $(window).width();
 			headFor = winOut - headIn;
 			headFinal = headFor / 2;
-      		}
+			}
 
-      		//Sets right border for "Need Help" fly-out on larger screens
-      		function widenBorder() {
-   			//    iniVars();
-   			// 	if (winOut > 1090) {
+			//Sets right border for "Need Help" fly-out on larger screens
+			function widenBorder() {
+			//    iniVars();
+			// 	if (winOut > 1090) {
 			// 	$("#nhContent").css("border-right-width", headFinal);
 			// }
 			// else {
 			// 	$("#nhContent").css("border-right-width", 0);
 			// }
 			$("#nhContent").css("border-right-width", 0);
-      		}
+			}
 
 		function resizeFonts(){
 			var defSize = 10;
@@ -137,76 +137,76 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			var index = -1;
 			$('#searchInput').keypress(function(event) { return event.keyCode != 13; });
 			$('#searchInput').on({
-                		keyup: function(e){
-                    		var m;
+						keyup: function(e){
+							var m;
 
-                   			if ($.trim($('#searchInput').val()) == ''){
-                        			$('.autoComplete').hide();
-                    		}
-                    		else if  ( e == true ) {
-                        			$('.autoComplete').hide();
-                    		}
-                    		else if  ( e.which == 27 ) {
-                        			$('.autoComplete').hide();
-                        			index = -1;
-                    		}
-                    		else if(e.which == 13) {
-                    			if($('.autoComplete li').hasClass('active')){
-                    				$('#searchInput').val($('.autoComplete li.active').text());
-                    				$('#searchInput').parent().submit();
-                    			}
-                        			else {
-                        				$('#searchInput').parent().submit();
-                        			}
-                        			$('.autoComplete').hide();
-                    		}
-                    		else if(e.which == 38){
-                        			e.preventDefault();
-                        			if(index == -1){
-                            			index = $('.autoComplete li').length - 1;
-                        			}
-                        			else {
-                            			index--;
-                        			}
-                        
-                        			if(index > $('.autoComplete li').length ){
-                            			index = $('.autoComplete li').length + 1;
-                        			}
-                        			m = true;
-                    		}
-                    		else if(e.which === 40){
-                        			e.preventDefault();
-                        			if(index >= $('.autoComplete li').length -1){
-                            			index = 0;
-                        			}
-                        			else{
-                            			index++;
-                        			}
-                        			m = true;
-                    		}
-                    		else{
-                        			var val = $('#searchInput').val();
-                        			$.get( "/search/autoCompleteTerm", { q: val } )
-                            		.done(function( data ) {
-                                			$('.autoComplete .results').html(data);
-                                			$('.autoComplete li').click(function(){
-                                    			$('#searchInput').val($(this).text());
-                                    			$('#searchInput').parent().submit();
-                                    			$('.autoComplete').hide();
-                                			});
-                         			});
+							if ($.trim($('#searchInput').val()) == ''){
+									$('.autoComplete').hide();
+							}
+							else if  ( e == true ) {
+									$('.autoComplete').hide();
+							}
+							else if  ( e.which == 27 ) {
+									$('.autoComplete').hide();
+									index = -1;
+							}
+							else if(e.which == 13) {
+								if($('.autoComplete li').hasClass('active')){
+									$('#searchInput').val($('.autoComplete li.active').text());
+									$('#searchInput').parent().submit();
+								}
+									else {
+										$('#searchInput').parent().submit();
+									}
+									$('.autoComplete').hide();
+							}
+							else if(e.which == 38){
+									e.preventDefault();
+									if(index == -1){
+										index = $('.autoComplete li').length - 1;
+									}
+									else {
+										index--;
+									}
+						
+									if(index > $('.autoComplete li').length ){
+										index = $('.autoComplete li').length + 1;
+									}
+									m = true;
+							}
+							else if(e.which === 40){
+									e.preventDefault();
+									if(index >= $('.autoComplete li').length -1){
+										index = 0;
+									}
+									else{
+										index++;
+									}
+									m = true;
+							}
+							else{
+									var val = $('#searchInput').val();
+									$.get( "/search/autoCompleteTerm", { q: val } )
+									.done(function( data ) {
+											$('.autoComplete .results').html(data);
+											$('.autoComplete li').click(function(){
+												$('#searchInput').val($(this).text());
+												$('#searchInput').parent().submit();
+												$('.autoComplete').hide();
+											});
+									});
 
-                        			$('.autoComplete').show();
-                    		}
+									$('.autoComplete').show();
+							}
 
-		                  	if(m){
-		                        	$('.autoComplete li.active').removeClass('active');
-		                        	$('.autoComplete li').eq(index).addClass('active');
-		                   }
-                		}
+							if(m){
+									$('.autoComplete li.active').removeClass('active');
+									$('.autoComplete li').eq(index).addClass('active');
+						   }
+						}
 			});
 		});
-        
+		
 		function showTermDef(elem){
 			var pos = $(elem).offset();
 			var data = $(elem).attr('data-definition');
@@ -216,73 +216,73 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			var winTop = pos.top - $('#info-win').outerHeight() - 5;
 			$('#info-win').css('top',winTop).css('left',winLeft);
 		}
-        	function hideTermDef(){
-            		$('#info-win').hide();
-        	}
-        
-        // Request functions
-        ///////////////////////////////
-        function showRequestQueue(){
-            $.get("/request/listQueue")
-                .done(function(data){
-                    if($(window).scrollTop()>50){
-                        var requestIconPos = $('#request-queue .request-num').offset();
-                        var left = requestIconPos.left - $('#request-popup').width() - 16;
-                        $('#request-popup').addClass('fixed').css('left', left);
-                    }else{
-                        $('#request-popup').removeClass('fixed').css('left', 'auto');
-                    }
-                    $('#request-popup').html(data).slideDown('fast');
-                });
-        }
-        function hideRequestQueue(){
-            $('#request-popup').hide();
-        }
-        function removeFromRequestQueue(id){
-            $.post("/request/removeFromQueue", {id:id})
-                .done(function(data){
-                    $('#requestItem'+id).remove();
-                    getCurrentRequestTerms();
-            });
-        }
-        function getCurrentRequestTerms(){
-            $.get("/request/getQueueJSArray")
-                .done(function(data){
-                    data = data.split(',');
-                    $('input[type=checkbox]').prop('checked', false);
+			function hideTermDef(){
+					$('#info-win').hide();
+			}
+		
+		// Request functions
+		///////////////////////////////
+		function showRequestQueue(){
+			$.get("/request/listQueue")
+				.done(function(data){
+					if($(window).scrollTop()>50){
+						var requestIconPos = $('#request-queue .request-num').offset();
+						var left = requestIconPos.left - $('#request-popup').width() - 16;
+						$('#request-popup').addClass('fixed').css('left', left);
+					}else{
+						$('#request-popup').removeClass('fixed').css('left', 'auto');
+					}
+					$('#request-popup').html(data).slideDown('fast');
+				});
+		}
+		function hideRequestQueue(){
+			$('#request-popup').hide();
+		}
+		function removeFromRequestQueue(id){
+			$.post("/request/removeFromQueue", {id:id})
+				.done(function(data){
+					$('#requestItem'+id).remove();
+					getCurrentRequestTerms();
+			});
+		}
+		function getCurrentRequestTerms(){
+			$.get("/request/getQueueJSArray")
+				.done(function(data){
+					data = data.split(',');
+					$('input[type=checkbox]').prop('checked', false);
 
-                    for(i=0; i<data.length; i++){
-                        $('.chk'+data[i]).prop('checked', true);
-                    }
-                    $('#request-queue .request-num').text(data.length-1);
-                    if(data.length-1 <= 0){
-                        $('#request-queue .request-num').addClass('request-hidden');
-                        hideRequestQueue();
-                    }
-            });
-        }
-        function addToQueue(elem){
-            var arrTitles = new Array($(elem).attr('data-title'));
-            var arrIDs = new Array($(elem).attr('data-rid'));
-            $(elem).parent().find('.checkBoxes').find('input').each(function(){
-                if($(this).prop( "checked")){
-                    arrTitles.push($(this).attr('data-title'));
-                    arrIDs.push($(this).val());
-                }
-            });
-            $.post("/request/addToQueue", {t:arrTitles, id:arrIDs})
-                .done(function(data){
-                    $(elem).attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
-                    var oldCount = parseInt($('#request-queue .request-num').text());
-                    data = parseInt(data);
-                    if(oldCount+data>0){
-                        $('#request-queue .request-num').text(oldCount+data).removeClass('request-hidden');
-                        showRequestQueue();
-                        getCurrentRequestTerms();
-                    }
-            });
-        }
-        /////////////////////////////
+					for(i=0; i<data.length; i++){
+						$('.chk'+data[i]).prop('checked', true);
+					}
+					$('#request-queue .request-num').text(data.length-1);
+					if(data.length-1 <= 0){
+						$('#request-queue .request-num').addClass('request-hidden');
+						hideRequestQueue();
+					}
+			});
+		}
+		function addToQueue(elem){
+			var arrTitles = new Array($(elem).attr('data-title'));
+			var arrIDs = new Array($(elem).attr('data-rid'));
+			$(elem).parent().find('.checkBoxes').find('input').each(function(){
+				if($(this).prop( "checked")){
+					arrTitles.push($(this).attr('data-title'));
+					arrIDs.push($(this).val());
+				}
+			});
+			$.post("/request/addToQueue", {t:arrTitles, id:arrIDs})
+				.done(function(data){
+					$(elem).attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
+					var oldCount = parseInt($('#request-queue .request-num').text());
+					data = parseInt(data);
+					if(oldCount+data>0){
+						$('#request-queue .request-num').text(oldCount+data).removeClass('request-hidden');
+						showRequestQueue();
+						getCurrentRequestTerms();
+					}
+			});
+		}
+		/////////////////////////////
 
 		$(document).on( 'click', function ( e ) {
 			if ( $( e.target ).closest('.autoComplete').length === 0 ) {
@@ -290,14 +290,14 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			}
 		});
 
-        $(window).scroll(function(){
-            if($(this).scrollTop()>50){
-                var requestIconPos = $('#request-queue .request-num').offset();
-                var left = requestIconPos.left - $('#request-popup').width() - 16;
-                $('#request-popup').addClass('fixed').css('left', left);
-            }else{
-                $('#request-popup').removeClass('fixed').css('left', 'auto');
-            }
+		$(window).scroll(function(){
+			if($(this).scrollTop()>50){
+				var requestIconPos = $('#request-queue .request-num').offset();
+				var left = requestIconPos.left - $('#request-popup').width() - 16;
+				$('#request-popup').addClass('fixed').css('left', left);
+			}else{
+				$('#request-popup').removeClass('fixed').css('left', 'auto');
+			}
 		});
 
 		$(function() {
@@ -330,48 +330,50 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 </head>
 <body>
 <?php
-    if($isAdmin){
+	if($isAdmin){
 ?>
    <div id="admin-top">
-        <ul id="admin-top-nav">
-            <li><a href="/admin/managepages">Manage Pages</a></li>
-            <li><a href="/admin/manageusers">Manage Users</a></li>
-            <?php if($controllerName=='cmsPages'){ ?>
-            <li><a href="javascript:togglePreview()">Preview Page</a></li>
-            <?php } ?>
-        </ul>
-        <ul id="admin-top-nav" class="right">
-            <li><a href="/admin/logout">Logout</a></li>
-        </ul>
-    </div>
+		<ul id="admin-top-nav">
+			<li><a href="/admin/managepages">Manage Pages</a></li>
+			<li><a href="/admin/manageusers">Manage Users</a></li>
+			<?php if($controllerName=='cmsPages'){ ?>
+			<li><a href="javascript:togglePreview()">Preview Page</a></li>
+			<?php } ?>
+		</ul>
+		<ul id="admin-top-nav" class="right">
+			<li><a href="/admin/logout">Logout</a></li>
+		</ul>
+	</div>
 <?php } ?>    
-    <div id="info-win"><div class="info-win-content"></div><div class="info-win-arrow"></div></div>
+	<div id="info-win"><div class="info-win-content"></div><div class="info-win-arrow"></div></div>
 	<div id="container">
 		<header>
 			<div id="headerInner" class="inner">
 				<h1><a href="/" id="logo">BYU InfoHub</a></h1>
 				<h2><a href="/" id="site-title">InfoHub</a></h2>
 				<div id="headerRight">
-					<span class="userInfo">
-						<?php if(!$casAuthenticated) echo $this->Html->link('Login', '/login'); ?>
-					</span>
 					<div id="request-queue" <?php if($casAuthenticated)  echo "class=loggedIn"; ?> >
 						<?php
-						    $reqHiddenClass = '';
-						    if($requestedTermCount==0){
-						        $reqHiddenClass = 'request-hidden';
-						    }
+							$reqHiddenClass = '';
+							if($requestedTermCount==0){
+								$reqHiddenClass = 'request-hidden';
+							}
 						?>
-					    	<a href="javascript: showRequestQueue()" title="Request Queue">
-                            			<div class="request-num <?php echo $reqHiddenClass ?>"><?php echo $requestedTermCount ?></div>
-                           		 	<img class="icon" src="/img/icon-cart.png" alt="Request Queue" title="Your Request">
-                        			</a>
-                        			<div id="request-popup"></div>
-                    		</div>
-		                    <?php if($casAuthenticated){ ?>
-		                    <a id="settingsWheel" href="/myaccount"><img src="/img/icon-settings.png" alt="My Account" title="My Account" /></a>
-		                    <?php } ?>
-
+						<a href="javascript: showRequestQueue()" title="Request Queue">
+							<div class="request-num <?php echo $reqHiddenClass ?>"><?php echo $requestedTermCount ?></div>
+							<img class="icon" src="/img/icon-cart.png" alt="Request Queue" title="Your Request">
+						</a>
+						<div id="request-popup"></div>
+					</div>
+					<span class="userInfo">
+						<?php
+							if(!$casAuthenticated){
+								echo $this->Html->link('Login', '/login');
+							}else{
+								echo $this->Html->link($byuUsername, '/myaccount');
+							}
+						?>
+					</span>
 					<!-- Below is fixed pos. on destop -->
 					<div id="needHelp">
 						<a id="mobileHelp"><img src="/img/icon-question.png" alt="Need Help?"></a>
@@ -379,7 +381,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 						<div id="nhContent">
 							<a class="close">Close <br>X</a>
 							<div id="nhLeft">
-								<h3>Have questions? We’re here to help.</h3>
+								<h3>Have questions? We're here to help.</h3>
 								<p>If you need any help with your search, please <a href="mailto:infogov@byu.edu">Contact Us</a> and an information steward will get back to you within 24 hours.</p>
 								
 							</div>
@@ -396,6 +398,11 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 				<li><a href="/search" id="searchLink">Search</a></li>
 				<li><a href="/people" id="findLink">Find People</a></li>
 				<li><a href="/resources" id="resourceLink">Resources</a></li>
+				<?php
+					if($casAuthenticated){
+						echo '<li><a href="/myaccount" id="resourceLink">My Requests</a></li>';
+					}
+				?>
 			</ul>
 		</nav>
 		<div id="content">

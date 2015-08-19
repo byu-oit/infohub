@@ -104,7 +104,7 @@ header #headerInner #headerRight .userInfo {
   font-size: 11px;
   display: block;
   float: left;
-  padding-right: 10px;
+  padding-left: 10px;
   line-height: 18px;
 }
 header #headerInner #headerRight .userInfo a {
