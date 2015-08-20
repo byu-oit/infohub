@@ -349,6 +349,12 @@ img.resultBodyLoading {
 #searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol input {
   margin-left: 0;
 }
+#searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol img,
+#searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol img,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol img {
+  position: relative;
+  top: -2px;
+}
 #searchBody #searchResults #srLower .resultItem .addQuickLink,
 #searchBody #requestForm #srLower .resultItem .addQuickLink,
 #searchBody #searchSuccess #srLower .resultItem .addQuickLink {
@@ -635,39 +641,39 @@ img.resultBodyLoading {
 #searchBody #searchSuccess #srLower input.full {
   height: auto;
 }
-#searchBody #requestForm #srLower #requesterInfo,
-#searchBody #searchSuccess #srLower #requesterInfo {
+#searchBody #requestForm #srLower .fieldGroup,
+#searchBody #searchSuccess #srLower .fieldGroup {
   width: 75%;
   margin-bottom: 10px;
   *zoom: 1;
 }
-#searchBody #requestForm #srLower #requesterInfo:before,
-#searchBody #searchSuccess #srLower #requesterInfo:before,
-#searchBody #requestForm #srLower #requesterInfo:after,
-#searchBody #searchSuccess #srLower #requesterInfo:after {
+#searchBody #requestForm #srLower .fieldGroup:before,
+#searchBody #searchSuccess #srLower .fieldGroup:before,
+#searchBody #requestForm #srLower .fieldGroup:after,
+#searchBody #searchSuccess #srLower .fieldGroup:after {
   content: "";
   display: table;
 }
-#searchBody #requestForm #srLower #requesterInfo:after,
-#searchBody #searchSuccess #srLower #requesterInfo:after {
+#searchBody #requestForm #srLower .fieldGroup:after,
+#searchBody #searchSuccess #srLower .fieldGroup:after {
   clear: both;
 }
-#searchBody #requestForm #srLower #requesterInfo .field-continer,
-#searchBody #searchSuccess #srLower #requesterInfo .field-continer {
+#searchBody #requestForm #srLower .fieldGroup .field-continer,
+#searchBody #searchSuccess #srLower .fieldGroup .field-continer {
   float: left;
   width: 47%;
   margin: 0 3% 0 0;
 }
-#searchBody #requestForm #srLower #requesterInfo label,
-#searchBody #searchSuccess #srLower #requesterInfo label {
+#searchBody #requestForm #srLower .fieldGroup label,
+#searchBody #searchSuccess #srLower .fieldGroup label {
   display: block;
   font-size: bold;
   font-size: 11px;
 }
-#searchBody #requestForm #srLower #requesterInfo input,
-#searchBody #searchSuccess #srLower #requesterInfo input,
-#searchBody #requestForm #srLower #requesterInfo select,
-#searchBody #searchSuccess #srLower #requesterInfo select {
+#searchBody #requestForm #srLower .fieldGroup input,
+#searchBody #searchSuccess #srLower .fieldGroup input,
+#searchBody #requestForm #srLower .fieldGroup select,
+#searchBody #searchSuccess #srLower .fieldGroup select {
   width: 100%;
   margin: 0 0 12px 0;
 }
@@ -723,6 +729,11 @@ img.resultBodyLoading {
 #searchBody #requestForm #srLower .resultItem .irLower .checkCol input,
 #searchBody #searchSuccess #srLower .resultItem .irLower .checkCol input {
   margin-left: 0;
+}
+#searchBody #requestForm #srLower .resultItem .irLower .checkCol img,
+#searchBody #searchSuccess #srLower .resultItem .irLower .checkCol img {
+  position: relative;
+  top: -2px;
 }
 #searchBody #requestForm #srLower .taBox,
 #searchBody #searchSuccess #srLower .taBox {
@@ -796,7 +807,7 @@ form#request #mobileReqd {
     clear: both;
     margin: -25px 0 23px 28%;
   }
-  #searchBody #requestForm #srLower #requesterInfo {
+  #searchBody #requestForm #srLower .fieldGroup {
     width: 104%;
   }
 }
@@ -871,16 +882,16 @@ form#request #mobileReqd {
   }
 }
 @media screen and (max-width: 650px) {
-  #searchBody #requestForm #srLower #requesterInfo {
+  #searchBody #requestForm #srLower .fieldGroup {
     width: 100%;
   }
-  #searchBody #requestForm #srLower #requesterInfo .field-continer {
+  #searchBody #requestForm #srLower .fieldGroup .field-continer {
     float: none;
     width: 100%;
     margin: 0;
   }
-  #searchBody #requestForm #srLower #requesterInfo input,
-  #searchBody #requestForm #srLower #requesterInfo select {
+  #searchBody #requestForm #srLower .fieldGroup input,
+  #searchBody #requestForm #srLower .fieldGroup select {
     width: 100%;
     margin: 0 0% 12px 0;
   }

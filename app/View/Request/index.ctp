@@ -72,7 +72,7 @@
 			<div id="srLower" class="whiteBox">
 				<h3 class="headerTab">Requester</h3>
 				<div class="clear"></div>
-				<div id="requesterInfo">
+				<div class="fieldGroup">
 					<!-- <div class="infoCol"> -->
 					    <div class="field-continer">
 					        <label for="name">Name</label>
@@ -89,9 +89,13 @@
 						    <input type="text" id="email" name="email" class="inputShade noPlaceHolder" value="<?php echo $psEmail ?>">
 					    </div>
 						<div class="field-continer">
-					        <label for="role">Role</label>
-						    <input type="text" id="role" name="role" class="inputShade noPlaceHolder" value="<?php echo $psRole ?>">
-					    </div>
+                            <label for="role">Role</label>
+                            <input type="text" id="role" name="role" class="inputShade noPlaceHolder" value="<?php echo $psRole ?>">
+                        </div>
+                        <div class="field-continer">
+                            <label for="requestingOrganization">Requesting Organization</label>
+                            <input type="text" id="requestingOrganization" name="requestingOrganization" class="inputShade noPlaceHolder" value="">
+                        </div>
 					    <input type="hidden" name="requesterPersonId" value="<?php echo $psPersonID ?>" />
 					<!-- </div> -->
 				</div>
@@ -111,7 +115,7 @@
                                 $community = $term->communityname;
                                 $domain = $term->domainname;
                                 $termID = $term->termrid;
-                                $termDef = addslashes(strip_tags($term->Attr00000000000000000000000000000202));
+                                $termDef = addslashes(strip_tags($term->Attr00000000000000000000000000000202longExpr));
                                 if($i>0 && $i%2==0){
                                     echo '</div>';
                                     echo '<div class="checkCol">';
@@ -129,10 +133,43 @@
                         </div>
 					</div>
 				</div>
+
+                <h3 class="headerTab">Sponsor</h3>
+                <div class="clear"></div>
+                <div class="fieldGroup">
+                    <div class="field-continer">
+                        <label for="sponsorName">Sponsor Name</label>
+                        <input type="text" id="sponsorName" sponsorName="name" class="inputShade noPlaceHolder" value="">
+                    </div>
+                    <div class="field-continer">
+                        <label for="sponsorRole">Sponsor Role</label>
+                        <input type="text" id="sponsorRole" name="sponsorRole" class="inputShade noPlaceHolder" value="">
+                    </div>
+                    <div class="field-continer">
+                        <label for="sponsorEmail">Sponsor Email</label>
+                        <input type="text" id="sponsorEmail" name="sponsorEmail" class="inputShade noPlaceHolder" value="">
+                    </div>
+                    <div class="field-continer">
+                        <label for="sponsorPhone">Sponsor Phone</label>
+                        <input type="text" id="sponsorPhone" name="sponsorPhone" class="inputShade noPlaceHolder" value="">
+                    </div>
+                </div>
                 
                 <?php
                     foreach($formFields->formProperties as $field){
-                        $arrNonDisplay = array("requesterName", "requesterEmail", "requesterPhone", "informationElements", "requesterRole", "requesterPersonId");
+                        $arrNonDisplay = array(
+                            "requesterName", 
+                            "requesterEmail", 
+                            "requesterPhone", 
+                            "informationElements", 
+                            "requesterRole", 
+                            "requesterPersonId", 
+                            "requestingOrganization",
+                            "sponsorName",
+                            "sponsorRole",
+                            "sponsorEmail",
+                            "sponsorPhone"
+                        );
                         if(!in_array($field->id, $arrNonDisplay)){
                             echo '<label class="headerTab" for="'.$field->id.'">'.$field->name.'</label>'.
                                 '<div class="clear"></div>'.

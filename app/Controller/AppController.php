@@ -45,15 +45,21 @@ class AppController extends Controller {
 			$this->set('casAuthenticated', true);
 
 			// get username from BYU web service to display in to navigation
-			/*$netID = phpCAS::getUser();
-			$this->loadModel('BYUWS');
-			$objBYUWS = new BYUWS();
-			$byuUser = $objBYUWS->personalSummary($netID);
-			if(isset($byuUser->names->preferred_name)){
-	            $byuUsername = $byuUser->names->preferred_name;
-	        }*/
+			if(empty($_SESSION["byuUsername"])){
+				$netID = phpCAS::getUser();
+				$this->loadModel('BYUWS');
+				$objBYUWS = new BYUWS();
+				$byuUser = $objBYUWS->personalSummary($netID);
+				if(isset($byuUser->names->preferred_name)){
+		            $byuUsername = $byuUser->names->preferred_name;
+		            $_SESSION["byuUsername"] = $byuUsername;
+		        }
+		    }else{
+		    	$byuUsername = $_SESSION["byuUsername"];
+		    }
 		}else{
 			$this->set('casAuthenticated', false);
+			$_SESSION["byuUsername"] = '';
 		}
 		
 		//$this->disableCache();

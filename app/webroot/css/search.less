@@ -290,6 +290,10 @@ img.resultBodyLoading {
                                 input {
                                     margin-left: 0;
                                 }
+                                img{
+									position: relative;
+									top: -2px;
+								}
                             }
                         }
 					}
@@ -501,7 +505,7 @@ img.resultBodyLoading {
                 height: auto;
             }
             
-			#requesterInfo {
+			.fieldGroup {
 				width: 75%;
 				margin-bottom: 10px;
                 .clear;
@@ -566,6 +570,10 @@ img.resultBodyLoading {
 						}
 						input {
 							margin-left: 0;
+						}
+						img{
+							position: relative;
+							top: -2px;
 						}
 					}
 				}
@@ -653,7 +661,7 @@ form#request {
 		clear: both;
 		margin: -25px 0 23px 28%;
 	}
-	#searchBody #requestForm #srLower #requesterInfo {
+	#searchBody #requestForm #srLower .fieldGroup {
 		width: 104%;
 	}
 }
@@ -748,7 +756,7 @@ form#request {
 	}
 }
 @media screen and (max-width: 650px) {
-	#searchBody #requestForm #srLower #requesterInfo {
+	#searchBody #requestForm #srLower .fieldGroup {
 		width: 100%;
         
         .field-continer{

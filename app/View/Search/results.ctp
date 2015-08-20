@@ -116,6 +116,15 @@
                     break;
             }
 
+            $termRequestID = $term->termrid;
+            $termRequestTitle = $term->termsignifier;
+            $synonymFor = '';
+            if(sizeof($term->synonym_for)!=0){
+                $synonymFor = $term->synonym_for[0]->Relc06ed0b7032f4d0fae405824c12f94a6T;
+                $termRequestTitle = $synonymFor;
+                $termRequestID = $term->synonym_for[0]->Relc06ed0b7032f4d0fae405824c12f94a6Trid;
+            }
+
             // add div around searched words 
             if($searchInput != ''){
                 $termDesc = stripslashes(strip_tags($term->Attr00000000000000000000000000000202longExpr));
@@ -142,6 +151,11 @@
                             ?>
                             <li><span class="listLabel">Last Updated:&nbsp;</span><?php echo $lastModified; ?></li>
                             <li><span class="listLabel">Classification: </span><span class="classificationTitle"><?php echo $classificationTitle ?></span></li>
+                            <?php
+                                if($synonymFor != ''){
+                                    echo '<li><span class="listLabel">Synonym For: </span><span class="classificationTitle">'.$synonymFor.'</span></li>';
+                                }
+                            ?>
                         </ul>
                         <div class="resultBody">
                             <p><?php echo $termDesc ?></p>
@@ -161,7 +175,7 @@
                     ?>
                             
                     </a>
-                    <input type="button" onclick="addToQueue(this)" data-title="<?php echo $term->termsignifier; ?>" data-rid="<?php echo $term->termrid; ?>" class="requestAccess grow" value="Add To Request" />
+                    <input type="button" onclick="addToQueue(this)" data-title="<?php echo $termRequestTitle; ?>" data-rid="<?php echo $termRequestID ?>" class="requestAccess grow" value="Add To Request" />
                     <!--<a href="/search/request/<?php echo $term->termrid; ?>" class="requestAccess grow">Request Access</a>-->
                     <a class="detailsTab" data-rid="<?php echo $term->domainrid; ?>"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a>
 				</form>
