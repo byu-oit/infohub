@@ -87,8 +87,9 @@
   clear: both;
 }
 #accountMid #accountMain .requestItem {
+  position: relative;
   background-color: white;
-  margin-bottom: 24px;
+  margin-bottom: 38px;
   padding: 20px 2%;
   float: left;
   width: 96%;
@@ -146,6 +147,104 @@
   margin-left: -128px;
   display: block;
 }
+#accountMid #accountMain .requestItem .detailsBody {
+  display: none;
+  *zoom: 1;
+  clear: both;
+  background-color: #f4f4f4;
+  border-top: solid 20px white;
+  padding: 20px 30px;
+}
+#accountMid #accountMain .requestItem .detailsBody:before,
+#accountMid #accountMain .requestItem .detailsBody:after {
+  content: "";
+  display: table;
+}
+#accountMid #accountMain .requestItem .detailsBody:after {
+  clear: both;
+}
+#accountMid #accountMain .requestItem .detailsBody .data-col {
+  float: left;
+  width: 40%;
+  margin-right: 10%;
+}
+#accountMid #accountMain .requestItem .detailsBody p {
+  font-size: 12px;
+  width: 100%;
+  margin-top: 0;
+}
+#accountMid #accountMain .requestItem .detailsBody h4 {
+  color: #114477;
+  font-size: 16px;
+  margin: 0;
+}
+#accountMid #accountMain .requestItem .detailsBody h5 {
+  font-size: 13px;
+  font-weight: bold;
+  color: #114477;
+  margin-bottom: 4px;
+}
+#accountMid #accountMain .requestItem .detailsTab {
+  background-color: #cccaca;
+  padding: 4px 30px 5px 12px;
+  position: absolute;
+  bottom: -24px;
+  left: 15px;
+  color: white;
+  font-weight: bold;
+  text-decoration: none;
+  font-size: 11px;
+  cursor: pointer;
+  -webkit-box-shadow: 3px 3px 6px 0px rgba(50, 50, 50, 0.15);
+  -moz-box-shadow: 3px 3px 6px 0px rgba(50, 50, 50, 0.15);
+  box-shadow: 3px 3px 6px 0px rgba(50, 50, 50, 0.15);
+  transition: all 0.2s ease-in-out;
+}
+#accountMid #accountMain .requestItem .detailsTab:before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(to bottom, rgba(50, 50, 50, 0.22), #cccaca);
+  top: 0;
+  left: 0;
+}
+#accountMid #accountMain .requestItem .detailsTab:after {
+  content: "";
+  position: absolute;
+  right: 14px;
+  top: 11px;
+  transition: top 0.2s ease-in-out;
+  height: 5px;
+  width: 8px;
+  background: url('/img/iconDownArrow.png') no-repeat;
+  background-size: 8px;
+}
+#accountMid #accountMain .requestItem .detailsTab .detailsLess {
+  display: none;
+  float: left;
+}
+#accountMid #accountMain .requestItem .detailsTab:hover {
+  padding-top: 9px;
+  bottom: -29px;
+}
+#accountMid #accountMain .requestItem .detailsTab:hover:after {
+  top: 16px;
+}
+#accountMid #accountMain .requestItem .detailsTab.active .detailsLess {
+  display: block;
+}
+#accountMid #accountMain .requestItem .detailsTab.active .detailsMore {
+  display: none;
+}
+#accountMid #accountMain .requestItem .detailsTab.active:after {
+  background: url('/img/iconUpArrow.png') no-repeat;
+  background-size: 8px;
+  top: 9px;
+}
+#accountMid #accountMain .requestItem .detailsTab.active:hover:after {
+  top: 15px;
+}
 @media screen and (max-width: 650px) {
   #accountMid #accountTop {
     padding: 25px 0;
@@ -202,6 +301,11 @@
   }
   #accountMid #accountMain .requestItem .contactBox:before {
     background: none;
+  }
+  #accountMid #accountMain .requestItem .detailsBody .data-col {
+    float: none;
+    width: 100%;
+    margin-right: 0;
   }
 }
 @media screen and (max-width: 490px) {

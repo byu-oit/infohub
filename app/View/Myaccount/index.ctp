@@ -3,7 +3,6 @@
 	$this->Html->css('account', null, array('inline' => false));
 ?>
 <script>
-	$(document).ready(colSize);
 	$(window).resize(colSize);
 
 	function colSize() {
@@ -14,6 +13,15 @@
 			$('.riLeft').css('width', '100%');
 		}
 	}
+
+	$(document).ready(function() {
+		colSize();
+		$('.detailsTab').click(function() {
+			var rid = $(this).attr('data-rid');
+			$('#'+rid).slideToggle();
+			$(this).toggleClass('active');
+		});
+	});
 </script>
 
 <!-- Background image div -->
@@ -39,79 +47,52 @@
 	<div class="clear"></div>
 	<div id="accountMain" class="whiteBox">
 <?php
-    if(sizeof($requests)==0){
-        echo '<div class="requestItem"><div class="riLeft"><h4 class="riTitle">No Requests Found</h4></div></div>';
-    }else{
-        foreach($requests as $req){
-            echo '<div class="requestItem">'.
-                '    <div class="riLeft">'.
-                '        <h4 class="riTitle">'.$req->signifier.'</h4>'.
-                '        <p class="riDate"><span>Date Created:&nbsp;</span>'.date('n/j/Y', ($req->createdOn)/1000).'</p>'.
-                '        <p class="riDate"><strong>Requested Data:</strong><br>';
-            $termCount = 0;
-            foreach($req->terms->aaData as $term){
-                echo $term->termsignifier;
-                $termCount++;
-                if($termCount < sizeof($req->terms->aaData)){
-                    echo ',&nbsp;&nbsp;';
-                }
-            }
-            echo '</p>';
-            if($page=='current'){
-                echo '<img src="/img/iconReview.png" alt="Request in review">';
-            }else{
-                echo '<img src="/img/iconApproved.png" alt="Approved requests">';
-            }
-            echo '    </div>'.
-                '    <!--<div class="contactBox">'.
-                '        <span class="contactName">Brad Gonzales</span>'.
-                '        <div class="contactNumber"><a href="tel:8015959845">801.595.9845</a></div>'.
-                '        <div class="contactEmail"><a href="mailto:bgonzales@byu.edu">bgonzales@byu.edu</a></div>'.
-                '    </div>-->'.
-                '</div>';
+	if(sizeof($requests)==0){
+		echo '<div class="requestItem"><div class="riLeft"><h4 class="riTitle">No Requests Found</h4></div></div>';
+	}else{
+		foreach($requests as $req){
+			echo '<div class="requestItem">'.
+				'    <div class="riLeft">'.
+				'        <h4 class="riTitle">'.$req->signifier.'</h4>'.
+				'        <p class="riDate"><span>Date Created:&nbsp;</span>'.date('n/j/Y', ($req->createdOn)/1000).'</p>'.
+				'        <p class="riDate"><strong>Requested Data:</strong><br>';
+			$termCount = 0;
+			foreach($req->terms->aaData as $term){
+				echo $term->termsignifier;
+				$termCount++;
+				if($termCount < sizeof($req->terms->aaData)){
+					echo ',&nbsp;&nbsp;';
+				}
+			}
+			echo '</p>';
+			if($page=='current'){
+				echo '<img src="/img/iconReview.png" alt="Request in review">';
+			}else{
+				echo '<img src="/img/iconApproved.png" alt="Approved requests">';
+			}
+			echo '    </div>'.
+				'    <!--<div class="contactBox">'.
+				'        <span class="contactName">Brad Gonzales</span>'.
+				'        <div class="contactNumber"><a href="tel:8015959845">801.595.9845</a></div>'.
+				'        <div class="contactEmail"><a href="mailto:bgonzales@byu.edu">bgonzales@byu.edu</a></div>'.
+				'    </div>-->'.
+				'	<div class="detailsBody" id="'.$req->resourceId.'">'.
+				'		<h4>Request Details</h4>';
 
-        }
-    }
+			foreach($req->attributeReferences->attributeReference as $attrRef){
+				if($attrRef->labelReference->signifier != 'Requester Person ID'){
+					echo '<div class="data-col"><h5>'.$attrRef->labelReference->signifier.'</h5>'.
+						'<p>'.$attrRef->value.'</p></div>';
+				}
+			}
+
+			echo '	</div>'.
+				'	<a class="detailsTab" data-rid="'.$req->resourceId.'"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a>'.
+				'</div>';
+
+		}
+	}
 ?>
-		<!--<div class="requestItem">
-			<div class="riLeft">
-				<h4 class="riTitle">ABC Title of Report</h4>
-				<p class="riDate"><span>Date Created:&nbsp;</span>03/08/2015</p>
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labare et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-				<img src="/img/iconReview.png" alt="Request in review">
-			</div>
-			<div class="contactBox">
-				<span class="contactName">Brad Gonzales</span>
-				<div class="contactNumber"><a href="tel:8015959845">801.595.9845</a></div>
-				<div class="contactEmail"><a href="mailto:bgonzales@byu.edu">bgonzales@byu.edu</a></div>
-			</div>
-		</div>
-		<div class="requestItem">
-			<div class="riLeft">
-				<h4 class="riTitle">ABC Title of Report</h4>
-				<p class="riDate"><span>Date Created:&nbsp;</span>03/08/2015</p>
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labare et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-				<img src="/img/iconApproved.png" alt="Request in approved">
-			</div>
-			<div class="contactBox">
-				<span class="contactName">Brad Gonzales</span>
-				<div class="contactNumber"><a href="tel:8015959845">801.595.9845</a></div>
-				<div class="contactEmail"><a href="mailto:bgonzales@byu.edu">bgonzales@byu.edu</a></div>
-			</div>
-		</div>
-		<div class="requestItem">
-			<div class="riLeft">
-				<h4 class="riTitle">ABC Title of Report</h4>
-				<p class="riDate"><span>Date Created:&nbsp;</span>03/08/2015</p>
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labare et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-				<img src="/img/iconApproved.png" alt="Request in approved">
-			</div>
-			<div class="contactBox">
-				<span class="contactName">Brad Gonzales</span>
-				<div class="contactNumber"><a href="tel:8015959845">801.595.9845</a></div>
-				<div class="contactEmail"><a href="mailto:bgonzales@byu.edu">bgonzales@byu.edu</a></div>
-			</div>
-		</div>-->
 	</div>
 </div>
 

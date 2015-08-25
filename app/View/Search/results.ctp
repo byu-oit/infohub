@@ -14,11 +14,18 @@
                 if($(this).parent().find('.checkBoxes').html() == ''){
                     var thisElem = $(this);
                     var rid = $(this).attr('data-rid');
+                    //var btnRequest = 
                     $.get( "/search/getFullVocab", { rid: rid } )
                         .done(function( data ) {
                             thisElem.parent().find('.resultBodyLoading').hide()
                             thisElem.parent().find('.checkBoxes').html(data);
                             getCurrentRequestTerms();
+                            thisElem.parent().find('.checkBoxes input').click(function(){
+                                if(thisElem.parent().find('.requestAccess').hasClass('inactive')){
+                                    thisElem.parent().find('.requestAccess').attr('value','Update Request').removeClass('inactive');
+                                }
+                            });
+                            //$(this).parent().find('.requestAccess').hide();
                     });
                 }else{
                     getCurrentRequestTerms();
@@ -175,7 +182,7 @@
                     ?>
                             
                     </a>
-                    <input type="button" onclick="addToQueue(this)" data-title="<?php echo $termRequestTitle; ?>" data-rid="<?php echo $termRequestID ?>" class="requestAccess grow" value="Add To Request" />
+                    <input type="button" onclick="addToQueue(this)" data-title="<?php echo $termRequestTitle; ?>" data-rid="<?php echo $termRequestID ?>" data-vocabID="<?php echo $term->commrid ?>" class="requestAccess grow" value="Add To Request" />
                     <!--<a href="/search/request/<?php echo $term->termrid; ?>" class="requestAccess grow">Request Access</a>-->
                     <a class="detailsTab" data-rid="<?php echo $term->domainrid; ?>"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a>
 				</form>
