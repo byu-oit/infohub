@@ -7,12 +7,12 @@
 		$("#searchLink").addClass('active');
 		resultsWidth();
         // populare form fields for testing
-        /*$('#request input, #request textarea').each(function(i) {
+        $('#request input, #request textarea').each(function(i) {
             if($(this).val()==''){
                 $(this).val('TEST DATA '+i);
             }
         })
-        $('#request select').val('7c04c361-7a87-4f25-8238-ee50f0afa377');*/
+        //$('#request select').val('7c04c361-7a87-4f25-8238-ee50f0afa377');
         
         <?php
             if($submitErr){
@@ -139,7 +139,7 @@
                 <div class="fieldGroup">
                     <div class="field-continer">
                         <label for="sponsorName">Sponsor Name</label>
-                        <input type="text" id="sponsorName" sponsorName="name" class="inputShade noPlaceHolder" value="">
+                        <input type="text" id="sponsorName" name="sponsorName" class="inputShade noPlaceHolder" value="">
                     </div>
                     <div class="field-continer">
                         <label for="sponsorRole">Sponsor Role</label>

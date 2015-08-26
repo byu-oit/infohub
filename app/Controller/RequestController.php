@@ -31,24 +31,15 @@ class RequestController extends AppController {
 			if(isset($_COOKIE['queue'])) {
 				$arrQueue = unserialize($_COOKIE['queue']);
 
-				// remove all terms in vocabularies
-				///////////////////////////////////////////
+				// Remove all terms in vocabularies passed and then re-add the ones selected by the user.
 				$arrIdx = array();
 				for($i=0; $i<sizeof($arrVocabIDs); $i++){
-					for($j=0; $j<sizeof($arrQueue); $j++){
+					for($j=sizeof($arrQueue)-1; $j>=0; $j--){
 						if($arrQueue[$j][2] == $arrVocabIDs[$i]){
-							//unset($arrQueue[$j]);
-							if(!in_array($j, $arrIdx)){
-								array_unshift($arrIdx, $j);
-							}
+							array_splice($arrQueue, $j, 1);
 						}
 					}
 				}
-				for($i=0; $i<sizeof($arrIdx); $i++){
-					echo $arrIdx[$i].'-';
-					array_splice($arrQueue, $arrIdx[$i], 1);
-				}
-				///////////////////////////////////////////
 			}
 			
 			for($i=0; $i<sizeof($arrTerms); $i++){
@@ -64,9 +55,31 @@ class RequestController extends AppController {
 					}
 				}
 
-				if(!$exists){
-					$newTermsAdded++;
-					array_push($arrQueue, array($term, $termID, $vocabID));
+				if($termID != '' && !$exists){
+					$requestable = true;
+					$this->loadModel('CollibraAPI');
+					$objCollibra = new CollibraAPI();
+					$termResp = $objCollibra->request(array('url'=>'term/'.$termID));
+					$termResp = json_decode($termResp);
+
+					// verify that the term is requestable
+					if(!Configure::read('allowUnrequestableTerms')){
+						foreach($termResp->attributeReferences->attributeReference as $attr){
+							if($attr->labelReference->resourceId == '0d798f70-b3ca-4af2-b283-54f84c4714aa'){
+								$requestable = $attr->value == 'true';
+							}
+						}
+					}
+
+					// verify that the term is approved
+					if(!Configure::read('allowUnapprovedeTerms')){
+						$requestable = $termResp->statusReference->signifier == 'Accepted';
+					}
+
+					if($requestable){
+						$newTermsAdded++;
+						array_push($arrQueue, array($term, $termID, $vocabID));
+					}
 				}
 			}
 		
@@ -199,9 +212,8 @@ class RequestController extends AppController {
 			'post'=>true,
 			'params'=>$postData
 		));
-		
 		$formResp = json_decode($formResp);
-		//print_r($formResp);
+		//print_r($postData);
 		//exit;
 		
 		if(isset($formResp->startWorkflowResponses[0]->successmessage)){

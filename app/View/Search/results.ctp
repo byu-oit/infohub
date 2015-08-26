@@ -9,6 +9,8 @@
 		$('.detailsTab').click(function() {
 			$(this).siblings('.resultContent').children('.resultBody').slideToggle();
 			$(this).toggleClass('active');
+            $(this).parent().find('.mainRequestBtn').toggle();
+            $(this).parent().find('.detailsRequestBtn').toggle();
             
             if($(this).hasClass('active')){
                 if($(this).parent().find('.checkBoxes').html() == ''){
@@ -95,6 +97,7 @@
     }else{
         for($i=0; $i<sizeof($terms->aaData); $i++){
             $term = $terms->aaData[$i];
+            $requestable = $term->Attr0d798f70b3ca4af2b28354f84c4714aa == 'true';
             $lastModified = $term->lastModified/1000;
             $lastModified = date('m/d/Y', $lastModified);
             $classification = $term->Attre0937764544a4d2198cedc0c1936b465;
@@ -182,8 +185,14 @@
                     ?>
                             
                     </a>
-                    <input type="button" onclick="addToQueue(this)" data-title="<?php echo $termRequestTitle; ?>" data-rid="<?php echo $termRequestID ?>" data-vocabID="<?php echo $term->commrid ?>" class="requestAccess grow" value="Add To Request" />
-                    <!--<a href="/search/request/<?php echo $term->termrid; ?>" class="requestAccess grow">Request Access</a>-->
+                    <?php
+                        if($requestable || Configure::read('allowUnrequestableTerms') || Configure::read('allowUnapprovedeTerms')){
+                    ?>
+                    <input type="button" onclick="addToQueue(this)" data-title="<?php echo $termRequestTitle; ?>" data-rid="<?php echo $termRequestID ?>" data-vocabID="<?php echo $term->commrid ?>" class="requestAccess grow mainRequestBtn" value="Add To Request" />
+                    <?php
+                        }
+                    ?>
+                    <input type="button" onclick="addToQueue(this)" class="requestAccess grow detailsRequestBtn" value="Add To Request" />
                     <a class="detailsTab" data-rid="<?php echo $term->domainrid; ?>"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a>
 				</form>
 			</div>

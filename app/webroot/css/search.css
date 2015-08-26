@@ -396,6 +396,11 @@ img.resultBodyLoading {
 #searchBody #searchSuccess #srLower .resultItem .inactive {
   background-color: #cccaca;
 }
+#searchBody #searchResults #srLower .resultItem .detailsRequestBtn,
+#searchBody #requestForm #srLower .resultItem .detailsRequestBtn,
+#searchBody #searchSuccess #srLower .resultItem .detailsRequestBtn {
+  display: none;
+}
 #searchBody #searchResults #srLower .resultItem .detailsTab,
 #searchBody #requestForm #srLower .resultItem .detailsTab,
 #searchBody #searchSuccess #srLower .resultItem .detailsTab {
