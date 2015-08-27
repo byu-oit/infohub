@@ -355,6 +355,12 @@ img.resultBodyLoading {
   position: relative;
   top: -2px;
 }
+#searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol img.denied,
+#searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol img.denied,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol img.denied {
+  top: 0;
+  margin: 3px 3px 0 0;
+}
 #searchBody #searchResults #srLower .resultItem .addQuickLink,
 #searchBody #requestForm #srLower .resultItem .addQuickLink,
 #searchBody #searchSuccess #srLower .resultItem .addQuickLink {
@@ -386,6 +392,28 @@ img.resultBodyLoading {
   border: none;
   outline: none;
   cursor: pointer;
+  -webkit-appearance: none;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+}
+#searchBody #searchResults #srLower .resultItem .unrequestable,
+#searchBody #requestForm #srLower .resultItem .unrequestable,
+#searchBody #searchSuccess #srLower .resultItem .unrequestable {
+  color: white;
+  font-size: 12.5px;
+  text-decoration: none;
+  padding: 6px 15px;
+  background-color: #cccaca;
+  display: block;
+  /*width: 98px;*/
+  text-align: center;
+  font-weight: bold;
+  position: absolute;
+  bottom: 20px;
+  right: 3%;
+  border: none;
+  outline: none;
   -webkit-appearance: none;
   -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
@@ -739,6 +767,11 @@ img.resultBodyLoading {
 #searchBody #searchSuccess #srLower .resultItem .irLower .checkCol img {
   position: relative;
   top: -2px;
+}
+#searchBody #requestForm #srLower .resultItem .irLower .checkCol img.denied,
+#searchBody #searchSuccess #srLower .resultItem .irLower .checkCol img.denied {
+  top: 0;
+  margin-right: 3px;
 }
 #searchBody #requestForm #srLower .taBox,
 #searchBody #searchSuccess #srLower .taBox {

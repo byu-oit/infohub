@@ -9,7 +9,7 @@
 		$('.detailsTab').click(function() {
 			$(this).siblings('.resultContent').children('.resultBody').slideToggle();
 			$(this).toggleClass('active');
-            $(this).parent().find('.mainRequestBtn').toggle();
+            $(this).parent().find('.mainRequestBtn, .unrequestable').toggle();
             $(this).parent().find('.detailsRequestBtn').toggle();
             
             if($(this).hasClass('active')){
@@ -142,13 +142,12 @@
                 $wrapAfter  = '</span>';
                 $termDesc = preg_replace("/(".$searchInput.")/i", "$wrapBefore$1$wrapAfter", $termDesc);
             }
-            
 ?>
 			<div id="term<?php echo $term->termrid; ?>" class="resultItem">
                 <div class="<?php echo $classification ?>" title="<?php echo $classificationTitle ?>"></div>
 			    <form action="/request/index/<?php echo $term->termrid; ?>" method="post">
                     <h4><?php echo $term->termsignifier; ?></h4>
-                    <h5 class="<?php echo $txtColor ?>"><?php echo $term->communityname.' > '.$term->domainname; ?></h5>
+                    <h5 class="<?php echo $txtColor ?>"><?php echo $term->communityname.' > <a href="/search/listTerms/'.$term->domainrid.'">'.$term->domainname.'</a>' ?></h5>
                     <div class="resultContent">
                         <ul>
                            <?php
@@ -186,9 +185,13 @@
                             
                     </a>
                     <?php
-                        if($requestable || Configure::read('allowUnrequestableTerms') || Configure::read('allowUnapprovedeTerms')){
+                        if($requestable || Configure::read('allowUnrequestableTerms')){
                     ?>
                     <input type="button" onclick="addToQueue(this)" data-title="<?php echo $termRequestTitle; ?>" data-rid="<?php echo $termRequestID ?>" data-vocabID="<?php echo $term->commrid ?>" class="requestAccess grow mainRequestBtn" value="Add To Request" />
+                    <?php
+                        }else{
+                    ?>
+                    <div class="unrequestable">Not Requestable</div>
                     <?php
                         }
                     ?>

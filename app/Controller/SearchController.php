@@ -288,8 +288,13 @@ class SearchController extends AppController {
 				echo '</div>';echo '</div>';
 				echo '<div class="checkCol">';
 			}
-			echo '    <input type="checkbox" name="terms[]" data-title="'.$termName.'" data-vocabID="'.$term->commrid.'" value="'.$termID.'" id="chk'.$termID.$random.'" class="chk'.$termID.'" '.$disabled.'>'.
-				$classificationIcon.
+			if(!$disabled){
+				echo '<input type="checkbox" name="terms[]" data-title="'.$termName.'" data-vocabID="'.$term->commrid.'" value="'.$termID.'" id="chk'.$termID.$random.'" class="chk'.$termID.'" '.$disabled.'>';
+			}else{
+				echo '<img class="denied" src="/img/denied.png" alt="Not available for request." title="Not available for request.">';
+			}
+
+			echo $classificationIcon.
 				'    <label for="chk'.$termID.$random.'">'.$termName.'</label><div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$termDef.'" class="info"><img src="/img/iconInfo.png"></div>';
 			if($i%2==0){
 				echo '<br/>';

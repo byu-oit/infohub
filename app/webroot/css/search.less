@@ -294,6 +294,11 @@ img.resultBodyLoading {
 									position: relative;
 									top: -2px;
 								}
+
+								img.denied{
+									top: 0;
+									margin: 3px 3px 0 0;
+								}
                             }
                         }
 					}
@@ -324,6 +329,24 @@ img.resultBodyLoading {
                     		outline: none;
                     		cursor: pointer;
                     		-webkit-appearance: none;
+					.box-shade();
+				}
+				.unrequestable {
+					color: #fff;
+					font-size: 12.5px;
+					text-decoration: none;
+					padding: 6px 15px;
+					background-color: #cccaca;
+					display: block;
+					/*width: 98px;*/
+					text-align: center;
+					font-weight: bold;
+					position: absolute;
+					bottom: 20px;
+					right: 3%;
+            		border: none;
+            		outline: none;
+            		-webkit-appearance: none;
 					.box-shade();
 				}
                 .inactive{
@@ -577,6 +600,10 @@ img.resultBodyLoading {
 						img{
 							position: relative;
 							top: -2px;
+						}
+						img.denied{
+							top: 0;
+							margin-right: 3px;
 						}
 					}
 				}

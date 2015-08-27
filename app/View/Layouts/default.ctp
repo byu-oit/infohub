@@ -210,7 +210,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 		function showTermDef(elem){
 			var pos = $(elem).offset();
 			var data = $(elem).attr('data-definition');
-			$('#info-win .info-win-content').text(data);
+			$('#info-win .info-win-content').html(data);
 			$('#info-win').show();
 			var winLeft = pos.left - $('#info-win').outerWidth()/2 + 5;
 			var winTop = pos.top - $('#info-win').outerHeight() - 5;

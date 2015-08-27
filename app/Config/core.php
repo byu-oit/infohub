@@ -22,7 +22,7 @@
     Configure::write('byuCommunity', '4e756e1e-11ee-4d1e-bfaa-fb0ada974fc5');
     Configure::write('isaWorkflow', '62d6b6a4-0fa6-4335-89c7-e822beb920d6');
     Configure::write('allowUnapprovedeTerms', true);
-    Configure::write('allowUnrequestableTerms', true);
+    Configure::write('allowUnrequestableTerms', false);
     
     // NON-DEV SERVER
     //Configure::write('byuCommunity', '99582048-38e3-4149-a301-c6d54d8151c8');
