@@ -26,17 +26,20 @@ class RequestController extends AppController {
 			$arrTerms = $this->request->data['t'];
 			$arrTermIDs = $this->request->data['id'];
 			$arrVocabIDs = $this->request->data['vocab'];
+			$clearRelated = $this->request->data['clearRelated']=='true';
 			
 			$arrQueue = array();
 			if(isset($_COOKIE['queue'])) {
 				$arrQueue = unserialize($_COOKIE['queue']);
 
 				// Remove all terms in vocabularies passed and then re-add the ones selected by the user.
-				$arrIdx = array();
-				for($i=0; $i<sizeof($arrVocabIDs); $i++){
-					for($j=sizeof($arrQueue)-1; $j>=0; $j--){
-						if($arrQueue[$j][2] == $arrVocabIDs[$i]){
-							array_splice($arrQueue, $j, 1);
+				if($clearRelated){
+					$arrIdx = array();
+					for($i=0; $i<sizeof($arrVocabIDs); $i++){
+						for($j=sizeof($arrQueue)-1; $j>=0; $j--){
+							if($arrQueue[$j][2] == $arrVocabIDs[$i]){
+								array_splice($arrQueue, $j, 1);
+							}
 						}
 					}
 				}

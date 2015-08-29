@@ -41,8 +41,8 @@
 		</div>
 	</div>
 	<div class="accountTabs">
-		<a href="/myaccount"><div id="tabLeft" class="atTab <?php if($page=='current') echo 'active' ?>">Current Requests</div></a>
-		<a href="/myaccount/?s=2"><div id="tabright" class="atTab <?php if($page=='past') echo 'active' ?>">Past Requests</div></a>
+		<a href="/myaccount"><div id="tabLeft" class="atTab <?php if($page=='current') echo 'active' ?>">Pending Requests</div></a>
+		<a href="/myaccount/?s=2"><div id="tabright" class="atTab <?php if($page=='past') echo 'active' ?>">Completed Requests</div></a>
 	</div>
 	<div class="clear"></div>
 	<div id="accountMain" class="whiteBox">
@@ -70,24 +70,102 @@
 			}else{
 				echo '<img src="/img/iconApproved.png" alt="Approved requests">';
 			}
-			echo '    </div>'.
-				'    <!--<div class="contactBox">'.
-				'        <span class="contactName">Brad Gonzales</span>'.
-				'        <div class="contactNumber"><a href="tel:8015959845">801.595.9845</a></div>'.
-				'        <div class="contactEmail"><a href="mailto:bgonzales@byu.edu">bgonzales@byu.edu</a></div>'.
-				'    </div>-->'.
-				'	<div class="detailsBody" id="'.$req->resourceId.'">'.
-				'		<h4>Request Details</h4>';
+			echo '</div>';
 
+			// display approvers and their info
+			////////////////////////////////////////
+			echo '<div class="riRight">';
+			foreach($req->approvals->aaData as $approval){
+				$approverName = $approval->Attr4331ec0988a248e6b0969ece6648aff3;
+				$approverEmail = $approval->Attr0cbbfd32fc9747cebef1a89ae4e77ee8;
+				$approverPhone = $approval->Attr9a18e247c09040c3896eab97335ae759;
+
+				echo '<div class="approver '.strtolower($approval->statusname).'">'.
+					'	<div class="info">'.
+					'		<span class="contactName">Brad Gonzales</span>'.
+					'		<div class="contactNumber"><a href="tel:8015959845">801.595.9845</a></div>'.
+					'		<div class="contactEmail"><a href="mailto:bgonzales@byu.edu">bgonzales@byu.edu</a></div>'.
+					'	</div>'.
+					'</div>';
+			}
+			echo '</div>';
+			////////////////////////////////////////
+
+			// show request details
+			////////////////////////////////////////
+			echo '	<div class="detailsBody" id="'.$req->resourceId.'">';
+?>
+
+			<h3 class="headerTab">Requester</h3>
+			<div class="clear"></div>
+			<div class="data-col">
+				<h5>Name:</h5>
+				<p><?php echo $req->attributeReferences->attributeReference[6]->value ?>
+			</div>
+			<div class="data-col">
+				<h5>Phone Number:</h5>
+				<p><?php echo $req->attributeReferences->attributeReference[5]->value ?>
+			</div>
+			<div class="data-col">
+				<h5>Email:</h5>
+				<p><?php echo $req->attributeReferences->attributeReference[12]->value ?>
+			</div>
+			<div class="data-col">
+				<h5>Role:</h5>
+				<p><?php echo $req->attributeReferences->attributeReference[11]->value ?>
+			</div>
+			<div class="data-col">
+				<h5>Requesting Organization:</h5>
+				<p><?php echo $req->attributeReferences->attributeReference[0]->value ?>
+			</div>
+			<div class="clear"></div>
+
+			<h3 class="headerTab">Sponsor</h3>
+			<div class="clear"></div>
+			<div class="data-col">
+				<h5>Sponsor Name:</h5>
+				<p><?php echo $req->attributeReferences->attributeReference[2]->value ?>
+			</div>
+			<div class="data-col">
+				<h5>Sponsor Role:</h5>
+				<p><?php echo $req->attributeReferences->attributeReference[10]->value ?>
+			</div>
+			<div class="data-col">
+				<h5>Sponsor Email:</h5>
+				<p><?php echo $req->attributeReferences->attributeReference[14]->value ?>
+			</div>
+			<div class="data-col">
+				<h5>Sponsor Phone:</h5>
+				<p><?php echo $req->attributeReferences->attributeReference[7]->value ?>
+			</div>
+			<div class="clear"></div>
+<?php
+			$arrNonDisplay = array(
+				"Requester Name", 
+				"Requester Email", 
+				"Requester Phone", 
+				"Information Elements", 
+				"Requester Role", 
+				"Requester PersonId", 
+				"Requesting Organization",
+				"Sponsor Name",
+				"Sponsor Role",
+				"Sponsor Email",
+				"Sponsor Phone",
+				"Requester Person ID",
+				"Request Date"
+			);
 			foreach($req->attributeReferences->attributeReference as $attrRef){
-				if($attrRef->labelReference->signifier != 'Requester Person ID'){
-					echo '<div class="data-col"><h5>'.$attrRef->labelReference->signifier.'</h5>'.
-						'<p>'.$attrRef->value.'</p></div>';
+				//print_r($attrRef);exit;
+				if(!in_array($attrRef->labelReference->signifier, $arrNonDisplay)){
+					echo '<h3 class="headerTab">'.$attrRef->labelReference->signifier.'</h3><div class="clear"></div>'.
+						'<p>'.$attrRef->value.'</p>';
 				}
 			}
+			echo '</div>';
+			////////////////////////////////////////
 
-			echo '	</div>'.
-				'	<a class="detailsTab" data-rid="'.$req->resourceId.'"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a>'.
+			echo '	<a class="detailsTab" data-rid="'.$req->resourceId.'"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a>'.
 				'</div>';
 
 		}

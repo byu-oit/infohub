@@ -261,7 +261,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 					}
 			});
 		}
-		function addToQueue(elem){
+		function addToQueue(elem, clearRelated){
 			var arrTitles = new Array($(elem).attr('data-title'));
 			var arrIDs = new Array($(elem).attr('data-rid'));
 			var arrVocabIDs = new Array($(elem).attr('data-vocabID'));
@@ -272,7 +272,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 					arrVocabIDs.push($(this).attr('data-vocabID'));
 				}
 			});
-			$.post("/request/addToQueue", {t:arrTitles, id:arrIDs, vocab:arrVocabIDs})
+			$.post("/request/addToQueue", {t:arrTitles, id:arrIDs, vocab:arrVocabIDs, clearRelated:clearRelated})
 				.done(function(data){
 					$(elem).attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
 					var oldCount = parseInt($('#request-queue .request-num').text());

@@ -257,7 +257,7 @@ class SearchController extends AppController {
 			if(Configure::read('allowUnrequestableTerms')){
 				$disabled = '';
 			}else{
-				$disabled = $term->Attr0d798f70b3ca4af2b28354f84c4714aa != 'true'?'disabled':'';
+				$disabled = $term->Attr0d798f70b3ca4af2b28354f84c4714aa == 'false'?'disabled':'';
 			}			
 
 			if(sizeof($term->synonym_for)!=0){
@@ -268,16 +268,16 @@ class SearchController extends AppController {
 			$classification = $term->Attre0937764544a4d2198cedc0c1936b465;
 			switch($classification){
 				case '1 - Public':
-					$classificationIcon = '<img src="/img/iconPublic.png" title="Public" alt="Public" width="8" />';
+					$classificationIcon = '<img src="/img/iconPublic.png" title="Public" alt="Public" width="9" />';
 					break;
 				case '2 - Internal':
-					$classificationIcon = '<img src="/img/iconInternal.png" title="Internal" alt="Internal" width="8" />';
+					$classificationIcon = '<img src="/img/iconInternal.png" title="Internal" alt="Internal" width="9" />';
 					break;
 				case '3 - Confidential':
-					$classificationIcon = '<img src="/img/iconClassified.png" title="Confidential" alt="Confidential" width="8" />';
+					$classificationIcon = '<img src="/img/iconClassified.png" title="Confidential" alt="Confidential" width="9" />';
 					break;
 				case '4 - Highly Confidential':
-					$classificationIcon = '<img src="/img/iconHighClassified.png" title="Highly Confidential" alt="Highly Confidential" width="8" />';
+					$classificationIcon = '<img src="/img/iconHighClassified.png" title="Highly Confidential" alt="Highly Confidential" width="9" />';
 					break;
 				default:
 					$classificationIcon = '';
@@ -305,18 +305,16 @@ class SearchController extends AppController {
 		exit;
 	}
 	
-	public function getTermDefinition() {
-		$vocabRID= $this->request->query['rid'];
-		$this->loadModel('CollibraAPI');
+	public function getTermDefinition($vocabRID) {
+		//$vocabRID= $this->request->query['rid'];
+		//$this->loadModel('CollibraAPI');
 		$objCollibra = new CollibraAPI();
 		$resp = $objCollibra->request(
 			array('url'=>'term/'.$vocabRID)
 		);
 		$jsonResp = json_decode($resp);
 		$resp = $jsonResp->attributeReferences->attributeReference[0]->value;
-		$resp = preg_replace( "/\r|\n/", "", $resp);
-		echo strip_tags($resp);
-		exit;
+		return $resp;
 	}
 	
 	public function autoCompleteTerm() {
@@ -413,15 +411,23 @@ class SearchController extends AppController {
 			)
 		);
 		$resp = json_decode($resp);
-		
+
 		// loop through terms to check for quick links and also to build domain breadcrumb
 		if(sizeof($resp->aaData)>0){
-			for($i=0; $i<sizeof($resp->aaData); $i++){
+
+			$term = $resp->aaData;
+			for($i=0; $i<sizeof($term); $i++){
+				// add terms reference for synonym terms
+				if(sizeof($term[$i]->synonym_for)!=0){
+					$synonymRid = $term[$i]->synonym_for[0]->Relc06ed0b7032f4d0fae405824c12f94a6Trid;
+					$term[$i]->synonym_for[0]->definition = $this->getTermDefinition($synonymRid);
+				}
+
 				// add parent community names to breadcrumb
 				$fullCommunityName = '';
 				for($j=0; $j<sizeof($jsonAllCommunities->communityReference); $j++){
 					$parentObj = $jsonAllCommunities->communityReference[$j];
-					if($parentObj->resourceId == $resp->aaData[$i]->commrid){
+					if($parentObj->resourceId == $term[$i]->commrid){
 						while(isset($parentObj->parentReference)){
 							$parentObj = $parentObj->parentReference;
 							if($parentObj->name != "BYU"){
@@ -430,16 +436,16 @@ class SearchController extends AppController {
 						}
 					}
 				}
-				$fullCommunityName .= $resp->aaData[$i]->communityname;
-				$resp->aaData[$i]->communityname = $fullCommunityName;
+				$fullCommunityName .= $term[$i]->communityname;
+				$term[$i]->communityname = $fullCommunityName;
 
 				// check to see if this terms is stored in user's quick links cookie
 				if(isset($_COOKIE['QL'])){
-					$resp->aaData[$i]->saved = '0';
+					$term[$i]->saved = '0';
 					$arrQl = unserialize($_COOKIE['QL']);
 					for($j=0; $j<sizeof($arrQl); $j++){
-						if($arrQl[$j][1] == $resp->aaData[$i]->termrid){
-							$resp->aaData[$i]->saved = '1';
+						if($arrQl[$j][1] == $term[$i]->termrid){
+							$term[$i]->saved = '1';
 							break;
 						}
 					}
@@ -591,12 +597,19 @@ class SearchController extends AppController {
 
 		// loop through terms to check for quick links and also to build domain breadcrumb
 		if(sizeof($resp->aaData)>0){
-			for($i=0; $i<sizeof($resp->aaData); $i++){
+			$term = $resp->aaData;
+			for($i=0; $i<sizeof($term); $i++){
+				// add terms reference for synonym terms
+				if(sizeof($term[$i]->synonym_for)!=0){
+					$synonymRid = $term[$i]->synonym_for[0]->Relc06ed0b7032f4d0fae405824c12f94a6Trid;
+					$term[$i]->synonym_for[0]->definition = $this->getTermDefinition($synonymRid);
+				}
+
 				// add parent community names to breadcrumb
 				$fullCommunityName = '';
 				for($j=0; $j<sizeof($jsonAllCommunities->communityReference); $j++){
 					$parentObj = $jsonAllCommunities->communityReference[$j];
-					if($parentObj->resourceId == $resp->aaData[$i]->commrid){
+					if($parentObj->resourceId == $term[$i]->commrid){
 						while(isset($parentObj->parentReference)){
 							$parentObj = $parentObj->parentReference;
 							if($parentObj->name != "BYU"){
@@ -605,16 +618,16 @@ class SearchController extends AppController {
 						}
 					}
 				}
-				$fullCommunityName .= $resp->aaData[$i]->communityname;
-				$resp->aaData[$i]->communityname = $fullCommunityName;
+				$fullCommunityName .= $term[$i]->communityname;
+				$term[$i]->communityname = $fullCommunityName;
 
 				// check to see if this terms is stored in user's quick links cookie
 				if(isset($_COOKIE['QL'])){
-					$resp->aaData[$i]->saved = '0';
+					$term[$i]->saved = '0';
 					$arrQl = unserialize($_COOKIE['QL']);
 					for($j=0; $j<sizeof($arrQl); $j++){
-						if($arrQl[$j][1] == $resp->aaData[$i]->termrid){
-							$resp->aaData[$i]->saved = '1';
+						if($arrQl[$j][1] == $term[$i]->termrid){
+							$term[$i]->saved = '1';
 							break;
 						}
 					}
@@ -700,12 +713,19 @@ class SearchController extends AppController {
 		
 		// loop through terms to check for quick links and also to build domain breadcrumb
 		if(sizeof($resp->aaData)>0){
-			for($i=0; $i<sizeof($resp->aaData); $i++){
+			$term = $resp->aaData;
+			for($i=0; $i<sizeof($term); $i++){
+				// add terms reference for synonym terms
+				if(sizeof($term[$i]->synonym_for)!=0){
+					$synonymRid = $term[$i]->synonym_for[0]->Relc06ed0b7032f4d0fae405824c12f94a6Trid;
+					$term[$i]->synonym_for[0]->definition = $this->getTermDefinition($synonymRid);
+				}
+				
 				// add parent community names to breadcrumb
 				$fullCommunityName = '';
 				for($j=0; $j<sizeof($jsonAllCommunities->communityReference); $j++){
 					$parentObj = $jsonAllCommunities->communityReference[$j];
-					if($parentObj->resourceId == $resp->aaData[$i]->commrid){
+					if($parentObj->resourceId == $term[$i]->commrid){
 						while(isset($parentObj->parentReference)){
 							$parentObj = $parentObj->parentReference;
 							if($parentObj->name != "BYU"){
@@ -714,16 +734,16 @@ class SearchController extends AppController {
 						}
 					}
 				}
-				$fullCommunityName .= $resp->aaData[$i]->communityname;
-				$resp->aaData[$i]->communityname = $fullCommunityName;
+				$fullCommunityName .= $term[$i]->communityname;
+				$term[$i]->communityname = $fullCommunityName;
 
 				// check to see if this terms is stored in user's quick links cookie
 				if(isset($_COOKIE['QL'])){
-					$resp->aaData[$i]->saved = '0';
+					$term[$i]->saved = '0';
 					$arrQl = unserialize($_COOKIE['QL']);
 					for($j=0; $j<sizeof($arrQl); $j++){
-						if($arrQl[$j][1] == $resp->aaData[$i]->termrid){
-							$resp->aaData[$i]->saved = '1';
+						if($arrQl[$j][1] == $term[$i]->termrid){
+							$term[$i]->saved = '1';
 							break;
 						}
 					}

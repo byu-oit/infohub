@@ -147,6 +147,40 @@
   margin-left: -128px;
   display: block;
 }
+#accountMid #accountMain .requestItem .approver {
+  position: relative;
+  float: left;
+  padding: 25px;
+  border-radius: 30px;
+  margin: 0 15px 15px 0;
+  background: url(../img/requests-user-icon.png) no-repeat center center #d8e8aa;
+}
+#accountMid #accountMain .requestItem .approver .info {
+  background-color: white;
+  position: absolute;
+  padding: 10px;
+  left: 54px;
+  top: -20%;
+  border: solid 3px #d8e8aa;
+}
+#accountMid #accountMain .requestItem .approver .info:before {
+  content: '';
+  width: 8px;
+  height: 16px;
+  position: absolute;
+  background: url(../img/requests-info-arrow.png) center right #d8e8aa;
+  left: -11px;
+  top: 35%;
+}
+#accountMid #accountMain .requestItem .approver.approved {
+  background-color: #b5d45d;
+}
+#accountMid #accountMain .requestItem .approver.approved .info {
+  border-color: #b5d45d;
+}
+#accountMid #accountMain .requestItem .approver.approved .info:before {
+  background-color: #b5d45d;
+}
 #accountMid #accountMain .requestItem .detailsBody {
   display: none;
   *zoom: 1;
@@ -165,13 +199,18 @@
 }
 #accountMid #accountMain .requestItem .detailsBody .data-col {
   float: left;
-  width: 40%;
+  width: 30%;
   margin-right: 10%;
 }
 #accountMid #accountMain .requestItem .detailsBody p {
   font-size: 12px;
   width: 100%;
   margin-top: 0;
+  background-color: white;
+  padding: 5px;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
 #accountMid #accountMain .requestItem .detailsBody h4 {
   color: #114477;
@@ -182,7 +221,17 @@
   font-size: 13px;
   font-weight: bold;
   color: #114477;
-  margin-bottom: 4px;
+  margin: 0 0 3px 0;
+}
+#accountMid #accountMain .requestItem .detailsBody h3.headerTab {
+  float: left;
+  font-size: 18px;
+  margin: 15px 0 10px 0;
+  padding: 4px 18px;
+  font-weight: normal;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
 #accountMid #accountMain .requestItem .detailsTab {
   background-color: #cccaca;

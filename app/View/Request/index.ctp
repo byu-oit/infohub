@@ -70,7 +70,7 @@
 			<h2 class="headerTab">Request Form</h2>
 
 			<div id="srLower" class="whiteBox">
-				<h3 class="headerTab">Requester</h3>
+				<h3 class="headerTab">Requester Information</h3>
 				<div class="clear"></div>
 				<div class="fieldGroup">
 					<!-- <div class="infoCol"> -->
@@ -99,6 +99,27 @@
 					    <input type="hidden" name="requesterPersonId" value="<?php echo $psPersonID ?>" />
 					<!-- </div> -->
 				</div>
+
+                <h3 class="headerTab">Sponsor Information</h3>
+                <div class="clear"></div>
+                <div class="fieldGroup">
+                    <div class="field-continer">
+                        <label for="sponsorName">Sponsor Name</label>
+                        <input type="text" id="sponsorName" name="sponsorName" class="inputShade noPlaceHolder" value="">
+                    </div>
+                    <div class="field-continer">
+                        <label for="sponsorRole">Sponsor Role</label>
+                        <input type="text" id="sponsorRole" name="sponsorRole" class="inputShade noPlaceHolder" value="">
+                    </div>
+                    <div class="field-continer">
+                        <label for="sponsorEmail">Sponsor Email</label>
+                        <input type="text" id="sponsorEmail" name="sponsorEmail" class="inputShade noPlaceHolder" value="">
+                    </div>
+                    <div class="field-continer">
+                        <label for="sponsorPhone">Sponsor Phone</label>
+                        <input type="text" id="sponsorPhone" name="sponsorPhone" class="inputShade noPlaceHolder" value="">
+                    </div>
+                </div>
                 
                 <h3 class="headerTab">Information Requested</h3>
 				<div class="clear"></div>
@@ -133,27 +154,6 @@
                         </div>
 					</div>
 				</div>
-
-                <h3 class="headerTab">Sponsor</h3>
-                <div class="clear"></div>
-                <div class="fieldGroup">
-                    <div class="field-continer">
-                        <label for="sponsorName">Sponsor Name</label>
-                        <input type="text" id="sponsorName" name="sponsorName" class="inputShade noPlaceHolder" value="">
-                    </div>
-                    <div class="field-continer">
-                        <label for="sponsorRole">Sponsor Role</label>
-                        <input type="text" id="sponsorRole" name="sponsorRole" class="inputShade noPlaceHolder" value="">
-                    </div>
-                    <div class="field-continer">
-                        <label for="sponsorEmail">Sponsor Email</label>
-                        <input type="text" id="sponsorEmail" name="sponsorEmail" class="inputShade noPlaceHolder" value="">
-                    </div>
-                    <div class="field-continer">
-                        <label for="sponsorPhone">Sponsor Phone</label>
-                        <input type="text" id="sponsorPhone" name="sponsorPhone" class="inputShade noPlaceHolder" value="">
-                    </div>
-                </div>
                 
                 <?php
                     foreach($formFields->formProperties as $field){

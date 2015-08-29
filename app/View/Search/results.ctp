@@ -44,7 +44,7 @@
 <!-- Request list -->
 <div id="searchBody" class="innerLower">
 	<div id="searchTop">
-		<h1 class="headerTab" >Search Information</h1>
+		<h1 class="headerTab">Search Information</h1>
 		<div class="clear"></div>
 		<div id="stLower" class="whiteBox">
 			<form action="#" onsubmit="document.location='/search/results/'+this.searchInput.value; return false;" method="post">
@@ -97,10 +97,11 @@
     }else{
         for($i=0; $i<sizeof($terms->aaData); $i++){
             $term = $terms->aaData[$i];
-            $requestable = $term->Attr0d798f70b3ca4af2b28354f84c4714aa == 'true';
+            $notRequestable = $term->Attr0d798f70b3ca4af2b28354f84c4714aa == 'false';
             $lastModified = $term->lastModified/1000;
             $lastModified = date('m/d/Y', $lastModified);
             $classification = $term->Attre0937764544a4d2198cedc0c1936b465;
+            $termDesc = $term->Attr00000000000000000000000000000202longExpr;
             $classificationTitle = '';
             $txtColor = 'blueText';
             switch($classification){
@@ -133,11 +134,12 @@
                 $synonymFor = $term->synonym_for[0]->Relc06ed0b7032f4d0fae405824c12f94a6T;
                 $termRequestTitle = $synonymFor;
                 $termRequestID = $term->synonym_for[0]->Relc06ed0b7032f4d0fae405824c12f94a6Trid;
+                $termDesc = $term->synonym_for[0]->definition;
             }
 
             // add div around searched words 
             if($searchInput != ''){
-                $termDesc = stripslashes(strip_tags($term->Attr00000000000000000000000000000202longExpr));
+                $termDesc = stripslashes(strip_tags($termDesc));
                 $wrapBefore = '<span class="highlight">';
                 $wrapAfter  = '</span>';
                 $termDesc = preg_replace("/(".$searchInput.")/i", "$wrapBefore$1$wrapAfter", $termDesc);
@@ -162,7 +164,7 @@
                             <li><span class="listLabel">Classification: </span><span class="classificationTitle"><?php echo $classificationTitle ?></span></li>
                             <?php
                                 if($synonymFor != ''){
-                                    echo '<li><span class="listLabel">Synonym For: </span><span class="classificationTitle">'.$synonymFor.'</span></li>';
+                                    echo '<li class="new-line"><span class="listLabel">Synonym For: </span><span class="classificationTitle">'.$synonymFor.'</span></li>';
                                 }
                             ?>
                         </ul>
@@ -185,9 +187,9 @@
                             
                     </a>
                     <?php
-                        if($requestable || Configure::read('allowUnrequestableTerms')){
+                        if(!$notRequestable || Configure::read('allowUnrequestableTerms')){
                     ?>
-                    <input type="button" onclick="addToQueue(this)" data-title="<?php echo $termRequestTitle; ?>" data-rid="<?php echo $termRequestID ?>" data-vocabID="<?php echo $term->commrid ?>" class="requestAccess grow mainRequestBtn" value="Add To Request" />
+                    <input type="button" onclick="addToQueue(this, false)" data-title="<?php echo $termRequestTitle; ?>" data-rid="<?php echo $termRequestID ?>" data-vocabID="<?php echo $term->commrid ?>" class="requestAccess grow mainRequestBtn" value="Add To Request" />
                     <?php
                         }else{
                     ?>
@@ -195,7 +197,7 @@
                     <?php
                         }
                     ?>
-                    <input type="button" onclick="addToQueue(this)" class="requestAccess grow detailsRequestBtn" value="Add To Request" />
+                    <input type="button" onclick="addToQueue(this, true)" class="requestAccess grow detailsRequestBtn" value="Add To Request" />
                     <a class="detailsTab" data-rid="<?php echo $term->domainrid; ?>"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a>
 				</form>
 			</div>

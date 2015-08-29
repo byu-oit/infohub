@@ -281,6 +281,11 @@ img.resultBodyLoading {
   color: #224d7d;
   margin-left: 3px;
 }
+#searchBody #searchResults #srLower .resultItem .resultContent ul li.new-line,
+#searchBody #requestForm #srLower .resultItem .resultContent ul li.new-line,
+#searchBody #searchSuccess #srLower .resultItem .resultContent ul li.new-line {
+  clear: left;
+}
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody,
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody,
 #searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody {
@@ -748,7 +753,7 @@ img.resultBodyLoading {
 }
 #searchBody #requestForm #srLower .resultItem .irLower .checkCol,
 #searchBody #searchSuccess #srLower .resultItem .irLower .checkCol {
-  width: 400px;
+  width: 50%;
   float: left;
 }
 #searchBody #requestForm #srLower .resultItem .irLower .checkCol label,
