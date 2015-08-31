@@ -281,6 +281,27 @@ img.resultBodyLoading {
   color: #224d7d;
   margin-left: 3px;
 }
+#searchBody #searchResults #srLower .resultItem .resultContent ul li.synonym,
+#searchBody #requestForm #srLower .resultItem .resultContent ul li.synonym,
+#searchBody #searchSuccess #srLower .resultItem .resultContent ul li.synonym {
+  background-color: #114477;
+  color: white;
+  padding: 2px 4px 2px 2px;
+  font-size: 11px;
+}
+#searchBody #searchResults #srLower .resultItem .resultContent ul li.synonym .listLabel,
+#searchBody #requestForm #srLower .resultItem .resultContent ul li.synonym .listLabel,
+#searchBody #searchSuccess #srLower .resultItem .resultContent ul li.synonym .listLabel,
+#searchBody #searchResults #srLower .resultItem .resultContent ul li.synonym .classificationTitle,
+#searchBody #requestForm #srLower .resultItem .resultContent ul li.synonym .classificationTitle,
+#searchBody #searchSuccess #srLower .resultItem .resultContent ul li.synonym .classificationTitle,
+#searchBody #searchResults #srLower .resultItem .resultContent ul li.synonym a,
+#searchBody #requestForm #srLower .resultItem .resultContent ul li.synonym a,
+#searchBody #searchSuccess #srLower .resultItem .resultContent ul li.synonym a {
+  color: white;
+  font-size: 11px;
+  text-decoration: none;
+}
 #searchBody #searchResults #srLower .resultItem .resultContent ul li.new-line,
 #searchBody #requestForm #srLower .resultItem .resultContent ul li.new-line,
 #searchBody #searchSuccess #srLower .resultItem .resultContent ul li.new-line {

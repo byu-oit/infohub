@@ -304,17 +304,24 @@ class SearchController extends AppController {
 		echo '</div>';
 		exit;
 	}
-	
-	public function getTermDefinition($vocabRID) {
-		//$vocabRID= $this->request->query['rid'];
-		//$this->loadModel('CollibraAPI');
+
+	public function getTermDefinition() {
+		$vocabRID= $this->request->query['vocabRid'];
+		$this->loadModel('CollibraAPI');
 		$objCollibra = new CollibraAPI();
 		$resp = $objCollibra->request(
 			array('url'=>'term/'.$vocabRID)
 		);
 		$jsonResp = json_decode($resp);
-		$resp = $jsonResp->attributeReferences->attributeReference[0]->value;
-		return $resp;
+		$def = '';
+		foreach($jsonResp->attributeReferences->attributeReference as $attr){
+			if($attr->labelReference->signifier == 'Definition'){
+				$def = addslashes($attr->value);
+				break;
+			}
+		}
+		echo $def;
+		exit;
 	}
 	
 	public function autoCompleteTerm() {
@@ -414,15 +421,8 @@ class SearchController extends AppController {
 
 		// loop through terms to check for quick links and also to build domain breadcrumb
 		if(sizeof($resp->aaData)>0){
-
 			$term = $resp->aaData;
 			for($i=0; $i<sizeof($term); $i++){
-				// add terms reference for synonym terms
-				if(sizeof($term[$i]->synonym_for)!=0){
-					$synonymRid = $term[$i]->synonym_for[0]->Relc06ed0b7032f4d0fae405824c12f94a6Trid;
-					$term[$i]->synonym_for[0]->definition = $this->getTermDefinition($synonymRid);
-				}
-
 				// add parent community names to breadcrumb
 				$fullCommunityName = '';
 				for($j=0; $j<sizeof($jsonAllCommunities->communityReference); $j++){
@@ -594,17 +594,10 @@ class SearchController extends AppController {
 		$resp = json_decode($resp);
 		//print_r($resp);exit;
 		
-
 		// loop through terms to check for quick links and also to build domain breadcrumb
 		if(sizeof($resp->aaData)>0){
 			$term = $resp->aaData;
 			for($i=0; $i<sizeof($term); $i++){
-				// add terms reference for synonym terms
-				if(sizeof($term[$i]->synonym_for)!=0){
-					$synonymRid = $term[$i]->synonym_for[0]->Relc06ed0b7032f4d0fae405824c12f94a6Trid;
-					$term[$i]->synonym_for[0]->definition = $this->getTermDefinition($synonymRid);
-				}
-
 				// add parent community names to breadcrumb
 				$fullCommunityName = '';
 				for($j=0; $j<sizeof($jsonAllCommunities->communityReference); $j++){
@@ -716,11 +709,11 @@ class SearchController extends AppController {
 			$term = $resp->aaData;
 			for($i=0; $i<sizeof($term); $i++){
 				// add terms reference for synonym terms
-				if(sizeof($term[$i]->synonym_for)!=0){
+				/*if(sizeof($term[$i]->synonym_for)!=0){
 					$synonymRid = $term[$i]->synonym_for[0]->Relc06ed0b7032f4d0fae405824c12f94a6Trid;
-					$term[$i]->synonym_for[0]->definition = $this->getTermDefinition($synonymRid);
-				}
-				
+					$term[$i]->synonym_for[0]->definition = $synonymRid.'--'.$this->getTermDefinition($synonymRid);
+				}*/
+
 				// add parent community names to breadcrumb
 				$fullCommunityName = '';
 				for($j=0; $j<sizeof($jsonAllCommunities->communityReference); $j++){
@@ -750,7 +743,6 @@ class SearchController extends AppController {
 				}
 			}
 		}
-		
 		return $resp;
 	}
 }
