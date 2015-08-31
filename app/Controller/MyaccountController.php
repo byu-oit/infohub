@@ -100,7 +100,7 @@ class MyaccountController extends AppController {
 				// load approval objects for request
 				////////////////////////////////////////////
 				$termRid = $r->name->id;
-				$termRid = 'd3b7c819-6f5f-43da-88ef-c99c97963842';
+				//$termRid = 'd3b7c819-6f5f-43da-88ef-c99c97963842';
 				$resp = $objCollibra->request(
 					array(
 						'url'=>'output/data_table',

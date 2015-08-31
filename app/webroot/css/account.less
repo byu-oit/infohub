@@ -103,15 +103,15 @@
                 }
             }
 
-			.riLeft {
-				width: 75%;
-				float: left;
+            .riTitle {
+				color: @headerBlue2;
+				font-size: 16px;
+				margin: 0;
+			}
 
-				.riTitle {
-					color: @headerBlue2;
-					font-size: 16px;
-					margin: 0;
-				}
+			.riLeft {
+				width: 65%;
+				float: left;
 				.riDate {
 					font-size: 12px;
 					margin: 4px 0;
@@ -133,44 +133,122 @@
 				}
 			}
 
+			.riRight {
+				width: 35%;
+				float: right;
+
+				.riTitle {
+					text-align: right;
+				}
+			}
+
 			.approver{
 				position: relative;
-				float: left;
-				padding: 25px;
-				border-radius: 30px;
-				margin: 0 15px 15px 0;
-				background: url(../img/requests-user-icon.png) no-repeat center center #d8e8aa;
+				float: right;
+				margin: 5px 15px 10px 0;
+				.clear;
+
+				.user-icon{
+					padding: 25px;
+					border-radius: 30px;
+					content: '';
+					float: left;
+					background-image: url(../img/requests-user-icon.png);
+					background-repeat: no-repeat;
+					background-position: center center;
+					background-color: #d8e8aa;
+				}
 
 				.info{
+					display: none;
+					width: 150px;
 					background-color: #fff;
 					position: absolute;
 					padding: 10px;
-					left: 54px;
-					top: -20%;
+					left: -128%;
+					top: -110px;
 					border: solid 3px #d8e8aa;
+					line-height: 10px;
 
-					&:before{
+					a,p{
+						color: #000;
+						text-decoration: none;
+						display: block;
+						float: left;
+						padding: 2px 0 0 0;
+						margin: 0;
+					}
+
+					div{
+						.clear;
+						margin-bottom: 2px;
+						font-size: 9px;
+					}
+
+					&:after{
 						content: '';
-						width: 8px;
-						height: 16px;
+						width: 16px;
+						height: 8px;
 						position: absolute;
 						background: url(../img/requests-info-arrow.png) center right #d8e8aa;
-						left: -11px;
-						top: 35%;
+						bottom: -11px;
+						left: 43%;
+					}
+
+					.icon{
+						display: block;
+						float: left;
+						width: 15px;
+						height: 15px;
+						margin-right: 5px;
+						background-color: #d8e8aa;
+						background-repeat: no-repeat;
+					}
+
+					.contactName{
+						text-align: center;
+						font-size: 12px;
+						font-weight: bold;
+						padding-bottom: 5px;
+					}
+					.contactNumber .icon{
+						background-image: url(../img/request-phone-icon.png);
+					}
+					.contactEmail .icon{
+						background-image: url(../img/request-email-icon.png);
+					}
+					.status .icon{
+						background-image: url(../img/request-pending-icon.png);
+					}
+					.status .icon.approved{
+						background-image: url(../img/request-approved-icon.png);
+					}
+					.status .icon.denied{
+						background-image: url(../img/request-pending-icon.png);
 					}
 				}
 
 				&.approved{
-					background-color: #b5d45d;
+					.user-icon {
+						background-color: #b5d45d;
+					}
 					.info{
 						border-color: #b5d45d;
-						&:before{
+						&:after, .icon{
 							background-color: #b5d45d;
 						}
 					}
 				}
 				&.denied{
-
+					.user-icon {
+						background-color: #EE3839;
+					}
+					.info{
+						border-color: #EE3839;
+						&:after, .icon{
+							background-color: #EE3839;
+						}
+					}
 				}
 			}
 
@@ -291,8 +369,7 @@
 
 
 //============== MEDIA QUERIES ==============//
-
-@media screen and (max-width: 650px) {
+@media screen and (max-width: 720px) {
 	#accountMid {
 		#accountTop {
 			padding: 25px 0;
@@ -340,6 +417,37 @@
 						width: 200px;
 						padding: 0;
 	  					margin: 0 auto;
+					}
+				}
+
+				.riRight{
+					width: 100%;
+					float: none;
+					clear: both;
+					margin: 20px 0;
+
+					.riTitle {
+						text-align: left;
+					}
+
+					.approver{
+						width: 100%;
+						clear: both;
+						.user-icon{
+							display: none;
+						}
+						
+						.info{
+							display: block;
+							width: 94%;
+							padding: 3%;
+							position: relative;
+							left: 0;
+							top:0;
+							&:after{
+								display: none;
+							}
+						}
 					}
 				}
 

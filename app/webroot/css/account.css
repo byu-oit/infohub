@@ -120,14 +120,14 @@
   list-style: disc;
   margin-right: 10px;
 }
-#accountMid #accountMain .requestItem .riLeft {
-  width: 75%;
-  float: left;
-}
-#accountMid #accountMain .requestItem .riLeft .riTitle {
+#accountMid #accountMain .requestItem .riTitle {
   color: #114477;
   font-size: 16px;
   margin: 0;
+}
+#accountMid #accountMain .requestItem .riLeft {
+  width: 65%;
+  float: left;
 }
 #accountMid #accountMain .requestItem .riLeft .riDate {
   font-size: 12px;
@@ -147,39 +147,128 @@
   margin-left: -128px;
   display: block;
 }
+#accountMid #accountMain .requestItem .riRight {
+  width: 35%;
+  float: right;
+}
+#accountMid #accountMain .requestItem .riRight .riTitle {
+  text-align: right;
+}
 #accountMid #accountMain .requestItem .approver {
   position: relative;
-  float: left;
+  float: right;
+  margin: 5px 15px 10px 0;
+  *zoom: 1;
+}
+#accountMid #accountMain .requestItem .approver:before,
+#accountMid #accountMain .requestItem .approver:after {
+  content: "";
+  display: table;
+}
+#accountMid #accountMain .requestItem .approver:after {
+  clear: both;
+}
+#accountMid #accountMain .requestItem .approver .user-icon {
   padding: 25px;
   border-radius: 30px;
-  margin: 0 15px 15px 0;
-  background: url(../img/requests-user-icon.png) no-repeat center center #d8e8aa;
+  content: '';
+  float: left;
+  background-image: url(../img/requests-user-icon.png);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: #d8e8aa;
 }
 #accountMid #accountMain .requestItem .approver .info {
+  display: none;
+  width: 150px;
   background-color: white;
   position: absolute;
   padding: 10px;
-  left: 54px;
-  top: -20%;
+  left: -128%;
+  top: -110px;
   border: solid 3px #d8e8aa;
+  line-height: 10px;
 }
-#accountMid #accountMain .requestItem .approver .info:before {
+#accountMid #accountMain .requestItem .approver .info a,
+#accountMid #accountMain .requestItem .approver .info p {
+  color: black;
+  text-decoration: none;
+  display: block;
+  float: left;
+  padding: 2px 0 0 0;
+  margin: 0;
+}
+#accountMid #accountMain .requestItem .approver .info div {
+  *zoom: 1;
+  margin-bottom: 2px;
+  font-size: 9px;
+}
+#accountMid #accountMain .requestItem .approver .info div:before,
+#accountMid #accountMain .requestItem .approver .info div:after {
+  content: "";
+  display: table;
+}
+#accountMid #accountMain .requestItem .approver .info div:after {
+  clear: both;
+}
+#accountMid #accountMain .requestItem .approver .info:after {
   content: '';
-  width: 8px;
-  height: 16px;
+  width: 16px;
+  height: 8px;
   position: absolute;
   background: url(../img/requests-info-arrow.png) center right #d8e8aa;
-  left: -11px;
-  top: 35%;
+  bottom: -11px;
+  left: 43%;
 }
-#accountMid #accountMain .requestItem .approver.approved {
+#accountMid #accountMain .requestItem .approver .info .icon {
+  display: block;
+  float: left;
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+  background-color: #d8e8aa;
+  background-repeat: no-repeat;
+}
+#accountMid #accountMain .requestItem .approver .info .contactName {
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+  padding-bottom: 5px;
+}
+#accountMid #accountMain .requestItem .approver .info .contactNumber .icon {
+  background-image: url(../img/request-phone-icon.png);
+}
+#accountMid #accountMain .requestItem .approver .info .contactEmail .icon {
+  background-image: url(../img/request-email-icon.png);
+}
+#accountMid #accountMain .requestItem .approver .info .status .icon {
+  background-image: url(../img/request-pending-icon.png);
+}
+#accountMid #accountMain .requestItem .approver .info .status .icon.approved {
+  background-image: url(../img/request-approved-icon.png);
+}
+#accountMid #accountMain .requestItem .approver .info .status .icon.denied {
+  background-image: url(../img/request-pending-icon.png);
+}
+#accountMid #accountMain .requestItem .approver.approved .user-icon {
   background-color: #b5d45d;
 }
 #accountMid #accountMain .requestItem .approver.approved .info {
   border-color: #b5d45d;
 }
-#accountMid #accountMain .requestItem .approver.approved .info:before {
+#accountMid #accountMain .requestItem .approver.approved .info:after,
+#accountMid #accountMain .requestItem .approver.approved .info .icon {
   background-color: #b5d45d;
+}
+#accountMid #accountMain .requestItem .approver.denied .user-icon {
+  background-color: #ee3839;
+}
+#accountMid #accountMain .requestItem .approver.denied .info {
+  border-color: #ee3839;
+}
+#accountMid #accountMain .requestItem .approver.denied .info:after,
+#accountMid #accountMain .requestItem .approver.denied .info .icon {
+  background-color: #ee3839;
 }
 #accountMid #accountMain .requestItem .detailsBody {
   display: none;
@@ -294,7 +383,7 @@
 #accountMid #accountMain .requestItem .detailsTab.active:hover:after {
   top: 15px;
 }
-@media screen and (max-width: 650px) {
+@media screen and (max-width: 720px) {
   #accountMid #accountTop {
     padding: 25px 0;
   }
@@ -339,6 +428,33 @@
     width: 200px;
     padding: 0;
     margin: 0 auto;
+  }
+  #accountMid #accountMain .requestItem .riRight {
+    width: 100%;
+    float: none;
+    clear: both;
+    margin: 20px 0;
+  }
+  #accountMid #accountMain .requestItem .riRight .riTitle {
+    text-align: left;
+  }
+  #accountMid #accountMain .requestItem .riRight .approver {
+    width: 100%;
+    clear: both;
+  }
+  #accountMid #accountMain .requestItem .riRight .approver .user-icon {
+    display: none;
+  }
+  #accountMid #accountMain .requestItem .riRight .approver .info {
+    display: block;
+    width: 94%;
+    padding: 3%;
+    position: relative;
+    left: 0;
+    top: 0;
+  }
+  #accountMid #accountMain .requestItem .riRight .approver .info:after {
+    display: none;
   }
   #accountMid #accountMain .requestItem .contactBox {
     float: none;

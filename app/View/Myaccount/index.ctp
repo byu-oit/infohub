@@ -7,10 +7,10 @@
 
 	function colSize() {
 		if($(window).width() > 650) {
-			$('.riLeft').css('width', '100%').css('width', '-=270px');
+			//$('.riLeft').css('width', '100%').css('width', '-=270px');
 		}
 		else {
-			$('.riLeft').css('width', '100%');
+			//$('.riLeft').css('width', '100%');
 		}
 	}
 
@@ -20,6 +20,13 @@
 			var rid = $(this).attr('data-rid');
 			$('#'+rid).slideToggle();
 			$(this).toggleClass('active');
+		});
+
+		$('.approver .user-icon').on('mouseover click', function(){
+			$(this).parent().find('.info').css('z-index', 20).toggle();
+		});
+		$('.approver .user-icon').mouseout(function(){
+			$(this).parent().find('.info').hide();
 		});
 	});
 </script>
@@ -74,19 +81,25 @@
 
 			// display approvers and their info
 			////////////////////////////////////////
-			echo '<div class="riRight">';
+			echo '<div class="riRight">'.
+				'<h4 class="riTitle">Reviewers of This Request</h4>';
 			foreach($req->approvals->aaData as $approval){
 				$approverName = $approval->Attr4331ec0988a248e6b0969ece6648aff3;
-				$approverEmail = $approval->Attr0cbbfd32fc9747cebef1a89ae4e77ee8;
-				$approverPhone = $approval->Attr9a18e247c09040c3896eab97335ae759;
+				if($approverName != ''){
+					$approverEmail = $approval->Attr0cbbfd32fc9747cebef1a89ae4e77ee8;
+					$approverPhone = $approval->Attr9a18e247c09040c3896eab97335ae759;
+					$approverStatus = strtolower($approval->statusname);
 
-				echo '<div class="approver '.strtolower($approval->statusname).'">'.
-					'	<div class="info">'.
-					'		<span class="contactName">Brad Gonzales</span>'.
-					'		<div class="contactNumber"><a href="tel:8015959845">801.595.9845</a></div>'.
-					'		<div class="contactEmail"><a href="mailto:bgonzales@byu.edu">bgonzales@byu.edu</a></div>'.
-					'	</div>'.
-					'</div>';
+					echo '<div class="approver '.$approverStatus.'">'.
+						'	<div class="user-icon"></div>'.
+						'	<div class="info">'.
+						'		<div class="contactName">'.$approverName.'</div>'.
+						'		<div class="contactNumber"><div class="icon"></div><a href="tel:'.$approverPhone.'">'.$approverPhone.'</a></div>'.
+						'		<div class="contactEmail"><div class="icon"></div><a href="mailto:'.$approverEmail.'">'.$approverEmail.'</a></div>'.
+						'		<div class="status"><div class="icon '.$approverStatus.'"></div><p>'.ucfirst($approverStatus).'</p></div>'.
+						'	</div>'.
+						'</div>';
+				}
 			}
 			echo '</div>';
 			////////////////////////////////////////
