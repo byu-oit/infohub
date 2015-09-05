@@ -106,52 +106,54 @@
 		for($i=0; $i<sizeof($terms->aaData); $i++){
 			$term = $terms->aaData[$i];
 			$notRequestable = $term->Attr0d798f70b3ca4af2b28354f84c4714aa == 'false';
-			$lastModified = $term->lastModified/1000;
-			$lastModified = date('m/d/Y', $lastModified);
-			$classification = $term->Attre0937764544a4d2198cedc0c1936b465;
-			$termDesc = $term->Attr00000000000000000000000000000202longExpr;
-			$classificationTitle = '';
-			$txtColor = 'blueText';
-			switch($classification){
-				case '1 - Public':
-					$classificationTitle = 'Public';
-					$classification = 'public';
-					$txtColor = 'greenText';
-					break;
-				case '2 - Internal':
-					$classificationTitle = 'Internal';
-					$classification = 'internal';
-					$txtColor = 'blueText';
-					break;
-				case '3 - Confidential':
-					$classificationTitle = 'Confidential';
-					$classification = 'classified';
-					$txtColor = 'orangeText';
-					break;
-				case '4 - Highly Confidential':
-					$classificationTitle = 'Highly Confidential';
-					$classification = 'highlyClassified';
-					$txtColor = 'redText';
-					break;
-			}
+			// don't display non-requestable terms
+			if(!$notRequestable){
+				$lastModified = $term->lastModified/1000;
+				$lastModified = date('m/d/Y', $lastModified);
+				$classification = $term->Attre0937764544a4d2198cedc0c1936b465;
+				$termDesc = $term->Attr00000000000000000000000000000202longExpr;
+				$classificationTitle = '';
+				$txtColor = 'blueText';
+				switch($classification){
+					case '1 - Public':
+						$classificationTitle = 'Public';
+						$classification = 'public';
+						$txtColor = 'greenText';
+						break;
+					case '2 - Internal':
+						$classificationTitle = 'Internal';
+						$classification = 'internal';
+						$txtColor = 'blueText';
+						break;
+					case '3 - Confidential':
+						$classificationTitle = 'Confidential';
+						$classification = 'classified';
+						$txtColor = 'orangeText';
+						break;
+					case '4 - Highly Confidential':
+						$classificationTitle = 'Highly Confidential';
+						$classification = 'highlyClassified';
+						$txtColor = 'redText';
+						break;
+				}
 
-			$termRequestID = $term->termrid;
-			$termRequestTitle = $term->termsignifier;
-			$synonymFor = '';
-			if(sizeof($term->synonym_for)!=0){
-				$synonymFor = $term->synonym_for[0]->Relc06ed0b7032f4d0fae405824c12f94a6T;
-				$termRequestTitle = $synonymFor;
-				$termRequestID = $term->synonym_for[0]->Relc06ed0b7032f4d0fae405824c12f94a6Trid;
-				$termDesc = $term->synonym_for[0]->definition;
-			}
+				$termRequestID = $term->termrid;
+				$termRequestTitle = $term->termsignifier;
+				$synonymFor = '';
+				if(sizeof($term->synonym_for)!=0){
+					$synonymFor = $term->synonym_for[0]->Relc06ed0b7032f4d0fae405824c12f94a6T;
+					$termRequestTitle = $synonymFor;
+					$termRequestID = $term->synonym_for[0]->Relc06ed0b7032f4d0fae405824c12f94a6Trid;
+					$termDesc = $term->synonym_for[0]->definition;
+				}
 
-			// add div around searched words 
-			if($searchInput != ''){
-				$termDesc = stripslashes(strip_tags($termDesc));
-				$wrapBefore = '<span class="highlight">';
-				$wrapAfter  = '</span>';
-				$termDesc = preg_replace("/(".$searchInput.")/i", "$wrapBefore$1$wrapAfter", $termDesc);
-			}
+				// add div around searched words 
+				if($searchInput != ''){
+					$termDesc = stripslashes(strip_tags($termDesc));
+					$wrapBefore = '<span class="highlight">';
+					$wrapAfter  = '</span>';
+					$termDesc = preg_replace("/(".$searchInput.")/i", "$wrapBefore$1$wrapAfter", $termDesc);
+				}
 ?>
 			<div id="term<?php echo $term->termrid; ?>" class="resultItem">
 				<div class="<?php echo $classification ?>" title="<?php echo $classificationTitle ?>"></div>
@@ -209,6 +211,7 @@
 				</form>
 			</div>
 <?php
+			}
 		}
 	}
 ?>

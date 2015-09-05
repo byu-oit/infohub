@@ -249,6 +249,7 @@ class SearchController extends AppController {
 		//exit;
 		
 		echo '<div class="checkCol">';
+		$itemCount = 0;
 		for($i=0; $i<sizeof($jsonResp->aaData); $i++){
 			$term = $jsonResp->aaData[$i];
 			$termName = $term->termsignifier;
@@ -258,46 +259,48 @@ class SearchController extends AppController {
 				$disabled = '';
 			}else{
 				$disabled = $term->Attr0d798f70b3ca4af2b28354f84c4714aa == 'false'?'disabled':'';
-			}			
-
-			if(sizeof($term->synonym_for)!=0){
-				$termDef = 'Synonym for '.$term->synonym_for[0]->Relc06ed0b7032f4d0fae405824c12f94a6T;
-			}
-
-			$random = uniqid(rand(111111,999999));
-			$classification = $term->Attre0937764544a4d2198cedc0c1936b465;
-			switch($classification){
-				case '1 - Public':
-					$classificationIcon = '<img src="/img/iconPublic.png" title="Public" alt="Public" width="9" />';
-					break;
-				case '2 - Internal':
-					$classificationIcon = '<img src="/img/iconInternal.png" title="Internal" alt="Internal" width="9" />';
-					break;
-				case '3 - Confidential':
-					$classificationIcon = '<img src="/img/iconClassified.png" title="Confidential" alt="Confidential" width="9" />';
-					break;
-				case '4 - Highly Confidential':
-					$classificationIcon = '<img src="/img/iconHighClassified.png" title="Highly Confidential" alt="Highly Confidential" width="9" />';
-					break;
-				default:
-					$classificationIcon = '';
-					break;
-			}
-
-			if($i>0 && $i%2==0){
-				echo '</div>';echo '</div>';
-				echo '<div class="checkCol">';
 			}
 			if(!$disabled){
-				echo '<input type="checkbox" name="terms[]" data-title="'.$termName.'" data-vocabID="'.$term->commrid.'" value="'.$termID.'" id="chk'.$termID.$random.'" class="chk'.$termID.'" '.$disabled.'>';
-			}else{
-				echo '<img class="denied" src="/img/denied.png" alt="Not available for request." title="Not available for request.">';
-			}
+				if(sizeof($term->synonym_for)!=0){
+					$termDef = 'Synonym for '.$term->synonym_for[0]->Relc06ed0b7032f4d0fae405824c12f94a6T;
+				}
 
-			echo $classificationIcon.
-				'    <label for="chk'.$termID.$random.'">'.$termName.'</label><div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$termDef.'" class="info"><img src="/img/iconInfo.png"></div>';
-			if($i%2==0){
-				echo '<br/>';
+				$random = uniqid(rand(111111,999999));
+				$classification = $term->Attre0937764544a4d2198cedc0c1936b465;
+				switch($classification){
+					case '1 - Public':
+						$classificationIcon = '<img src="/img/iconPublic.png" title="Public" alt="Public" width="9" />';
+						break;
+					case '2 - Internal':
+						$classificationIcon = '<img src="/img/iconInternal.png" title="Internal" alt="Internal" width="9" />';
+						break;
+					case '3 - Confidential':
+						$classificationIcon = '<img src="/img/iconClassified.png" title="Confidential" alt="Confidential" width="9" />';
+						break;
+					case '4 - Highly Confidential':
+						$classificationIcon = '<img src="/img/iconHighClassified.png" title="Highly Confidential" alt="Highly Confidential" width="9" />';
+						break;
+					default:
+						$classificationIcon = '';
+						break;
+				}
+
+				if($itemCount>0 && $itemCount%2==0){
+					echo '</div>';echo '</div>';
+					echo '<div class="checkCol">';
+				}
+				if(!$disabled){
+					echo '<input type="checkbox" name="terms[]" data-title="'.$termName.'" data-vocabID="'.$term->commrid.'" value="'.$termID.'" id="chk'.$termID.$random.'" class="chk'.$termID.'" '.$disabled.'>';
+				}else{
+					//echo '<img class="denied" src="/img/denied.png" alt="Not available for request." title="Not available for request.">';
+				}
+
+				echo $classificationIcon.
+					'    <label for="chk'.$termID.$random.'">'.$termName.'</label><div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$termDef.'" class="info"><img src="/img/iconInfo.png"></div>';
+				if($itemCount%2==0){
+					echo '<br/>';
+				}
+				$itemCount++;
 			}
 				
 		}
@@ -332,7 +335,7 @@ class SearchController extends AppController {
 			$objCollibra = new CollibraAPI();
 
 			// create JSON request string
-			$request = '{"query": "'.$query.'*", "filter": { "community": ["'.Configure::read('byuCommunity').'"], "category": ["TE"], "vocabulary": [], "type": { "asset":["00000000-0000-0000-0000-000000011001","ed82f17f-c1e7-4d6d-83cc-50f6b529c296"], "domain":[] },';		
+			$request = '{"query": "'.$query.'*", "filter": { "community": ["'.Configure::read('byuCommunity').'"], "category": ["TE"], "vocabulary": [], "type": { "asset":["00000000-0000-0000-0000-000000011001","ed82f17f-c1e7-4d6d-83cc-50f6b529c296"], "domain":[] },';
 			if(!Configure::read('allowUnapprovedeTerms')){
 				$request .= '"status": ["00000000-0000-0000-0000-000000005009"], ';
 			}
@@ -343,13 +346,22 @@ class SearchController extends AppController {
 						'url'=>'search',
 						'post'=>true,
 						'json'=>true,
-						'params'=>$request//'{ "query": "'.$query.'*", "filter": { "community": ["'.Configure::read('byuCommunity').'"], "category": ["TE"], "vocabulary": [], "type": { "asset":["00000000-0000-0000-0000-000000011001","ed82f17f-c1e7-4d6d-83cc-50f6b529c296"], "domain":[] }, "includeMeta": true }, "fields": ["name"], "order": { "by": "score", "sort": "desc" }, "limit": 5, "offset": 0, "highlight": false, "relativeUrl": true, "withParents": true }'
-					  //'params'=>'{ "query": "'.$query.'*", "filter": { "community": ["'.Configure::read('byuCommunity').'"], "category": ["TE"], "vocabulary": ["fbe8efa7-6273-475b-8770-bf0efac31752"], "type": { "asset":[], "domain":[] }, "status": ["00000000-0000-0000-0000-000000005009"], "includeMeta": true }, "fields": ["name"], "order": { "by": "score", "sort": "desc" }, "limit": 5, "offset": 0, "highlight": false, "relativeUrl": true, "withParents": true }'
+						'params'=>$request
 					)
 			);
 			$jsonResp = json_decode($resp);
 			for($i=0; $i<sizeof($jsonResp->results); $i++){
-				echo '<li>'.$jsonResp->results[$i]->name->val.'</li>';
+				$requestable = true;
+				// don't show non-requestable items
+				foreach($jsonResp->results[$i]->attributes as $attr){
+					if($attr->type == 'Requestable' && $attr->val == 'false'){
+						$requestable = false;
+						break;
+					}
+				}
+				if($requestable){
+					echo '<li>'.$jsonResp->results[$i]->name->val.'</li>';
+				}
 			}
 		}		
 		exit;
