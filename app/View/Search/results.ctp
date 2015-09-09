@@ -19,7 +19,7 @@
 					var vocabRid = $(this).attr('data-vocabRid');
 					
 					// load term definition
-					$.get("/search/getTermDefinition",{vocabRid:vocabRid})
+					$.get("/search/getTermDefinition",{vocabRid:vocabRid, searchInput:'<?php echo $searchInput ?>'})
 						.done(function(data) {
 							var termDesc = '<p>'+data+'</p><h5>Also included in this selection (check all that apply to your request).</h5>';
 							
@@ -55,7 +55,7 @@
 		<h1 class="headerTab">Search Information</h1>
 		<div class="clear"></div>
 		<div id="stLower" class="whiteBox">
-			<form action="#" onsubmit="document.location='/search/results/'+this.searchInput.value; return false;" method="post">
+			<form action="#" onsubmit="document.location='/search/results/'+this.searchInput.value.replace('+','&'); return false;" method="post">
 				<input id="searchInput" type="text" class="inputShade" value="<?php echo $searchInput ?>" placeholder="Search keyword, topic, or phrase" maxlength="50" autocomplete="off" >
 				<?php echo $this->element('auto_complete'); ?>
 				<input type="submit" value="Search" class="inputButton">

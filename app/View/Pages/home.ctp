@@ -65,7 +65,7 @@
 				<h3>Search Information</h3>
 			</div>
 			<div id="searchBox">
-				<form action="#" onsubmit="document.location='/search/results/'+this.searchInput.value; return false;" method="post">
+				<form action="#" onsubmit="document.location='/search/results/'+this.searchInput.value.replace('+','&'); return false;" method="post">
                     		<input id="searchInput" name="searchInput" type="text" class="inputShade" placeholder="Search keyword, topic, or phrase" maxlength="50" autocomplete="off"  />
                     		<?php echo $this->element('auto_complete'); ?>
                     		<input type="submit" value="Search" class="inputButton" />

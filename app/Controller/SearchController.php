@@ -30,6 +30,21 @@ class SearchController extends AppController {
 		}
 	}
 	
+	private function convert_smart_quotes($string){ 
+		$search = array(chr(145), 
+			chr(146), 
+			chr(147), 
+			chr(148), 
+			chr(151)); 
+
+		$replace = array("'", 
+			"'", 
+			'"', 
+			'"', 
+			'-'); 
+
+		return str_replace($search, $replace, $string); 
+	}
 	
 	// NORMAL VIEWS
 	/////////////////////////////////////////////////////////
@@ -86,7 +101,7 @@ class SearchController extends AppController {
 	
 	public function results() {
 		App::uses('Helpers', 'Model');
-		$query = $this->request->params['pass'][0];
+		$query = htmlentities($this->request->params['pass'][0]);
 		$defaultCommunity = Configure::read('byuCommunity');
 		
 		// set community filter based on querystring value
@@ -123,9 +138,10 @@ class SearchController extends AppController {
 			$page = Helpers::getInt($this->request->params['pass'][1]);
 		}
 		if($page==0) $page=1;
+		//$query = str_replace('%2B', 'ss', $this->request->params['pass'][0]);
 		
 		// get all terms matching query
-		$terms = $this->searchTerms($query, $page-1, 10, $sortField, $sortOrder, $filter);
+		$terms = $this->searchTerms(html_entity_decode($query), $page-1, 10, $sortField, $sortOrder, $filter);
 		//print_r($terms);exit;
 		
 		// save search and delete anything over 300 entries
@@ -161,7 +177,7 @@ class SearchController extends AppController {
 		$this->set('filter', $filter);
 		$this->set('sort', $sort);
 		$this->set('terms', $terms);
-		$this->set('searchInput', $query);
+		$this->set('searchInput', str_replace("&amp;", "+", $query));
 	}
 	
 	
@@ -310,6 +326,9 @@ class SearchController extends AppController {
 
 	public function getTermDefinition() {
 		$vocabRID= $this->request->query['vocabRid'];
+		$searchInput= html_entity_decode($this->request->query['searchInput']);
+		$searchInput = addslashes($searchInput);
+
 		$this->loadModel('CollibraAPI');
 		$objCollibra = new CollibraAPI();
 		$resp = $objCollibra->request(
@@ -323,6 +342,17 @@ class SearchController extends AppController {
 				break;
 			}
 		}
+
+		// highlight each search term
+		$def = stripslashes(strip_tags($def));
+		$wrapBefore = '<span class="highlight">';
+		$wrapAfter  = '</span>';
+		$arrQuery = explode(" ", $searchInput);
+		for($i=0; $i<sizeof($arrQuery); $i++){
+			$arrQuery[$i] = str_replace("+", " ", $arrQuery[$i]	);
+			$def = preg_replace("/(".$arrQuery[$i].")/i", "$wrapBefore$1$wrapAfter", $def);
+		}
+
 		echo $def;
 		exit;
 	}
@@ -469,6 +499,12 @@ class SearchController extends AppController {
 	}
 	
 	private function searchTerms($query, $page=0, $displayLength=20, $sortField='termsignifier', $sortOrder='ASC', $communityFilter='', $termOnly=false){
+		$query = addslashes($query);
+		$arrQuery = explode(" ", $query);
+		for($i=0; $i<sizeof($arrQuery); $i++){
+			$arrQuery[$i] = str_replace("&", " ", $arrQuery[$i]	);
+		}
+
 		$arrResp = '';
 		$displayStart = $page*$displayLength;
 		
@@ -547,31 +583,29 @@ class SearchController extends AppController {
 			'			 ]'.
 			'       },'.
 			'		{'.
-			'           "OR":['.
-			'              {'.
+			'           "OR":[';
+		foreach($arrQuery as $q){
+			$requestFilter .= '              {'.
 			'                 "Field":{'.
 			'                    "name":"termsignifier",'.
 			'                    "operator":"INCLUDES",'.
-			'                    "value":"'.$query.'"'.
+			'                    "value":"'.$q.'"'.
 			'                 }'.
-			'              }';
+			'              },';
+		}
+		$requestFilter = substR($requestFilter, 0, strlen($requestFilter)-1);
 
 		// search definition as well as term title
 		if(!$termOnly){
-			$requestFilter .= ',{'.
-				'                 "Field":{'.
-				'                    "name":"Attr00000000000000000000000000000202longExpr",'.
-				'                    "operator":"INCLUDES",'.
-				'                    "value":"'.$query.'"'.
-				'                 }'.
-				'               }';
-				/*'               ,{'.
-				'                 "Field":{'.
-				'                    "name":"Attr00000000000000000000000000000202",'.
-				'                    "operator":"INCLUDES",'.
-				'                    "value":"'.$query.'"'.
-				'                 }'.
-				'               }';*/
+			foreach($arrQuery as $q){
+				$requestFilter .= ',{'.
+					'                 "Field":{'.
+					'                    "name":"Attr00000000000000000000000000000202longExpr",'.
+					'                    "operator":"INCLUDES",'.
+					'                    "value":"'.$q.'"'.
+					'                 }'.
+					'               }';
+			}
 		}
 
 		$requestFilter .= ']'.
@@ -593,7 +627,7 @@ class SearchController extends AppController {
 		$requestFilter .= '{"Field":{"name":"'.$sortField.'","order":"'.$sortOrder.'"}}';
 
 		$requestFilter .= ']}},"displayStart":'.$displayStart.',"displayLength":'.$displayLength.'}}';
-		
+
 		$resp = $objCollibra->request(
 			array(
 				'url'=>'output/data_table',
