@@ -370,9 +370,10 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 					<span class="userInfo">
 						<?php
 							if(!$casAuthenticated){
-								echo $this->Html->link('Login', '/login');
+								echo '<a href="/login" class="login">Login</a>';
 							}else{
-								echo $this->Html->link($byuUsername, '/myaccount');
+								echo '<a href="/myaccount">'.$byuUsername.'</a>';
+								echo '<br><a href="/myaccount/logout" class="logout">Logout</a>';
 							}
 						?>
 					</span>

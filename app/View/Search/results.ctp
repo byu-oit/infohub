@@ -40,9 +40,39 @@
 				}else{
 					getCurrentRequestTerms();
 				}
-		}
+			}
 		});
+
+		pageResults(1);
+		generatePageNav();
 	});
+
+	var resultsPerPage = 10;
+	function generatePageNav(){
+		var resultNum = $('.resultItem').size();
+		var totalPages = Math.ceil(resultNum/resultsPerPage);
+		if(totalPages>1){
+			for(i=0; i<totalPages; i++){
+				$('.page-nav').append('<li><a href="javascript:pageResults('+(i+1)+')">'+(i+1)+'</a></li>');
+			}
+		}
+	}
+	function pageResults(pg){
+		if(!pg) pg = 1;
+		var startIdx = (pg-1) * resultsPerPage;
+		var endIdx = startIdx + resultsPerPage;
+		var resultNum = $('.resultItem').size();
+		$('.resultItem').hide();
+		$('.resultItem').each(function(i){
+			if(i>=startIdx & i<endIdx){
+				$(this).show();
+			}
+		});
+		// scroll user to top of results
+		if($(window).scrollTop() > $("#searchResults").offset().top){
+			$('html, body').delay(200).animate({scrollTop: $("#searchResults").offset().top}, 500);
+		}
+	}
 </script>
 
 <!-- Background image div -->
@@ -76,7 +106,7 @@
 ?>
 			<div id="searchFilters">
 				<label for="filerBy">Filter By:</label>
-				<select name="filterBy" id="filerBy" class="inputShade" onchange="document.location='/search/results/<?php echo $searchInput ?>?s=<?php echo $pageNum ?>&f='+this.value">
+				<select name="filterBy" id="filerBy" class="inputShade" onchange="document.location='/search/results/<?php echo $searchInput ?>?s=<?php echo $sort ?>&f='+this.value">
 					<option value="">All</option>
 <?php
 		for($i=0; $i<sizeof($communities->communityReference); $i++){
@@ -91,9 +121,10 @@
 				</select>
 				<label for="filerBy">Sort By:</label>
 				<select name="filterBy" id="filerBy" class="inputShade" onchange="document.location='/search/results/<?php echo $searchInput ?>?s='+this.value+'&f=<?php echo $filter ?>'">
-					<option value="0" <?php if($sort==0) echo 'selected'; ?>>Alphabetical</option>
-					<option value="1" <?php if($sort==1) echo 'selected'; ?>>Last Modified</option>
-					<option value="2" <?php if($sort==2) echo 'selected'; ?>>Classification</option>
+					<option value="0" <?php if($sort==0) echo 'selected'; ?>>Relevance</option>
+					<option value="1" <?php if($sort==1) echo 'selected'; ?>>Alphabetical</option>
+					<option value="2" <?php if($sort==2) echo 'selected'; ?>>Last Modified</option>
+					<option value="3" <?php if($sort==3) echo 'selected'; ?>>Classification</option>
 				</select>
 			</div>
 			
@@ -216,23 +247,7 @@
 	}
 ?>
 			<div class="clear"></div>
-			<?php
-				$urlParts = parse_url($_SERVER['REQUEST_URI']);
-				$urlParts = explode("/", $urlParts['path']);
-
-				if($totalPages>1){
-					echo '<ul class="page-nav">';
-					for($i=0; $i<$totalPages; $i++){
-						$cssClass = (($i+1) == $pageNum)?'class="active"':'';
-						if($urlParts[2] == 'listTerms'){
-							echo '<li '.$cssClass.'><a href="/search/listTerms/'.$domain.'/'.($i+1).'/?s='.$sort.'&f='.$filter.'">'.($i+1).'</a></li>';
-						}else{
-							echo '<li '.$cssClass.'><a href="/search/results/'.$searchInput.'/'.($i+1).'/?s='.$sort.'&f='.$filter.'">'.($i+1).'</a></li>';
-						}
-					}
-					echo '</ul>';
-				}
-			?>
+			<ul class="page-nav"></ul>
 			<div class="clear"></div>
 		</div>
 	</div>

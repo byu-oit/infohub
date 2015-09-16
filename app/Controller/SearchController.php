@@ -65,8 +65,8 @@ class SearchController extends AppController {
 		$terms = $this->getTermDetails($query);
 		
 		$this->set('commonSearches', $this->getCommonSearches());
-		$this->set('totalPages', 0);
-		$this->set('pageNum', 0);
+		//$this->set('totalPages', 0);
+		//$this->set('pageNum', 0);
 		$this->set('terms', $terms);
 		$this->set('searchInput', '');
 		
@@ -90,8 +90,8 @@ class SearchController extends AppController {
 		$terms = $this->getDomainTerms($domainID, $page-1, 25);
 		
 		$this->set('commonSearches', $this->getCommonSearches());
-		$this->set('totalPages', ceil($terms->iTotalDisplayRecords/25));
-		$this->set('pageNum', $page);
+		//$this->set('totalPages', ceil($terms->iTotalDisplayRecords/25));
+		//$this->set('pageNum', $page);
 		$this->set('terms', $terms);
 		$this->set('searchInput', '');
 		$this->set('domain', $domainID);
@@ -121,13 +121,17 @@ class SearchController extends AppController {
 		$sortField = null;
 		switch($sort){
 			case 0:
-				$sortField = 'termsignifier';
+				$sortField = 'score';
+				$sortOrder = 'DESC';
 				break;
 			case 1:
+				$sortField = 'termsignifier';
+				break;
+			case 2:
 				$sortField = 'lastModified';
 				$sortOrder = 'DESC';
 				break;
-			case 2:
+			case 3:
 				$sortField = 'Attre0937764544a4d2198cedc0c1936b465';
 				break;
 		}
@@ -172,8 +176,8 @@ class SearchController extends AppController {
 		
 		$this->set('commonSearches', $this->getCommonSearches());
 		$this->set('communities', $communities);
-		$this->set('totalPages', ceil($terms->iTotalDisplayRecords/10));
-		$this->set('pageNum', $page);
+		//$this->set('totalPages', ceil($terms->iTotalDisplayRecords/10));
+		//$this->set('pageNum', $page);
 		$this->set('filter', $filter);
 		$this->set('sort', $sort);
 		$this->set('terms', $terms);
@@ -347,10 +351,11 @@ class SearchController extends AppController {
 		$def = stripslashes(strip_tags($def));
 		$wrapBefore = '<span class="highlight">';
 		$wrapAfter  = '</span>';
+		
+		$searchInput = trim($searchInput, '\"');
 		$arrQuery = explode(" ", $searchInput);
 		for($i=0; $i<sizeof($arrQuery); $i++){
-			$arrQuery[$i] = str_replace("+", " ", $arrQuery[$i]	);
-			$def = preg_replace("/(".$arrQuery[$i].")/i", "$wrapBefore$1$wrapAfter", $def);
+			$def = preg_replace("/\b(".$arrQuery[$i].")\b/i", "$wrapBefore$1$wrapAfter", $def);
 		}
 
 		echo $def;
@@ -500,65 +505,42 @@ class SearchController extends AppController {
 	
 	private function searchTerms($query, $page=0, $displayLength=20, $sortField='termsignifier', $sortOrder='ASC', $communityFilter='', $termOnly=false){
 		$query = addslashes($query);
-		$arrQuery = explode(" ", $query);
-		for($i=0; $i<sizeof($arrQuery); $i++){
-			$arrQuery[$i] = str_replace("&", " ", $arrQuery[$i]	);
+		if(substr($query, 0, 2)!='\"' && substr($query, strlen($query)-2, 2)!='\"' && substr($query, strlen($query)-1, 1)!='*'){
+			$query .= '*';	
 		}
 
-		$arrResp = '';
 		$displayStart = $page*$displayLength;
 		
 		$obj = new SearchController();
 		$obj->loadModel('CollibraAPI');
 		$objCollibra = new CollibraAPI();
-		
-		// get all communities to use for search filtering and bread crumbs in results page
-		$resp = $objCollibra->request(
-			array('url'=>'community/all')
-		);
-		$jsonAllCommunities = json_decode($resp);
 
-		//print_r($jsonAllCommunities);exit;
-		
-		// get all communities to search within if no community filter is applied
-		///////////////////////////////////////////
-		$commFilter = '';
-		if($communityFilter == ''){ // get all communities if communityFilter is not provided
-			for($i=0; $i<sizeof($jsonAllCommunities->communityReference); $i++){
-				$commFilterTmp = '';
-				$parentObj = $jsonAllCommunities->communityReference[$i];
-				// only add reference id if not in current list
-				if(strpos($commFilter, $parentObj->resourceId)===false){
-					$commFilterTmp .= '{"Field":{"name":"commrid","operator":"EQUALS","value":"'.$parentObj->resourceId.'"}},';
-				}
-				while(isset($parentObj->parentReference)){
-					// only add reference id if not in current list
-					if(strpos($commFilter, $parentObj->parentReference->resourceId)==false){
-						$commFilterTmp .= '{"Field":{"name":"commrid","operator":"EQUALS","value":"'.$parentObj->parentReference->resourceId.'"}},';
-					}
-					$parentObj = $parentObj->parentReference;
-				}
-
-				if($parentObj->resourceId === Configure::read('byuCommunity')){
-					$commFilter .= $commFilterTmp;
-				}
-			}
-		}else{ // search sub communities if communityFilter is provided
-			$resp = $objCollibra->request(
-				array('url'=>'community/'.$communityFilter.'/sub-communities')
-			);
-			$jsonResp = json_decode($resp);
-			$commFilter .= '{"Field":{"name":"commrid","operator":"EQUALS","value":"'.$communityFilter.'"}},';
-			foreach($jsonResp->communityReference as $comm){
-				$commFilter .= '{"Field":{"name":"commrid","operator":"EQUALS","value":"'.$comm->resourceId.'"}},';
-			}
+		// use API search call to query based on user input
+		///////////////////////////////////
+		// set filter to community selected or the "BYU" community by default
+		if($communityFilter == ''){
+			$communityFilter = Configure::read('byuCommunity');
 		}
-		if($commFilter!='') $commFilter = substr($commFilter, 0, strlen($commFilter)-1);
-		///////////////////////////////////////////
-
-		$resp = $objCollibra->request(
-			array('url'=>'community/all')
+		
+		$request = '{"query":"'.$query.'", "filter": { "community": ["'.$communityFilter.'"], "category":["TE"], "vocabulary":[], "type":{"asset":["00000000-0000-0000-0000-000000011001","ed82f17f-c1e7-4d6d-83cc-50f6b529c296"]},';
+		if(!Configure::read('allowUnapprovedeTerms')){
+			$request .= '"status": ["00000000-0000-0000-0000-000000005009"], ';
+		}
+		$request .= '"includeMeta":false}, "fields":["name","attributes"], "order":{"by":"score","sort": "desc"}, "limit":200, "offset":0, "highlight":false}';
+		//die($request);
+		$searchResp = $objCollibra->request(
+			array('url'=>'search', 'post'=>true, 'json'=>true, 'params'=>$request)
 		);
+		$searchResp = json_decode($searchResp);
+
+		// build filter string of term ID used to full detail search below
+		$ridFilter = '';
+		foreach($searchResp->results as $result){
+			$ridFilter .= '{"Field":{"name":"termrid","operator":"EQUALS","value":"'.$result->name->id.'"}},';
+		}
+		if($ridFilter!='') $ridFilter = substr($ridFilter, 0, strlen($ridFilter)-1);
+		//die($ridFilter);
+ 		///////////////////////////////////
 
 		$requestFilter = '{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"lastModified"}},{"Column":{"fieldName":"createdOn"}},{"Column":{"fieldName":"Attr0d798f70b3ca4af2b28354f84c4714aarid"}},{"Column":{"fieldName":"Attr0d798f70b3ca4af2b28354f84c4714aa","fieldId":"0d798f70-b3ca-4af2-b283-54f84c4714aa"}},{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldId":"00000000-0000-0000-0000-000000000202","fieldName":"Attr00000000000000000000000000000202"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202longExpr"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202rid"}},{"Column":{"fieldId":"e0937764-544a-4d21-98ce-dc0c1936b465","fieldName":"Attre0937764544a4d2198cedc0c1936b465"}},{"Column":{"fieldName":"Attre0937764544a4d2198cedc0c1936b465rid"}},{"Group":{"Columns":[{"Column":{"label":"Steward User ID","fieldId":"00000000-0000-0000-0000-000000005016","fieldName":"userRole00000000000000000000000000005016rid"}},{"Column":{"label":"Steward Gender","fieldName":"userRole00000000000000000000000000005016gender"}},{"Column":{"label":"Steward First Name","fieldName":"userRole00000000000000000000000000005016fn"}},{"Column":{"label":"Steward Last Name","fieldName":"userRole00000000000000000000000000005016ln"}}],"name":"Role00000000000000000000000000005016"}},{"Group":{"Columns":[{"Column":{"label":"Steward Group ID","fieldName":"groupRole00000000000000000000000000005016grid"}},{"Column":{"label":"Steward Group Name","fieldName":"groupRole00000000000000000000000000005016ggn"}}],"name":"Role00000000000000000000000000005016g"}},{"Column":{"fieldName":"statusname"}},{"Column":{"fieldName":"statusrid"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldName":"concepttyperid"}}, {"Group":{"name":"synonym_for","Columns":[{"Column":{"fieldName":"Relc06ed0b7032f4d0fae405824c12f94a6T","fieldId":"c06ed0b7-032f-4d0f-ae40-5824c12f94a6T","label":"Business Term"}},{"Column":{"fieldName":"relRelc06ed0b7032f4d0fae405824c12f94a6Trid","label":"Business Term ID"}},{"Column":{"fieldName":"Relc06ed0b7032f4d0fae405824c12f94a6Trid","label":"Business Term Business Term ID"}}]}}],'.
 			'"Resources":{"Term":{"CreatedOn":{"name":"createdOn"},"LastModified":{"name":"lastModified"},"Id":{"name":"termrid"},"BooleanAttribute":[{"Id":{"name":"Attr0d798f70b3ca4af2b28354f84c4714aarid"},"labelId":"0d798f70-b3ca-4af2-b283-54f84c4714aa","Value":{"name":"Attr0d798f70b3ca4af2b28354f84c4714aa"}}],"Signifier":{"name":"termsignifier"},"StringAttribute":[{"Value":{"name":"Attr00000000000000000000000000000202"},"LongExpression":{"name":"Attr00000000000000000000000000000202longExpr"},"Id":{"name":"Attr00000000000000000000000000000202rid"},"labelId":"00000000-0000-0000-0000-000000000202"}],"Member":[{"User":{"Gender":{"name":"userRole00000000000000000000000000005016gender"},"FirstName":{"name":"userRole00000000000000000000000000005016fn"},"Id":{"name":"userRole00000000000000000000000000005016rid"},"LastName":{"name":"userRole00000000000000000000000000005016ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016sig"},"name":"Role00000000000000000000000000005016","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016rid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005016ggn"},"Id":{"name":"groupRole00000000000000000000000000005016grid"}},"roleId":"00000000-0000-0000-0000-000000005016"}],"SingleValueListAttribute":[{"Value":{"name":"Attre0937764544a4d2198cedc0c1936b465"},"Id":{"name":"Attre0937764544a4d2198cedc0c1936b465rid"},"labelId":"e0937764-544a-4d21-98ce-dc0c1936b465"}],"Status":{"Signifier":{"name":"statusname"},"Id":{"name":"statusrid"}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"},"Id":{"name":"concepttyperid"}}],"Relation":[{"typeId":"c06ed0b7-032f-4d0f-ae40-5824c12f94a6","type":"TARGET","Id":{"name":"relRelc06ed0b7032f4d0fae405824c12f94a6Trid"},"Source":{"Id":{"name":"Relc06ed0b7032f4d0fae405824c12f94a6Trid"},"Signifier":{"name":"Relc06ed0b7032f4d0fae405824c12f94a6T"}}}],'.
@@ -583,49 +565,45 @@ class SearchController extends AppController {
 			'			 ]'.
 			'       },'.
 			'		{'.
-			'           "OR":[';
-		foreach($arrQuery as $q){
-			$requestFilter .= '              {'.
-			'                 "Field":{'.
-			'                    "name":"termsignifier",'.
-			'                    "operator":"INCLUDES",'.
-			'                    "value":"'.$q.'"'.
-			'                 }'.
-			'              },';
-		}
-		$requestFilter = substR($requestFilter, 0, strlen($requestFilter)-1);
+			'			"OR":['.$ridFilter.']'.
+			'		}';
 
-		// search definition as well as term title
-		if(!$termOnly){
-			foreach($arrQuery as $q){
-				$requestFilter .= ',{'.
-					'                 "Field":{'.
-					'                    "name":"Attr00000000000000000000000000000202longExpr",'.
-					'                    "operator":"INCLUDES",'.
-					'                    "value":"'.$q.'"'.
-					'                 }'.
-					'               }';
-			}
+		if(!Configure::read('allowUnrequestableTerms')){
+			$requestFilter .= ',{  '.
+			'	   "OR":[  '.
+			'		  {  '.
+			'			 "Field":{  '.
+			'				"name":"Attr0d798f70b3ca4af2b28354f84c4714aa",'.
+			'				"operator":"NULL"'.
+			'			 }'.
+			'		  },'.
+			'		  {  '.
+			'			 "Field":{  '.
+			'				"name":"Attr0d798f70b3ca4af2b28354f84c4714aa",'.
+			'				"operator":"EQUALS",'.
+			'				"value":true'.
+			'			 }'.
+			'		  }'.
+			'	   ]'.
+			'	}';
+		}
+
+		if(!Configure::read('allowUnapprovedeTerms')){
+			$requestFilter .= ',{"AND":[{"Field":{"name":"statusname","operator":"EQUALS","value":"Accepted"}}]}';
 		}
 
 		$requestFilter .= ']'.
-			'        },'.
-			'        {'.
-			'           "OR":['.$commFilter.']'.
-			'        }';
-		if(!Configure::read('allowUnapprovedeTerms')){
-			$requestFilter .= '        ,'.
-				'        {'.
-				'           "AND":[{"Field":{"name":"statusname","operator":"EQUALS","value":"Accepted"}}]'.
-				'        }';
-		}
-		$requestFilter .= '     ]'.
 			'}'.
 			',"Order":[';
 
-		// set sort
-		$requestFilter .= '{"Field":{"name":"'.$sortField.'","order":"'.$sortOrder.'"}}';
+		// set sort if not sorting by score
+		if($sortField != 'score'){
+			$requestFilter .= '{"Field":{"name":"'.$sortField.'","order":"'.$sortOrder.'"}}';
+		}
 
+		// set paging
+		$displayStart = 0;
+		$displayLength = 100;
 		$requestFilter .= ']}},"displayStart":'.$displayStart.',"displayLength":'.$displayLength.'}}';
 
 		$resp = $objCollibra->request(
@@ -638,10 +616,29 @@ class SearchController extends AppController {
 			)
 		);
 		$resp = json_decode($resp);
-		//print_r($resp);exit;
+
+		//order results based on first search
+		if($sortField == 'score' && sizeof($resp->aaData)>0){
+			$arrTmpTerms = array();
+			foreach($searchResp->results as $result){
+				foreach($resp->aaData as $term){
+					if($term->termrid == $result->name->id){
+						array_push($arrTmpTerms, $term);
+						break;
+					}
+				}
+			}
+			$resp->aaData = $arrTmpTerms;
+		}
+
+		// get all communities to use for search filtering and bread crumbs in results page
+		$communityResp = $objCollibra->request(
+			array('url'=>'community/all')
+		);
+		$jsonAllCommunities = json_decode($communityResp);
 		
 		// loop through terms to check for quick links and also to build domain breadcrumb
-		if(sizeof($resp->aaData)>0){
+		if(is_array($resp->aaData)){
 			$term = $resp->aaData;
 			for($i=0; $i<sizeof($term); $i++){
 				// add parent community names to breadcrumb
