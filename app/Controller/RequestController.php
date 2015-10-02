@@ -255,9 +255,11 @@ class RequestController extends AppController {
 			phpCAS::forceAuthentication();
 		}else{
 			$netID = phpCAS::getUser();
+			//$netID = "***REMOVED***";
 			$this->loadModel('BYUWS');
 			$objBYUWS = new BYUWS();
 			$byuUser = $objBYUWS->personalSummary($netID);
+			$supervisorInfo = $objBYUWS->supervisorLookup($netID);
 		}
 		
 		// make sure terms have been added to the users's queue
@@ -319,50 +321,14 @@ class RequestController extends AppController {
 			$termNames[] = $term->termsignifier;
 		}
 		array_multisort($domains, SORT_ASC, $termNames, SORT_ASC, $termResp->aaData);
-		//print_r($termResp);exit;
-		
-		/*
-		// get all communities to use for bread crumbs in results page
-		$communityResp = $objCollibra->request(
-			array('url'=>'community/all')
-		);
-		$jsonAllCommunities = json_decode($communityResp);
-		// loop through terms to build domain breadcrumb
-		if(sizeof($termResp->aaData)>0){
-			for($i=0; $i<sizeof($termResp->aaData); $i++){
-				// add parent community names to breadcrumb
-				$fullCommunityName = '';
-				for($j=0; $j<sizeof($jsonAllCommunities->communityReference); $j++){
-					$parentObj = $jsonAllCommunities->communityReference[$j];
-					if($parentObj->resourceId == $termResp->aaData[$i]->commrid){
-						while(isset($parentObj->parentReference)){
-							$parentObj = $parentObj->parentReference;
-							if($parentObj->name != "BYU"){
-								$fullCommunityName = $parentObj->name.' > '.$fullCommunityName;
-							}
-						}
-					}
-				}
-				$fullCommunityName .= $termResp->aaData[$i]->communityname;
-				$termResp->aaData[$i]->communityname = $fullCommunityName;
-			}
-		}*/
-		//print_r($termResp);exit;
-		
+
 		// load form fields for ISA workflow
 		$formResp = $objCollibra->request(array('url'=>'workflow/'.Configure::read('isaWorkflow').'/form/start'));
 		$formResp = json_decode($formResp);
 		
-		// load all collibra users for sponsor drop down
-		/*$userResp = $objCollibra->request(array('url'=>'user/all'));
-		$userResp = json_decode($userResp);
-		usort($userResp->user, 'self::sortUsers');*/
-		
 		$this->set('formFields', $formResp);
-		//$this->set('sponsors', $userResp);
 		$this->set('termDetails', $termResp);
-		//$this->set('byuUser', $byuUser);
-		
+
 		$psName = '';
 		$psPhone = '';
 		$psEmail = '';
@@ -393,6 +359,7 @@ class RequestController extends AppController {
 		$this->set('psDepartment', $psDepartment);
 		$this->set('psPersonID', $psPersonID);
 		$this->set('psReportsToName', $psReportsToName);
+		$this->set('supervisorInfo', $supervisorInfo);
 		$this->set('submitErr', isset($this->request->query['err']));
 	}
 }
