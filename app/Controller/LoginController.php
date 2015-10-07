@@ -11,6 +11,7 @@ class LoginController extends AppController {
         
         // phpCAS::setCasServerCACert($cas_server_ca_cert_path);
         phpCAS::setNoCasServerValidation();
+		phpCAS::handleLogoutRequests(false);
         
         if(phpCAS::isAuthenticated()){
             $redirect = '/';

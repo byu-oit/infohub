@@ -39,6 +39,7 @@ class AppController extends Controller {
 		phpCAS::client(CAS_VERSION_2_0, $cas_host, $cas_port, $cas_context);
 		// phpCAS::setCasServerCACert($cas_server_ca_cert_path);
 		phpCAS::setNoCasServerValidation();
+		phpCAS::handleLogoutRequests(false);
 		$byuUsername = '';
 
 		if(phpCAS::isAuthenticated()){
