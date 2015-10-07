@@ -72,6 +72,7 @@ class BYUWS extends Model {
         }
         if(is_array($supervisorResponse->EMPLOYEE->JOB)){
             $supervisorResponse->EMPLOYEE->JOB = $supervisorResponse->EMPLOYEE->JOB[0];
+            $supervisorResponse->EMPLOYEE->JOB->SupervisorPhoneNumber = str_replace('/', '-', $supervisorResponse->EMPLOYEE->JOB->SupervisorPhoneNumber);
         }
         return $supervisorResponse->EMPLOYEE;
     }
