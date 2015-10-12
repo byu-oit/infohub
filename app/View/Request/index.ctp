@@ -75,25 +75,25 @@
 				<div class="fieldGroup">
 					<!-- <div class="infoCol"> -->
 					    <div class="field-continer">
-					        <label for="name">Name</label>
+					        <label for="name">Requester Name</label>
 						    <input type="text" id="name" name="name" class="inputShade noPlaceHolder" value="<?php echo $psName ?>">
 					    </div>
-					    <div class="field-continer">
-					        <label for="phone">Phone Number</label>
-						    <input type="text" id="phone" name="phone" class="inputShade noPlaceHolder" value="<?php echo $psPhone ?>">
-					    </div>
+                        <div class="field-continer">
+                            <label for="phone">Requester Phone</label>
+                            <input type="text" id="phone" name="phone" class="inputShade noPlaceHolder" value="<?php echo $psPhone ?>">
+                        </div>
 					<!-- </div>
 					<div class="infoCol"> -->
 					    <div class="field-continer">
-					        <label for="email">Email</label>
-						    <input type="text" id="email" name="email" class="inputShade noPlaceHolder" value="<?php echo $psEmail ?>">
-					    </div>
-						<div class="field-continer">
-                            <label for="role">Role</label>
+                            <label for="role">Requester Role</label>
                             <input type="text" id="role" name="role" class="inputShade noPlaceHolder" value="<?php echo $psRole ?>">
                         </div>
                         <div class="field-continer">
-                            <label for="requestingOrganization">Requesting Organization</label>
+                            <label for="email">Requester Email</label>
+                            <input type="text" id="email" name="email" class="inputShade noPlaceHolder" value="<?php echo $psEmail ?>">
+                        </div>
+						<div class="field-continer">
+                            <label for="requestingOrganization">Requester Organization</label>
                             <input type="text" id="requestingOrganization" name="requestingOrganization" class="inputShade noPlaceHolder" value="<?php echo $supervisorInfo->JOB->SupervisorOrganization ?>">
                         </div>
 					    <input type="hidden" name="requesterPersonId" value="<?php echo $psPersonID ?>" />
@@ -108,6 +108,10 @@
                         <input type="text" id="sponsorName" name="sponsorName" class="inputShade noPlaceHolder" value="<?php echo $supervisorInfo->JOB->SupervisorName ?>">
                     </div>
                     <div class="field-continer">
+                        <label for="sponsorPhone">Sponsor Phone</label>
+                        <input type="text" id="sponsorPhone" name="sponsorPhone" class="inputShade noPlaceHolder" value="<?php echo $supervisorInfo->JOB->SupervisorPhoneNumber ?>">
+                    </div>
+                    <div class="field-continer">
                         <label for="sponsorRole">Sponsor Role</label>
                         <input type="text" id="sponsorRole" name="sponsorRole" class="inputShade noPlaceHolder" value="<?php echo $supervisorInfo->JOB->SupervisorJobTitle ?>">
                     </div>
@@ -115,10 +119,7 @@
                         <label for="sponsorEmail">Sponsor Email</label>
                         <input type="text" id="sponsorEmail" name="sponsorEmail" class="inputShade noPlaceHolder" value="<?php echo $supervisorInfo->JOB->SupervisorEmail ?>">
                     </div>
-                    <div class="field-continer">
-                        <label for="sponsorPhone">Sponsor Phone</label>
-                        <input type="text" id="sponsorPhone" name="sponsorPhone" class="inputShade noPlaceHolder" value="<?php echo $supervisorInfo->JOB->SupervisorPhoneNumber ?>">
-                    </div>
+                    
                 </div>
                 
                 <h3 class="headerTab">Information Requested</h3>
