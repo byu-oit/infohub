@@ -7,12 +7,12 @@
 		$("#searchLink").addClass('active');
 		resultsWidth();
         // populare form fields for testing
-        $('#request input, #request textarea').each(function(i) {
+        /*$('#request input, #request textarea').each(function(i) {
             if($(this).val()==''){
                 $(this).val('TEST DATA '+i);
             }
-        })
-        $('#request select').val('7c04c361-7a87-4f25-8238-ee50f0afa377');
+        })*/
+        //$('#request select').val('7c04c361-7a87-4f25-8238-ee50f0afa377');
         
         <?php
             if($submitErr){
@@ -70,31 +70,57 @@
 			<h2 class="headerTab">Request Form</h2>
 
 			<div id="srLower" class="whiteBox">
-				<h3 class="headerTab">Requester</h3>
+				<h3 class="headerTab">Requester Information</h3>
 				<div class="clear"></div>
-				<div id="requesterInfo">
+				<div class="fieldGroup">
 					<!-- <div class="infoCol"> -->
 					    <div class="field-continer">
-					        <label for="name">Name</label>
-						    <input type="text" id="name" name="name" class="inputShade" placeholder="Name" value="<?php echo $psName ?>">
+					        <label for="name">Requester Name</label>
+						    <input type="text" id="name" name="name" class="inputShade noPlaceHolder" value="<?php echo $psName ?>">
 					    </div>
-					    <div class="field-continer">
-					        <label for="phone">Phone Number</label>
-						    <input type="text" id="phone" name="phone" class="inputShade" placeholder="Phone Number" value="<?php echo $psPhone ?>">
-					    </div>
+                        <div class="field-continer">
+                            <label for="phone">Requester Phone</label>
+                            <input type="text" id="phone" name="phone" class="inputShade noPlaceHolder" value="<?php echo $psPhone ?>">
+                        </div>
 					<!-- </div>
 					<div class="infoCol"> -->
 					    <div class="field-continer">
-					        <label for="email">Email</label>
-						    <input type="text" id="email" name="email" class="inputShade" placeholder="Email" value="<?php echo $psEmail ?>">
-					    </div>
+                            <label for="role">Requester Role</label>
+                            <input type="text" id="role" name="role" class="inputShade noPlaceHolder" value="<?php echo $psRole ?>">
+                        </div>
+                        <div class="field-continer">
+                            <label for="email">Requester Email</label>
+                            <input type="text" id="email" name="email" class="inputShade noPlaceHolder" value="<?php echo $psEmail ?>">
+                        </div>
 						<div class="field-continer">
-					        <label for="role">Role</label>
-						    <input type="text" id="role" name="role" class="inputShade" placeholder="Role" value="<?php echo $psRole ?>">
-					    </div>
+                            <label for="requestingOrganization">Requester Organization</label>
+                            <input type="text" id="requestingOrganization" name="requestingOrganization" class="inputShade noPlaceHolder" value="<?php echo $supervisorInfo->JOB->SupervisorOrganization ?>">
+                        </div>
 					    <input type="hidden" name="requesterPersonId" value="<?php echo $psPersonID ?>" />
 					<!-- </div> -->
 				</div>
+
+                <h3 class="headerTab">Sponsor Information</h3>
+                <div class="clear"></div>
+                <div class="fieldGroup">
+                    <div class="field-continer">
+                        <label for="sponsorName">Sponsor Name</label>
+                        <input type="text" id="sponsorName" name="sponsorName" class="inputShade noPlaceHolder" value="<?php echo $supervisorInfo->JOB->SupervisorName ?>">
+                    </div>
+                    <div class="field-continer">
+                        <label for="sponsorPhone">Sponsor Phone</label>
+                        <input type="text" id="sponsorPhone" name="sponsorPhone" class="inputShade noPlaceHolder" value="<?php echo $supervisorInfo->JOB->SupervisorPhoneNumber ?>">
+                    </div>
+                    <div class="field-continer">
+                        <label for="sponsorRole">Sponsor Role</label>
+                        <input type="text" id="sponsorRole" name="sponsorRole" class="inputShade noPlaceHolder" value="<?php echo $supervisorInfo->JOB->SupervisorJobTitle ?>">
+                    </div>
+                    <div class="field-continer">
+                        <label for="sponsorEmail">Sponsor Email</label>
+                        <input type="text" id="sponsorEmail" name="sponsorEmail" class="inputShade noPlaceHolder" value="<?php echo $supervisorInfo->JOB->SupervisorEmail ?>">
+                    </div>
+                    
+                </div>
                 
                 <h3 class="headerTab">Information Requested</h3>
 				<div class="clear"></div>
@@ -111,13 +137,13 @@
                                 $community = $term->communityname;
                                 $domain = $term->domainname;
                                 $termID = $term->termrid;
-                                $termDef = addslashes(strip_tags($term->Attr00000000000000000000000000000202));
+                                $termDef = addslashes(strip_tags($term->Attr00000000000000000000000000000202longExpr));
                                 if($i>0 && $i%2==0){
                                     echo '</div>';
                                     echo '<div class="checkCol">';
                                 }
                                 echo '    <input type="checkbox" onclick="toggleDataNeeded(this)" value="'.$termID.'" name="terms[]" id="'.$termID.'" checked="checked">'.
-                                    '    <label for="'.$termID.'">'.$domain.' > '.$termName.'</label><div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$termDef.'" class="info"><img src="/img/iconInfo.png"></div>';
+                                    '    <label for="'.$termID.'">'.$community.' > '.$domain.' > '.$termName.'</label><div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$termDef.'" class="info"><img src="/img/iconInfo.png"></div>';
                                 if($i%2==0){
                                     echo '<br/>';
                                 }
@@ -132,19 +158,36 @@
                 
                 <?php
                     foreach($formFields->formProperties as $field){
-                        $arrNonDisplay = array("requesterName", "requesterEmail", "requesterPhone", "informationElements", "requesterRole", "requesterPersonId");
+                        $arrNonDisplay = array(
+                            "requesterName", 
+                            "requesterEmail", 
+                            "requesterPhone", 
+                            "informationElements", 
+                            "requesterRole", 
+                            "requesterPersonId", 
+                            "requestingOrganization",
+                            "sponsorName",
+                            "sponsorRole",
+                            "sponsorEmail",
+                            "sponsorPhone"
+                        );
                         if(!in_array($field->id, $arrNonDisplay)){
                             echo '<label class="headerTab" for="'.$field->id.'">'.$field->name.'</label>'.
                                 '<div class="clear"></div>'.
                                 '<div class="taBox">';
                             
                             $val = '';
-                            if($field->id == 'requestingOrganization'){
-                                $val = $psDepartment;
+                            switch($field->id){
+                                case 'requestingOrganization':
+                                    $val = $psDepartment;
+                                    break;
+                                case 'sponsorName':
+                                    $val = $psReportsToName;
+                                    break;
                             }
                             
                             if($field->type == 'textarea'){
-                                echo '<textarea name="'.$field->id.'" id="'.$field->id.'"  class="inputShade">'.$val.'</textarea>';
+                                echo '<textarea name="'.$field->id.'" id="'.$field->id.'"  class="inputShade noPlaceHolder">'.$val.'</textarea>';
                             }elseif($field->type == 'user'){
                                 echo '<select name="'.$field->id.'" id="'.$field->id.'">';
                                 foreach($sponsors->user as $sponsor){
@@ -154,7 +197,7 @@
                                 }
                                 echo '</select>';
                             }else{
-                                echo '<input type="text" name="'.$field->id.'" id="'.$field->id.'" val="'.$val.'" class="inputShade full" />';
+                                echo '<input type="text" name="'.$field->id.'" id="'.$field->id.'" value="'.$val.'" class="inputShade full noPlaceHolder" />';
                             }
 
                             echo '</div>';

@@ -279,7 +279,28 @@ img.resultBodyLoading {
 #searchBody #requestForm #srLower .resultItem .resultContent ul li .listLabel,
 #searchBody #searchSuccess #srLower .resultItem .resultContent ul li .listLabel {
   color: #224d7d;
-  margin-left: 3px;
+}
+#searchBody #searchResults #srLower .resultItem .resultContent ul li.synonym,
+#searchBody #requestForm #srLower .resultItem .resultContent ul li.synonym,
+#searchBody #searchSuccess #srLower .resultItem .resultContent ul li.synonym {
+  color: #b5b5b5;
+}
+#searchBody #searchResults #srLower .resultItem .resultContent ul li.synonym .listLabel,
+#searchBody #requestForm #srLower .resultItem .resultContent ul li.synonym .listLabel,
+#searchBody #searchSuccess #srLower .resultItem .resultContent ul li.synonym .listLabel,
+#searchBody #searchResults #srLower .resultItem .resultContent ul li.synonym .classificationTitle,
+#searchBody #requestForm #srLower .resultItem .resultContent ul li.synonym .classificationTitle,
+#searchBody #searchSuccess #srLower .resultItem .resultContent ul li.synonym .classificationTitle,
+#searchBody #searchResults #srLower .resultItem .resultContent ul li.synonym a,
+#searchBody #requestForm #srLower .resultItem .resultContent ul li.synonym a,
+#searchBody #searchSuccess #srLower .resultItem .resultContent ul li.synonym a {
+  color: #b5b5b5;
+  text-decoration: none;
+}
+#searchBody #searchResults #srLower .resultItem .resultContent ul li.new-line,
+#searchBody #requestForm #srLower .resultItem .resultContent ul li.new-line,
+#searchBody #searchSuccess #srLower .resultItem .resultContent ul li.new-line {
+  clear: left;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody,
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody,
@@ -349,6 +370,18 @@ img.resultBodyLoading {
 #searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol input {
   margin-left: 0;
 }
+#searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol img,
+#searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol img,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol img {
+  position: relative;
+  top: -2px;
+}
+#searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol img.denied,
+#searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol img.denied,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol img.denied {
+  top: 0;
+  margin: 3px 3px 0 0;
+}
 #searchBody #searchResults #srLower .resultItem .addQuickLink,
 #searchBody #requestForm #srLower .resultItem .addQuickLink,
 #searchBody #searchSuccess #srLower .resultItem .addQuickLink {
@@ -385,10 +418,37 @@ img.resultBodyLoading {
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
+#searchBody #searchResults #srLower .resultItem .unrequestable,
+#searchBody #requestForm #srLower .resultItem .unrequestable,
+#searchBody #searchSuccess #srLower .resultItem .unrequestable {
+  color: white;
+  font-size: 12.5px;
+  text-decoration: none;
+  padding: 6px 15px;
+  background-color: #cccaca;
+  display: block;
+  /*width: 98px;*/
+  text-align: center;
+  font-weight: bold;
+  position: absolute;
+  bottom: 20px;
+  right: 3%;
+  border: none;
+  outline: none;
+  -webkit-appearance: none;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+}
 #searchBody #searchResults #srLower .resultItem .inactive,
 #searchBody #requestForm #srLower .resultItem .inactive,
 #searchBody #searchSuccess #srLower .resultItem .inactive {
   background-color: #cccaca;
+}
+#searchBody #searchResults #srLower .resultItem .detailsRequestBtn,
+#searchBody #requestForm #srLower .resultItem .detailsRequestBtn,
+#searchBody #searchSuccess #srLower .resultItem .detailsRequestBtn {
+  display: none;
 }
 #searchBody #searchResults #srLower .resultItem .detailsTab,
 #searchBody #requestForm #srLower .resultItem .detailsTab,
@@ -635,39 +695,39 @@ img.resultBodyLoading {
 #searchBody #searchSuccess #srLower input.full {
   height: auto;
 }
-#searchBody #requestForm #srLower #requesterInfo,
-#searchBody #searchSuccess #srLower #requesterInfo {
+#searchBody #requestForm #srLower .fieldGroup,
+#searchBody #searchSuccess #srLower .fieldGroup {
   width: 75%;
   margin-bottom: 10px;
   *zoom: 1;
 }
-#searchBody #requestForm #srLower #requesterInfo:before,
-#searchBody #searchSuccess #srLower #requesterInfo:before,
-#searchBody #requestForm #srLower #requesterInfo:after,
-#searchBody #searchSuccess #srLower #requesterInfo:after {
+#searchBody #requestForm #srLower .fieldGroup:before,
+#searchBody #searchSuccess #srLower .fieldGroup:before,
+#searchBody #requestForm #srLower .fieldGroup:after,
+#searchBody #searchSuccess #srLower .fieldGroup:after {
   content: "";
   display: table;
 }
-#searchBody #requestForm #srLower #requesterInfo:after,
-#searchBody #searchSuccess #srLower #requesterInfo:after {
+#searchBody #requestForm #srLower .fieldGroup:after,
+#searchBody #searchSuccess #srLower .fieldGroup:after {
   clear: both;
 }
-#searchBody #requestForm #srLower #requesterInfo .field-continer,
-#searchBody #searchSuccess #srLower #requesterInfo .field-continer {
+#searchBody #requestForm #srLower .fieldGroup .field-continer,
+#searchBody #searchSuccess #srLower .fieldGroup .field-continer {
   float: left;
   width: 47%;
   margin: 0 3% 0 0;
 }
-#searchBody #requestForm #srLower #requesterInfo label,
-#searchBody #searchSuccess #srLower #requesterInfo label {
+#searchBody #requestForm #srLower .fieldGroup label,
+#searchBody #searchSuccess #srLower .fieldGroup label {
   display: block;
   font-size: bold;
   font-size: 11px;
 }
-#searchBody #requestForm #srLower #requesterInfo input,
-#searchBody #searchSuccess #srLower #requesterInfo input,
-#searchBody #requestForm #srLower #requesterInfo select,
-#searchBody #searchSuccess #srLower #requesterInfo select {
+#searchBody #requestForm #srLower .fieldGroup input,
+#searchBody #searchSuccess #srLower .fieldGroup input,
+#searchBody #requestForm #srLower .fieldGroup select,
+#searchBody #searchSuccess #srLower .fieldGroup select {
   width: 100%;
   margin: 0 0 12px 0;
 }
@@ -709,7 +769,7 @@ img.resultBodyLoading {
 }
 #searchBody #requestForm #srLower .resultItem .irLower .checkCol,
 #searchBody #searchSuccess #srLower .resultItem .irLower .checkCol {
-  width: 400px;
+  width: 50%;
   float: left;
 }
 #searchBody #requestForm #srLower .resultItem .irLower .checkCol label,
@@ -723,6 +783,16 @@ img.resultBodyLoading {
 #searchBody #requestForm #srLower .resultItem .irLower .checkCol input,
 #searchBody #searchSuccess #srLower .resultItem .irLower .checkCol input {
   margin-left: 0;
+}
+#searchBody #requestForm #srLower .resultItem .irLower .checkCol img,
+#searchBody #searchSuccess #srLower .resultItem .irLower .checkCol img {
+  position: relative;
+  top: -2px;
+}
+#searchBody #requestForm #srLower .resultItem .irLower .checkCol img.denied,
+#searchBody #searchSuccess #srLower .resultItem .irLower .checkCol img.denied {
+  top: 0;
+  margin-right: 3px;
 }
 #searchBody #requestForm #srLower .taBox,
 #searchBody #searchSuccess #srLower .taBox {
@@ -796,7 +866,7 @@ form#request #mobileReqd {
     clear: both;
     margin: -25px 0 23px 28%;
   }
-  #searchBody #requestForm #srLower #requesterInfo {
+  #searchBody #requestForm #srLower .fieldGroup {
     width: 104%;
   }
 }
@@ -871,16 +941,16 @@ form#request #mobileReqd {
   }
 }
 @media screen and (max-width: 650px) {
-  #searchBody #requestForm #srLower #requesterInfo {
+  #searchBody #requestForm #srLower .fieldGroup {
     width: 100%;
   }
-  #searchBody #requestForm #srLower #requesterInfo .field-continer {
+  #searchBody #requestForm #srLower .fieldGroup .field-continer {
     float: none;
     width: 100%;
     margin: 0;
   }
-  #searchBody #requestForm #srLower #requesterInfo input,
-  #searchBody #requestForm #srLower #requesterInfo select {
+  #searchBody #requestForm #srLower .fieldGroup input,
+  #searchBody #requestForm #srLower .fieldGroup select {
     width: 100%;
     margin: 0 0% 12px 0;
   }

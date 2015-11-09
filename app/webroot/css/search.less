@@ -214,6 +214,7 @@ img.resultBodyLoading {
 				padding: 20px 3% 20px 60px;
 				margin-bottom: 38px;
 				.box-shade();
+				//display: none;
 
 				h4 {
 					font-size: 16px;
@@ -246,7 +247,22 @@ img.resultBodyLoading {
 
 							.listLabel {
 								color: #224d7d;
-								margin-left: 3px;
+								//margin-left: 3px;
+							}
+
+							&.synonym{
+								//background-color: @headerBlue2;
+								//color: #fff;
+								color: #b5b5b5;
+								//padding: 2px 4px 2px 2px;
+								.listLabel, .classificationTitle, a{
+									color: #b5b5b5;
+									text-decoration: none;
+								}
+							}
+
+							&.new-line{
+								clear: left;
 							}
 						}
 					}
@@ -290,6 +306,15 @@ img.resultBodyLoading {
                                 input {
                                     margin-left: 0;
                                 }
+                                img{
+									position: relative;
+									top: -2px;
+								}
+
+								img.denied{
+									top: 0;
+									margin: 3px 3px 0 0;
+								}
                             }
                         }
 					}
@@ -322,9 +347,30 @@ img.resultBodyLoading {
                     		-webkit-appearance: none;
 					.box-shade();
 				}
+				.unrequestable {
+					color: #fff;
+					font-size: 12.5px;
+					text-decoration: none;
+					padding: 6px 15px;
+					background-color: #cccaca;
+					display: block;
+					/*width: 98px;*/
+					text-align: center;
+					font-weight: bold;
+					position: absolute;
+					bottom: 20px;
+					right: 3%;
+            		border: none;
+            		outline: none;
+            		-webkit-appearance: none;
+					.box-shade();
+				}
                 .inactive{
                     background-color: #cccaca;
                 }
+				.detailsRequestBtn{
+					display: none;
+				}
 				.detailsTab {
 					background-color: #cccaca;
 					padding: 4px 30px 5px 12px;
@@ -501,7 +547,7 @@ img.resultBodyLoading {
                 height: auto;
             }
             
-			#requesterInfo {
+			.fieldGroup {
 				width: 75%;
 				margin-bottom: 10px;
                 .clear;
@@ -554,7 +600,7 @@ img.resultBodyLoading {
 					}
 					.checkCol {
 						//width: 154px;
-                        width: 400px;
+                        width: 50%;//400px;
 						float: left;
 
 						label {
@@ -566,6 +612,14 @@ img.resultBodyLoading {
 						}
 						input {
 							margin-left: 0;
+						}
+						img{
+							position: relative;
+							top: -2px;
+						}
+						img.denied{
+							top: 0;
+							margin-right: 3px;
 						}
 					}
 				}
@@ -653,7 +707,7 @@ form#request {
 		clear: both;
 		margin: -25px 0 23px 28%;
 	}
-	#searchBody #requestForm #srLower #requesterInfo {
+	#searchBody #requestForm #srLower .fieldGroup {
 		width: 104%;
 	}
 }
@@ -748,7 +802,7 @@ form#request {
 	}
 }
 @media screen and (max-width: 650px) {
-	#searchBody #requestForm #srLower #requesterInfo {
+	#searchBody #requestForm #srLower .fieldGroup {
 		width: 100%;
         
         .field-continer{

@@ -65,7 +65,7 @@
 				<h3>Search Information</h3>
 			</div>
 			<div id="searchBox">
-				<form action="#" onsubmit="document.location='/search/results/'+this.searchInput.value; return false;" method="post">
+				<form action="#" onsubmit="document.location='/search/results/'+this.searchInput.value.replace('+','&'); return false;" method="post">
                     		<input id="searchInput" name="searchInput" type="text" class="inputShade" placeholder="Search keyword, topic, or phrase" maxlength="50" autocomplete="off"  />
                     		<?php echo $this->element('auto_complete'); ?>
                     		<input type="submit" value="Search" class="inputButton" />
@@ -80,7 +80,7 @@
 	<h3><span>Quick Links</span></h3>
 	<div class="qlBox">
 		<a href="/people" class="qLicon grow"><img src="/img/ql-book.png" alt="Locate People"></a>
-		<p>Locate peolpe who <br>can help you find <br>your information.</p>
+		<p>Locate people who <br>can help you find <br>your information.</p>
 		<a href="/people" class="qlLink">Find People</a>
 	</div>
 	<div class="qlBox">

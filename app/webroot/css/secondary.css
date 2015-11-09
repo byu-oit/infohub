@@ -88,16 +88,24 @@
 .clear {
   clear: both;
 }
-.blueText {
+.blueText,
+.blueText a {
+  text-decoration: none;
   color: #1b7bdb;
 }
-.greenText {
+.greenText,
+.greenText a {
+  text-decoration: none;
   color: #5db154;
 }
-.orangeText {
+.orangeText,
+.orangeText a {
+  text-decoration: none;
   color: #fe8a02;
 }
-.redText {
+.redText,
+.redText a {
+  text-decoration: none;
   color: #f72525;
 }
 .contactBox {

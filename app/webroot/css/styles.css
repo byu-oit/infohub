@@ -104,12 +104,20 @@ header #headerInner #headerRight .userInfo {
   font-size: 11px;
   display: block;
   float: left;
-  padding-right: 10px;
-  line-height: 18px;
+  padding-left: 10px;
+  line-height: 13px;
+  margin-top: -3px;
 }
 header #headerInner #headerRight .userInfo a {
   color: white;
   text-decoration: none;
+}
+header #headerInner #headerRight .userInfo a.login {
+  display: block;
+  margin-top: 5px;
+}
+header #headerInner #headerRight .userInfo a.logout {
+  font-size: 10px;
 }
 header #headerInner #headerRight .userInfo a:hover {
   text-decoration: underline;

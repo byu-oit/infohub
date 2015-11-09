@@ -26,6 +26,10 @@
         a{
             color: @blue;
             font-size: 15px;
+
+            &.logout{
+            	font-size: 12px;
+            }
         }
 		#atLower {
 			clear: left;
@@ -83,8 +87,9 @@
         .clear;
 
 		.requestItem {
+			position: relative;
 			background-color: #fff;
-			margin-bottom: 24px;
+			margin-bottom: 38px;
 			padding: 20px 2%;
 			float: left;
   			width: 96%;
@@ -98,15 +103,15 @@
                 }
             }
 
-			.riLeft {
-				width: 75%;
-				float: left;
+            .riTitle {
+				color: @headerBlue2;
+				font-size: 16px;
+				margin: 0;
+			}
 
-				.riTitle {
-					color: @headerBlue2;
-					font-size: 16px;
-					margin: 0;
-				}
+			.riLeft {
+				width: 65%;
+				float: left;
 				.riDate {
 					font-size: 12px;
 					margin: 4px 0;
@@ -127,14 +132,244 @@
 					display: block;
 				}
 			}
+
+			.riRight {
+				width: 35%;
+				float: right;
+
+				.riTitle {
+					text-align: right;
+				}
+			}
+
+			.approver{
+				position: relative;
+				float: right;
+				margin: 5px 15px 10px 0;
+				.clear;
+
+				.user-icon{
+					padding: 25px;
+					border-radius: 30px;
+					content: '';
+					float: left;
+					background-image: url(../img/requests-user-icon.png);
+					background-repeat: no-repeat;
+					background-position: center center;
+					background-color: #d8e8aa;
+				}
+
+				.info{
+					display: none;
+					width: 150px;
+					background-color: #fff;
+					position: absolute;
+					padding: 10px;
+					left: -128%;
+					top: -110px;
+					border: solid 3px #d8e8aa;
+					line-height: 10px;
+
+					a,p{
+						color: #000;
+						text-decoration: none;
+						display: block;
+						float: left;
+						padding: 2px 0 0 0;
+						margin: 0;
+					}
+
+					div{
+						.clear;
+						margin-bottom: 2px;
+						font-size: 9px;
+					}
+
+					&:after{
+						content: '';
+						width: 16px;
+						height: 8px;
+						position: absolute;
+						background: url(../img/requests-info-arrow.png) center right #d8e8aa;
+						bottom: -11px;
+						left: 43%;
+					}
+
+					.icon{
+						display: block;
+						float: left;
+						width: 15px;
+						height: 15px;
+						margin-right: 5px;
+						background-color: #d8e8aa;
+						background-repeat: no-repeat;
+					}
+
+					.contactName{
+						text-align: center;
+						font-size: 12px;
+						font-weight: bold;
+						padding-bottom: 5px;
+					}
+					.contactNumber .icon{
+						background-image: url(../img/request-phone-icon.png);
+					}
+					.contactEmail .icon{
+						background-image: url(../img/request-email-icon.png);
+					}
+					.status .icon{
+						background-image: url(../img/request-pending-icon.png);
+					}
+					.status .icon.approved{
+						background-image: url(../img/request-approved-icon.png);
+					}
+					.status .icon.denied{
+						background-image: url(../img/request-pending-icon.png);
+					}
+				}
+
+				&.approved{
+					.user-icon {
+						background-color: #b5d45d;
+					}
+					.info{
+						border-color: #b5d45d;
+						&:after, .icon{
+							background-color: #b5d45d;
+						}
+					}
+				}
+				&.denied{
+					.user-icon {
+						background-color: #EE3839;
+					}
+					.info{
+						border-color: #EE3839;
+						&:after, .icon{
+							background-color: #EE3839;
+						}
+					}
+				}
+			}
+
+			.detailsBody {
+				display: none;
+				.clear;
+				clear: both;
+				background-color: @grayLight;
+				border-top: solid 20px #fff;
+				padding: 20px 30px;
+
+				.data-col{
+					float: left;
+					width: 30%;
+					margin-right: 10%;
+				}
+
+				p {
+					font-size: 12px;
+					width: 100%;
+					margin-top: 0;
+					background-color: #fff;
+					padding: 5px;
+					.box-shade();
+				}
+				h4 {
+					color: @headerBlue2;
+					font-size: 16px;
+					margin: 0;
+				}
+				h5 {
+					font-size: 13px;
+					font-weight: bold;
+					color: @headerBlue2;
+					margin: 0 0 3px 0;
+					//margin: 0;
+				}
+				h3.headerTab {
+					float: left;
+					font-size: 18px;
+					margin: 15px 0 10px 0;
+					padding: 4px 18px;
+					font-weight: normal;
+					.box-shade();
+				}
+			}
+
+			.detailsTab {
+				background-color: #cccaca;
+				padding: 4px 30px 5px 12px;
+				position: absolute;
+				bottom: -24px;
+				left: 15px;
+				color: #fff;
+				font-weight: bold;
+				text-decoration: none;
+				font-size: 11px;
+				cursor: pointer;
+				-webkit-box-shadow: 3px 3px 6px 0px rgba(50, 50, 50, 0.15);
+				-moz-box-shadow: 3px 3px 6px 0px rgba(50, 50, 50, 0.15);
+				box-shadow: 3px 3px 6px 0px rgba(50, 50, 50, 0.15);
+				transition: all .2s ease-in-out;
+				
+				&:before {
+					content:'';
+					position:absolute;
+					width: 100%;
+					height: 4px;
+					background:linear-gradient(to bottom, rgba(50, 50, 50, 0.22), #cccaca);
+					top:0;
+					left:0;
+				}
+				&:after {
+					content: "";
+					position: absolute;
+					right: 14px;
+					top: 11px;
+					transition: top .2s ease-in-out;
+					height: 5px;
+					width: 8px;
+					background: url('/img/iconDownArrow.png') no-repeat;
+					background-size: 8px;
+				}
+				.detailsLess {
+					display: none;
+					float: left;
+				}
+				&:hover {
+					padding-top: 9px;
+					bottom: -29px;
+
+					&:after {
+						top:16px;
+					}
+				}
+				&.active {
+					.detailsLess {
+						display: block;
+					}
+					.detailsMore {
+						display: none;
+					}
+					&:after {
+						background: url('/img/iconUpArrow.png') no-repeat;
+						background-size: 8px;
+						top: 9px;
+					}
+					&:hover {
+						&:after {
+							top:15px;
+						}
+					}
+				}
+			}
 		}
 	}
 }
 
 
 //============== MEDIA QUERIES ==============//
-
-@media screen and (max-width: 650px) {
+@media screen and (max-width: 720px) {
 	#accountMid {
 		#accountTop {
 			padding: 25px 0;
@@ -184,6 +419,38 @@
 	  					margin: 0 auto;
 					}
 				}
+
+				.riRight{
+					width: 100%;
+					float: none;
+					clear: both;
+					margin: 20px 0;
+
+					.riTitle {
+						text-align: left;
+					}
+
+					.approver{
+						width: 100%;
+						clear: both;
+						.user-icon{
+							display: none;
+						}
+						
+						.info{
+							display: block;
+							width: 94%;
+							padding: 3%;
+							position: relative;
+							left: 0;
+							top:0;
+							&:after{
+								display: none;
+							}
+						}
+					}
+				}
+
 				.contactBox {
 					float: none;
 					margin: 0 auto;
@@ -195,6 +462,13 @@
 					&:before {
 						background: none;
 
+					}
+				}
+				.detailsBody {
+					.data-col{
+						float: none;
+						width: 100%;
+						margin-right: 0;
 					}
 				}
 			}
