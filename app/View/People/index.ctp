@@ -92,9 +92,11 @@
                         foreach($val as $key2 => $val2){
                             $user = $val[$key2];
                             echo '<div class="contactBox">'.
-                                '    <span class="contactName">'.$user['fname'].' '.$user['lname'].'</span>'.
-                                '    <div class="contactNumber"><a href="tel:'.$user['phone'].'">'.$user['phone'].'</a></div>'.
-                                '    <div class="contactEmail"><a href="mailto:'.$user[email]['email'].'">'.$user['email'].'</a></div>'.
+                                '    <span class="contactName">'.$user['fname'].' '.$user['lname'].'</span>';
+                            if($user['phone'] != '&nbsp;'){
+                                echo '    <div class="contactNumber"><a href="tel:'.$user['phone'].'">'.$user['phone'].'</a></div>';
+                            }
+                            echo '    <div class="contactEmail"><a href="mailto:'.$user['email'].'">'.$user['email'].'</a></div>'.
                                 '</div>'; 
                         }
                         echo '</div>';
