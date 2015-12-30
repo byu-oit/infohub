@@ -13,7 +13,7 @@
 		
 		$(".deptLink").click(function() {
 			$(".deptLink").removeClass('active');
-			$(this).addClass("active");
+			//$(this).addClass("active");
 			mobMenu();
 		});
 
@@ -55,12 +55,11 @@
 <!-- Request list -->
 <div id="peopleBody" class="innerLower">
 	<div id="peopleTop">
-		<h2 class="headerTab">Person Look-Up</h2>
+		<h2 class="headerTab">Directory Look-Up</h2>
 		<div class="clear"></div>
 		<div id="ptLower" class="whiteBox">
 			<form action="/people/lookup" method="post">
-				<input type="text" placeholder="First Name" class="inputShade" value="<?php echo $fname ?>" name="fname" maxlength="50">
-				<input type="text" placeholder="Last Name" class="inputShade" value="<?php echo $lname ?>" name="lname" maxlength="50">
+				<input type="text" placeholder="Search keywords" class="inputShade" value="<?php echo $query ?>" name="query" maxlength="50">
 				<input type="submit" value="Search" class="inputButton">
 			</form>
 			<div class="clear"></div>
@@ -76,30 +75,67 @@
 				<ul class="show">
 					<li><a href="/people" class="deptLink">A-Z Listing</a></li>
 					<?php
-                        foreach($communities->communityReference as $c){
-                            echo '<li><a href="/people?c='.$c->resourceId.'" class="deptLink">'.$c->name.'</a></li>';
+                        foreach($parentCommunities->communityReference as $c){
+                            echo '<li><a href="/people/dept?c='.$c->resourceId.'" class="deptLink">'.$c->name.'</a></li>';
                         }
                     ?>
 				</ul>
 			</div>
 			<div id="rightCol">
 			    <?php
-                    if(sizeof($userData)==0){
+                    if(count($communities->aaData[0]->Subcommunities)==0){
                         echo '<h1>No results found.</h1><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>';
                     }else{
-                        // loop through user groups
-                        foreach($userData as $key => $val){
+                    	// loop through user groups
+                        foreach($communities->aaData[0]->Subcommunities as $c){
+                        	$title = $c->subcommunity;
+                        	if($c->parentCommunity != ''){
+                        		$title = $c->parentCommunity.'/'.$title;
+                        	}
+
                             echo '<div class="people-list">'.
-                                '<h4 class="deptHeader">'.$key.'</h4>';
-                            // display eac user in group
-                            foreach($val as $key2 => $val2){
-                                $user = $val[$key2];
-                                echo '<div class="contactBox">'.
-                                    '    <span class="contactName">'.$user['fname'].' '.$user['lname'].'</span>'.
-                                    '    <div class="contactNumber"><a href="tel:'.$user['phone'].'">'.$user['phone'].'</a></div>'.
-                                    '    <div class="contactEmail"><a href="mailto:'.$user[email]['email'].'">'.$user['email'].'</a></div>'.
+                                '<h4 class="deptHeader">'.$title.'</h4>';
+                            // display stewards
+                           	if(isset($c->steward)){
+                           		$name = $c->steward->userfirstname.' '.$c->steward->userlastname;
+                           		if(strpos(strtolower($name), strtolower($query)) !== false){
+                           			$name = '<strong>'.$name.'</strong>';
+                           		}
+                           		$email = $c->steward->emailemailaddress;
+                           		$phone = '';
+                           		if(count($c->steward->phonenumber>0)){
+                           			$phone = $c->steward->phonenumber[0]->phonephonenumber;
+                           		}
+                           		echo '<div class="contactBox contactOrange">'.
+                                    '    <span class="contactName">'.$name.'</span>';
+                                if($phone != ''){
+                                    echo '    <div class="contactNumber"><a href="tel:'.$phone.'">'.$phone.'</a></div>';
+                                }
+                                echo '    <div class="contactEmail"><a href="mailto:'.$email.'">'.$email.'</a></div>'.
+                                	'    <span class="contactTitle">Steward<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$stewardDef.'" class="info"><img src="/img/iconInfo.png"></div></span>'.
                                     '</div>'; 
-                            }
+                           	}
+                           	// display custodians
+                           	if(isset($c->custodian)){
+                           		$name = $c->custodian->userfirstname.' '.$c->custodian->userlastname;
+                           		if(strpos(strtolower($name), strtolower($query)) !== false){
+                           			$name = '<strong>'.$name.'</strong>';
+                           		}
+                           		$email = $c->custodian->emailemailaddress;
+                           		$phone = '';
+                           		if(count($c->custodian->phonenumber>0)){
+                           			$phone = $c->custodian->phonenumber[0]->phonephonenumber;
+                           		}
+                           		echo '<div class="contactBox">'.
+                                    '    <span class="contactName">'.$name.'</span>';
+                                if($phone != ''){
+                                    echo '    <div class="contactNumber"><a href="tel:'.$phone.'">'.$phone.'</a></div>';
+                                }
+                                echo '    <div class="contactEmail"><a href="mailto:'.$email.'">'.$email.'</a></div>'.
+                                	'    <span class="contactTitle">Custodian<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$custodianDef.'" class="info"><img src="/img/iconInfo.png"></div></span>'.
+                                    '</div>'; 
+                           	}
+
                             echo '</div>';
                         }
                     }

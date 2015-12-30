@@ -133,7 +133,7 @@ class RequestController extends AppController {
 			$arrQueue = unserialize($_COOKIE['queue']);
 			if(sizeof($arrQueue)>=1){
 				for($j=0; $j<sizeof($arrQueue); $j++){
-					$listHTML .= '<li id="requestItem'.$arrQueue[$j][1].'">'.$arrQueue[$j][0].'<a class="delete" onclick="return confirm(\'Are you sure you want to delete this item?\')" href="javascript:removeFromRequestQueue(\''.$arrQueue[$j][1].'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a></li>';
+					$listHTML .= '<li id="requestItem'.$arrQueue[$j][1].'" data-title="'.$arrQueue[$j][0].'" data-rid="'.$arrQueue[$j][1].'" data-vocabID="'.$arrQueue[$j][2].'">'.$arrQueue[$j][0].'<a class="delete" href="javascript:removeFromRequestQueue(\''.$arrQueue[$j][1].'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a></li>';
 				}
 			}else{
 				$emptyQueue = true;

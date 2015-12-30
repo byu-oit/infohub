@@ -137,73 +137,73 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			var index = -1;
 			$('#searchInput').keypress(function(event) { return event.keyCode != 13; });
 			$('#searchInput').on({
-						keyup: function(e){
-							var m;
+				keyup: function(e){
+					var m;
 
-							if ($.trim($('#searchInput').val()) == ''){
-									$('.autoComplete').hide();
-							}
-							else if  ( e == true ) {
-									$('.autoComplete').hide();
-							}
-							else if  ( e.which == 27 ) {
-									$('.autoComplete').hide();
-									index = -1;
-							}
-							else if(e.which == 13) {
-								if($('.autoComplete li').hasClass('active')){
-									$('#searchInput').val($('.autoComplete li.active').text());
-									$('#searchInput').parent().submit();
-								}
-									else {
-										$('#searchInput').parent().submit();
-									}
-									$('.autoComplete').hide();
-							}
-							else if(e.which == 38){
-									e.preventDefault();
-									if(index == -1){
-										index = $('.autoComplete li').length - 1;
-									}
-									else {
-										index--;
-									}
-						
-									if(index > $('.autoComplete li').length ){
-										index = $('.autoComplete li').length + 1;
-									}
-									m = true;
-							}
-							else if(e.which === 40){
-									e.preventDefault();
-									if(index >= $('.autoComplete li').length -1){
-										index = 0;
-									}
-									else{
-										index++;
-									}
-									m = true;
-							}
-							else{
-									var val = $('#searchInput').val();
-									$.get( "/search/autoCompleteTerm", { q: val } )
-									.done(function( data ) {
-											$('.autoComplete .results').html(data);
-											$('.autoComplete li').click(function(){
-												$('#searchInput').val($(this).text());
-												$('#searchInput').parent().submit();
-												$('.autoComplete').hide();
-											});
-									});
-
-									$('.autoComplete').show();
-							}
-
-							if(m){
-									$('.autoComplete li.active').removeClass('active');
-									$('.autoComplete li').eq(index).addClass('active');
-						   }
+					if ($.trim($('#searchInput').val()) == ''){
+						$('.autoComplete').hide();
+					}
+					else if  ( e == true ) {
+						$('.autoComplete').hide();
+					}
+					else if  ( e.which == 27 ) {
+						$('.autoComplete').hide();
+						index = -1;
+					}
+					else if(e.which == 13) {
+						if($('.autoComplete li').hasClass('active')){
+							$('#searchInput').val($('.autoComplete li.active').text());
+							$('#searchInput').parent().submit();
 						}
+						else {
+							$('#searchInput').parent().submit();
+						}
+						$('.autoComplete').hide();
+					}
+					else if(e.which == 38){
+						e.preventDefault();
+						if(index == -1){
+							index = $('.autoComplete li').length - 1;
+						}
+						else {
+							index--;
+						}
+			
+						if(index > $('.autoComplete li').length ){
+							index = $('.autoComplete li').length + 1;
+						}
+						m = true;
+					}
+					else if(e.which === 40){
+						e.preventDefault();
+						if(index >= $('.autoComplete li').length -1){
+							index = 0;
+						}
+						else{
+							index++;
+						}
+						m = true;
+					}
+					else{
+						var val = $('#searchInput').val();
+						$.get( "/search/autoCompleteTerm", { q: val } )
+						.done(function( data ) {
+								$('.autoComplete .results').html(data);
+								$('.autoComplete li').click(function(){
+									$('#searchInput').val($(this).text());
+									$('#searchInput').parent().submit();
+									$('.autoComplete').hide();
+								});
+						});
+
+						$('.autoComplete').show();
+					}
+
+					if(m){
+						$('.autoComplete li.active').removeClass('active');
+						$('.autoComplete li').eq(index).addClass('active');
+				   }
+				}
 			});
 		});
 		
@@ -241,8 +241,20 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 		function removeFromRequestQueue(id){
 			$.post("/request/removeFromQueue", {id:id})
 				.done(function(data){
-					$('#requestItem'+id).remove();
-					getCurrentRequestTerms();
+					var title = $('#requestItem'+id).attr('data-title');
+					var rID = $('#requestItem'+id).attr('data-rid');
+					var vocabID = $('#requestItem'+id).attr('data-vocabID');
+					
+					$('#request-undo').remove();
+					$('#requestItem'+id).fadeOut('fast',function(){
+						var html = '<div id="request-undo" data-title="' + title + '" data-rid="' + rID + '" data-vocabID="' + vocabID + '">Item removed. Click to undo.</div>';
+						$(html).insertBefore('#request-popup ul');
+						$('#request-undo').click(function(){
+							addToQueue(this, false);
+							$(this).remove();
+						})
+						getCurrentRequestTerms();
+					});
 			});
 		}
 		function getCurrentRequestTerms(){
@@ -265,6 +277,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			var arrTitles = new Array($(elem).attr('data-title'));
 			var arrIDs = new Array($(elem).attr('data-rid'));
 			var arrVocabIDs = new Array($(elem).attr('data-vocabID'));
+
 			$(elem).parent().find('.checkBoxes').find('input').each(function(){
 				if($(this).prop("checked")){
 					arrTitles.push($(this).attr('data-title'));

@@ -12,13 +12,19 @@
 		$("#findLink").addClass('active');
 		
 		$(".deptLink").click(function() {
-			$(".deptLink").removeClass('active');
-			$(this).addClass("active");
+			$(".deptLink").parent().removeClass('active');
+			//$(this).addClass("active");
 			mobMenu();
 		});
 
 		$("#subMobMenu").click(function() {
 			$('#leftCol ul').slideToggle();
+		});
+		
+		$(".deptLink-sub").click(function() {
+			if($(window).width() < 750) {
+				$('#leftCol ul').hide();
+			}
 		});
 	});
 
@@ -55,12 +61,11 @@
 <!-- Request list -->
 <div id="peopleBody" class="innerLower">
 	<div id="peopleTop">
-		<h2 class="headerTab">Person Look-Up</h2>
+		<h2 class="headerTab">Directory Look-Up</h2>
 		<div class="clear"></div>
 		<div id="ptLower" class="whiteBox">
 			<form action="/people/lookup" method="post">
-				<input type="text" placeholder="First Name" class="inputShade" name="fname" maxlength="50">
-				<input type="text" placeholder="Last Name" class="inputShade" name="lname" maxlength="50">
+				<input type="text" placeholder="Search keywords" class="inputShade" value="" name="query" maxlength="50">
 				<input type="submit" value="Search" class="inputButton">
 			</form>
 			<div class="clear"></div>
@@ -81,7 +86,14 @@
                             if($c->resourceId == $community){
                                 $cssClass = 'class="active"';
                             }
-                            echo '<li><a '.$cssClass.' href="/people/dept?c='.$c->resourceId.'" class="deptLink">'.$c->name.'</a></li>';
+                            echo '<li '.$cssClass.'><a href="/people/dept?c='.$c->resourceId.'" class="deptLink">'.$c->name.'</a>';
+                            // build sub navigation
+                            if($c->resourceId == $community){
+			                    foreach($domains as $d){
+			                    	echo '<a class="deptLink-sub" href="#'.$d['id'].'">'.$d['name'].'</a>';
+			                    }
+			                }
+ 	                        echo '</li>';
                         }
                     ?>
 				</ul>
@@ -90,6 +102,7 @@
 			    <?php
                     foreach($domains as $d){
                         echo '<div class="people-list">'.
+                        	'<a name="'.$d['id'].'"></a>'.
                             '<h4 class="deptHeader">'.$d['name'].'</h4>';
                         if(sizeof($d['steward'])>0){
                             $phone = '&nbsp;';

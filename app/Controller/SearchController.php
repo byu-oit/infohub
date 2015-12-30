@@ -521,7 +521,7 @@ class SearchController extends AppController {
 		if($communityFilter == ''){
 			$communityFilter = Configure::read('byuCommunity');
 		}
-		
+		// call search API limiting results to business term and synonym types
 		$request = '{"query":"'.$query.'", "filter": { "community": ["'.$communityFilter.'"], "category":["TE"], "vocabulary":[], "type":{"asset":["00000000-0000-0000-0000-000000011001","ed82f17f-c1e7-4d6d-83cc-50f6b529c296"]},';
 		if(!Configure::read('allowUnapprovedeTerms')){
 			$request .= '"status": ["00000000-0000-0000-0000-000000005009"], ';

@@ -178,6 +178,13 @@ header #headerInner #headerRight #request-popup.fixed {
 header #headerInner #headerRight #request-popup h3 {
   margin: 0 0 5px 0;
 }
+header #headerInner #headerRight #request-popup #request-undo {
+  padding: 2px 10px;
+  color: #4f8a10;
+  background-color: #dff2bf;
+  text-align: center;
+  cursor: pointer;
+}
 header #headerInner #headerRight #request-popup ul {
   margin: 0;
   padding: 0 0 0 15px;
