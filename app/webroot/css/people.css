@@ -15,6 +15,18 @@
   margin: 0;
   background-position: center;
 }
+.people-list {
+  *zoom: 1;
+  margin-bottom: 20px;
+}
+.people-list:before,
+.people-list:after {
+  content: "";
+  display: table;
+}
+.people-list:after {
+  clear: both;
+}
 #peopleBody {
   position: relative;
 }
@@ -145,7 +157,7 @@
 #peopleBody #peopleBottom #peopleMain #rightCol .contactBox {
   *zoom: 1;
   float: left;
-  margin-top: 68px;
+  margin-top: 55px;
   margin-bottom: 25px;
   margin-left: 0;
   margin-right: 5%;
