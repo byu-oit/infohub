@@ -104,65 +104,38 @@
                         echo '<div class="people-list">'.
                         	'<a name="'.$d['id'].'"></a>'.
                             '<h4 class="deptHeader">'.$d['name'].'</h4>';
-                        if(sizeof($d['steward'])>0){
-                            $phone = '&nbsp;';
-                            if(isset($d['steward']->phoneNumbers->phone)){
-                                $phone = $d['steward']->phoneNumbers->phone[0]->number;
+                        if(sizeof($d['stewardData'])>0){
+                            $phone = '';
+                            if(count($d['stewardData']->phonephonenumber)>0){
+                                $phone = $d['stewardData']->phonenumber[0]->phonephonenumber;
+                                $phone = '<div class="contactNumber"><a href="tel:'.$phone.'">'.$phone.'</a></div>';
                             }
                             $deptTitle = 'Steward';
                             $cssClass = '';
                             echo '<div class="contactBox contactOrange">'.
-                                '    <span class="contactName">'.$d['steward']->firstName.' '.$d['steward']->lastName.'</span>'.
-                                '    <div class="contactNumber"><a href="tel:'.$phone.'">'.$phone.'</a></div>'.
-                                '    <div class="contactEmail"><a href="mailto:'.$d['steward']->emailAddress.'">'.$d['steward']->emailAddress.'</a></div>'.
+                                '    <span class="contactName">'.$d['stewardData']->userfirstname.' '.$d['stewardData']->userlastname.'</span>'.
+                                $phone.
+                                '    <div class="contactEmail"><a href="mailto:'.$d['stewardData']->emailemailaddress.'">'.$d['stewardData']->emailemailaddress.'</a></div>'.
                                 '    <span class="contactTitle">'.$deptTitle.'<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$stewardDef.'" class="info"><img src="/img/iconInfo.png"></div></span>'.
                                 '</div>';
                         }
-                        if(sizeof($d['custodian'])>0){
-                            $phone = '&nbsp;';
-                            if(isset($d['custodian']->phoneNumbers->phone)){
-                                $phone = $d['custodian']->phoneNumbers->phone[0]->number;
+                        if(sizeof($d['custodianData'])>0){
+                            $phone = '';
+                            if(isset($d['custodianData']->phoneNumbers->phone)){
+                                $phone = $d['custodianData']->phonenumber[0]->phonephonenumber;
+                                $phone = '<div class="contactNumber"><a href="tel:'.$phone.'">'.$phone.'</a></div>';
                             }
                             $deptTitle = 'Custodian';
                             $cssClass = '';
                             echo '<div class="contactBox">'.
-                                '    <span class="contactName">'.$d['custodian']->firstName.' '.$d['custodian']->lastName.'</span>'.
-                                '    <div class="contactNumber"><a href="tel:'.$phone.'">'.$phone.'</a></div>'.
-                                '    <div class="contactEmail"><a href="mailto:'.$d['custodian']->emailAddress.'">'.$d['custodian']->emailAddress.'</a></div>'.
+                                '    <span class="contactName">'.$d['custodianData']->userfirstname.' '.$d['custodianData']->userlastname.'</span>'.
+                                $phone.
+                                '    <div class="contactEmail"><a href="mailto:'.$d['custodianData']->emailemailaddress.'">'.$d['custodianData']->emailemailaddress.'</a></div>'.
                                 '    <span class="contactTitle">'.$deptTitle.'<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$custodianDef.'" class="info"><img src="/img/iconInfo.png"></div></span>'.
                                 '</div>';
                         }
                         echo '</div>';
                     }
-                    /*foreach($domains->aaData[1]->Vocabularies as $v){
-                        
-                        if(sizeof($v->Role615829186613486a9d8261f7d1c0c014VOCSUFFIX)>0){
-                            $userrid = $v->Role615829186613486a9d8261f7d1c0c014VOCSUFFIX[0]->userRole615829186613486a9d8261f7d1c0c014VOCSUFFIXrid;
-                            $deptTitle = 'custodian';
-                            $cssClass = '';
-                            $name = $v->Role615829186613486a9d8261f7d1c0c014VOCSUFFIX[0]->userRole615829186613486a9d8261f7d1c0c014VOCSUFFIXfn.' '.$v->Role615829186613486a9d8261f7d1c0c014VOCSUFFIX[0]->userRole615829186613486a9d8261f7d1c0c014VOCSUFFIXln;
-                            echo '<div class="contactBox '.$cssClass.'">'.
-                                '    <span class="contactName">'.$name.'</span>'.
-                                '    <div class="contactNumber"><a href="tel:'.$users[$userrid]['phone'].'">'.$users[$userrid]['phone'].'</a></div>'.
-                                '    <div class="contactEmail"><a href="mailto:'.$users[$userrid]['email'].'">'.$users[$userrid]['email'].'</a></div>'.
-                                '    <span class="contactTitle">'.$deptTitle.'</span>'.
-                                '</div>';
-                        }
-                        if(sizeof($v->Role7865d2c3405a459db11edf061adec84bVOCSUFFIX)>0){
-                            $userrid = $v->Role7865d2c3405a459db11edf061adec84bVOCSUFFIX[0]->userRole7865d2c3405a459db11edf061adec84bVOCSUFFIXrid;
-                            $deptTitle = 'Custodian';
-                            $cssClass = 'contactOrange';
-                            $name = $v->Role7865d2c3405a459db11edf061adec84bVOCSUFFIX[0]->userRole7865d2c3405a459db11edf061adec84bVOCSUFFIXfn.' '.$v->Role7865d2c3405a459db11edf061adec84bVOCSUFFIX[0]->userRole7865d2c3405a459db11edf061adec84bVOCSUFFIXln;
-                            echo '<div class="contactBox '.$cssClass.'">'.
-                                '    <span class="contactName">'.$name.'</span>'.
-                                '    <div class="contactNumber"><a href="tel:'.$users[$userrid]['phone'].'">'.$users[$userrid]['phone'].'</a></div>'.
-                                '    <div class="contactEmail"><a href="mailto:'.$users[$userrid]['email'].'">'.$users[$userrid]['email'].'</a></div>'.
-                                '    <span class="contactTitle">'.$deptTitle.'</span>'.
-                                '</div>';
-                        }
-                        echo '</div>';
-                        
-                    }*/
                 ?>
 			</div>
 			<div class="clear"></div>

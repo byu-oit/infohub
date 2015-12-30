@@ -307,34 +307,42 @@ class PeopleController extends AppController {
 				array_push($arrDomainData, $arr);
 			}
 		}
-		
+
+		// get all users including their contact info
+		$users = $objCollibra->request(
+			array(
+				'url'=>'output/data_table',
+				'post'=>true,
+				'json'=>true,
+				'params'=>'{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"userrid"}},{"Column":{"fieldName":"userenabled"}},{"Column":{"fieldName":"userfirstname"}},{"Column":{"fieldName":"userlastname"}},{"Column":{"fieldName":"emailemailaddress"}},{"Group":{"name":"phonenumber","Columns":[{"Column":{"fieldName":"phonephonenumber"}},{"Column":{"fieldName":"phonerid"}}]}},{"Column":{"fieldName":"useractivated"}},{"Column":{"fieldName":"isuserldap"}}],"Resources":{"User":{"Enabled":{"name":"userenabled"},"UserName":{"name":"userusername"},"FirstName":{"name":"userfirstname"},"LastName":{"name":"userlastname"},"Emailaddress":{"name":"emailemailaddress"},"Phone":{"Phonenumber":{"name":"phonephonenumber"},"Id":{"name":"phonerid"}},"Activated":{"name":"useractivated"},"LDAPUser":{"name":"isuserldap"},"Id":{"name":"userrid"},"Filter":{"AND":[{"AND":[{"Field":{"name":"userenabled","operator":"EQUALS","value":"true"}}]}]}}},"Order":[{"Field":{"name":"userlasttname","order":"ASC"}}],"displayStart":0,"displayLength":1000}}'
+			)
+		);
+		$users = json_decode($users);
+
+
 		// load additional information for users
 		$arrUserDetails = array();
 		array_shift($arrDomainData);
 		for($i=0; $i<sizeof($arrDomainData); $i++){
-			// Add Steward to data array
-			if(sizeof($arrDomainData[$i]['steward'])>0){
-				$userrid = $arrDomainData[$i]['steward'][0]->userRole8a0a6c89106c4adb9936f09f29b747acrid;
-				if(!isset($arrUserDetails[$userrid])){
-					$userResp = $objCollibra->request(array('url'=>'user/'.$userrid));
-					$arrUserDetails[$userrid] = json_decode($userResp);
+			foreach($users->aaData as $u){
+				if(count($arrDomainData[$i]['steward']) > 0){
+					$userrid = $arrDomainData[$i]['steward'][0]->userRole8a0a6c89106c4adb9936f09f29b747acrid;
+					if($u->userrid == $userrid){
+						$arrDomainData[$i]['stewardData'] = $u;
+					}
 				}
-				$arrDomainData[$i]['steward'] = $arrUserDetails[$userrid];
-			}
-			// Add Custodian to data array
-			if(sizeof($arrDomainData[$i]['custodian'])>0){
-				$userrid = $arrDomainData[$i]['custodian'][0]->userRolef86d1d3abc2e4beeb17fe0e9985d5afbrid;
-				if(!isset($arrUserDetails[$userrid])){
-					$userResp = $objCollibra->request(array('url'=>'user/'.$userrid));
-					$arrUserDetails[$userrid] = json_decode($userResp);
+
+				if(count($arrDomainData[$i]['custodian']) > 0){
+					$userrid = $arrDomainData[$i]['custodian'][0]->userRolef86d1d3abc2e4beeb17fe0e9985d5afbrid;
+					if($u->userrid == $userrid){
+						$arrDomainData[$i]['custodianData'] = $u;
+					}
 				}
-				$arrDomainData[$i]['custodian'] = $arrUserDetails[$userrid];
 			}
 		}
-		/*print_r($arrDomainData);
-		echo "\r\n\r\n";
-		exit;
-		*/
+		//print_r($arrDomainData);
+		//exit;
+		
 		//////////////////////////////
 		//////////////////////////////
 		
