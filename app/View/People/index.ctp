@@ -87,7 +87,7 @@
 					foreach($userData as $key => $val){
 						echo '<div class="people-list">'.
 							'<h4 class="deptHeader">'.$key.'</h4>';
-						// display eac user in group
+						// display each user in group
 						foreach($val as $key2 => $val2){
 							$user = $val[$key2];
 							echo '<div class="contactBox contactBlue">'.
@@ -99,21 +99,33 @@
 							echo '		<div class="contactEmail"><a href="mailto:'.$user['email'].'">'.$user['email'].'</a></div>'.
 								'	</div>';
 
-							// list roles
+							// list communities with steward role
 							echo '	<div class="roles">';
 							if(count($user['stewardRoles'])>0){
 								echo '<strong class="orangeText">Steward<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$stewardDef.'" class="info"><img src="/img/iconInfo.png"></div></strong>';
 								echo '<ul>';
 								foreach($user['stewardRoles'] as $role){
-									echo '<li>'.$role.'</li>';
+									echo '<li><a href="/people/dept?c='.$role->parents[count($role->parents)-1]->subcommunityid.'#'.$role->subcommunityid.'">';
+									foreach($role->parents as $parent){
+										echo $parent->subcommunity.' <span class="arrow-separator">&gt;</span> ';
+									}
+									echo $role->subcommunity;
+									echo '</a></li>';
 								}
 								echo '</ul>';
 							}
+
+							// list communities with steward role
 							if(count($user['custodianRoles'])>0){
 								echo '<strong class="greenText">Custodian<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$custodianDef.'" class="info"><img src="/img/iconInfo.png"></div></strong>';
 								echo '<ul>';
 								foreach($user['custodianRoles'] as $role){
-									echo '<li>'.$role.'</li>';
+									echo '<li><a href="/people/dept?c='.$role->parents[count($role->parents)-1]->subcommunityid.'#'.$role->subcommunityid.'">';
+									foreach($role->parents as $parent){
+										echo $parent->subcommunity.' <span class="arrow-separator">&gt;</span> ';
+									}
+									echo $role->subcommunity;
+									echo '</a></li>';
 								}
 								echo '</ul>';
 							}

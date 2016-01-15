@@ -101,12 +101,16 @@
 			<div id="rightCol">
 			    <?php
                     foreach($domains as $d){
-                        echo '<div class="people-list">'.
+                    	echo '<div class="people-list">'.
                         	'<a name="'.$d['id'].'"></a>'.
-                            '<h4 class="deptHeader">'.$d['name'].'</h4>';
-                        if(sizeof($d['stewardData'])>0){
+                            '<h4 class="deptHeader">'.$d['name'];
+                        if($d['description'] != ''){
+                        	echo '<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$d['description'].'" class="info"><img src="/img/iconInfo.png"></div>';
+                        }
+                        echo '</h4>';
+                        if(count($d['stewardData'])>0){
                             $phone = '';
-                            if(count($d['stewardData']->phonephonenumber)>0){
+                            if(isset($d['stewardData']->phonenumber[0]->phonephonenumber)){
                                 $phone = $d['stewardData']->phonenumber[0]->phonephonenumber;
                                 $phone = '<div class="contactNumber"><a href="tel:'.$phone.'">'.$phone.'</a></div>';
                             }
@@ -116,12 +120,12 @@
                                 '    <span class="contactName">'.$d['stewardData']->userfirstname.' '.$d['stewardData']->userlastname.'</span>'.
                                 $phone.
                                 '    <div class="contactEmail"><a href="mailto:'.$d['stewardData']->emailemailaddress.'">'.$d['stewardData']->emailemailaddress.'</a></div>'.
-                                '    <span class="contactTitle">'.$deptTitle.'<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$stewardDef.'" class="info"><img src="/img/iconInfo.png"></div></span>'.
+                                '    <span class="contactTitle orange-text">'.$deptTitle.'<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$stewardDef.'" class="info"><img src="/img/iconInfo.png"></div></span>'.
                                 '</div>';
                         }
-                        if(sizeof($d['custodianData'])>0){
+                        if(count($d['custodianData'])>0){
                             $phone = '';
-                            if(isset($d['custodianData']->phoneNumbers->phone)){
+                           if(isset($d['custodianData']->phonenumber[0]->phonephonenumber)){
                                 $phone = $d['custodianData']->phonenumber[0]->phonephonenumber;
                                 $phone = '<div class="contactNumber"><a href="tel:'.$phone.'">'.$phone.'</a></div>';
                             }
@@ -131,7 +135,7 @@
                                 '    <span class="contactName">'.$d['custodianData']->userfirstname.' '.$d['custodianData']->userlastname.'</span>'.
                                 $phone.
                                 '    <div class="contactEmail"><a href="mailto:'.$d['custodianData']->emailemailaddress.'">'.$d['custodianData']->emailemailaddress.'</a></div>'.
-                                '    <span class="contactTitle">'.$deptTitle.'<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$custodianDef.'" class="info"><img src="/img/iconInfo.png"></div></span>'.
+                                '    <span class="contactTitle green-text">'.$deptTitle.'<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$custodianDef.'" class="info"><img src="/img/iconInfo.png"></div></span>'.
                                 '</div>';
                         }
                         echo '</div>';

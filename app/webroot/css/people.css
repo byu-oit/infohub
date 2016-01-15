@@ -183,18 +183,32 @@
 }
 #peopleBody #peopleBottom #peopleMain #rightCol .contactBlue .contact-info {
   float: left;
-  width: 48%;
+  width: 33%;
   margin-right: 2%;
 }
 #peopleBody #peopleBottom #peopleMain #rightCol .contactBlue .roles {
   float: left;
-  width: 50%;
+  width: 65%;
   font-size: 12px;
   margin-top: 8px;
 }
 #peopleBody #peopleBottom #peopleMain #rightCol .contactBlue .roles ul {
   margin: 0 0 8px 0;
   padding: 0 0 0 15px;
+}
+#peopleBody #peopleBottom #peopleMain #rightCol .contactBlue .roles a {
+  color: #282828;
+  text-decoration: none;
+  position: relative;
+}
+#peopleBody #peopleBottom #peopleMain #rightCol .contactBlue .roles a:hover:after {
+  content: '';
+  width: 100%;
+  height: 1px;
+  position: absolute;
+  bottom: 0px;
+  left: 0;
+  border-bottom: solid 1px;
 }
 #peopleBody #peopleBottom #peopleMain #rightCol .contactBlue:before {
   content: "";

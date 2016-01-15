@@ -179,6 +179,12 @@
   clear: left;
   font-weight: bold;
 }
+.contactBox .green-text {
+  color: #5db154;
+}
+.contactBox .orange-text {
+  color: #fe8a02;
+}
 .contactOrange {
   border: 3px solid #ffa900;
 }

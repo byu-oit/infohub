@@ -90,7 +90,7 @@
                         foreach($communities->aaData[0]->Subcommunities as $c){
                         	$title = $c->subcommunity;
                         	if($c->parentCommunity != ''){
-                        		$title = $c->parentCommunity.'/'.$title;
+                        		$title = $c->parentCommunity.' <span class="arrow-separator">&gt;</span> '.$title;
                         	}
 
                             echo '<div class="people-list">'.
