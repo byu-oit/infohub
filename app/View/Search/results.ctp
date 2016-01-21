@@ -190,7 +190,7 @@
 				<div class="<?php echo $classification ?>" title="<?php echo $classificationTitle ?>"></div>
 				<form action="/request/index/<?php echo $term->termrid; ?>" method="post">
 					<h4><?php echo $term->termsignifier; ?></h4>
-					<h5 class="<?php echo $txtColor ?>"><?php echo $term->communityname.' > <a href="/search/listTerms/'.$term->domainrid.'">'.$term->domainname.'</a>' ?></h5>
+					<h5 class="<?php echo $txtColor ?>"><?php echo $term->communityname.' <span class="arrow-separator">&gt;</span> <a href="/search/listTerms/'.$term->domainrid.'">'.$term->domainname.'</a>' ?></h5>
 					<div class="resultContent">
 						<ul>
 						   <?php

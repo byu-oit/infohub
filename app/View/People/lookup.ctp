@@ -20,6 +20,14 @@
 		$("#subMobMenu").click(function() {
 			$('#leftCol ul').slideToggle();
 		});
+
+		// add padding to role title to make sure contact boxes are the same height
+		var maxBoxH = 0;
+		$('.contactBox').each(function(){
+			if(!$(this).find('.contactNumber').size() || !$(this).find('.contactEmail').size()){
+				$(this).find('.contactTitle').css('margin-top', '32');
+			}
+		});
 	});
 
 	function menuSize() {
@@ -82,7 +90,62 @@
 				</ul>
 			</div>
 			<div id="rightCol">
+				<?php
+					//////////////////////////////////
+					// loop through users
+					//////////////////////////////////
+					foreach($userData as $key => $val){
+						foreach($val as $key2 => $val2){
+							$user = $val[$key2];
+							echo '<div class="contactBox contactBlue">'.
+								'	<span class="contactName">'.$user['fname'].' '.$user['lname'].'</span>'.
+								'	<div class="contact-info">';
+							if($user['phone'] != '&nbsp;'){
+								echo '		<div class="contactNumber"><a href="tel:'.$user['phone'].'">'.$user['phone'].'</a></div>';
+							}
+							echo '		<div class="contactEmail"><a href="mailto:'.$user['email'].'">'.$user['email'].'</a></div>'.
+								'	</div>';
+
+							// list communities with steward role
+							echo '	<div class="roles">';
+							if(count($user['stewardRoles'])>0){
+								echo '<strong class="orangeText">Steward<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$stewardDef.'" class="info"><img src="/img/iconInfo.png"></div></strong>';
+								echo '<ul>';
+								foreach($user['stewardRoles'] as $role){
+									echo '<li><a href="/people/dept?c='.$role->parents[count($role->parents)-1]->subcommunityid.'#'.$role->subcommunityid.'">';
+									foreach($role->parents as $parent){
+										echo $parent->subcommunity.' <span class="arrow-separator">&gt;</span> ';
+									}
+									echo $role->subcommunity;
+									echo '</a></li>';
+								}
+								echo '</ul>';
+							}
+
+							// list communities with steward role
+							if(count($user['custodianRoles'])>0){
+								echo '<strong class="greenText">Custodian<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$custodianDef.'" class="info"><img src="/img/iconInfo.png"></div></strong>';
+								echo '<ul>';
+								foreach($user['custodianRoles'] as $role){
+									echo '<li><a href="/people/dept?c='.$role->parents[count($role->parents)-1]->subcommunityid.'#'.$role->subcommunityid.'">';
+									foreach($role->parents as $parent){
+										echo $parent->subcommunity.' <span class="arrow-separator">&gt;</span> ';
+									}
+									echo $role->subcommunity;
+									echo '</a></li>';
+								}
+								echo '</ul>';
+							}
+							echo '	</div>'.
+								'</div>'; 
+						}
+					}
+				?>
+				<div class="clear"></div><br><br>
 			    <?php
+			    	//////////////////////////////////
+			    	// loop through communities
+			    	//////////////////////////////////
                     if(count($communities->aaData[0]->Subcommunities)==0){
                         echo '<h1>No results found.</h1><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>';
                     }else{

@@ -93,7 +93,6 @@
 #peopleBody #peopleBottom #peopleMain #leftCol ul li {
   float: none;
   display: list-item;
-  cursor: pointer;
   margin-bottom: 10px;
   width: 90%;
   -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
@@ -103,7 +102,6 @@
 #peopleBody #peopleBottom #peopleMain #leftCol ul li a {
   color: white;
   padding: 8px 20px;
-  font-size: 1.8em;
   text-decoration: none;
   background-color: #234e77;
   display: block;
@@ -117,15 +115,27 @@
 #peopleBody #peopleBottom #peopleMain #leftCol ul li a:hover {
   background-color: #10375b;
 }
-#peopleBody #peopleBottom #peopleMain #leftCol ul li a.deptLink-sub {
+#peopleBody #peopleBottom #peopleMain #leftCol ul li .deptLink {
+  font-size: 1.8em;
+}
+#peopleBody #peopleBottom #peopleMain #leftCol ul li .deptLink-sub,
+#peopleBody #peopleBottom #peopleMain #leftCol ul li .deptLink-sub-sub {
   margin: 0;
   background-color: white;
   font-size: 12px;
   padding: 5px 10px;
   color: #10375b;
+  display: block;
 }
-#peopleBody #peopleBottom #peopleMain #leftCol ul li a.deptLink-sub:hover {
+#peopleBody #peopleBottom #peopleMain #leftCol ul li .deptLink-arrow {
+  margin-left: 3px;
+}
+#peopleBody #peopleBottom #peopleMain #leftCol ul li a.deptLink-sub:hover,
+#peopleBody #peopleBottom #peopleMain #leftCol ul li a.deptLink-sub-sub:hover {
   background-color: #eeeeee;
+}
+#peopleBody #peopleBottom #peopleMain #leftCol ul li .deptLink-sub-sub {
+  padding: 5px 10px 5px 25px;
 }
 #peopleBody #peopleBottom #peopleMain #leftCol ul li.active {
   width: 100%;
@@ -294,12 +304,6 @@
   #peopleBody #peopleBottom #peopleMain #leftCol ul.mob li {
     border-right: 2px solid #10375b;
     border-left: 2px solid #10375b;
-  }
-  #peopleBody #peopleBottom #peopleMain #leftCol ul.show li a,
-  #peopleBody #peopleBottom #peopleMain #leftCol ul.mob li a {
-    padding: 9px 0 9px 5%;
-    width: 95%;
-    margin-bottom: 2px;
     font-size: 15px;
   }
   #peopleBody #peopleBottom #peopleMain #leftCol ul.show li a:hover,
@@ -310,6 +314,23 @@
   #peopleBody #peopleBottom #peopleMain #leftCol ul.mob li a.active {
     display: block;
     margin-left: 0;
+  }
+  #peopleBody #peopleBottom #peopleMain #leftCol ul.show li .deptLink,
+  #peopleBody #peopleBottom #peopleMain #leftCol ul.mob li .deptLink {
+    font-size: 15px;
+  }
+  #peopleBody #peopleBottom #peopleMain #leftCol ul.show li .deptLink-sub,
+  #peopleBody #peopleBottom #peopleMain #leftCol ul.mob li .deptLink-sub,
+  #peopleBody #peopleBottom #peopleMain #leftCol ul.show li .deptLink-sub-sub,
+  #peopleBody #peopleBottom #peopleMain #leftCol ul.mob li .deptLink-sub-sub {
+    padding: 9px 0 9px 5%;
+    width: 95%;
+    margin-bottom: 2px;
+  }
+  #peopleBody #peopleBottom #peopleMain #leftCol ul.show li .deptLink-sub-sub,
+  #peopleBody #peopleBottom #peopleMain #leftCol ul.mob li .deptLink-sub-sub {
+    padding: 9px 0 9px 10%;
+    width: 90%;
   }
   #peopleBody #peopleBottom #peopleMain #leftCol ul.mob {
     display: block;
@@ -346,5 +367,62 @@
     float: none;
     width: 100%;
     margin-top: 15px;
+  }
+}
+@media print {
+  .headerTab {
+    color: #001948;
+  }
+  #peopleTop {
+    display: none;
+  }
+  #peopleBody #peopleBottom #peopleMain {
+    padding-top: 0;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+  }
+  #peopleBody #peopleBottom #peopleMain #rightCol .contactBox {
+    margin-top: 15px;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+  }
+  #peopleBody #peopleBottom #peopleMain #rightCol .contactBox:before {
+    display: none;
+  }
+  #peopleBody #peopleBottom #peopleMain #rightCol .contactBlue:before {
+    display: none;
+  }
+  #peopleBody #peopleBottom #peopleMain #leftCol,
+  #peopleBody #peopleBottom #peopleMain #rightCol {
+    display: block;
+    float: none;
+    width: 100%;
+  }
+  #peopleBody #peopleBottom #peopleMain #rightCol {
+    width: 90%;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+  }
+  #peopleBody #peopleBottom #peopleMain #leftCol ul li {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    display: none;
+  }
+  #peopleBody #peopleBottom #peopleMain #leftCol ul li.active {
+    display: block;
+  }
+  #peopleBody #peopleBottom #peopleMain #leftCol ul li .deptLink {
+    color: black;
+    font-size: 20px;
+    border-top: solid 1px #acacac;
+    border-bottom: solid 1px #acacac;
+  }
+  #peopleBody #peopleBottom #peopleMain #leftCol ul li .deptLink-sub,
+  #peopleBody #peopleBottom #peopleMain #leftCol ul li .deptLink-sub-sub {
+    display: none;
   }
 }

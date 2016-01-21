@@ -588,6 +588,14 @@ footer #footerBottom p a:hover {
     padding: .2em 0;
   }
 }
+@media print {
+  header,
+  nav,
+  #footerBottom,
+  #needHelp {
+    display: none;
+  }
+}
 pre.cake-error {
   width: 90%;
   margin-left: 5%;

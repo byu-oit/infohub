@@ -23,6 +23,8 @@ class PeopleController extends AppController {
 	}
 
 	private function getSubCommunities($json, $cid, $arrData=null, $level=0){
+		// returns array with first item being the sub community
+		// and the second item being an array with sub-sub communities
 		if(!$arrData) $arrData = array();
 		foreach($json->aaData[0]->Subcommunities as $sc){
 			if($sc->parentCommunityId === $cid){
@@ -51,7 +53,7 @@ class PeopleController extends AppController {
 		$parentCommunities = json_decode($resp);
 		usort($parentCommunities->communityReference, 'self::sortCommunities');
 		
-		// get user data for specified user groups
+		// get user data for specified user groups including their phone and email
 		$objCollibra = new CollibraAPI();
 		$resp = $objCollibra->request(
 			array(
@@ -64,7 +66,7 @@ class PeopleController extends AppController {
 		$resp = json_decode($resp);
 		usort($resp->aaData, 'self::sortUsers');
 
-		// get all communities in the system
+		// get all communities in the system with their steward and custodian
 		$communities = $objCollibra->request(
 			array(
 				'url'=>'output/data_table',
@@ -145,7 +147,6 @@ class PeopleController extends AppController {
 			// search in all communities, vocabularies and users
 			//=================================================================
 			if(isset($this->request->data['query'])){
-				//$query = htmlspecialchars($this->request->data['query'], ENT_QUOTES, 'UTF-8');
 				$query = $this->request->data['query'];
 				$query = preg_replace('/[^ \w]+/', '', $query);
 			}
@@ -200,6 +201,45 @@ class PeopleController extends AppController {
 				)
 			);
 			$users = json_decode($users);
+
+			$arrUserData = array();
+			foreach($users->aaData as $r){
+				if(in_array($r->userrid, $arrUserResults)){
+					$group = substr($r->userlastname,0,1);
+					if(!isset($arrUserData[$group])){
+						$arrUserData[$group] = array();
+					}
+					
+					if(!isset($arrUserData[$group][$r->userrid])){
+						$arrUserData[$group][$r->userrid]['id'] = $r->userrid;
+						$arrUserData[$group][$r->userrid]['fname'] = $r->userfirstname;
+						$arrUserData[$group][$r->userrid]['lname'] = $r->userlastname;
+						$arrUserData[$group][$r->userrid]['email'] = $r->emailemailaddress;
+						$arrUserData[$group][$r->userrid]['phone'] = '&nbsp;';
+						if(sizeof($r->phonenumber)>0){
+							$arrUserData[$group][$r->userrid]['phone'] = $r->phonenumber[0]->phonephonenumber;
+						}
+
+						// add communities in which user has a role
+						$arrUserData[$group][$r->userrid]['stewardRoles'] = array();
+						$arrUserData[$group][$r->userrid]['custodianRoles'] = array();
+						foreach($communities->aaData[0]->Subcommunities as $c){
+							foreach($c->Role8a0a6c89106c4adb9936f09f29b747ac as $role){
+								if($role->userRole8a0a6c89106c4adb9936f09f29b747acrid == $r->userrid){
+									$this->getParentCommunities($communities, $c->parentCommunityId, $c);
+									array_push($arrUserData[$group][$r->userrid]['stewardRoles'], $c);
+								}
+							}
+							foreach($c->Rolef86d1d3abc2e4beeb17fe0e9985d5afb as $role){
+								if($role->userRolef86d1d3abc2e4beeb17fe0e9985d5afbrid == $r->userrid){
+									$this->getParentCommunities($communities, $c->parentCommunityId, $c);
+									array_push($arrUserData[$group][$r->userrid]['custodianRoles'], $c);
+								}
+							}
+						}
+					}
+				}
+			}
 			
 			// loop through all communities from above and filter out those not found
 			// in our first search results
@@ -215,13 +255,13 @@ class PeopleController extends AppController {
 					// add community based on custodian
 					if(count($c->Rolef86d1d3abc2e4beeb17fe0e9985d5afb)>0){
 						if(in_array($c->Rolef86d1d3abc2e4beeb17fe0e9985d5afb[0]->userRolef86d1d3abc2e4beeb17fe0e9985d5afbrid, $arrUserResults)){
-							$include = true;
+							//$include = true;
 						}
 					}
 					// add community based on steward
 					if(count($c->Role8a0a6c89106c4adb9936f09f29b747ac)>0){
 						if(in_array($c->Role8a0a6c89106c4adb9936f09f29b747ac[0]->userRole8a0a6c89106c4adb9936f09f29b747acrid, $arrUserResults)){
-							$include = true;
+							//$include = true;
 						}
 					}
 
@@ -263,6 +303,7 @@ class PeopleController extends AppController {
 		$this->set('custodianDef', $custodianDefinition);
 		$this->set('communities', $communities);
 		$this->set('parentCommunities', $parentCommunities);
+		$this->set('userData', $arrUserData);
 		$this->set('query', $query);
 	}
 	
@@ -301,6 +342,22 @@ class PeopleController extends AppController {
 		//print_r($arrCommunities);
 		//exit;
 		
+		// build data array for navigation
+		$arrNavDomainData = array();
+		for($i=0; $i<sizeof($arrCommunities); $i++){
+			$communityName = $arrCommunities[$i][0]->subcommunity;
+			$arr = array();
+			$arr['name'] = $communityName;
+			$arr['id'] = $arrCommunities[$i][0]->subcommunityid;
+
+			if(sizeof($arrCommunities[$i])>1){
+				$arr['subdomains']  = $arrCommunities[$i][1];
+			}
+
+			array_push($arrNavDomainData, $arr);
+		}
+
+		// build data array for directory/role listing
 		$arrDomainData = array(array());
 		for($i=0; $i<sizeof($arrCommunities); $i++){
 			$communityName = $arrCommunities[$i][0]->subcommunity;
@@ -377,6 +434,7 @@ class PeopleController extends AppController {
 		$custodianDefinition = strip_tags($custodianDefinition->attributeReferences->attributeReference[2]->value);
 		
 		$this->set('communities', $parentCommunities);
+		$this->set('navDomains', $arrNavDomainData);
 		$this->set('domains', $arrDomainData);
 		$this->set('community', $community);
 		$this->set('stewardDef', $stewardDefinition);

@@ -478,7 +478,7 @@ class SearchController extends AppController {
 						while(isset($parentObj->parentReference)){
 							$parentObj = $parentObj->parentReference;
 							if($parentObj->name != "BYU"){
-								$fullCommunityName = $parentObj->name.' > '.$fullCommunityName;
+								$fullCommunityName = $parentObj->name.' <span class="arrow-separator">&gt;</span> '.$fullCommunityName;
 							}
 						}
 					}
@@ -649,7 +649,7 @@ class SearchController extends AppController {
 						while(isset($parentObj->parentReference)){
 							$parentObj = $parentObj->parentReference;
 							if($parentObj->name != "BYU"){
-								$fullCommunityName = $parentObj->name.' > '.$fullCommunityName;
+								$fullCommunityName = $parentObj->name.' <span class="arrow-separator">&gt;</span> '.$fullCommunityName;
 							}
 						}
 					}
@@ -765,7 +765,7 @@ class SearchController extends AppController {
 						while(isset($parentObj->parentReference)){
 							$parentObj = $parentObj->parentReference;
 							if($parentObj->name != "BYU"){
-								$fullCommunityName = $parentObj->name.' > '.$fullCommunityName;
+								$fullCommunityName = $parentObj->name.' <span class="arrow-separator">&gt;</span> '.$fullCommunityName;
 							}
 						}
 					}

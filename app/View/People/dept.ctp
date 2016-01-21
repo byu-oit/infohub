@@ -26,6 +26,14 @@
 				$('#leftCol ul').hide();
 			}
 		});
+
+		// add padding to role title to make sure contact boxes are the same height
+		var maxBoxH = 0;
+		$('.contactBox').each(function(){
+			if(!$(this).find('.contactNumber').size() || !$(this).find('.contactEmail').size()){
+				$(this).find('.contactTitle').css('margin-top', '32px');
+			}
+		});
 	});
 
 	function menuSize() {
@@ -89,8 +97,15 @@
                             echo '<li '.$cssClass.'><a href="/people/dept?c='.$c->resourceId.'" class="deptLink">'.$c->name.'</a>';
                             // build sub navigation
                             if($c->resourceId == $community){
-			                    foreach($domains as $d){
-			                    	echo '<a class="deptLink-sub" href="#'.$d['id'].'">'.$d['name'].'</a>';
+			                    foreach($navDomains as $nd){
+			                    	if(!empty($nd['subdomains'])){
+			                    		echo '<div class="deptLink-sub">'.$nd['name'].'<img class="deptLink-arrow" src="/img/down-arrow.gif"></div>';
+				                    	foreach($nd['subdomains'] as $sub){
+				                    		echo '<a class="deptLink-sub-sub" href="#'.$sub[0]->subcommunityid.'">'.$sub[0]->subcommunity.'</a>';
+				                    	}
+				                    }else{
+				                    	echo '<a class="deptLink-sub" href="#'.$nd['id'].'">'.$nd['name'].'</a>';
+				                    }
 			                    }
 			                }
  	                        echo '</li>';

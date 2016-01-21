@@ -75,7 +75,6 @@
 					li {
 						float: none;
 						display: list-item;
-						cursor: pointer;
 						margin-bottom: 10px;
 						width: 90%;
 						.box-shade();
@@ -83,7 +82,6 @@
 						a {
 							color: white;
 							padding: 8px 20px;
-							font-size: 1.8em;
 							text-decoration: none;
 							background-color: #234e77;
 							display: block;
@@ -95,16 +93,29 @@
 							}
 						}
 
-						a.deptLink-sub{
+						.deptLink{
+							font-size: 1.8em;
+						}
+
+						.deptLink-sub, .deptLink-sub-sub{
 							margin: 0;
 							background-color: #fff;
 							font-size: 12px;
 							padding: 5px 10px;
 							color: #10375b;
+							display: block;
+						}
 
-							&:hover{
-								background-color: #eee;
-							}
+						.deptLink-arrow{
+							margin-left: 3px;
+						}
+
+						a.deptLink-sub:hover, a.deptLink-sub-sub:hover{
+							background-color: #eee;
+						}
+
+						.deptLink-sub-sub{
+							padding: 5px 10px 5px 25px;
 						}
 
 						&.active{
@@ -287,12 +298,9 @@
 					li {
 						border-right: 2px solid #10375b;
 						border-left: 2px solid #10375b;
+						font-size: 15px;
+
 	  					a {
-							padding: 9px 0 9px 5%;
-							width: 95%;
-							margin-bottom: 2px;
-							font-size: 15px;
-							
 							&:hover {
 								margin-left: 0;
 							}
@@ -300,6 +308,21 @@
 								display: block;
 								margin-left: 0;
 							}
+						}
+
+						.deptLink{
+							font-size: 15px;
+						}
+
+						.deptLink-sub, .deptLink-sub-sub{
+							padding: 9px 0 9px 5%;
+							width: 95%;
+							margin-bottom: 2px;
+						}
+
+						.deptLink-sub-sub{
+							padding: 9px 0 9px 10%;
+							width: 90%;
 						}
 					}
 				}
@@ -347,5 +370,72 @@
 			}
 		}
 	}
+}
 
+@media print{
+	.headerTab{
+		color: @blueText;
+	}
+
+	#peopleTop{
+		display: none;
+	}
+	#peopleBody #peopleBottom #peopleMain{
+		padding-top: 0;
+		-webkit-box-shadow: none;
+		-moz-box-shadow: none;
+		box-shadow: none;
+	}
+
+	#peopleBody #peopleBottom #peopleMain #rightCol{
+		.contactBox{
+			margin-top: 15px;
+			-webkit-box-shadow: none;
+			-moz-box-shadow: none;
+			box-shadow: none;
+
+			&:before{
+				display: none;
+			}
+		}
+
+		.contactBlue:before{
+			display: none;
+		}
+	}
+	#peopleBody #peopleBottom #peopleMain{
+		#leftCol, #rightCol{
+			display: block;
+			float: none;
+			width: 100%;
+		}
+
+		#rightCol{
+			width: 90%;
+			-webkit-box-shadow: none;
+			-moz-box-shadow: none;
+			box-shadow: none;
+		}
+
+		#leftCol ul li{
+			-webkit-box-shadow: none;
+			-moz-box-shadow: none;
+			box-shadow: none;
+			display: none;
+
+			&.active{
+				display: block;
+			}
+
+			.deptLink{
+				color: #000;
+				font-size: 20px;
+				border-top: solid 1px #acacac;
+				border-bottom: solid 1px #acacac;
+			}
+			.deptLink-sub, .deptLink-sub-sub{
+				display: none;
+			}
+		}
+	}
 }

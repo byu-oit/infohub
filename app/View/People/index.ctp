@@ -73,7 +73,7 @@
 				<a id="subMobMenu" class="inner">&nbsp;</a>
 				<ul class="mob"><li></li></ul>
 				<ul class="show">
-					<li><a href="/people" class="deptLink active">A-Z Listing</a></li>
+					<li class="active"><a href="/people" class="deptLink">A-Z Listing</a></li>
 					<?php
 						foreach($communities->communityReference as $c){
 							echo '<li><a href="/people/dept?c='.$c->resourceId.'" class="deptLink">'.$c->name.'</a></li>';
