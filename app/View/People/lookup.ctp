@@ -112,7 +112,7 @@
 								echo '<strong class="orangeText">Steward<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$stewardDef.'" class="info"><img src="/img/iconInfo.png"></div></strong>';
 								echo '<ul>';
 								foreach($user['stewardRoles'] as $role){
-									echo '<li><a href="/people/dept?c='.$role->parents[count($role->parents)-1]->subcommunityid.'#'.$role->subcommunityid.'">';
+									echo '<li><a href="/people/dept?c='.$role->parents[0]->subcommunityid.'#'.$role->subcommunityid.'">';
 									foreach($role->parents as $parent){
 										echo $parent->subcommunity.' <span class="arrow-separator">&gt;</span> ';
 									}
@@ -127,7 +127,7 @@
 								echo '<strong class="greenText">Custodian<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$custodianDef.'" class="info"><img src="/img/iconInfo.png"></div></strong>';
 								echo '<ul>';
 								foreach($user['custodianRoles'] as $role){
-									echo '<li><a href="/people/dept?c='.$role->parents[count($role->parents)-1]->subcommunityid.'#'.$role->subcommunityid.'">';
+									echo '<li><a href="/people/dept?c='.$role->parents[0]->subcommunityid.'#'.$role->subcommunityid.'">';
 									foreach($role->parents as $parent){
 										echo $parent->subcommunity.' <span class="arrow-separator">&gt;</span> ';
 									}
@@ -146,18 +146,24 @@
 			    	//////////////////////////////////
 			    	// loop through communities
 			    	//////////////////////////////////
-                    if(count($communities->aaData[0]->Subcommunities)==0){
+                    if(count($communities->aaData[0]->Subcommunities)==0 && count($userData)==0){
                         echo '<h1>No results found.</h1><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>';
                     }else{
                     	// loop through user groups
                         foreach($communities->aaData[0]->Subcommunities as $c){
-                        	$title = $c->subcommunity;
-                        	if($c->parentCommunity != ''){
-                        		$title = $c->parentCommunity.' <span class="arrow-separator">&gt;</span> '.$title;
-                        	}
+                        	$title = '';
+                        	foreach($c->parents as $parent){
+								$title .= $parent->subcommunity.' <span class="arrow-separator">&gt;</span> ';
+							}
+							$title .= $c->subcommunity;
 
                             echo '<div class="people-list">'.
-                                '<h4 class="deptHeader">'.$title.'</h4>';
+                                '<h4 class="deptHeader">'.$title;
+                            if($c->description != ''){
+	                        	echo '<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$c->description.'" class="info"><img src="/img/iconInfo.png"></div>';
+	                        }
+	                        echo '</h4>';
+
                             // display stewards
                            	if(isset($c->steward)){
                            		$name = $c->steward->userfirstname.' '.$c->steward->userlastname;

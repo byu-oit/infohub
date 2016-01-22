@@ -12,12 +12,8 @@ class CollibraAPI extends Model {
     private $settings = array(
         // DEV SERVER
         'url'       =>  'https://byu-dev.collibra.com/rest/latest/',
-        'username'  => '***REMOVED***',//'Admin',
-        'password'  => '***REMOVED***'//'ey6Rourpkwxwe5G'
-        // NON-DEV SERVER
-        //'url'       =>  'https://byu.collibra.com/rest/latest/',
-        //'username'  => '***REMOVED***', 
-        //'password'  => '***REMOVED***'
+        'username'  => '***REMOVED***',
+        'password'  => '***REMOVED***'
     );
     
     private static function cmp($a, $b){
@@ -45,12 +41,8 @@ class CollibraAPI extends Model {
         
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        //curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        //curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-        //curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
-        //curl_setopt($ch, CURLOPT_FRESH_CONNECT, TRUE);
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         curl_setopt($ch, CURLOPT_USERPWD, $this->settings['username'].":".$this->settings['password']);
         $response = curl_exec($ch);
