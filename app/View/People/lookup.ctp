@@ -25,7 +25,7 @@
 		var maxBoxH = 0;
 		$('.contactBox').each(function(){
 			if(!$(this).find('.contactNumber').size() || !$(this).find('.contactEmail').size()){
-				$(this).find('.contactTitle').css('margin-top', '32');
+				$(this).find('.contactTitle').css('margin-top', '32px');
 			}
 		});
 	});
@@ -181,7 +181,7 @@
                                     echo '    <div class="contactNumber"><a href="tel:'.$phone.'">'.$phone.'</a></div>';
                                 }
                                 echo '    <div class="contactEmail"><a href="mailto:'.$email.'">'.$email.'</a></div>'.
-                                	'    <span class="contactTitle">Steward<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$stewardDef.'" class="info"><img src="/img/iconInfo.png"></div></span>'.
+                                	'    <span class="contactTitle orangeText">Steward<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$stewardDef.'" class="info"><img src="/img/iconInfo.png"></div></span>'.
                                     '</div>'; 
                            	}
                            	// display custodians
@@ -201,7 +201,7 @@
                                     echo '    <div class="contactNumber"><a href="tel:'.$phone.'">'.$phone.'</a></div>';
                                 }
                                 echo '    <div class="contactEmail"><a href="mailto:'.$email.'">'.$email.'</a></div>'.
-                                	'    <span class="contactTitle">Custodian<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$custodianDef.'" class="info"><img src="/img/iconInfo.png"></div></span>'.
+                                	'    <span class="contactTitle greenText">Custodian<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$custodianDef.'" class="info"><img src="/img/iconInfo.png"></div></span>'.
                                     '</div>'; 
                            	}
 

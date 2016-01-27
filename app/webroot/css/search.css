@@ -563,7 +563,7 @@ img.resultBodyLoading {
 #searchBody #searchResults #srLower .classified .classificationTitle,
 #searchBody #requestForm #srLower .classified .classificationTitle,
 #searchBody #searchSuccess #srLower .classified .classificationTitle {
-  color: #fe8a02;
+  color: #ffa900;
 }
 #searchBody #searchResults #srLower .classified:before,
 #searchBody #requestForm #srLower .classified:before,
@@ -574,7 +574,7 @@ img.resultBodyLoading {
 #searchBody #searchResults #srLower .public .classificationTitle,
 #searchBody #requestForm #srLower .public .classificationTitle,
 #searchBody #searchSuccess #srLower .public .classificationTitle {
-  color: #5db154;
+  color: #b5d45d;
 }
 #searchBody #searchResults #srLower .public:before,
 #searchBody #requestForm #srLower .public:before,

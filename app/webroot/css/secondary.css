@@ -96,12 +96,12 @@
 .greenText,
 .greenText a {
   text-decoration: none;
-  color: #5db154;
+  color: #b5d45d;
 }
 .orangeText,
 .orangeText a {
   text-decoration: none;
-  color: #fe8a02;
+  color: #ffa900;
 }
 .redText,
 .redText a {
@@ -180,10 +180,10 @@
   font-weight: bold;
 }
 .contactBox .green-text {
-  color: #5db154;
+  color: #b5d45d;
 }
 .contactBox .orange-text {
-  color: #fe8a02;
+  color: #ffa900;
 }
 .contactOrange {
   border: 3px solid #ffa900;
@@ -352,6 +352,18 @@
 }
 .quickLinks .ql-edit.active:after {
   border-left: 10px solid #ffd480;
+}
+.contactBox .contactTitle.blueText {
+  text-decoration: none;
+  color: #1b7bdb;
+}
+.contactBox .contactTitle.greenText {
+  text-decoration: none;
+  color: #b5d45d;
+}
+.contactBox .contactTitle.orangeText {
+  text-decoration: none;
+  color: #ffa900;
 }
 /*============== LOGIN PAGE  ===============*/
 
