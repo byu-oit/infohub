@@ -21,10 +21,11 @@
   Contact: Lyubomir Arsov, liubo (at) web-lobby.com
 */
 function checkAccess($action){
+    session_name("session_for:index_php");
     if(!session_id()){
         session_start();
     }
-    
+
     if($_SESSION["userID"] == ""){
         exit;
     }

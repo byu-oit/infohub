@@ -49,7 +49,7 @@ class CmsPagesController extends AppController {
         $this -> render('/Cmspages/'.$templateFile);
     }
     
-    /*public function updatePage(){
+    public function updatePage(){
         if ($this->request->data) {
             App::uses('Helpers', 'Model');
             $pgID = Helpers::getInt($this->request->data['pgID']);
@@ -69,5 +69,5 @@ class CmsPagesController extends AppController {
             }
         }
         exit;
-    }*/
+    }
 }
