@@ -54,14 +54,14 @@
             		<td>Description:</td>
 					<td><input id="imgDesc" name="imgDesc" type="text" /></td>
             	</tr>
-            	<tr>
+            	<tr id="dimensions">
             		<td>Dimensions:</td>
 					<td>
                         <table border="0" cellspacing="0" cellpadding="0">
                             <tr>
-                                <td><input id="width" name="width" type="text" style="width: 30px" /></td>
+                                <td><input id="width" name="width" type="text" style="width: 30px" value="100%" /></td>
                                 <td>&nbsp;X&nbsp;</td>
-                                <td><input id="height" name="height" type="text" style="width: 30px" /></td>
+                                <td><input id="height" name="height" type="text" style="width: 30px" value="auto" /></td>
                             </tr>
                         </table>
                     </td>
@@ -73,6 +73,7 @@
 	<div class="mceActionPanel">
 		<div style="float: left">
 			<input type="button" id="btnSubmit1" class="button" name="submit" value="submit" onclick="insertImage()" />
+			<input type="button" id="btnSubmit2" style='display:none' class="button" name="submit" value="submit" onclick="insertDocument()" />
 		</div>
 		<div style="float: right">
 			<input type="button" id="cancel" name="cancel" value="Cancel" onclick="tinyMCEPopup.close();" />

@@ -2109,7 +2109,7 @@ function setFile() {
             self.close();
             break;
         case "tinymce3":
-            var d = tinyMCEPopup.getWindowArg("window");
+            /*var d = tinyMCEPopup.getWindowArg("window");
             d.document.getElementById(tinyMCEPopup.getWindowArg("input")).value = a;
             if (typeof(d.ImageDialog) != "undefined") {
                 if (d.ImageDialog.getImageData) {
@@ -2120,7 +2120,7 @@ function setFile() {
                 }
             }
             tinyMCEPopup.close();
-            break;
+            break;*/
         case "tinymce4":
             var d = (window.opener ? window.opener : window.parent);
             d.document.getElementById(RoxyUtils.GetUrlParam("input")).value = a;

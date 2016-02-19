@@ -18,6 +18,16 @@ var fileLibraryDialog = {
 		// Insert the contents from the input into the document
 		tinyMCEPopup.editor.execCommand('mceInsertContent', false, document.forms[0].youtube_embed.value);
 		tinyMCEPopup.close();
+	},
+	
+	getImageData : function(file) {
+		this.file = file;
+		if(file.type == 'image'){
+
+		}else{
+			$('#btnSubmit1, #dimensions').hide();
+			$('#btnSubmit2').show();
+		}
 	}
 }
 
@@ -49,11 +59,27 @@ function insertImage(){
 	tinyMCEPopup.close();
 }
 
-function insertDocument(file, title){
+function insertDocument(){
+	var f = document.forms[0];
+    var src = f.src.value;
+    var desc = f.imgDesc.value;
+
+    var file = fileLibraryDialog.file.fullPath;
+    file = file.replace('/app/webroot', '');
+
+    if(fileLibraryDialog.file.type == 'pdf'){
+    	desc = '<img src="/js/tiny_mce/plugins/fileLibrary/img/pdf_icon.gif" />';
+    }
+
+    if(desc == ''){
+		desc = fileLibraryDialog.file.name;
+    }
+
+	console.log(fileLibraryDialog.file)
 	tinyMCEPopup.restoreSelection();
 	var selectedText = tinyMCE.activeEditor.selection.getContent();
 	if(selectedText != "") title = selectedText;
-	var html = '<a href="'+file+'" target="_blank">'+title+'</a>';
+	var html = '<a href="'+file+'" target="_blank">'+desc+'</a>';
 	tinyMCEPopup.editor.execCommand('mceInsertContent', false, html);
 	tinyMCEPopup.editor.addVisual()
 	tinyMCEPopup.close();

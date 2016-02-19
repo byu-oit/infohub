@@ -161,7 +161,7 @@ return <<<HTML
 	});
     
     function RoxyFileBrowser(field_name, url, type, win) {
-		//type = '';
+		type = '';
 		
         var roxyFileman = '/fileman/index.html';
         if (roxyFileman.indexOf("?") < 0) {     

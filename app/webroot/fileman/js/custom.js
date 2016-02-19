@@ -35,12 +35,14 @@ function FileSelected(file){
    */
   //alert('"' + file.fullPath + "\" selected.\n To integrate with CKEditor or TinyMCE change INTEGRATION setting in conf.json. For more details see the Installation instructions at http://www.roxyfileman.com/install.");
     
+    alert('test')
     // Get the ID of the input to fill
     var fieldId = RoxyUtils.GetUrlParam('txtFieldId');
     if(fieldId!=''){
         var filePath = file.fullPath;//.toString().replace('/uploads/images/, '');
         //filePath = filePath.replace("\/uploads\/", "");
         $(window.parent.document).find('#' + fieldId).attr('value', filePath);
+        console.log(width)
         window.parent.closeCustomRoxy2();
     }
 }
