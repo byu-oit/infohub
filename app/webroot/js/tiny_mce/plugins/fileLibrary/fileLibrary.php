@@ -31,7 +31,7 @@
 <form action="fileLibrary.php?pageID=<?php echo $pageID ?>" method="post" enctype="multipart/form-data" >
 	<div class="tabs">
 		<ul>
-			<li id="add_tab" class="current"><span><a href="javascript:mcTabs.displayTab('add_tab','add_panel'); toggleButtons(1);" onmousedown="return false;">Insert Image</a></span></li>                   
+			<li id="add_tab" class="current"><span><a href="javascript:mcTabs.displayTab('add_tab','add_panel'); toggleButtons(1);" onmousedown="return false;">Insert File</a></span></li>                   
 		</ul>
 	</div>
 	<div class="panel_wrapper">
