@@ -52,6 +52,9 @@ function insertImage(){
     var desc = f.imgDesc.value;
     var imgW = f.width.value;
     var imgH = f.height.value;
+    if(src.substring(0,1) != '/'){
+    	src = "/"+src;
+    }
 	var html = '<img src="'+src+'" width="'+imgW+'" alt="'+desc+'" />';
 	
 	tinyMCEPopup.editor.execCommand('mceInsertContent', false, html);
@@ -66,6 +69,9 @@ function insertDocument(){
 
     var file = fileLibraryDialog.file.fullPath;
     file = file.replace('/app/webroot', '');
+    if(file.substring(0,1) != '/'){
+    	file = "/"+file;
+    }
 
     if(fileLibraryDialog.file.type == 'pdf'){
     	desc = '<img src="/js/tiny_mce/plugins/fileLibrary/img/pdf_icon.gif" />';
