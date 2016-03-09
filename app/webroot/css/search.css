@@ -307,6 +307,17 @@ img.resultBodyLoading {
 #searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody {
   display: none;
 }
+#searchBody #searchResults #srLower .resultItem .resultContent .resultBody .term-desc ul,
+#searchBody #requestForm #srLower .resultItem .resultContent .resultBody .term-desc ul,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .term-desc ul {
+  list-style: inside disc;
+}
+#searchBody #searchResults #srLower .resultItem .resultContent .resultBody .term-desc ul li,
+#searchBody #requestForm #srLower .resultItem .resultContent .resultBody .term-desc ul li,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .term-desc ul li {
+  display: list-item;
+  float: none;
+}
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody p,
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody p,
 #searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody p {

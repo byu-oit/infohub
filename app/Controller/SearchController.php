@@ -342,13 +342,13 @@ class SearchController extends AppController {
 		$def = '';
 		foreach($jsonResp->attributeReferences->attributeReference as $attr){
 			if($attr->labelReference->signifier == 'Definition'){
-				$def = addslashes($attr->value);
+				$def = $attr->value;
 				break;
 			}
 		}
 
 		// highlight each search term
-		$def = stripslashes(strip_tags($def));
+		$def = strip_tags($def, '<p><span><div><ul><li>');
 		$wrapBefore = '<span class="highlight">';
 		$wrapAfter  = '</span>';
 		
