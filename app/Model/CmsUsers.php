@@ -5,8 +5,8 @@ class CmsUsers extends AppModel {
     
     public $validate = array(
         'username' => array(
-            'rule' => array('email'),
-            'massage' => 'Please enter a valid email address',
+            'rule' => 'notEmpty',
+            'massage' => 'Please enter a username',
         ),
         'password' => array(
             'rule' => 'notEmpty',

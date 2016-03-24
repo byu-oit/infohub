@@ -7,7 +7,7 @@ class QuickLinksController extends AppController {
         if(isset($_COOKIE['QL'])) {
             return unserialize($_COOKIE['QL']);
         }else{
-            return '';   
+            return array();
         }
     }
     

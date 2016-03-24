@@ -34,8 +34,8 @@ class AppController extends Controller {
 	private $quickLinks;
 	
 	public function initBeforeFilter(){
-		require_once $_SERVER['DOCUMENT_ROOT'].'/CAS-1.3.3/config.php';
-		require_once $_SERVER['DOCUMENT_ROOT'].'/CAS-1.3.3/CAS.php';
+		require_once ROOT.'/CAS-1.3.3/config.php';
+		require_once ROOT.'/CAS-1.3.3/CAS.php';
 		phpCAS::client(CAS_VERSION_2_0, $cas_host, $cas_port, $cas_context);
 		// phpCAS::setCasServerCACert($cas_server_ca_cert_path);
 		phpCAS::setNoCasServerValidation();
@@ -64,7 +64,7 @@ class AppController extends Controller {
 		}
 		
 		//$this->disableCache();
-		
+
 		App::import('Controller', 'QuickLinks');
 		$objQuickLinks = new QuickLinksController;
 		$quickLinks = $objQuickLinks->load();
@@ -83,7 +83,7 @@ class AppController extends Controller {
 	
 	public function beforeFilter() {
 		parent::beforeFilter();
-		
+
 		if($this->name != 'CakeError'){
 			$this->initBeforeFilter();
 		}

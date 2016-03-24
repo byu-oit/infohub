@@ -3483,6 +3483,7 @@ class CAS_Client
             // explode the host list separated by comma and use the first host
             $hosts = explode(',', $_SERVER['HTTP_X_FORWARDED_HOST']);
             $server_url = $hosts[0];
+            $server_url = preg_replace('/\:443$/', '', $server_url);
         } else if (!empty($_SERVER['HTTP_X_FORWARDED_SERVER'])) {
             $server_url = $_SERVER['HTTP_X_FORWARDED_SERVER'];
         } else {
@@ -3500,7 +3501,7 @@ class CAS_Client
                 $server_port = $ports[0];
             }
 
-            if ( ($this->_isHttps() && $server_port!=443)
+            if ( ($this->_isHttps() && !isset($_SERVER['HTTP_X_FORWARDED_HOST']) && $server_port!=443)
                 || (!$this->_isHttps() && $server_port!=80)
             ) {
                 $server_url .= ':';
@@ -3517,8 +3518,15 @@ class CAS_Client
      */
     private function _isHttps()
     {
+        if (!empty($_SERVER['HTTP_X_HTTPS'])
+                && $_SERVER['HTTP_X_HTTPS'] != 'off') {
+            return true;
+        }
         if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
             return ($_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+        }
+        if (!empty($_SERVER['HTTP_HTTP_X_FORWARDED_PROTO'])) {
+            return ($_SERVER['HTTP_HTTP_X_FORWARDED_PROTO'] === 'https');
         }
         if ( isset($_SERVER['HTTPS'])
             && !empty($_SERVER['HTTPS'])

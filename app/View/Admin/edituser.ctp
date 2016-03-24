@@ -20,10 +20,7 @@
                 </tr>
                 <tr>
                     <td style="padding-bottom: 10px;">
-                        <?php echo $this->Form->input('username', array('label'=>'Email', 'maxlength'=>'50', 'class'=>'fld', 'type'=>'email')); ?>
-                    </td>
-                    <td style="padding-bottom: 10px;">
-                        <?php echo $this->Form->input('password', array('label'=>'Password', 'maxlength'=>'50', 'class'=>'fld', 'value'=>'p#uphukuD-3aP4a&e#hU')); ?>
+                        <strong>Net ID:</strong> <?= $this->request->data['CmsUsers']['username'] ?>
                     </td>
                 </tr>	
                 <tr>

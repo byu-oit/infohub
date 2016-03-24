@@ -14,7 +14,7 @@ class MyaccountController extends AppController {
 	}
 	
 	public function logout() {
-		phpCAS::logout(array('url'=>'http://'.$_SERVER['SERVER_NAME']));
+		phpCAS::logout();
 	}
 
 	function sortArrayByArray(Array $array, Array $orderArray) {

@@ -5,8 +5,8 @@ class LoginController extends AppController {
     }
     
     public function index() {
-        require_once $_SERVER['DOCUMENT_ROOT'].'/CAS-1.3.3/config.php';
-        require_once $phpcas_path.'/CAS.php';
+        require_once ROOT.'/CAS-1.3.3/config.php';
+        require_once ROOT.'/CAS-1.3.3/CAS.php';
         phpCAS::client(CAS_VERSION_2_0, $cas_host, $cas_port, $cas_context);
         
         // phpCAS::setCasServerCACert($cas_server_ca_cert_path);
@@ -33,7 +33,7 @@ class LoginController extends AppController {
         //echo 'user: '.phpCAS::getUser();
     }
     public function logout() {
-        require_once $_SERVER['DOCUMENT_ROOT'].'/CAS-1.3.3/config.php';
+        require_once ROOT.'/CAS-1.3.3/config.php';
         require_once $phpcas_path.'/CAS.php';
         phpCAS::client(CAS_VERSION_2_0, $cas_host, $cas_port, $cas_context);
         phpCAS::logout();

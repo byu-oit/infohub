@@ -255,11 +255,9 @@ class RequestController extends AppController {
 			phpCAS::forceAuthentication();
 		}else{
 			$netID = phpCAS::getUser();
-			//$netID = "***REMOVED***";
 			$this->loadModel('BYUWS');
-			$objBYUWS = new BYUWS();
-			$byuUser = $objBYUWS->personalSummary($netID);
-			$supervisorInfo = $objBYUWS->supervisorLookup($netID);
+			$byuUser = $this->BYUWS->personalSummary($netID);
+			$supervisorInfo = $this->BYUWS->supervisorLookup($netID);
 		}
 		
 		// make sure terms have been added to the users's queue

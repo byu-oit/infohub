@@ -150,15 +150,14 @@ class SearchController extends AppController {
 		
 		// save search and delete anything over 300 entries
 		if(sizeof($terms->aaData)>0){
-			$this->loadModel('CollibraAPI');
-			$objCollibra = new CollibraAPI();
+			$this->loadModel('CmsPage');
 			// delete last record
-			$results = $objCollibra->query("SELECT * FROM common_searches");
+			$results = $this->CmsPage->query("SELECT * FROM common_searches");
 			if(sizeof($results)>=300){
-				$objCollibra->query("DELETE FROM common_searches WHERE id=".$results[0]['common_searches']['id']);
+				$this->CmsPage->query("DELETE FROM common_searches WHERE id=".$results[0]['common_searches']['id']);
 			}
 			// add new record
-			$objCollibra->query("INSERT INTO common_searches (query) VALUES('".$query."')");
+			$this->CmsPage->query("INSERT INTO common_searches (query) VALUES('".$query."')");
 		}
 		///////////////////////////////////////////////////////
 		
@@ -403,10 +402,9 @@ class SearchController extends AppController {
 	}
 	
 	public function getCommonSearches(){
-		$this->loadModel('CollibraAPI');
-		$objCollibra = new CollibraAPI();
+		$this->loadModel('CmsPage');
 		$commonSearches = array();
-		$results = $objCollibra->query("SELECT query, COUNT(*) total FROM common_searches GROUP BY query ORDER BY COUNT(*) DESC LIMIT 0,4");
+		$results = $this->CmsPage->query("SELECT query, COUNT(*) total FROM common_searches GROUP BY query ORDER BY COUNT(*) DESC LIMIT 0,4");
 		foreach($results as $result){
 			array_push($commonSearches, ucfirst($result['common_searches']['query']));
 		}

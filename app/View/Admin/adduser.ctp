@@ -15,10 +15,7 @@
             <table border="0" cellpadding="0" cellspacing="0">
                 <tr>
                     <td style="padding-bottom: 10px;">
-                        <?php echo $this->Form->input('username', array('label'=>'Email', 'maxlength'=>'50', 'class'=>'fld', 'type'=>'email')); ?>
-                    </td>
-                    <td style="padding-bottom: 10px;">
-                        <?php echo $this->Form->input('password', array('label'=>'Password', 'maxlength'=>'50', 'class'=>'fld')); ?>
+                        <?php echo $this->Form->input('username', array('label'=>'Net ID', 'maxlength'=>'50', 'class'=>'fld')); ?>
                     </td>
                 </tr>	
                 <tr>

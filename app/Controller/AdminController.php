@@ -8,45 +8,46 @@ class AdminController extends AppController {
         $this->layout = 'admin';
         if(!$this->Session->read('userID') || $this->Session->read('userIP')!=$_SERVER["REMOTE_ADDR"]){
             if($this->request->params['action'] != 'login'){
+                $this->Session->write('adminLoginRedirect', $this->request->here());
                 header('location: /admin/login');
                 exit;
             }
         }
     }
-    
+
     public function index(){
         /*$this->layout = 'default';
         $this->render('login');*/
-        header('Location: /admin/login');
+        header('Location: /admin/manageusers');
         exit;
     }
     
     public function login(){
-        if ($this->request->is('post')) {
-            $username = $this->request->data['login']['Username'];
-            $pass = $this->request->data['login']['Password'];
-            
-            $this->loadModel('CmsUsers');
-            $objCmsUser = new CmsUsers();
-            $user = $objCmsUser->authUser($username, $pass);
-            if(sizeof($user)>0){
-                $this->Session->write('userID', $user['CmsUsers']['id']);
-                $this->Session->write('userIP', $_SERVER["REMOTE_ADDR"]);
-                header('location: /');
-                exit;
-            }else{
-                $this->Session->setFlash('Incorrect Login', 'default', array('class' => 'error'));
-                $this->Session->delete('userID');
+        phpCAS::setNoCasServerValidation();
+		phpCAS::handleLogoutRequests(false);
+        phpCAS::forceAuthentication();
+        $this->loadModel('CmsUsers');
+        $cmsUser = $this->CmsUsers->find('first', array(
+            'conditions' => array('username' => phpCAS::getUser(), 'active' => '1')));
+        if (empty($cmsUser)) {
+            $this->Session->delete('userID');
+            $this->Session->delete('userIP');
+        } else {
+            $this->Session->write('userID', $cmsUser['CmsUsers']['id']);
+            $this->Session->write('userIP', $_SERVER["REMOTE_ADDR"]);
+            $redirect = $this->Session->read('adminLoginRedirect');
+            $this->Session->delete('adminLoginRedirect');
+            if (!empty($redirect)) {
+                $this->redirect($redirect);
             }
         }
-        $this->layout = 'default';
+        $this->redirect('/');
     }
     
     public function logout(){
         $this->Session->delete('userID');
         $this->Session->delete('userIP');
-        header('location: /admin/login');
-        exit;
+        phpCAS::logout();
     }
     
     public function managepages(){
@@ -173,25 +174,18 @@ class AdminController extends AppController {
             }else{
                 if ($this->request->is(array('post', 'put'))) {
                     $data = $this->request['data']['CmsUsers'];
-                    $newUsername = $data['username'];
-                    $newPassword = $data['password'];
                     $newActive = $data['active'];
-                        
-                    if($newUsername!=$user['CmsUsers']['username'] && $objCmsUser->userExists($this->request['data']['CmsUsers']['username'])){
-                        $this->Session->setFlash('This user already exists.', 'default', array('class' => 'error'));
+
+                    App::uses('Bcrypt', 'Model');
+                    $objCmsUser->id = $id;
+                    $objCmsUser->set('active', $newActive);
+                    if ($this->Session->read('userID') == $id) {
+                        $this->Session->setFlash(__('Cannot inactivate yourself!'));
+                    } elseif ($objCmsUser->save()) {
+                        $this->Session->setFlash(__('This user has been updated.'));
+                        $this->redirect($this->request->here());
                     }else{
-                        App::uses('Bcrypt', 'Model');
-                        $objCmsUser->id = $id;
-                        $objCmsUser->set('username', $newUsername);
-                        $objCmsUser->set('active', $newActive);
-                        if($newPassword != 'p#uphukuD-3aP4a&e#hU'){
-                            $objCmsUser->set('password', Bcrypt::hash($newPassword));
-                        }
-                        if ($objCmsUser->save()) {
-                            $this->Session->setFlash(__('This user has been updated.'));
-                        }else{
-                            $this->Session->setFlash('Unable to update this user.', 'default', array('class' => 'error'));
-                        }
+                        $this->Session->setFlash('Unable to update this user.', 'default', array('class' => 'error'));
                     }
                 }
             }
@@ -233,7 +227,6 @@ class AdminController extends AppController {
                 $this->Session->setFlash('This user already exists.', 'default', array('class' => 'error'));
             }else{
                 $data = $this->request['data'];
-                $data['CmsUsers']['password'] = Bcrypt::hash($data['CmsUsers']['password']);
                 if ($objCmsUser->save($data)) {
                     $this->Session->setFlash(__('The user has been added.'));
                 }else{
@@ -248,7 +241,9 @@ class AdminController extends AppController {
     public function deleteuser($id = null) {
         $this->loadModel('CmsUsers');
         $objCmsUser = new CmsUsers();
-        if ($objCmsUser->delete($id)) {
+        if ($this->Session->read('userID') == $id) {
+            $this->Session->setFlash(__('Cannot delete yourself!', h($id)));
+        } elseif ($objCmsUser->delete($id)) {
             $this->Session->setFlash(
                 __('The user has been deleted.', h($id))
             );
