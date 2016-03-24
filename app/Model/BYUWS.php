@@ -1,59 +1,36 @@
 <?php
-
+App::uses('HttpSocket', 'Network/Http');
 App::uses('Model', 'Model');
 
 class BYUWS extends Model {
-    private $apiKey = '***REMOVED***';
-    private $sharedSecret = "***REMOVED***";
-    private $pwsURL = 'https://ws.byu.edu:443/rest/v2.0/identity/person/PRO/personSummary.cgi/';
+    private $pwsURL = 'https://ws.byu.edu/rest/v2.0/identity/person/PRO/personSummary.cgi/';
     private $supervisorURL = 'https://api.byu.edu/rest/v1/apikey/PeopleSoft_HR_REST_Get/Y_REST.v1?sn=EMPLOYEE_SUPERVISOR_LOOKUP&oprid=';
-    private $nonceURL = 'https://ws.byu.edu/authentication/services/rest/v1/hmac/nonce/';
+
+    public $useTable = false;
+    public $useDbConfig = 'byuApi';
 
 
-    public function personalSummary($netid){
-        $nonce = $this->getNonce($netid);
-        $nonceValue = $nonce->nonceValue;
-        $nonceKey = $nonce->nonceKey;
-        $hash = base64_encode(hash_hmac('sha512', $nonceValue, $this->sharedSecret, true));
-        
-        //# Call the Service
-        $chWS = curl_init();
-        curl_setopt($chWS, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($chWS, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($chWS, CURLOPT_URL, $this->pwsURL.$netid);
-        curl_setopt($chWS, CURLOPT_HTTPGET, true);
-        curl_setopt($chWS, CURLOPT_HTTPHEADER, array(
-            "Authorization: Nonce-Encoded-API-Key {$this->apiKey},{$nonceKey},{$hash}",
-            "Accept: application/json"
-        ));
-        $userResponse = curl_exec($chWS);
-        curl_close($chWS);
-        $userResponse = json_decode($userResponse);
+    public function personalSummary($netidRaw){
+        $netid = urlencode(trim($netidRaw));
+        $config = $this->getDataSource()->config;
+        $config['net_id'] = $netidRaw;
+        $http = new HttpSocket();
+        $http->configAuth('ByuApi', $config);
+        $response = $http->get($this->pwsURL . $netid);
+        $data = json_decode($response->body());
 
-        return $userResponse->PersonSummaryService->response;
+        return $data->PersonSummaryService->response;
     }
 
-    public function supervisorLookup($netid){
-        //$netid = "***REMOVED***";
-        $nonce = $this->getNonce($netid);
-        $nonceValue = $nonce->nonceValue;
-        $nonceKey = $nonce->nonceKey;
-        $hash = base64_encode(hash_hmac('sha512', $nonceValue, $this->sharedSecret, true));
-        
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_URL, $this->supervisorURL.$netid);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_HTTPGET, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER,
-            array(
-                "Authorization: Nonce-Encoded-API-Key {$this->apiKey},{$nonceKey},{$hash}",
-                "Accept: application/json"
-            )
-        );
-        $supervisorResponse = curl_exec($ch);
-        curl_close ($ch);
-        $supervisorResponse = json_decode($supervisorResponse);
+    public function supervisorLookup($netidRaw){
+        $netid = urlencode(trim($netidRaw));
+        $config = $this->getDataSource()->config;
+        $config['net_id'] = $netidRaw;
+        $http = new HttpSocket();
+        $http->configAuth('ByuApi', $config);
+
+        $response = $http->request(['uri' => $this->supervisorURL . $netid, 'header' => ['Accept' => 'application/json']]);
+        $supervisorResponse = json_decode($response->body());
         
         // set empty object properties if user is not an employee
         if(!empty($supervisorResponse->MESSAGE)){
@@ -75,16 +52,5 @@ class BYUWS extends Model {
             $supervisorResponse->EMPLOYEE->JOB->SupervisorPhoneNumber = str_replace('/', '-', $supervisorResponse->EMPLOYEE->JOB->SupervisorPhoneNumber);
         }
         return $supervisorResponse->EMPLOYEE;
-    }
-
-    private function getNonce($netID){
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->nonceURL.$this->apiKey.'/'.$netID);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch,CURLOPT_POST,1);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        $response = curl_exec($ch);
-        curl_close($ch);
-        return json_decode($response);
     }
 }

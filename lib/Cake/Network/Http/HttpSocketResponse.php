@@ -309,7 +309,13 @@ class HttpSocketResponse implements ArrayAccess {
 				$parts = preg_split('/\;[ \t]*/', $cookie);
 			}
 
-			list($name, $value) = explode('=', array_shift($parts), 2);
+			$part = array_shift($parts);
+            if (strpos($part, '=') === false) {
+                $name = $part;
+                $value = null;
+            } else {
+                list($name, $value) = explode('=', array_shift($parts), 2);
+            }
 			$cookies[$name] = compact('value');
 
 			foreach ($parts as $part) {

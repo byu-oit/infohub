@@ -10,21 +10,26 @@ class ByuApiAuthentication {
  * @return void
  */
     public static function authentication(HttpSocket $http, &$authInfo) {
-        if (empty($authInfo['user'])) {
+        if (empty($authInfo['api_key'])) {
             return;
         }
-        if (empty($authInfo['pass'])) {
+        if (empty($authInfo['shared_secret'])) {
             return;
         }
-        $nonce = self::_getNonce($authInfo['user'], $authInfo['pass']);
+        $netId = empty($authInfo['net_id']) ? null : $authInfo['net_id'];
+        $nonce = self::_getNonce($authInfo['api_key'], $authInfo['shared_secret'], $netId);
         $http->request['header']['Authorization'] = $nonce;
     }
 
-    protected static function _getNonce($key, $sharedSecret)
+    protected static function _getNonce($key, $sharedSecret, $netId = null)
     {
         $ch = curl_init();
         $nonceUrl = 'https://ws.byu.edu/authentication/services/rest/v1/hmac/nonce/';
-        curl_setopt($ch, CURLOPT_URL, $nonceUrl . $key);
+        if (!empty($netId)) {
+            curl_setopt($ch, CURLOPT_URL, $nonceUrl . $key . '/' . urlencode(trim($netId)));
+        } else  {
+            curl_setopt($ch, CURLOPT_URL, $nonceUrl . $key);
+        }
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, '');

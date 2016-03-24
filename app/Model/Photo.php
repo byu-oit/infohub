@@ -9,7 +9,7 @@ class Photo extends AppModel{
         $netId = urlencode($netIdRaw);
         $config = $this->getDataSource()->config;
         $http = new HttpSocket();
-        $http->configAuth('ByuApi', $config['api_key'], $config['shared_secret']);
+        $http->configAuth('ByuApi', $config);
         /* @var $response HttpSocketResponse */
         $response = $http->get("https://{$config['host']}/rest/v1/apikey/identity/person/idphoto/photo?n={$netId}");
         if (!$response->isOk()) {
