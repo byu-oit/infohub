@@ -47,10 +47,10 @@ class BYUWS extends Model {
             $supervisorResponse->EMPLOYEE->JOB[0]->SupervisorEmail = '';
             $supervisorResponse->EMPLOYEE->JOB[0]->SupervisorPhoneNumber = '';
         }
-        if(is_array($supervisorResponse->EMPLOYEE->JOB)){
+        if(!empty($supervisorResponse->EMPLOYEE->JOB) && is_array($supervisorResponse->EMPLOYEE->JOB)){
             $supervisorResponse->EMPLOYEE->JOB = $supervisorResponse->EMPLOYEE->JOB[0];
             $supervisorResponse->EMPLOYEE->JOB->SupervisorPhoneNumber = str_replace('/', '-', $supervisorResponse->EMPLOYEE->JOB->SupervisorPhoneNumber);
         }
-        return $supervisorResponse->EMPLOYEE;
+        return empty($supervisorResponse->EMPLOYEE) ? null : $supervisorResponse->EMPLOYEE;
     }
 }
