@@ -6,4 +6,6 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
-php_value session.save_path /opt/phproot/infohub/app/tmp/sessions
+<IfDefine !NoCustomPHPSessionPath>
+    php_value session.save_path /opt/phproot/infohub/app/tmp/sessions
+</IfDefine>
