@@ -3,6 +3,7 @@
 /app/Config/database.php
 /app/Config/core.php
 /app/tmp
+/app/webroot/*info.php
 /lib/Cake/Console/Templates/skel/tmp/
 /plugins
 /vendors
@@ -10,6 +11,7 @@
 /dist
 /tags
 *.mo
+/docker-compose.yml
 
 # IDE and editor specific files #
 #################################
