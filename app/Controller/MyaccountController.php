@@ -1,6 +1,12 @@
 <?php
 
 class MyaccountController extends AppController {
+	function beforeFilter() {
+		parent::beforeFilter();
+		$this->Auth->deny();
+		$this->Auth->allow('logout');
+	}
+
 	private static function sortUsers($a, $b){
 		return strcmp($a->firstName, $b->firstName);
 	}
@@ -14,7 +20,8 @@ class MyaccountController extends AppController {
 	}
 
 	public function logout() {
-		phpCAS::logout();
+		$this->Auth->logout();
+		$this->redirect('/');
 	}
 
 	function sortArrayByArray(Array $array, Array $orderArray) {
@@ -36,14 +43,10 @@ class MyaccountController extends AppController {
 			$page = 'past';
 		}
 
-		if(!phpCAS::isAuthenticated()){
-			phpCAS::forceAuthentication();
-		}else{
-			$netID = phpCAS::getUser();
-			$this->loadModel('BYUWS');
-			$byuUser = $this->BYUWS->personalSummary($netID);
-			$personID = $byuUser->identifiers->person_id;
-		}
+		$netID = $this->Auth->user('username');
+		$this->loadModel('BYUWS');
+		$byuUser = $this->BYUWS->personalSummary($netID);
+		$personID = $byuUser->identifiers->person_id;
 
 		// attempt to reindex source to make sure latest requests are displayed
 		$this->loadModel('CollibraAPI');

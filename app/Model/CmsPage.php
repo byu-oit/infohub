@@ -2,7 +2,7 @@
 
 class CmsPage extends AppModel {
     public $listPageHtml = '';
-    
+
     public $validate = array(
         'title' => array(
             'rule' => 'notEmpty'
@@ -14,8 +14,8 @@ class CmsPage extends AppModel {
             'rule' => 'notEmpty'
         )
     );
-    
-    public function loadPage($pageID=0){        
+
+    public function loadPage($pageID=0){
         App::uses('Helpers', 'Model');
         $pageID = Helpers::getInt($pageID);
         $cmsPage = '';
@@ -32,14 +32,14 @@ class CmsPage extends AppModel {
         }
         return $cmsPage;
     }
-    
+
     public function listPages($pageID=0, $parentID=0, $level=0, $html=''){
         App::uses('Helpers', 'Model');
         $parentID = Helpers::getInt($parentID);
         $level = Helpers::getInt($level);
         $pageID = Helpers::getInt($pageID);
         $hasSubpages = false;
-        
+
         $parentTitle = "";
         $urlStr = "";
         if($parentID!=1){
@@ -49,23 +49,23 @@ class CmsPage extends AppModel {
             }
             $urlStr .= "/".strToLower($parentTitle);
         }
-        
+
         $activeFilter = "";
         App::uses('CakeSession', 'Model/Datasource');
-        if(CakeSession::read('userID') == null){
+        if(CakeSession::read('Auth.User.infohubUserId') == null){
             $activeFilter = "AND active=1";
         }
-        
+
         $results = $this->query("SELECT P.*, (SELECT COUNT(*) FROM cms_pages WHERE parentID=P.id) AS ChildPages FROM cms_pages P WHERE P.parentID=".$parentID." ".$activeFilter." ORDER BY P.rank");
 		foreach($results as $result){
             $page = $result['P'];
             $hasSubpages = $result[0]["ChildPages"];
-			
+
 			$cssClass = "";
 			if($hasSubpages){
 				$cssClass = "hasChildren";
 			}
-            
+
             $levelCss = "";
             switch($level){
                 case 1:
@@ -75,13 +75,13 @@ class CmsPage extends AppModel {
                     $levelCss = "grandChild";
                     break;
             }
-            
+
             if($result['P']["redirectURL"]){
                 $link = $result['P']["redirectURL"].'" target="_blank"';
             }else{
                 $link = '/resources'.$urlStr.'/'.$page["slug"];
             }
-            
+
             $this->listPageHtml .= '<li class="catalogItem"><a class="'.$cssClass.'" href="'.$link.'">'.$page['title'].'</a>';
 			if($hasSubpages){
                 $this->listPageHtml .=  "<ul class='subList ".$levelCss."'>\r\n";
@@ -94,20 +94,20 @@ class CmsPage extends AppModel {
             return $this->listPageHtml;
         }
     }
-    
+
     public function listAdminPages($pageID=0, $parentID=0, $level=0, $html=''){
         App::uses('Helpers', 'Model');
         $parentID = Helpers::getInt($parentID);
         $level = Helpers::getInt($level);
         $pageID = Helpers::getInt($pageID);
-        
+
         $hasSubpages = false;
         $results = $this->query("SELECT P.*, (SELECT COUNT(*) FROM cms_pages WHERE parentID=P.id) AS ChildPages FROM cms_pages P WHERE P.parentID=".$parentID." ORDER BY P.rank");
 		foreach($results as $result){
             $page = $result['P'];
             $hasSubpages = $result[0]["ChildPages"];
 			$pageTitle = str_replace("-", " ", $page['title']);
-			
+
 			$cssClass = "";
 			if($page['id'] == 1){
 				//$cssClass = "no-nest disabled";
@@ -116,7 +116,7 @@ class CmsPage extends AppModel {
 			if($pageID == $page['id']){
 				$cssClass = $cssClass . " active";
 			}
-            
+
             $this->listPageHtml .= '<li class="'.$cssClass.'" id="'.$page['id'].'_'.$page['parentID'].'"><a href="/admin/editpage/'.$page["id"].'#pg'.$page["id"].'" name="pg'.$page["id"].'">'.$pageTitle.'</a>';
 			if($hasSubpages){
                 if($page['id']==1){
@@ -133,7 +133,7 @@ class CmsPage extends AppModel {
             return $this->listPageHtml;
         }
     }
-    
+
     public function loadCmsBody($pageID, $body, $isAdmin){
         $pageBody = stripslashes($body);
         if($isAdmin){
@@ -159,13 +159,13 @@ return <<<HTML
 		pageID:$pageID,
         file_browser_callback: RoxyFileBrowser
 	});
-    
+
     function RoxyFileBrowser(field_name, url, type, win) {
 		type = '';
-		
+
         var roxyFileman = '/fileman/index.html';
-        if (roxyFileman.indexOf("?") < 0) {     
-            roxyFileman += "?type=" + type;   
+        if (roxyFileman.indexOf("?") < 0) {
+            roxyFileman += "?type=" + type;
         }
         else {
             roxyFileman += "&type=" + type;
@@ -177,16 +177,16 @@ return <<<HTML
         tinyMCE.activeEditor.windowManager.open({
             file: roxyFileman,
             title: 'Roxy Fileman',
-            width: 850, 
+            width: 850,
             height: 650,
             resizable: "yes",
             plugins: "media",
             inline: "yes",
-            close_previous: "no"  
+            close_previous: "no"
         }, {     window: win,     input: field_name    });
-        return false; 
+        return false;
     }
-	
+
 	function togglePreview(){
 		//tinyMCE.execCommand('mceFocus',false,'pgBody');
 		$("#cms-preview-container").html(tinyMCE.editors["mcePGBody"].getContent());
@@ -197,16 +197,16 @@ return <<<HTML
 			$("#cms-edit-container").show();
 			$("#cms-preview-container").hide();
 		}
-		
+
 		if($(".cms-links").css("display") == "block"){
 			$(".cms-links").hide();
 		} else {
 			$(".cms-links").show();
 		}
-        
+
         $(".preview-hidden").toggle();
-		
-		if($("#cms-edit-container2").css("display") == "block"){		
+
+		if($("#cms-edit-container2").css("display") == "block"){
 			$("#cms-edit-container2").hide();
 			$("#cms-preview-container2").show();
 		}else{

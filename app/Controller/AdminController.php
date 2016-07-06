@@ -6,48 +6,22 @@ class AdminController extends AppController {
 
 	function beforeFilter() {
 		parent::beforeFilter();
+		$this->Auth->deny();
+		$this->Auth->allow('logout');
 		$this->layout = 'admin';
-		if(!$this->Session->read('userID') || $this->Session->read('userIP')!=$_SERVER["REMOTE_ADDR"]){
-			if($this->request->params['action'] != 'login'){
-				$this->Session->write('adminLoginRedirect', $this->request->here());
-				header('location: /admin/login');
-				exit;
-			}
-		}
+	}
+
+	public function isAuthorized($user) {
+		return $this->isAdmin($user);
 	}
 
 	public function index(){
-		/*$this->layout = 'default';
-		$this->render('login');*/
-		header('Location: /admin/manageusers');
-		exit;
-	}
-
-	public function login(){
-		phpCAS::setNoCasServerValidation();
-		phpCAS::handleLogoutRequests(false);
-		phpCAS::forceAuthentication();
-		$cmsUser = $this->CmsUsers->find('first', array(
-			'conditions' => array('username' => phpCAS::getUser(), 'active' => '1')));
-		if (empty($cmsUser)) {
-			$this->Session->delete('userID');
-			$this->Session->delete('userIP');
-		} else {
-			$this->Session->write('userID', $cmsUser['CmsUsers']['id']);
-			$this->Session->write('userIP', $_SERVER["REMOTE_ADDR"]);
-			$redirect = $this->Session->read('adminLoginRedirect');
-			$this->Session->delete('adminLoginRedirect');
-			if (!empty($redirect)) {
-				$this->redirect($redirect);
-			}
-		}
-		$this->redirect('/');
+		$this->redirect(array('action' => 'manageusers'));
 	}
 
 	public function logout(){
-		$this->Session->delete('userID');
-		$this->Session->delete('userIP');
-		phpCAS::logout();
+		$this->Auth->logout();
+		$this->redirect('/');
 	}
 
 	public function managepages(){
@@ -157,7 +131,7 @@ class AdminController extends AppController {
 
 					$this->CmsUsers->id = $id;
 					$this->CmsUsers->set('active', $newActive);
-					if ($this->Session->read('userID') == $id) {
+					if ($this->Auth->user('infohubUserId') == $id) {
 						$this->Session->setFlash(__('Cannot inactivate yourself!'));
 					} elseif ($this->CmsUsers->save()) {
 						$this->Session->setFlash(__('This user has been updated.'));
@@ -210,7 +184,7 @@ class AdminController extends AppController {
 	}
 
 	public function deleteuser($id = null) {
-		if ($this->Session->read('userID') == $id) {
+		if ($this->Auth->user('infohubUserId') == $id) {
 			$this->Session->setFlash(__('Cannot delete yourself!', h($id)));
 		} elseif ($this->CmsUsers->delete($id)) {
 			$this->Session->setFlash(

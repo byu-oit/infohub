@@ -6,11 +6,10 @@ class PhotosController extends AppController {
 	function beforeFilter() {
 		parent::beforeFilter();
 		$this->layout = 'admin';
-		if(!$this->Session->read('userID') || $this->Session->read('userIP')!=$_SERVER["REMOTE_ADDR"]){
-			$this->Session->write('adminLoginRedirect', $this->request->here());
-			header('location: /admin/login');
-			exit;
-		}
+	}
+
+	public function isAuthorized($user) {
+		return $this->isAdmin($user);
 	}
 
 	public function index() {

@@ -32,22 +32,17 @@ App::uses('Controller', 'Controller');
  */
 class AppController extends Controller {
 	private $quickLinks;
+	public $components = array('Session', 'Auth' => array('authorize' => 'Controller'));
 
 	public function initBeforeFilter(){
-		require_once ROOT.'/CAS-1.3.3/config.php';
-		require_once ROOT.'/CAS-1.3.3/CAS.php';
-		phpCAS::client(CAS_VERSION_2_0, $cas_host, $cas_port, $cas_context);
-		// phpCAS::setCasServerCACert($cas_server_ca_cert_path);
-		phpCAS::setNoCasServerValidation();
-		phpCAS::handleLogoutRequests(false);
 		$byuUsername = '';
 
-		if(phpCAS::isAuthenticated()){
+		if ($authUser = $this->Session->read('Auth.User')) {
 			$this->set('casAuthenticated', true);
 
 			// get username from BYU web service to display in to navigation
 			if(empty($_SESSION["byuUsername"])){
-				$netID = phpCAS::getUser();
+				$netID = $authUser['username'];
 				$this->loadModel('BYUWS');
 				$byuUser = $this->BYUWS->personalSummary($netID);
 				if(isset($byuUser->names->preferred_name)){
@@ -83,14 +78,35 @@ class AppController extends Controller {
 	public function beforeFilter() {
 		parent::beforeFilter();
 
+		$this->Auth->authenticate = array('Cas' => array('hostname' => 'cas.byu.edu', 'uri' => 'cas'));
+		$this->Auth->allow();
 		if($this->name != 'CakeError'){
 			$this->initBeforeFilter();
 		}
 
 		$isAdmin = false;
-		if($this->Session->read('userID') != '' && $this->Session->read('userIP')==$_SERVER["REMOTE_ADDR"]){
+		if($this->Session->read('Auth.User.infohubUserId') != ''){
 			$isAdmin = true;
 		}
 		$this->set('isAdmin', $isAdmin);
+	}
+
+	public function isAuthorized($user) {
+		return true;
+	}
+
+	public function isAdmin($user) {
+		if (!array_key_exists('infohubUserId', $user)) {
+			$this->loadModel('CmsUsers');
+			$cmsUser = $this->CmsUsers->find('first', array(
+				'conditions' => array('username' => $user['username'], 'active' => '1')));
+			if (empty($cmsUser)) {
+				$user['infohubUserId'] = null;
+			} else {
+				$user['infohubUserId'] = $cmsUser['CmsUsers']['id'];
+			}
+			$this->Session->write('Auth.User.infohubUserId', $user['infohubUserId']);
+		}
+		return !empty($user['infohubUserId']);
 	}
 }

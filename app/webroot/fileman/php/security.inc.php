@@ -1,6 +1,6 @@
 <?php
 /*
-  RoxyFileman - web based file manager. Ready to use with CKEditor, TinyMCE. 
+  RoxyFileman - web based file manager. Ready to use with CKEditor, TinyMCE.
   Can be easily integrated with any other WYSIWYG editor or CMS.
 
   Copyright (C) 2013, RoxyFileman.com - Lyubomir Arsov. All rights reserved.
@@ -21,12 +21,12 @@
   Contact: Lyubomir Arsov, liubo (at) web-lobby.com
 */
 function checkAccess($action){
-    session_name("session_for:index_php");
+    session_name("CAKEPHP");
     if(!session_id()){
         session_start();
     }
 
-    if($_SESSION["userID"] == ""){
+    if(empty($_SESSION['Auth']['User']['infohubUserId'])){
         exit;
     }
 }

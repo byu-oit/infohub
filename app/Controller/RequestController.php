@@ -4,7 +4,8 @@ class RequestController extends AppController {
 	public $helpers = array('Html', 'Form');
 
 	function beforeFilter() {
-		$this->initBeforeFilter();
+		parent::beforeFilter();
+		$this->Auth->deny('index', 'submit');
 	}
 
 	private static function sortUsers($a, $b){
@@ -164,10 +165,6 @@ class RequestController extends AppController {
 			exit;
 		}
 
-		if(!phpCAS::isAuthenticated()){
-			phpCAS::forceAuthentication();
-		}
-
 		$this->loadModel('CollibraAPI');
 
 		$name = explode(' ',$this->request->data['name']);
@@ -248,14 +245,10 @@ class RequestController extends AppController {
 	}
 
 	public function index() {
-		if(!phpCAS::isAuthenticated()){
-			phpCAS::forceAuthentication();
-		}else{
-			$netID = phpCAS::getUser();
-			$this->loadModel('BYUWS');
-			$byuUser = $this->BYUWS->personalSummary($netID);
-			$supervisorInfo = $this->BYUWS->supervisorLookup($netID);
-		}
+		$netID = $this->Auth->user('username');
+		$this->loadModel('BYUWS');
+		$byuUser = $this->BYUWS->personalSummary($netID);
+		$supervisorInfo = $this->BYUWS->supervisorLookup($netID);
 
 		// make sure terms have been added to the users's queue
 		if(!isset($_COOKIE['queue'])) {
