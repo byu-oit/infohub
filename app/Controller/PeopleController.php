@@ -4,7 +4,7 @@ class PeopleController extends AppController {
 	private static function sortCommunities($a, $b){
 		return strcmp($a->name, $b->name);
 	}
-	
+
 	private static function sortUsers($a, $b){
 		return strcmp($a->userlastname, $b->userlastname);
 	}
@@ -36,26 +36,24 @@ class PeopleController extends AppController {
 						$arrData[sizeof($arrData)-1][$level+1] = $arr;
 					}else{
 						array_pop($arrData[sizeof($arrData)-1]);
-					}   
+					}
 				}
 			}
 		}
 		return $arrData;
 	}
-	
+
 	public function index(){
 		// get all parent communities for left nav
 		$this->loadModel('CollibraAPI');
-		$objCollibra = new CollibraAPI();
-		$resp = $objCollibra->request(
+		$resp = $this->CollibraAPI->request(
 			array('url'=>'community/'.Configure::read('byuCommunity').'/sub-communities')
 		);
 		$parentCommunities = json_decode($resp);
 		usort($parentCommunities->communityReference, 'self::sortCommunities');
-		
+
 		// get user data for specified user groups including their phone and email
-		$objCollibra = new CollibraAPI();
-		$resp = $objCollibra->request(
+		$resp = $this->CollibraAPI->request(
 			array(
 				'url'=>'output/data_table',
 				'post'=>true,
@@ -67,7 +65,7 @@ class PeopleController extends AppController {
 		usort($resp->aaData, 'self::sortUsers');
 
 		// get all communities in the system with their steward and custodian
-		$communities = $objCollibra->request(
+		$communities = $this->CollibraAPI->request(
 			array(
 				'url'=>'output/data_table',
 				'post'=>true,
@@ -86,7 +84,7 @@ class PeopleController extends AppController {
 			if(!isset($arrUserData[$group])){
 				$arrUserData[$group] = array();
 			}
-			
+
 			if(!isset($arrUserData[$group][$r->userrid])){
 				$arrUserData[$group][$r->userrid]['id'] = $r->userrid;
 				$arrUserData[$group][$r->userrid]['fname'] = $r->userfirstname;
@@ -118,13 +116,13 @@ class PeopleController extends AppController {
 		}
 
 		// get definitions for steward and custodian terms
-		$resp = $objCollibra->request(array('url'=>'term/f6b8b3cd-373c-43d7-8cbd-d8f03ff9048b'));
+		$resp = $this->CollibraAPI->request(array('url'=>'term/f6b8b3cd-373c-43d7-8cbd-d8f03ff9048b'));
 		$stewardDefinition = json_decode($resp);
 		$stewardDefinition = strip_tags($stewardDefinition->attributeReferences->attributeReference[3]->value);
-		$resp = $objCollibra->request(array('url'=>'term/8ed41506-3eaf-47e1-b076-76bb49022059'));
+		$resp = $this->CollibraAPI->request(array('url'=>'term/8ed41506-3eaf-47e1-b076-76bb49022059'));
 		$custodianDefinition = json_decode($resp);
 		$custodianDefinition = strip_tags($custodianDefinition->attributeReferences->attributeReference[2]->value);
-		
+
 		$this->set('stewardDef', $stewardDefinition);
 		$this->set('custodianDef', $custodianDefinition);
 
@@ -135,13 +133,12 @@ class PeopleController extends AppController {
 	public function lookup(){
 		// get all parent communities for left nav
 		$this->loadModel('CollibraAPI');
-		$objCollibra = new CollibraAPI();
-		$resp = $objCollibra->request(
+		$resp = $this->CollibraAPI->request(
 			array('url'=>'community/'.Configure::read('byuCommunity').'/sub-communities')
 		);
 		$parentCommunities = json_decode($resp);
 		usort($parentCommunities->communityReference, 'self::sortCommunities');
-		
+
 		//$query = 'glossary';
 		if ($this->request->is('post')) {
 			// search in all communities, vocabularies and users
@@ -150,14 +147,14 @@ class PeopleController extends AppController {
 				$query = $this->request->data['query'];
 				$query = preg_replace('/[^ \w]+/', '', $query);
 			}
-			
+
 			$request = '{"query":"'.$query.'*", "filter": { "community": ["'.Configure::read('byuCommunity').'"], "category":["CO", "VC", "UR"], "vocabulary":[], "type":{"asset":[]},';
 			if(!Configure::read('allowUnapprovedeTerms')){
 				$request .= '"status": ["00000000-0000-0000-0000-000000005009"], ';
 			}
 			$request .= '"includeMeta":false}, "fields":["name","attributes"], "order":{"by":"score","sort": "desc"}, "limit":500, "offset":0, "highlight":false}';
-			
-			$searchResp = $objCollibra->request(
+
+			$searchResp = $this->CollibraAPI->request(
 				array('url'=>'search', 'post'=>true, 'json'=>true, 'params'=>$request)
 			);
 			$searchResp = json_decode($searchResp);
@@ -180,7 +177,7 @@ class PeopleController extends AppController {
 			}
 
 			// get all communities in the system along with their custodian and steward info
-			$communities = $objCollibra->request(
+			$communities = $this->CollibraAPI->request(
 				array(
 					'url'=>'output/data_table',
 					'post'=>true,
@@ -192,7 +189,7 @@ class PeopleController extends AppController {
 			$communities = json_decode($communities);
 
 			// get all users including their contact info
-			$users = $objCollibra->request(
+			$users = $this->CollibraAPI->request(
 				array(
 					'url'=>'output/data_table',
 					'post'=>true,
@@ -209,7 +206,7 @@ class PeopleController extends AppController {
 					if(!isset($arrUserData[$group])){
 						$arrUserData[$group] = array();
 					}
-					
+
 					if(!isset($arrUserData[$group][$r->userrid])){
 						$arrUserData[$group][$r->userrid]['id'] = $r->userrid;
 						$arrUserData[$group][$r->userrid]['fname'] = $r->userfirstname;
@@ -240,7 +237,7 @@ class PeopleController extends AppController {
 					}
 				}
 			}
-			
+
 			// loop through all communities from above and filter out those not found
 			// in our first search results
 			//=================================================================
@@ -295,13 +292,13 @@ class PeopleController extends AppController {
 		}
 
 		// get definitions for steward and custodian terms
-		$resp = $objCollibra->request(array('url'=>'term/f6b8b3cd-373c-43d7-8cbd-d8f03ff9048b'));
+		$resp = $this->CollibraAPI->request(array('url'=>'term/f6b8b3cd-373c-43d7-8cbd-d8f03ff9048b'));
 		$stewardDefinition = json_decode($resp);
 		$stewardDefinition = strip_tags($stewardDefinition->attributeReferences->attributeReference[3]->value);
-		$resp = $objCollibra->request(array('url'=>'term/8ed41506-3eaf-47e1-b076-76bb49022059'));
+		$resp = $this->CollibraAPI->request(array('url'=>'term/8ed41506-3eaf-47e1-b076-76bb49022059'));
 		$custodianDefinition = json_decode($resp);
 		$custodianDefinition = strip_tags($custodianDefinition->attributeReferences->attributeReference[2]->value);
-		
+
 		$this->set('stewardDef', $stewardDefinition);
 		$this->set('custodianDef', $custodianDefinition);
 		$this->set('communities', $communities);
@@ -309,17 +306,16 @@ class PeopleController extends AppController {
 		$this->set('userData', $arrUserData);
 		$this->set('query', $query);
 	}
-	
+
 	public function dept() {
 		// get all parent communities for left nav
 		$this->loadModel('CollibraAPI');
-		$objCollibra = new CollibraAPI();
-		$resp = $objCollibra->request(
+		$resp = $this->CollibraAPI->request(
 			array('url'=>'community/'.Configure::read('byuCommunity').'/sub-communities')
 		);
 		$parentCommunities = json_decode($resp);
 		usort($parentCommunities->communityReference, 'self::sortCommunities');
-		
+
 		// get community from querystring or set as first community from array above
 		if(isset($this->request->query['c']) && $this->request->query['c'] != ''){
 			$community = htmlspecialchars($this->request->query['c']);
@@ -327,9 +323,9 @@ class PeopleController extends AppController {
 			$community = $parentCommunities->communityReference[0]->resourceId;
 		}
 		//$community = '4e756e1e-11ee-4d1e-bfaa-fb0ada974fc5';
-		
+
 		// get all communities in the system
-		$resp = $objCollibra->request(
+		$resp = $this->CollibraAPI->request(
 			array(
 				'url'=>'output/data_table',
 				'post'=>true,
@@ -339,12 +335,12 @@ class PeopleController extends AppController {
 			)
 		);
 		$resp = json_decode($resp);
-		
+
 		// run through recursive function to return array with only the sub communities for the selected community
 		$arrCommunities = $this->getSubCommunities($resp, $community);
 		//print_r($arrCommunities);
 		//exit;
-		
+
 		// build data array for navigation
 		$arrNavDomainData = array();
 		for($i=0; $i<sizeof($arrCommunities); $i++){
@@ -391,7 +387,7 @@ class PeopleController extends AppController {
 		}
 
 		// get all users including their contact info
-		$users = $objCollibra->request(
+		$users = $this->CollibraAPI->request(
 			array(
 				'url'=>'output/data_table',
 				'post'=>true,
@@ -424,20 +420,20 @@ class PeopleController extends AppController {
 		}
 		//print_r($arrDomainData);
 		//exit;
-		
+
 		//////////////////////////////
 		//////////////////////////////
-		
+
 		// get definitions for steward and custodian terms
 
-		$jsonResp1 = $objCollibra->request(array('url'=>'term/f6b8b3cd-373c-43d7-8cbd-d8f03ff9048b'));
+		$jsonResp1 = $this->CollibraAPI->request(array('url'=>'term/f6b8b3cd-373c-43d7-8cbd-d8f03ff9048b'));
 		$stewardDefinition = json_decode($jsonResp1);
 		$stewardDefinition = strip_tags($stewardDefinition->attributeReferences->attributeReference[3]->value);
 
-		$jsonResp2 = $objCollibra->request(array('url'=>'term/8ed41506-3eaf-47e1-b076-76bb49022059'));
+		$jsonResp2 = $this->CollibraAPI->request(array('url'=>'term/8ed41506-3eaf-47e1-b076-76bb49022059'));
 		$custodianDefinition = json_decode($jsonResp2);
 		$custodianDefinition = strip_tags($custodianDefinition->attributeReferences->attributeReference[2]->value);
-		
+
 		$this->set('communities', $parentCommunities);
 		$this->set('navDomains', $arrNavDomainData);
 		$this->set('domains', $arrDomainData);

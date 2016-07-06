@@ -63,11 +63,11 @@ class PagesController extends AppController {
 			$title_for_layout = Inflector::humanize($path[$count - 1]);
 		}
 		$this->set(compact('page', 'subpage', 'title_for_layout'));
-        
-        App::import('Controller', 'Search');
-        $search = new SearchController;
-        $this->set('commonSearches', $search->getCommonSearches());
-        
+
+		App::import('Controller', 'Search');
+		$search = new SearchController;
+		$this->set('commonSearches', $search->getCommonSearches());
+
 		try {
 			$this->render(implode('/', $path));
 		} catch (MissingViewException $e) {

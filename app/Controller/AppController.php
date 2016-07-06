@@ -30,9 +30,9 @@ App::uses('Controller', 'Controller');
  * @package		app.Controller
  * @link		http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
  */
-class AppController extends Controller {   
+class AppController extends Controller {
 	private $quickLinks;
-	
+
 	public function initBeforeFilter(){
 		require_once ROOT.'/CAS-1.3.3/config.php';
 		require_once ROOT.'/CAS-1.3.3/CAS.php';
@@ -49,45 +49,44 @@ class AppController extends Controller {
 			if(empty($_SESSION["byuUsername"])){
 				$netID = phpCAS::getUser();
 				$this->loadModel('BYUWS');
-				$objBYUWS = new BYUWS();
-				$byuUser = $objBYUWS->personalSummary($netID);
+				$byuUser = $this->BYUWS->personalSummary($netID);
 				if(isset($byuUser->names->preferred_name)){
-		            $byuUsername = $byuUser->names->preferred_name;
-		            $_SESSION["byuUsername"] = $byuUsername;
-		        }
-		    }else{
-		    	$byuUsername = $_SESSION["byuUsername"];
-		    }
+					$byuUsername = $byuUser->names->preferred_name;
+					$_SESSION["byuUsername"] = $byuUsername;
+				}
+			}else{
+				$byuUsername = $_SESSION["byuUsername"];
+			}
 		}else{
 			$this->set('casAuthenticated', false);
 			$_SESSION["byuUsername"] = '';
 		}
-		
+
 		//$this->disableCache();
 
 		App::import('Controller', 'QuickLinks');
 		$objQuickLinks = new QuickLinksController;
 		$quickLinks = $objQuickLinks->load();
-		
+
 		$requestedTermCount = 0;
 		if(isset($_COOKIE['queue'])) {
 			$arrQueue = unserialize($_COOKIE['queue']);
 			$requestedTermCount = sizeof($arrQueue);
 		}
-		
+
 		$this->set('byuUsername', $byuUsername);
 		$this->set('quickLinks', $quickLinks);
 		$this->set('requestedTermCount', $requestedTermCount);
 		$this->set('controllerName', $controllerName = $this->request->params['controller']);
 	}
-	
+
 	public function beforeFilter() {
 		parent::beforeFilter();
 
 		if($this->name != 'CakeError'){
 			$this->initBeforeFilter();
 		}
-		
+
 		$isAdmin = false;
 		if($this->Session->read('userID') != '' && $this->Session->read('userIP')==$_SERVER["REMOTE_ADDR"]){
 			$isAdmin = true;

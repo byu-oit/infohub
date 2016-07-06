@@ -2,23 +2,23 @@
 
 class RequestController extends AppController {
 	public $helpers = array('Html', 'Form');
-	
+
 	function beforeFilter() {
 		$this->initBeforeFilter();
 	}
-	
+
 	private static function sortUsers($a, $b){
 		return strcmp($a->firstName, $b->firstName);
 	}
-	
+
 	private static function sortTerms($a, $b){
 		return strcmp($a->signifier, $b->signifier);
 	}
-	
+
 	private static function sortTermsByDomain($a, $b){
 		return strcmp($a->domainname, $b->domainname);
 	}
-	
+
 	public function addToQueue() {
 		$this->autoRender = false;
 		if($this->request->is('post')){
@@ -27,7 +27,7 @@ class RequestController extends AppController {
 			$arrTermIDs = $this->request->data['id'];
 			$arrVocabIDs = $this->request->data['vocab'];
 			$clearRelated = $this->request->data['clearRelated']=='true';
-			
+
 			$arrQueue = array();
 			if(isset($_COOKIE['queue'])) {
 				$arrQueue = unserialize($_COOKIE['queue']);
@@ -44,13 +44,13 @@ class RequestController extends AppController {
 					}
 				}
 			}
-			
+
 			for($i=0; $i<sizeof($arrTerms); $i++){
 				$term = $arrTerms[$i];
 				$termID = $arrTermIDs[$i];
 				$vocabID = $arrVocabIDs[$i];
 				$exists = false;
-				
+
 				for($j=0; $j<sizeof($arrQueue); $j++){
 					if($arrQueue[$j][1] == $termID){
 						$exists = true;
@@ -61,8 +61,7 @@ class RequestController extends AppController {
 				if($termID != '' && !$exists){
 					$requestable = true;
 					$this->loadModel('CollibraAPI');
-					$objCollibra = new CollibraAPI();
-					$termResp = $objCollibra->request(array('url'=>'term/'.$termID));
+					$termResp = $this->CollibraAPI->request(array('url'=>'term/'.$termID));
 					$termResp = json_decode($termResp);
 
 					// verify that the term is requestable
@@ -85,12 +84,12 @@ class RequestController extends AppController {
 					}
 				}
 			}
-		
+
 			setcookie('queue', serialize($arrQueue), time() + (60*60*24*90), "/"); // 90 days
 			echo $newTermsAdded;
 		}
 	}
-	
+
 	public function removeFromQueue() {
 		$this->autoRender = false;
 		if($this->request->is('post')){
@@ -108,11 +107,11 @@ class RequestController extends AppController {
 			}
 		}
 	}
-	
+
 	public function getQueueJSArray() {
 		$this->autoRender = false;
 		$JS = '';
-		
+
 		if(isset($_COOKIE['queue'])) {
 			$arrQueue = unserialize($_COOKIE['queue']);
 			for($j=0; $j<sizeof($arrQueue); $j++){
@@ -121,13 +120,13 @@ class RequestController extends AppController {
 		}
 		echo $JS;
 	}
-	
+
 	public function listQueue() {
 		$this->autoRender = false;
 		$listHTML = '';
 		$responseHTML = '';
 		$emptyQueue = true;
-		
+
 		if(isset($_COOKIE['queue'])) {
 			$emptyQueue = false;
 			$arrQueue = unserialize($_COOKIE['queue']);
@@ -137,7 +136,7 @@ class RequestController extends AppController {
 				}
 			}else{
 				$emptyQueue = true;
-				$listHTML = 'No request items found.';   
+				$listHTML = 'No request items found.';
 			}
 		}else{
 			$listHTML = 'No request items found.';
@@ -153,13 +152,13 @@ class RequestController extends AppController {
 		}
 		echo $responseHTML;
 	}
-	
+
 	public function success() {
 	}
-	
+
 	public function submit() {
 		$this->autoRender = false;
-		
+
 		if(!$this->request->is('post')){
 			header('location: /search');
 			exit;
@@ -168,10 +167,9 @@ class RequestController extends AppController {
 		if(!phpCAS::isAuthenticated()){
 			phpCAS::forceAuthentication();
 		}
-		
+
 		$this->loadModel('CollibraAPI');
-		$objCollibra = new CollibraAPI();
-		
+
 		$name = explode(' ',$this->request->data['name']);
 		$firstName = $name[0];
 		$lastName = '';
@@ -180,9 +178,9 @@ class RequestController extends AppController {
 		$phone = $this->request->data['phone'];
 		$role = $this->request->data['role'];
 		$dataRequested = '';
-		
+
 		// create guest user to use for submitting request
-		/*$guestUserResp = $objCollibra->request(
+		/*$guestUserResp = $this->CollibraAPI->request(
 			array(
 				'url'=>'user/guest',
 				'post'=>true,
@@ -192,7 +190,7 @@ class RequestController extends AppController {
 		$guestUserResp = json_decode($guestUserResp);
 		$guestID = $guestUserResp->resourceId;
 		*/
-		
+
 		$postData = '';//'user='.$guestID;
 		foreach($this->request->data as $key => $val){
 			if($key!='name' && $key!='phone' && $key!='email' && $key!='role' && $key!='terms' && $key!='requestSubmit' && $key!='collibraUser'){
@@ -209,8 +207,8 @@ class RequestController extends AppController {
 			$postData .= '&informationElements='.$term;
 			$dataRequested .= $term.',';
 		}
-		
-		$formResp = $objCollibra->request(array(
+
+		$formResp = $this->CollibraAPI->request(array(
 			'url'=>'workflow/'.Configure::read('isaWorkflow').'/start',
 			'post'=>true,
 			'params'=>$postData
@@ -218,19 +216,18 @@ class RequestController extends AppController {
 		$formResp = json_decode($formResp);
 		//print_r($postData);
 		//exit;
-		
+
 		if(isset($formResp->startWorkflowResponses[0]->successmessage)){
 			$processID = $formResp->startWorkflowResponses[0]->processInstanceId;
-			
+
 			// attempt to reindex source to make sure latest requests are displayed
-			$objCollibra = new CollibraAPI();
-			$resp = $objCollibra->request(
+			$resp = $this->CollibraAPI->request(
 				array(
 					'url'=>'search/re-index',
 					'post'=>true
 				)
 			);
-			
+
 			// store user's request
 			/*$this->loadModel('ISARequests');
 			$isaReq = new ISARequests();
@@ -239,7 +236,7 @@ class RequestController extends AppController {
 			$isaReq->set('request', $dataRequested);
 			$isaReq->set('personId', $this->request->data['requesterPersonId']);
 			$isaReq->save();*/
-			
+
 			// clear items in queue
 			setcookie('queue', '', time()-3600, "/");
 
@@ -249,8 +246,8 @@ class RequestController extends AppController {
 		}
 		exit;
 	}
-	
-	public function index() {        
+
+	public function index() {
 		if(!phpCAS::isAuthenticated()){
 			phpCAS::forceAuthentication();
 		}else{
@@ -259,31 +256,30 @@ class RequestController extends AppController {
 			$byuUser = $this->BYUWS->personalSummary($netID);
 			$supervisorInfo = $this->BYUWS->supervisorLookup($netID);
 		}
-		
+
 		// make sure terms have been added to the users's queue
 		if(!isset($_COOKIE['queue'])) {
 			header('location: /search');
 			exit;
 		}
-		
+
 		// redirect if cookie is set but not empty
 		$arrQueue = unserialize($_COOKIE['queue']);
 		if(sizeof($arrQueue)<=0){
 			header('location: /search');
 			exit;
 		}
-		
+
 		//$termID = $this->request->params['pass'][0];
 		$this->loadModel('CollibraAPI');
-		$objCollibra = new CollibraAPI();
-		
+
 		$requestFilter = '{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"createdOn"}},{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldId":"00000000-0000-0000-0000-000000000202","fieldName":"Attr00000000000000000000000000000202"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202longExpr"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202rid"}},{"Group":{"Columns":[{"Column":{"label":"Steward User ID","fieldId":"00000000-0000-0000-0000-000000005016","fieldName":"userRole00000000000000000000000000005016rid"}},{"Column":{"label":"Steward Gender","fieldName":"userRole00000000000000000000000000005016gender"}},{"Column":{"label":"Steward First Name","fieldName":"userRole00000000000000000000000000005016fn"}},{"Column":{"label":"Steward Last Name","fieldName":"userRole00000000000000000000000000005016ln"}}],"name":"Role00000000000000000000000000005016"}},{"Group":{"Columns":[{"Column":{"label":"Steward Group ID","fieldName":"groupRole00000000000000000000000000005016grid"}},{"Column":{"label":"Steward Group Name","fieldName":"groupRole00000000000000000000000000005016ggn"}}],"name":"Role00000000000000000000000000005016g"}},{"Column":{"fieldName":"statusname"}},{"Column":{"fieldName":"statusrid"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldName":"concepttyperid"}}],'.
 			'"Resources":{"Term":{"CreatedOn":{"name":"createdOn"},"Id":{"name":"termrid"},"Signifier":{"name":"termsignifier"},"StringAttribute":[{"Value":{"name":"Attr00000000000000000000000000000202"},"LongExpression":{"name":"Attr00000000000000000000000000000202longExpr"},"Id":{"name":"Attr00000000000000000000000000000202rid"},"labelId":"00000000-0000-0000-0000-000000000202"}],"Member":[{"User":{"Gender":{"name":"userRole00000000000000000000000000005016gender"},"FirstName":{"name":"userRole00000000000000000000000000005016fn"},"Id":{"name":"userRole00000000000000000000000000005016rid"},"LastName":{"name":"userRole00000000000000000000000000005016ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016sig"},"name":"Role00000000000000000000000000005016","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016rid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005016ggn"},"Id":{"name":"groupRole00000000000000000000000000005016grid"}},"roleId":"00000000-0000-0000-0000-000000005016"}],"Status":{"Signifier":{"name":"statusname"},"Id":{"name":"statusrid"}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"},"Id":{"name":"concepttyperid"}}],'.
 			'"Filter":{'.
 			'   "AND":['.
 			'        {'.
 			'           "OR":[';
-		
+
 		for($i=0; $i<sizeof($arrQueue); $i++){
 			$requestFilter .= '{"Field":{'.
 				'   "name":"termrid",'.
@@ -292,7 +288,7 @@ class RequestController extends AppController {
 				'}},';
 		}
 		$requestFilter = substr($requestFilter, 0, strlen($requestFilter)-1);
-		
+
 		$requestFilter .= ']'.
 			'        }'.
 			'     ]'.
@@ -302,8 +298,8 @@ class RequestController extends AppController {
 			']'.
 			'}'.
 			'},"displayStart":0,"displayLength":10}}';
-		
-		$termResp = $objCollibra->request(
+
+		$termResp = $this->CollibraAPI->request(
 			array(
 				'url'=>'output/data_table',
 				//'url'=>'output/csv-raw',
@@ -321,9 +317,9 @@ class RequestController extends AppController {
 		array_multisort($domains, SORT_ASC, $termNames, SORT_ASC, $termResp->aaData);
 
 		// load form fields for ISA workflow
-		$formResp = $objCollibra->request(array('url'=>'workflow/'.Configure::read('isaWorkflow').'/form/start'));
+		$formResp = $this->CollibraAPI->request(array('url'=>'workflow/'.Configure::read('isaWorkflow').'/form/start'));
 		$formResp = json_decode($formResp);
-		
+
 		$this->set('formFields', $formResp);
 		$this->set('termDetails', $termResp);
 
@@ -349,7 +345,7 @@ class RequestController extends AppController {
 		if(isset($byuUser->employee_information->reportsToName)){
 			$psReportsToName = $byuUser->employee_information->reportsToName;
 		}
-		
+
 		$this->set('psName', $psName);
 		$this->set('psPhone', $psPhone);
 		$this->set('psEmail', $psEmail);

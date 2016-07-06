@@ -1,25 +1,27 @@
 <?php
 
 class SearchController extends AppController {
+	public $uses = array('CollibraAPI', 'CmsPage');
+
 	public function beforeFilter() {
 		parent::beforeFilter();
 	}
-	
+
 	private static function  str_getcsv2($arr){
 		$a = str_getcsv($arr, ";", '"');
 		$epoch = $a[0]/1000;
-		$a[0] = date('m/d/Y', $epoch);        
+		$a[0] = date('m/d/Y', $epoch);
 		return $a;
 	}
-	
+
 	private static function sortUsers($a, $b){
 		return strcmp($a->firstName, $b->firstName);
 	}
-	
+
 	private static function sortTerms($a, $b){
 		return strcmp($a->signifier, $b->signifier);
 	}
-	
+
 	private static function sortCommunities($a, $b){
 		if ($a->name < $b->name) {
 			return -1;
@@ -29,33 +31,33 @@ class SearchController extends AppController {
 			return 0;
 		}
 	}
-	
-	private function convert_smart_quotes($string){ 
-		$search = array(chr(145), 
-			chr(146), 
-			chr(147), 
-			chr(148), 
-			chr(151)); 
 
-		$replace = array("'", 
-			"'", 
-			'"', 
-			'"', 
-			'-'); 
+	private function convert_smart_quotes($string){
+		$search = array(chr(145),
+			chr(146),
+			chr(147),
+			chr(148),
+			chr(151));
 
-		return str_replace($search, $replace, $string); 
+		$replace = array("'",
+			"'",
+			'"',
+			'"',
+			'-');
+
+		return str_replace($search, $replace, $string);
 	}
-	
+
 	// NORMAL VIEWS
 	/////////////////////////////////////////////////////////
 	public function index() {
 		$this->set('commonSearches', $this->getCommonSearches());
 	}
-	
+
 	public function catalog() {
 		$this->set('commonSearches', $this->getCommonSearches());
 	}
-	
+
 	public function term() {
 		if(!isset($this->request->params['pass'][0])){
 			header('location: /search');
@@ -63,47 +65,47 @@ class SearchController extends AppController {
 		}
 		$query = $this->request->params['pass'][0];
 		$terms = $this->getTermDetails($query);
-		
+
 		$this->set('commonSearches', $this->getCommonSearches());
 		//$this->set('totalPages', 0);
 		//$this->set('pageNum', 0);
 		$this->set('terms', $terms);
 		$this->set('searchInput', '');
-		
+
 		$this->render('results');
 	}
-	
+
 	public function listTerms() {
 		if(!isset($this->request->params['pass'][0])){
 			header('location: /search');
 			exit;
 		}
-		
+
 		App::uses('Helpers', 'Model');
 		$page = 0;
 		if(isset($this->request->params['pass'][1])){
 			$page = Helpers::getInt($this->request->params['pass'][1]);
 		}
 		if($page==0) $page=1;
-		
+
 		$domainID = $this->request->params['pass'][0];
 		$terms = $this->getDomainTerms($domainID, $page-1, 25);
-		
+
 		$this->set('commonSearches', $this->getCommonSearches());
 		//$this->set('totalPages', ceil($terms->iTotalDisplayRecords/25));
 		//$this->set('pageNum', $page);
 		$this->set('terms', $terms);
 		$this->set('searchInput', '');
 		$this->set('domain', $domainID);
-		
+
 		$this->render('results');
 	}
-	
+
 	public function results() {
 		App::uses('Helpers', 'Model');
 		$query = htmlentities($this->request->params['pass'][0]);
 		$defaultCommunity = Configure::read('byuCommunity');
-		
+
 		// set community filter based on querystring value
 		///////////////////////////////////////////////////////
 		$filter = '';
@@ -113,7 +115,7 @@ class SearchController extends AppController {
 			}
 		}
 		///////////////////////////////////////////////////////
-		
+
 		// set sort filter based on querystring value
 		///////////////////////////////////////////////////////
 		$sort = isset($this->request->query['s'])?$this->request->query['s']:0;
@@ -136,21 +138,20 @@ class SearchController extends AppController {
 				break;
 		}
 		///////////////////////////////////////////////////////
-		
+
 		$page = 0;
 		if(isset($this->request->params['pass'][1])){
 			$page = Helpers::getInt($this->request->params['pass'][1]);
 		}
 		if($page==0) $page=1;
 		//$query = str_replace('%2B', 'ss', $this->request->params['pass'][0]);
-		
+
 		// get all terms matching query
 		$terms = $this->searchTerms(html_entity_decode($query), $page-1, 10, $sortField, $sortOrder, $filter);
 		//print_r($terms);exit;
-		
+
 		// save search and delete anything over 300 entries
 		if(sizeof($terms->aaData)>0){
-			$this->loadModel('CmsPage');
 			// delete last record
 			$results = $this->CmsPage->query("SELECT * FROM common_searches");
 			if(sizeof($results)>=300){
@@ -160,19 +161,17 @@ class SearchController extends AppController {
 			$this->CmsPage->query("INSERT INTO common_searches (query) VALUES('".$query."')");
 		}
 		///////////////////////////////////////////////////////
-		
+
 		// get all sub communities for Data Governance Council
 		// to be used in the search filter drop down
 		///////////////////////////////////////////////////////
-		$this->loadModel('CollibraAPI');
-		$objCollibra = new CollibraAPI();
-		$resp = $objCollibra->request(array('url'=>'community/'.$defaultCommunity.'/sub-communities'));
+		$resp = $this->CollibraAPI->request(array('url'=>'community/'.$defaultCommunity.'/sub-communities'));
 		$communities = json_decode($resp);
 		usort($communities->communityReference, 'self::sortCommunities');
 		///////////////////////////////////////////////////////
-		
+
 		if($filter == $defaultCommunity) $filter = '';
-		
+
 		$this->set('commonSearches', $this->getCommonSearches());
 		$this->set('communities', $communities);
 		//$this->set('totalPages', ceil($terms->iTotalDisplayRecords/10));
@@ -182,8 +181,8 @@ class SearchController extends AppController {
 		$this->set('terms', $terms);
 		$this->set('searchInput', str_replace("&amp;", "+", $query));
 	}
-	
-	
+
+
 	// AJAX VIEWS
 	/////////////////////////////////////////////////////////
 
@@ -197,14 +196,12 @@ class SearchController extends AppController {
 				$community = $this->request->data['c'];
 			}
 		}
-			
+
 		$obj = new SearchController();
-		$obj->loadModel('CollibraAPI');
-		$objCollibra = new CollibraAPI();
 		$request = '{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldId":"00000000-0000-0000-0000-000000000202","fieldName":"Attr00000000000000000000000000000202"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202longExpr"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202rid"}},{"Column":{"fieldName":"Attr0d798f70b3ca4af2b28354f84c4714aarid"}},{"Column":{"fieldName":"Attr0d798f70b3ca4af2b28354f84c4714aa","fieldId":"0d798f70-b3ca-4af2-b283-54f84c4714aa"}},{"Column":{"fieldName":"statusname"}},{"Column":{"fieldName":"statusrid"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldId":"e0937764-544a-4d21-98ce-dc0c1936b465","fieldName":"Attre0937764544a4d2198cedc0c1936b465"}},{"Column":{"fieldName":"Attre0937764544a4d2198cedc0c1936b465rid"}},{"Group":{"name":"synonym_for","Columns":[{"Column":{"fieldName":"Relc06ed0b7032f4d0fae405824c12f94a6T","fieldId":"c06ed0b7-032f-4d0f-ae40-5824c12f94a6T","label":"Business Term"}},{"Column":{"fieldName":"relRelc06ed0b7032f4d0fae405824c12f94a6Trid","label":"Business Term ID"}},{"Column":{"fieldName":"Relc06ed0b7032f4d0fae405824c12f94a6Trid","label":"Business Term Business Term ID"}}]}}],"Resources":{"Term":{"Id":{"name":"termrid"},"Signifier":{"name":"termsignifier"},"StringAttribute":[{"Value":{"name":"Attr00000000000000000000000000000202"},"LongExpression":{"name":"Attr00000000000000000000000000000202longExpr"},"Id":{"name":"Attr00000000000000000000000000000202rid"},"labelId":"00000000-0000-0000-0000-000000000202"}],"BooleanAttribute":[{"Id":{"name":"Attr0d798f70b3ca4af2b28354f84c4714aarid"},"labelId":"0d798f70-b3ca-4af2-b283-54f84c4714aa","Value":{"name":"Attr0d798f70b3ca4af2b28354f84c4714aa"}}],"Status":{"Signifier":{"name":"statusname"},"Id":{"name":"statusrid"}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"},"Id":{"name":"concepttyperid"}}],"SingleValueListAttribute":[{"Value":{"name":"Attre0937764544a4d2198cedc0c1936b465"},"Id":{"name":"Attre0937764544a4d2198cedc0c1936b465rid"},"labelId":"e0937764-544a-4d21-98ce-dc0c1936b465"}],"Relation":[{"typeId":"c06ed0b7-032f-4d0f-ae40-5824c12f94a6","type":"TARGET","Id":{"name":"relRelc06ed0b7032f4d0fae405824c12f94a6Trid"},"Source":{"Id":{"name":"Relc06ed0b7032f4d0fae405824c12f94a6Trid"},"Signifier":{"name":"Relc06ed0b7032f4d0fae405824c12f94a6T"}}}],"Filter":{"AND":[{"OR":[{"Field":{"name":"concepttypename","operator":"INCLUDES","value":"Business Term"}},{"Field":{"name":"concepttypename","operator":"INCLUDES","value":"Synonym"}}]},';
 		if(!Configure::read('allowUnapprovedeTerms')){
 		}
-		$resp = $objCollibra->request(
+		$resp = $this->CollibraAPI->request(
 			array(
 				'url'=>'output/data_table',
 				'post'=>true,
@@ -215,17 +212,15 @@ class SearchController extends AppController {
 
 		return $resp;
 	}
-	
+
 	// get list of all other terms within a vocabulary/glossary
 	public function getFullVocab() {
 		$vocabRID= $this->request->query['rid'];
-		$this->loadModel('CollibraAPI');
-		$objCollibra = new CollibraAPI();
-		$resp = $objCollibra->request(
+		$resp = $this->CollibraAPI->request(
 			array('url'=>'vocabulary/'.$vocabRID.'/terms')
 		);
 		$jsonResp = json_decode($resp);
-		
+
 		// create request JSON string
 		$request = '{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldId":"00000000-0000-0000-0000-000000000202","fieldName":"Attr00000000000000000000000000000202"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202longExpr"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202rid"}},{"Column":{"fieldName":"Attr0d798f70b3ca4af2b28354f84c4714aarid"}},{"Column":{"fieldName":"Attr0d798f70b3ca4af2b28354f84c4714aa","fieldId":"0d798f70-b3ca-4af2-b283-54f84c4714aa"}},{"Column":{"fieldName":"statusname"}},{"Column":{"fieldName":"statusrid"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldId":"e0937764-544a-4d21-98ce-dc0c1936b465","fieldName":"Attre0937764544a4d2198cedc0c1936b465"}},{"Column":{"fieldName":"Attre0937764544a4d2198cedc0c1936b465rid"}},{"Group":{"name":"synonym_for","Columns":[{"Column":{"fieldName":"Relc06ed0b7032f4d0fae405824c12f94a6T","fieldId":"c06ed0b7-032f-4d0f-ae40-5824c12f94a6T","label":"Business Term"}},{"Column":{"fieldName":"relRelc06ed0b7032f4d0fae405824c12f94a6Trid","label":"Business Term ID"}},{"Column":{"fieldName":"Relc06ed0b7032f4d0fae405824c12f94a6Trid","label":"Business Term Business Term ID"}}]}}],"Resources":{"Term":{"Id":{"name":"termrid"},"Signifier":{"name":"termsignifier"},"StringAttribute":[{"Value":{"name":"Attr00000000000000000000000000000202"},"LongExpression":{"name":"Attr00000000000000000000000000000202longExpr"},"Id":{"name":"Attr00000000000000000000000000000202rid"},"labelId":"00000000-0000-0000-0000-000000000202"}],"BooleanAttribute":[{"Id":{"name":"Attr0d798f70b3ca4af2b28354f84c4714aarid"},"labelId":"0d798f70-b3ca-4af2-b283-54f84c4714aa","Value":{"name":"Attr0d798f70b3ca4af2b28354f84c4714aa"}}],"Status":{"Signifier":{"name":"statusname"},"Id":{"name":"statusrid"}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"},"Id":{"name":"concepttyperid"}}],"SingleValueListAttribute":[{"Value":{"name":"Attre0937764544a4d2198cedc0c1936b465"},"Id":{"name":"Attre0937764544a4d2198cedc0c1936b465rid"},"labelId":"e0937764-544a-4d21-98ce-dc0c1936b465"}],"Relation":[{"typeId":"c06ed0b7-032f-4d0f-ae40-5824c12f94a6","type":"TARGET","Id":{"name":"relRelc06ed0b7032f4d0fae405824c12f94a6Trid"},"Source":{"Id":{"name":"Relc06ed0b7032f4d0fae405824c12f94a6Trid"},"Signifier":{"name":"Relc06ed0b7032f4d0fae405824c12f94a6T"}}}],"Filter":{"AND":[{"OR":[{"Field":{"name":"concepttypename","operator":"INCLUDES","value":"Business Term"}},{"Field":{"name":"concepttypename","operator":"INCLUDES","value":"Synonym"}}]},';
 		if(!Configure::read('allowUnapprovedeTerms')){
@@ -254,7 +249,7 @@ class SearchController extends AppController {
 			'  }'.
 			']},"Order":[{"Field":{"name":"termsignifier","order":"ASC"}}]}},"displayStart":0,"displayLength":1000,"relationTypeId":"bc80a28c-57f6-49a7-9d2b-063e91614824","roleDirection":true}}';
 
-		$resp = $objCollibra->request(
+		$resp = $this->CollibraAPI->request(
 			array(
 				'url'=>'output/data_table',
 				'post'=>true,
@@ -262,11 +257,11 @@ class SearchController extends AppController {
 				'params'=>$request
 			)
 		);
-		
+
 		$jsonResp = json_decode($resp);
 		//print_r($jsonResp);
 		//exit;
-		
+
 		echo '<div class="checkCol">';
 		$itemCount = 0;
 		for($i=0; $i<sizeof($jsonResp->aaData); $i++){
@@ -321,7 +316,7 @@ class SearchController extends AppController {
 				}
 				$itemCount++;
 			}
-				
+
 		}
 		echo '</div>';
 		exit;
@@ -332,9 +327,7 @@ class SearchController extends AppController {
 		$searchInput= html_entity_decode($this->request->query['searchInput']);
 		$searchInput = addslashes($searchInput);
 
-		$this->loadModel('CollibraAPI');
-		$objCollibra = new CollibraAPI();
-		$resp = $objCollibra->request(
+		$resp = $this->CollibraAPI->request(
 			array('url'=>'term/'.$vocabRID)
 		);
 		$jsonResp = json_decode($resp);
@@ -350,7 +343,7 @@ class SearchController extends AppController {
 		$def = strip_tags($def, '<p><span><div><ul><li>');
 		$wrapBefore = '<span class="highlight">';
 		$wrapAfter  = '</span>';
-		
+
 		$searchInput = trim($searchInput, '\"');
 		$arrQuery = explode(" ", $searchInput);
 		for($i=0; $i<sizeof($arrQuery); $i++){
@@ -360,13 +353,11 @@ class SearchController extends AppController {
 		echo $def;
 		exit;
 	}
-	
+
 	public function autoCompleteTerm() {
 		$query= $this->request->query['q'];
 		if($query!=''){
 			$obj = new SearchController();
-			$this->loadModel('CollibraAPI');
-			$objCollibra = new CollibraAPI();
 
 			// create JSON request string
 			$request = '{"query": "'.$query.'*", "filter": { "community": ["'.Configure::read('byuCommunity').'"], "category": ["TE"], "vocabulary": [], "type": { "asset":["00000000-0000-0000-0000-000000011001","ed82f17f-c1e7-4d6d-83cc-50f6b529c296"], "domain":[] },';
@@ -374,8 +365,8 @@ class SearchController extends AppController {
 				$request .= '"status": ["00000000-0000-0000-0000-000000005009"], ';
 			}
 			$request .= '"includeMeta": true }, "fields": ["name"], "order": { "by": "score", "sort": "desc" }, "limit": 5, "offset": 0, "highlight": false, "relativeUrl": true, "withParents": true }';
-			
-			$resp = $objCollibra->request(
+
+			$resp = $this->CollibraAPI->request(
 				array(
 						'url'=>'search',
 						'post'=>true,
@@ -397,12 +388,11 @@ class SearchController extends AppController {
 					echo '<li>'.$jsonResp->results[$i]->name->val.'</li>';
 				}
 			}
-		}		
+		}
 		exit;
 	}
-	
+
 	public function getCommonSearches(){
-		$this->loadModel('CmsPage');
 		$commonSearches = array();
 		$results = $this->CmsPage->query("SELECT query, COUNT(*) total FROM common_searches GROUP BY query ORDER BY COUNT(*) DESC LIMIT 0,4");
 		foreach($results as $result){
@@ -411,19 +401,17 @@ class SearchController extends AppController {
 		return $commonSearches;
 	}
 	/////////////////////////////////////////////////////////
-	
+
 	private function getTermDetails($query){
 		$arrResp = '';
 		$obj = new SearchController();
-		$obj->loadModel('CollibraAPI');
-		$objCollibra = new CollibraAPI();
 
 		// get all communities to use for bread crumbs in results page
-		$resp = $objCollibra->request(
+		$resp = $this->CollibraAPI->request(
 			array('url'=>'community/all')
 		);
 		$jsonAllCommunities = json_decode($resp);
-		
+
 		$requestFilter = '{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"createdOn"}},{"Column":{"fieldName":"Attr0d798f70b3ca4af2b28354f84c4714aarid"}},{"Column":{"fieldName":"Attr0d798f70b3ca4af2b28354f84c4714aa","fieldId":"0d798f70-b3ca-4af2-b283-54f84c4714aa"}},{"Column":{"fieldName":"lastModified"}},{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldId":"e0937764-544a-4d21-98ce-dc0c1936b465", "fieldName":"Attre0937764544a4d2198cedc0c1936b465"}},{"Column":{"fieldName":"Attre0937764544a4d2198cedc0c1936b465rid"}},{"Column":{"fieldId":"00000000-0000-0000-0000-000000000202","fieldName":"Attr00000000000000000000000000000202"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202longExpr"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202rid"}},{"Group":{"Columns":[{"Column":{"label":"Steward User ID","fieldId":"00000000-0000-0000-0000-000000005016","fieldName":"userRole00000000000000000000000000005016rid"}},{"Column":{"label":"Steward Gender","fieldName":"userRole00000000000000000000000000005016gender"}},{"Column":{"label":"Steward First Name","fieldName":"userRole00000000000000000000000000005016fn"}},{"Column":{"label":"Steward Last Name","fieldName":"userRole00000000000000000000000000005016ln"}}],"name":"Role00000000000000000000000000005016"}},{"Group":{"Columns":[{"Column":{"label":"Steward Group ID","fieldName":"groupRole00000000000000000000000000005016grid"}},{"Column":{"label":"Steward Group Name","fieldName":"groupRole00000000000000000000000000005016ggn"}}],"name":"Role00000000000000000000000000005016g"}},{"Column":{"fieldName":"statusname"}},{"Column":{"fieldName":"statusrid"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldName":"concepttyperid"}}, {"Group":{"name":"synonym_for","Columns":[{"Column":{"fieldName":"Relc06ed0b7032f4d0fae405824c12f94a6T","fieldId":"c06ed0b7-032f-4d0f-ae40-5824c12f94a6T","label":"Business Term"}},{"Column":{"fieldName":"relRelc06ed0b7032f4d0fae405824c12f94a6Trid","label":"Business Term ID"}},{"Column":{"fieldName":"Relc06ed0b7032f4d0fae405824c12f94a6Trid","label":"Business Term Business Term ID"}}]}}],'.
 			'"Resources":{"Term":{"CreatedOn":{"name":"createdOn"},"LastModified":{"name":"lastModified"},"Id":{"name":"termrid"},"BooleanAttribute":[{"Id":{"name":"Attr0d798f70b3ca4af2b28354f84c4714aarid"},"labelId":"0d798f70-b3ca-4af2-b283-54f84c4714aa","Value":{"name":"Attr0d798f70b3ca4af2b28354f84c4714aa"}}], "SingleValueListAttribute":[{"Value":{"name":"Attre0937764544a4d2198cedc0c1936b465"}, "Id":{"name":"Attre0937764544a4d2198cedc0c1936b465rid"}, "labelId":"e0937764-544a-4d21-98ce-dc0c1936b465"}],"Signifier":{"name":"termsignifier"},"StringAttribute":[{"Value":{"name":"Attr00000000000000000000000000000202"},"LongExpression":{"name":"Attr00000000000000000000000000000202longExpr"},"Id":{"name":"Attr00000000000000000000000000000202rid"},"labelId":"00000000-0000-0000-0000-000000000202"}],"Member":[{"User":{"Gender":{"name":"userRole00000000000000000000000000005016gender"},"FirstName":{"name":"userRole00000000000000000000000000005016fn"},"Id":{"name":"userRole00000000000000000000000000005016rid"},"LastName":{"name":"userRole00000000000000000000000000005016ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016sig"},"name":"Role00000000000000000000000000005016","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016rid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005016ggn"},"Id":{"name":"groupRole00000000000000000000000000005016grid"}},"roleId":"00000000-0000-0000-0000-000000005016"}],"Status":{"Signifier":{"name":"statusname"},"Id":{"name":"statusrid"}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"},"Id":{"name":"concepttyperid"}}],"Relation":[{"typeId":"c06ed0b7-032f-4d0f-ae40-5824c12f94a6","type":"TARGET","Id":{"name":"relRelc06ed0b7032f4d0fae405824c12f94a6Trid"},"Source":{"Id":{"name":"Relc06ed0b7032f4d0fae405824c12f94a6Trid"},"Signifier":{"name":"Relc06ed0b7032f4d0fae405824c12f94a6T"}}}],'.
 			'"Filter":{'.
@@ -452,8 +440,8 @@ class SearchController extends AppController {
 			']'.
 			'}'.
 			'},"displayStart":0,"displayLength":10}}';
-		
-		$resp = $objCollibra->request(
+
+		$resp = $this->CollibraAPI->request(
 			array(
 				'url'=>'output/data_table',
 				//'url'=>'output/csv-raw',
@@ -500,18 +488,16 @@ class SearchController extends AppController {
 
 		return $resp;
 	}
-	
+
 	private function searchTerms($query, $page=0, $displayLength=20, $sortField='termsignifier', $sortOrder='ASC', $communityFilter='', $termOnly=false){
 		$query = addslashes($query);
 		if(substr($query, 0, 2)!='\"' && substr($query, strlen($query)-2, 2)!='\"' && substr($query, strlen($query)-1, 1)!='*'){
-			$query .= '*';	
+			$query .= '*';
 		}
 
 		$displayStart = $page*$displayLength;
-		
+
 		$obj = new SearchController();
-		$obj->loadModel('CollibraAPI');
-		$objCollibra = new CollibraAPI();
 
 		// use API search call to query based on user input
 		///////////////////////////////////
@@ -526,7 +512,7 @@ class SearchController extends AppController {
 		}
 		$request .= '"includeMeta":false}, "fields":["name","attributes"], "order":{"by":"score","sort": "desc"}, "limit":200, "offset":0, "highlight":false}';
 		//die($request);
-		$searchResp = $objCollibra->request(
+		$searchResp = $this->CollibraAPI->request(
 			array('url'=>'search', 'post'=>true, 'json'=>true, 'params'=>$request)
 		);
 		$searchResp = json_decode($searchResp);
@@ -538,7 +524,7 @@ class SearchController extends AppController {
 		}
 		if($ridFilter!='') $ridFilter = substr($ridFilter, 0, strlen($ridFilter)-1);
 		//die($ridFilter);
- 		///////////////////////////////////
+		///////////////////////////////////
 
 		$requestFilter = '{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"lastModified"}},{"Column":{"fieldName":"createdOn"}},{"Column":{"fieldName":"Attr0d798f70b3ca4af2b28354f84c4714aarid"}},{"Column":{"fieldName":"Attr0d798f70b3ca4af2b28354f84c4714aa","fieldId":"0d798f70-b3ca-4af2-b283-54f84c4714aa"}},{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldId":"00000000-0000-0000-0000-000000000202","fieldName":"Attr00000000000000000000000000000202"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202longExpr"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202rid"}},{"Column":{"fieldId":"e0937764-544a-4d21-98ce-dc0c1936b465","fieldName":"Attre0937764544a4d2198cedc0c1936b465"}},{"Column":{"fieldName":"Attre0937764544a4d2198cedc0c1936b465rid"}},{"Group":{"Columns":[{"Column":{"label":"Steward User ID","fieldId":"00000000-0000-0000-0000-000000005016","fieldName":"userRole00000000000000000000000000005016rid"}},{"Column":{"label":"Steward Gender","fieldName":"userRole00000000000000000000000000005016gender"}},{"Column":{"label":"Steward First Name","fieldName":"userRole00000000000000000000000000005016fn"}},{"Column":{"label":"Steward Last Name","fieldName":"userRole00000000000000000000000000005016ln"}}],"name":"Role00000000000000000000000000005016"}},{"Group":{"Columns":[{"Column":{"label":"Steward Group ID","fieldName":"groupRole00000000000000000000000000005016grid"}},{"Column":{"label":"Steward Group Name","fieldName":"groupRole00000000000000000000000000005016ggn"}}],"name":"Role00000000000000000000000000005016g"}},{"Column":{"fieldName":"statusname"}},{"Column":{"fieldName":"statusrid"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldName":"concepttyperid"}}, {"Group":{"name":"synonym_for","Columns":[{"Column":{"fieldName":"Relc06ed0b7032f4d0fae405824c12f94a6T","fieldId":"c06ed0b7-032f-4d0f-ae40-5824c12f94a6T","label":"Business Term"}},{"Column":{"fieldName":"relRelc06ed0b7032f4d0fae405824c12f94a6Trid","label":"Business Term ID"}},{"Column":{"fieldName":"Relc06ed0b7032f4d0fae405824c12f94a6Trid","label":"Business Term Business Term ID"}}]}}],'.
 			'"Resources":{"Term":{"CreatedOn":{"name":"createdOn"},"LastModified":{"name":"lastModified"},"Id":{"name":"termrid"},"BooleanAttribute":[{"Id":{"name":"Attr0d798f70b3ca4af2b28354f84c4714aarid"},"labelId":"0d798f70-b3ca-4af2-b283-54f84c4714aa","Value":{"name":"Attr0d798f70b3ca4af2b28354f84c4714aa"}}],"Signifier":{"name":"termsignifier"},"StringAttribute":[{"Value":{"name":"Attr00000000000000000000000000000202"},"LongExpression":{"name":"Attr00000000000000000000000000000202longExpr"},"Id":{"name":"Attr00000000000000000000000000000202rid"},"labelId":"00000000-0000-0000-0000-000000000202"}],"Member":[{"User":{"Gender":{"name":"userRole00000000000000000000000000005016gender"},"FirstName":{"name":"userRole00000000000000000000000000005016fn"},"Id":{"name":"userRole00000000000000000000000000005016rid"},"LastName":{"name":"userRole00000000000000000000000000005016ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016sig"},"name":"Role00000000000000000000000000005016","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016rid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005016ggn"},"Id":{"name":"groupRole00000000000000000000000000005016grid"}},"roleId":"00000000-0000-0000-0000-000000005016"}],"SingleValueListAttribute":[{"Value":{"name":"Attre0937764544a4d2198cedc0c1936b465"},"Id":{"name":"Attre0937764544a4d2198cedc0c1936b465rid"},"labelId":"e0937764-544a-4d21-98ce-dc0c1936b465"}],"Status":{"Signifier":{"name":"statusname"},"Id":{"name":"statusrid"}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"},"Id":{"name":"concepttyperid"}}],"Relation":[{"typeId":"c06ed0b7-032f-4d0f-ae40-5824c12f94a6","type":"TARGET","Id":{"name":"relRelc06ed0b7032f4d0fae405824c12f94a6Trid"},"Source":{"Id":{"name":"Relc06ed0b7032f4d0fae405824c12f94a6Trid"},"Signifier":{"name":"Relc06ed0b7032f4d0fae405824c12f94a6T"}}}],'.
@@ -604,7 +590,7 @@ class SearchController extends AppController {
 		$displayLength = 100;
 		$requestFilter .= ']}},"displayStart":'.$displayStart.',"displayLength":'.$displayLength.'}}';
 
-		$resp = $objCollibra->request(
+		$resp = $this->CollibraAPI->request(
 			array(
 				'url'=>'output/data_table',
 				//'url'=>'output/csv-raw',
@@ -630,11 +616,11 @@ class SearchController extends AppController {
 		}
 
 		// get all communities to use for search filtering and bread crumbs in results page
-		$communityResp = $objCollibra->request(
+		$communityResp = $this->CollibraAPI->request(
 			array('url'=>'community/all')
 		);
 		$jsonAllCommunities = json_decode($communityResp);
-		
+
 		// loop through terms to check for quick links and also to build domain breadcrumb
 		if(is_array($resp->aaData)){
 			$term = $resp->aaData;
@@ -672,25 +658,23 @@ class SearchController extends AppController {
 		//print_r($resp);exit;
 		return $resp;
 	}
-	
+
 	private function getDomainTerms($domainFilter='', $page=0, $displayLength=20, $sortField='termsignifier', $sortOrder='ASC'){
 		$arrResp = '';
 		$displayStart = $page*$displayLength;
-		
+
 		$obj = new SearchController();
-		$obj->loadModel('CollibraAPI');
-		$objCollibra = new CollibraAPI();
 
 		// get all communities to use for bread crumbs in results page
-		$resp = $objCollibra->request(
+		$resp = $this->CollibraAPI->request(
 			array('url'=>'community/all')
 		);
 		$jsonAllCommunities = json_decode($resp);
-		
-		
+
+
 		$requestFilter = '{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"createdOn"}},{"Column":{"fieldName":"lastModified"}},{"Column":{"fieldName":"Attr0d798f70b3ca4af2b28354f84c4714aarid"}},{"Column":{"fieldName":"Attr0d798f70b3ca4af2b28354f84c4714aa","fieldId":"0d798f70-b3ca-4af2-b283-54f84c4714aa"}},{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldId":"e0937764-544a-4d21-98ce-dc0c1936b465", "fieldName":"Attre0937764544a4d2198cedc0c1936b465"}},{"Column":{"fieldName":"Attre0937764544a4d2198cedc0c1936b465rid"}},{"Column":{"fieldId":"00000000-0000-0000-0000-000000000202","fieldName":"Attr00000000000000000000000000000202"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202longExpr"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202rid"}},{"Group":{"Columns":[{"Column":{"label":"Steward User ID","fieldId":"00000000-0000-0000-0000-000000005016","fieldName":"userRole00000000000000000000000000005016rid"}},{"Column":{"label":"Steward Gender","fieldName":"userRole00000000000000000000000000005016gender"}},{"Column":{"label":"Steward First Name","fieldName":"userRole00000000000000000000000000005016fn"}},{"Column":{"label":"Steward Last Name","fieldName":"userRole00000000000000000000000000005016ln"}}],"name":"Role00000000000000000000000000005016"}},{"Group":{"Columns":[{"Column":{"label":"Steward Group ID","fieldName":"groupRole00000000000000000000000000005016grid"}},{"Column":{"label":"Steward Group Name","fieldName":"groupRole00000000000000000000000000005016ggn"}}],"name":"Role00000000000000000000000000005016g"}},{"Column":{"fieldName":"statusname"}},{"Column":{"fieldName":"statusrid"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldName":"concepttyperid"}},{"Group":{"name":"synonym_for","Columns":[{"Column":{"fieldName":"Relc06ed0b7032f4d0fae405824c12f94a6T","fieldId":"c06ed0b7-032f-4d0f-ae40-5824c12f94a6T","label":"Business Term"}},{"Column":{"fieldName":"relRelc06ed0b7032f4d0fae405824c12f94a6Trid","label":"Business Term ID"}},{"Column":{"fieldName":"Relc06ed0b7032f4d0fae405824c12f94a6Trid","label":"Business Term Business Term ID"}}]}}],'.
 			'"Resources":{"Term":{"CreatedOn":{"name":"createdOn"},"LastModified":{"name":"lastModified"},"Id":{"name":"termrid"},"BooleanAttribute":[{"Id":{"name":"Attr0d798f70b3ca4af2b28354f84c4714aarid"},"labelId":"0d798f70-b3ca-4af2-b283-54f84c4714aa","Value":{"name":"Attr0d798f70b3ca4af2b28354f84c4714aa"}}],"Signifier":{"name":"termsignifier"},"StringAttribute":[{"Value":{"name":"Attr00000000000000000000000000000202"},"LongExpression":{"name":"Attr00000000000000000000000000000202longExpr"},"Id":{"name":"Attr00000000000000000000000000000202rid"},"labelId":"00000000-0000-0000-0000-000000000202"}],"Member":[{"User":{"Gender":{"name":"userRole00000000000000000000000000005016gender"},"FirstName":{"name":"userRole00000000000000000000000000005016fn"},"Id":{"name":"userRole00000000000000000000000000005016rid"},"LastName":{"name":"userRole00000000000000000000000000005016ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016sig"},"name":"Role00000000000000000000000000005016","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016rid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005016ggn"},"Id":{"name":"groupRole00000000000000000000000000005016grid"}},"roleId":"00000000-0000-0000-0000-000000005016"}], "SingleValueListAttribute":[{"Value":{"name":"Attre0937764544a4d2198cedc0c1936b465"}, "Id":{"name":"Attre0937764544a4d2198cedc0c1936b465rid"}, "labelId":"e0937764-544a-4d21-98ce-dc0c1936b465"}],"Status":{"Signifier":{"name":"statusname"},"Id":{"name":"statusrid"}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"},"Id":{"name":"concepttyperid"}}],"Relation":[{"typeId":"c06ed0b7-032f-4d0f-ae40-5824c12f94a6","type":"TARGET","Id":{"name":"relRelc06ed0b7032f4d0fae405824c12f94a6Trid"},"Source":{"Id":{"name":"Relc06ed0b7032f4d0fae405824c12f94a6Trid"},"Signifier":{"name":"Relc06ed0b7032f4d0fae405824c12f94a6T"}}}],'.
-		
+
 		/*$requestFilter = '{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"createdOn"}},{"Column":{"fieldName":"lastModified"}},{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldId":"e0937764-544a-4d21-98ce-dc0c1936b465", "fieldName":"Attre0937764544a4d2198cedc0c1936b465"}},{"Column":{"fieldName":"Attre0937764544a4d2198cedc0c1936b465rid"}},{"Column":{"fieldId":"00000000-0000-0000-0000-000000000202","fieldName":"Attr00000000000000000000000000000202"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202longExpr"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202rid"}},{"Group":{"Columns":[{"Column":{"label":"Steward User ID","fieldId":"00000000-0000-0000-0000-000000005016","fieldName":"userRole00000000000000000000000000005016rid"}},{"Column":{"label":"Steward Gender","fieldName":"userRole00000000000000000000000000005016gender"}},{"Column":{"label":"Steward First Name","fieldName":"userRole00000000000000000000000000005016fn"}},{"Column":{"label":"Steward Last Name","fieldName":"userRole00000000000000000000000000005016ln"}}],"name":"Role00000000000000000000000000005016"}},{"Group":{"Columns":[{"Column":{"label":"Steward Group ID","fieldName":"groupRole00000000000000000000000000005016grid"}},{"Column":{"label":"Steward Group Name","fieldName":"groupRole00000000000000000000000000005016ggn"}}],"name":"Role00000000000000000000000000005016g"}},{"Column":{"fieldName":"statusname"}},{"Column":{"fieldName":"statusrid"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldName":"concepttyperid"}}],'.
 			'"Resources":{"Term":{"CreatedOn":{"name":"createdOn"},"LastModified":{"name":"lastModified"},"Id":{"name":"termrid"},"Signifier":{"name":"termsignifier"},"StringAttribute":[{"Value":{"name":"Attr00000000000000000000000000000202"},"LongExpression":{"name":"Attr00000000000000000000000000000202longExpr"},"Id":{"name":"Attr00000000000000000000000000000202rid"},"labelId":"00000000-0000-0000-0000-000000000202"}],"Member":[{"User":{"Gender":{"name":"userRole00000000000000000000000000005016gender"},"FirstName":{"name":"userRole00000000000000000000000000005016fn"},"Id":{"name":"userRole00000000000000000000000000005016rid"},"LastName":{"name":"userRole00000000000000000000000000005016ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016sig"},"name":"Role00000000000000000000000000005016","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016rid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005016ggn"},"Id":{"name":"groupRole00000000000000000000000000005016grid"}},"roleId":"00000000-0000-0000-0000-000000005016"}], "SingleValueListAttribute":[{"Value":{"name":"Attre0937764544a4d2198cedc0c1936b465"}, "Id":{"name":"Attre0937764544a4d2198cedc0c1936b465rid"}, "labelId":"e0937764-544a-4d21-98ce-dc0c1936b465"}],"Status":{"Signifier":{"name":"statusname"},"Id":{"name":"statusrid"}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"},"Id":{"name":"concepttyperid"}}],'.
 		*/	'"Filter":{'.
@@ -734,7 +718,7 @@ class SearchController extends AppController {
 		// set paging options
 		$requestFilter .= ']}},"displayStart":'.$displayStart.',"displayLength":'.$displayLength.'}}';
 
-		$resp = $objCollibra->request(
+		$resp = $this->CollibraAPI->request(
 			array(
 				'url'=>'output/data_table',
 				//'url'=>'output/csv-raw',
@@ -744,7 +728,7 @@ class SearchController extends AppController {
 			)
 		);
 		$resp = json_decode($resp);
-		
+
 		// loop through terms to check for quick links and also to build domain breadcrumb
 		if(sizeof($resp->aaData)>0){
 			$term = $resp->aaData;

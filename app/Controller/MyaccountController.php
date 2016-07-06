@@ -4,7 +4,7 @@ class MyaccountController extends AppController {
 	private static function sortUsers($a, $b){
 		return strcmp($a->firstName, $b->firstName);
 	}
-	
+
 	private static function sortRequests($a, $b){
 		return strcmp($a->createdOn, $b->createdOn);
 	}
@@ -12,7 +12,7 @@ class MyaccountController extends AppController {
 	private static function sortAttributes($a, $b){
 		return strcmp($a->labelReference->signifier, $b->labelReference->signifier);
 	}
-	
+
 	public function logout() {
 		phpCAS::logout();
 	}
@@ -27,7 +27,7 @@ class MyaccountController extends AppController {
 		}
 		return $ordered + $array;
 	}
-	
+
 	public function index() {
 		$requestStatus = 'Submitted';
 		$page = 'current';
@@ -35,17 +35,16 @@ class MyaccountController extends AppController {
 			$requestStatus = 'Complete';
 			$page = 'past';
 		}
-		
+
 		if(!phpCAS::isAuthenticated()){
 			phpCAS::forceAuthentication();
 		}else{
 			$netID = phpCAS::getUser();
 			$this->loadModel('BYUWS');
-			$objBYUWS = new BYUWS();
-			$byuUser = $objBYUWS->personalSummary($netID);
+			$byuUser = $this->BYUWS->personalSummary($netID);
 			$personID = $byuUser->identifiers->person_id;
 		}
-		
+
 		// attempt to reindex source to make sure latest requests are displayed
 		$this->loadModel('CollibraAPI');
 		$objCollibra = new CollibraAPI();
@@ -55,9 +54,9 @@ class MyaccountController extends AppController {
 				'post'=>true
 			)
 		);*/
-		
+
 		// get all request for this user
-		$resp = $objCollibra->request(
+		$resp = $this->CollibraAPI->request(
 			array(
 				'url'=>'search',
 				'post'=>true,
@@ -66,12 +65,12 @@ class MyaccountController extends AppController {
 			)
 		);
 		$isaRequests = json_decode($resp);
-		
+
 		$arrRequests = array();
 		foreach($isaRequests->results as $r){
 			if($r->status == $requestStatus){
 				// load terms details
-				$resp = $objCollibra->request(
+				$resp = $this->CollibraAPI->request(
 					array(
 						'url'=>'term/'.$r->name->id
 					)
@@ -79,10 +78,10 @@ class MyaccountController extends AppController {
 				$request = json_decode($resp);
 				//$createdDate = $request->createdOn/1000;
 				//$createdDate = date('m/d/Y', $request->createdOn);
-				
+
 				// load terms submitted in request
 				////////////////////////////////////////////
-				$resp = $objCollibra->request(
+				$resp = $this->CollibraAPI->request(
 					array(
 						'url'=>'output/data_table',
 						'post'=>true,
@@ -101,7 +100,7 @@ class MyaccountController extends AppController {
 				////////////////////////////////////////////
 				$termRid = $r->name->id;
 				//$termRid = 'd3b7c819-6f5f-43da-88ef-c99c97963842';
-				$resp = $objCollibra->request(
+				$resp = $this->CollibraAPI->request(
 					array(
 						'url'=>'output/data_table',
 						'post'=>true,
@@ -114,16 +113,16 @@ class MyaccountController extends AppController {
 					$request->approvals = $approvalObjects;
 				}
 				////////////////////////////////////////////
-				
+
 				// add to request data array
 				array_push($arrRequests, $request);
 			}
 		}
 		// sort results by date added
 		usort($arrRequests, 'self::sortRequests');
-		
+
 		// sort request attribute data based on workflow form field order
-		$workflowResp = $objCollibra->request(array('url'=>'workflow/'.Configure::read('isaWorkflow').'/form/start'));
+		$workflowResp = $this->CollibraAPI->request(array('url'=>'workflow/'.Configure::read('isaWorkflow').'/form/start'));
 		$workflowResp = json_decode($workflowResp);
 		foreach($arrRequests as $r){
 			$arrNewAttr = array();
@@ -137,7 +136,7 @@ class MyaccountController extends AppController {
 			}
 			$r->attributeReferences->attributeReference = $arrNewAttr;
 		}
-		
+
 		$psName = '';
 		$psRole = 'N/A';
 		$psDepartment = 'N/A';
