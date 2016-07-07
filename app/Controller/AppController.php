@@ -84,11 +84,7 @@ class AppController extends Controller {
 			$this->initBeforeFilter();
 		}
 
-		$isAdmin = false;
-		if($this->Session->read('Auth.User.infohubUserId') != ''){
-			$isAdmin = true;
-		}
-		$this->set('isAdmin', $isAdmin);
+		$this->set('isAdmin', $this->Auth->user('infohubUserId'));
 	}
 
 	public function isAuthorized($user) {
@@ -96,17 +92,26 @@ class AppController extends Controller {
 	}
 
 	public function isAdmin($user) {
-		if (!array_key_exists('infohubUserId', $user)) {
+		return !empty($user['infohubUserId']);
+	}
+
+	public function implementedEvents() {
+		$implementedEvents = parent::implementedEvents();
+		$implementedEvents['CAS.authenticated'] = 'afterCASAuthentication';
+		return $implementedEvents;
+	}
+
+	public function afterCASAuthentication($event) {
+		if (!array_key_exists('infohubUserId', $event->data)) {
 			$this->loadModel('CmsUsers');
 			$cmsUser = $this->CmsUsers->find('first', array(
-				'conditions' => array('username' => $user['username'], 'active' => '1')));
+				'conditions' => array('username' => $event->data['username'], 'active' => '1')));
 			if (empty($cmsUser)) {
-				$user['infohubUserId'] = null;
+				$event->data['infohubUserId'] = null;
 			} else {
-				$user['infohubUserId'] = $cmsUser['CmsUsers']['id'];
+				$event->data['infohubUserId'] = $cmsUser['CmsUsers']['id'];
 			}
-			$this->Session->write('Auth.User.infohubUserId', $user['infohubUserId']);
 		}
-		return !empty($user['infohubUserId']);
+		return $event;
 	}
 }

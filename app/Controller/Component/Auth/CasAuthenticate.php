@@ -2,6 +2,7 @@
 
 App::import('Vendor', 'CAS/CAS');
 App::uses('BaseAuthenticate', 'Controller/Component/Auth');
+App::uses('CakeEvent', 'Event');
 App::uses('Hash', 'Utility');
 
 class CasAuthenticate extends BaseAuthenticate {
@@ -31,7 +32,10 @@ class CasAuthenticate extends BaseAuthenticate {
 	public function authenticate(CakeRequest $request, CakeResponse $response) {
 		phpCAS::handleLogoutRequests(false);
 		phpCAS::forceAuthentication();
-		return array_merge(array('username' => phpCAS::getUser()), phpCAS::getAttributes());
+		$user = array_merge(array('username' => phpCAS::getUser()), phpCAS::getAttributes());
+		$event = new CakeEvent('CAS.authenticated', $this, $user);
+		$this->_Collection->getController()->getEventManager()->dispatch($event);
+		return $event->data;
 	}
 
 	public function unauthenticated(CakeRequest $request, CakeResponse $response) {
