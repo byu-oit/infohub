@@ -86,18 +86,7 @@ class PhotosController extends AppController {
 			exit("No photo found");
 		}
 
-		$userResourceId = $this->CollibraAPI->userResourceFromUsername($netId);
-		if (empty($userResourceId)) {
-			exit('No photo found');
-		}
-		/* @var $photo HttpSocketResponse */
-		$photo = $this->CollibraAPI->photo($userResourceId);
-		if (empty($photo)) {
-			exit("No photo found");
-		}
-		header('Content-Type: ' . $photo['type']);
-		echo $photo['body'];
-		exit();
+		return $this->rview($this->CollibraAPI->userResourceFromUsername($netId));
 	}
 
 	public function rview($userResourceId = null) {
