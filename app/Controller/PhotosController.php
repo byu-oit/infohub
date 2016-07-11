@@ -5,6 +5,7 @@ class PhotosController extends AppController {
 
 	function beforeFilter() {
 		parent::beforeFilter();
+		$this->Auth->deny();
 		$this->layout = 'admin';
 	}
 
