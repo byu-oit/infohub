@@ -338,6 +338,9 @@ class RequestController extends AppController {
 		if(isset($byuUser->employee_information->reportsToName)){
 			$psReportsToName = $byuUser->employee_information->reportsToName;
 		}
+		if (!empty($byuUser->employee_information->department)) {
+			$psDepartment = $byuUser->employee_information->department;
+		}
 
 		$this->set('psName', $psName);
 		$this->set('psPhone', $psPhone);
