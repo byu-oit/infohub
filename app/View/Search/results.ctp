@@ -131,7 +131,7 @@
 <?php
 	}
 
-	if(sizeof($terms->aaData)==0){
+	if(empty($terms->aaData)){
 		echo '<h1>No results found.</h1><h3>Please try a different search term.</h3>';
 	}else{
 		for($i=0; $i<sizeof($terms->aaData); $i++){

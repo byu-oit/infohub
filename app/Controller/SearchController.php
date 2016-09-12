@@ -151,7 +151,7 @@ class SearchController extends AppController {
 		//print_r($terms);exit;
 
 		// save search and delete anything over 300 entries
-		if(sizeof($terms->aaData)>0){
+		if(!empty($terms->aaData)){
 			// delete last record
 			$results = $this->CmsPage->query("SELECT * FROM common_searches");
 			if(sizeof($results)>=300){
@@ -599,7 +599,10 @@ class SearchController extends AppController {
 				'params'=>$requestFilter
 			)
 		);
-		$resp = json_decode($resp);
+		$resp = @json_decode($resp);
+		if (empty($resp)) {
+			return false;
+		}
 
 		//order results based on first search
 		if($sortField == 'score' && sizeof($resp->aaData)>0){
