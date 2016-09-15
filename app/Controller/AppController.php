@@ -73,6 +73,7 @@ class AppController extends Controller {
 		$this->set('quickLinks', $quickLinks);
 		$this->set('requestedTermCount', $requestedTermCount);
 		$this->set('controllerName', $controllerName = $this->request->params['controller']);
+		$this->set('isAdmin', $this->Auth->user('infohubUserId'));
 	}
 
 	public function beforeFilter() {
@@ -82,9 +83,9 @@ class AppController extends Controller {
 		$this->Auth->allow();
 		if($this->name != 'CakeError'){
 			$this->initBeforeFilter();
+		} else {
+			$this->set('isAdmin', $this->Auth->user('infohubUserId'));
 		}
-
-		$this->set('isAdmin', $this->Auth->user('infohubUserId'));
 	}
 
 	public function isAuthorized($user) {
@@ -98,6 +99,8 @@ class AppController extends Controller {
 	public function implementedEvents() {
 		$implementedEvents = parent::implementedEvents();
 		$implementedEvents['CAS.authenticated'] = 'afterCASAuthentication';
+		//Re-run initBeforeFilter immediately after fresh Authentication
+		$implementedEvents['Auth.afterIdentify'] = 'initBeforeFilter';
 		return $implementedEvents;
 	}
 

@@ -368,7 +368,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 				<h1><a href="/" id="logo">BYU InfoHub</a></h1>
 				<h2><a href="/" id="site-title">InfoHub</a></h2>
 				<div id="headerRight">
-					<div id="request-queue" <?php if($casAuthenticated)  echo "class=loggedIn"; ?> >
+					<div id="request-queue" <?php if(!empty($casAuthenticated))  echo "class=loggedIn"; ?> >
 						<?php
 							$reqHiddenClass = '';
 							if($requestedTermCount==0){
