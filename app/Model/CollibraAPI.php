@@ -2,6 +2,7 @@
 
 App::uses('HttpSocket', 'Network/Http');
 App::uses('Model', 'Model');
+App::uses('String', 'Utility');
 
 class CollibraAPI extends Model {
 	public $useTable = false;
