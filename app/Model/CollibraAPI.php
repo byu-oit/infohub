@@ -40,9 +40,13 @@ class CollibraAPI extends Model {
 		return empty($options['raw']) ? $response->body() : $response;
 	}
 
+	public function post($url, $data = [], $options = []) {
+		return $this->client()->post($this->settings['url'] . $url, $data, $options);
+	}
+
 	public function dataTable($config) {
-		$response = $this->client()->post(
-				$this->settings['url'] . "output/data_table",
+		$response = $this->post(
+				"output/data_table",
 				json_encode($config),
 				['header' => [
 					'Content-Type' => "application/json"]]);
@@ -155,7 +159,7 @@ class CollibraAPI extends Model {
 			$this->errors[] = 'Missing required fields: ' . implode(', ', $missingFields);
 			return false; //missing some required fields
 		}
-		$response = $this->client()->post($this->settings['url'] . "user/{$userResourceId}", $data);
+		$response = $this->post("user/{$userResourceId}", $data);
 	}
 
 	public function updateUserPhone($userResourceId, $phone, $existingPhoneResourceId = null) {
@@ -163,7 +167,7 @@ class CollibraAPI extends Model {
 		if (!empty($existingPhoneResourceId)) {
 			$path .= "/$existingPhoneResourceId";
 		}
-		$response = $this->client()->post($this->settings['url'] . $path, ['phoneNumber' => $phone, 'phoneType' => 'WORK']);
+		$response = $this->post($path, ['phoneNumber' => $phone, 'phoneType' => 'WORK']);
 	}
 
 	public function userRecordFromUsername($username) {
@@ -199,7 +203,7 @@ class CollibraAPI extends Model {
 			if (empty($fileId)) {
 				return null;
 			}
-			$response = $this->client()->post($this->settings['url'] . "user/{$userResourceId}/avatar", ['file' => $fileId]);
+			$response = $this->post("user/{$userResourceId}/avatar", ['file' => $fileId]);
 			return ($response && $response->isOk());
 		}
 		$photo = $this->get("user/{$userResourceId}/avatar", ['raw' => true]);
@@ -218,8 +222,8 @@ class CollibraAPI extends Model {
 		}
 		$body = "--{$boundary}\r\nContent-Disposition: form-data; name=\"{$filename}\"; filename=\"{$filename}\"\r\n\r\n{$rawData}\r\n--{$boundary}--";
 		/* @var $response HttpSocketResponse */
-		$response = $this->client()->post(
-				$this->settings['url'] . "file",
+		$response = $this->post(
+				"file",
 				$body,
 				['header' => [
 					'Content-Type' => "multipart/form-data; boundary={$boundary}"]]);
