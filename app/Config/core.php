@@ -18,16 +18,41 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-    // DEV SERVER
-    Configure::write('byuCommunity', '4e756e1e-11ee-4d1e-bfaa-fb0ada974fc5');
-    Configure::write('isaWorkflow', '62d6b6a4-0fa6-4335-89c7-e822beb920d6');
-    Configure::write('allowUnapprovedeTerms', true);
-    Configure::write('allowUnrequestableTerms', true);
-    
-    // NON-DEV SERVER
-    //Configure::write('byuCommunity', '99582048-38e3-4149-a301-c6d54d8151c8');
-    //Configure::write('isaWorkflow', 'c9b528d6-67a8-458a-902a-d072e09fea19');
+if (!function_exists('denv')) {
+	function denv($key, $default = null) {
+		$val = env($key);
+		if ($val === null) {
+			return $default;
+		}
+		return $val;
+	}
+}
 
+	Configure::write('Collibra.APICommunity', denv('COLLIBRA_API_COMMUNITY', '9091816c-9b8b-45ba-8422-5e9fa36088be'));
+	Configure::write('byuCommunity', denv('COLLIBRA_BYU_COMMUNITY', '4e756e1e-11ee-4d1e-bfaa-fb0ada974fc5'));
+	Configure::write('isaWorkflow', denv('COLLIBRA_ISA_WORKFLOW', '62d6b6a4-0fa6-4335-89c7-e822beb920d6'));
+	Configure::write('allowUnapprovedeTerms', true);
+	Configure::write('allowUnrequestableTerms', true);
+
+	Configure::write('Datasources', [
+		'default' => [
+			'datasource' => 'Database/Mysql',
+			'persistent' => false,
+			'host' => denv('CAKE_DEFAULT_DB_HOST', 'salix.byu.edu'),
+			'login' => denv('CAKE_DEFAULT_DB_USERNAME', '***REQUIRED***'),
+			'password' => denv('CAKE_DEFAULT_DB_PASSWORD', '***REQUIRED***'),
+			'database' => denv('CAKE_DEFAULT_DB_DATABASE', 'infohub'),
+			'prefix' => ''],
+		'byuApi' => [
+			'datasource' => 'DataSource',
+			'host' => denv('CAKE_BYU_WS_HOST', 'api.byu.edu'),
+			'api_key' => denv('CAKE_BYU_WS_AUTH_KEY', '***REQUIRED***'),
+			'shared_secret' => denv('CAKE_BYU_WS_AUTH_SHARED_SECRET', '***REQUIRED***')],
+		'collibra' => [
+			'datasource' => 'DataSource',
+			'url'       =>  denv('CAKE_COLLIBRA_HOST', 'https://byu.collibra.com/rest/latest/'),
+			'username'  => denv('CAKE_COLLIBRA_USERNAME', '***REQUIRED***'),
+			'password'  => denv('CAKE_COLLIBRA_PASSWORD', '***REQUIRED***')]]);
 /**
  * CakePHP Debug Level:
  *
@@ -41,7 +66,7 @@
  * In production mode, flash messages redirect after a time interval.
  * In development mode, you need to click the flash message to continue.
  */
-	Configure::write('debug', 1);
+	Configure::write('debug', denv('CAKE_DEBUG', 0));
 
 /**
  * Configure the Error handler used to handle errors for your application. By default
@@ -123,7 +148,7 @@
  * will override the automatic detection of full base URL and can be
  * useful when generating links from the CLI (e.g. sending emails)
  */
-	//Configure::write('App.fullBaseUrl', 'http://example.com');
+	Configure::write('App.fullBaseUrl', denv('CAKE_FULL_BASE_URL', 'https://infohub.byu.edu'));
 
 /**
  * Web path to the public images directory under webroot.
@@ -165,7 +190,7 @@
  * Turn off all caching application-wide.
  *
  */
-	Configure::write('Cache.disable', true);
+//	Configure::write('Cache.disable', true);
 
 /**
  * Enable cache checking.
@@ -232,12 +257,12 @@
 /**
  * A random string used in security hashing methods.
  */
-	Configure::write('Security.salt', 'DYhG2db0qyJO3xfs2guGoUubWwvniR2G0FgaC9mi');
+	Configure::write('Security.salt', denv('CAKE_SECURITY_SALT', 'DYhG2db0qyJO3xfs2guGoUubWwvniR2G0FgaC9mi'));
 
 /**
  * A random numeric string (digits only) used to encrypt/decrypt strings.
  */
-	Configure::write('Security.cipherSeed', '26859309377459542446745783645');
+	Configure::write('Security.cipherSeed', denv('CAKE_SECURITY_CIPHER_SEED', '26859309377459542446745783645'));
 
 /**
  * Apply timestamps with the last modified time to static assets (js, css, images).
@@ -394,3 +419,8 @@ Cache::config('_cake_model_', array(
 	'serialize' => ($engine === 'File'),
 	'duration' => $duration
 ));
+
+
+if (is_readable(dirname(__FILE__) . DS . 'core-local.php')) {
+	Configure::load('core-local');
+}
