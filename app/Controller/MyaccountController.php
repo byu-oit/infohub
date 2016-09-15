@@ -125,7 +125,7 @@ class MyaccountController extends AppController {
 		usort($arrRequests, 'self::sortRequests');
 
 		// sort request attribute data based on workflow form field order
-		$workflowResp = $this->CollibraAPI->request(array('url'=>'workflow/'.Configure::read('isaWorkflow').'/form/start'));
+		$workflowResp = $this->CollibraAPI->request(array('url'=>'workflow/'.Configure::read('Collibra.isaWorkflow').'/form/start'));
 		$workflowResp = json_decode($workflowResp);
 		foreach($arrRequests as $r){
 			$arrNewAttr = array();

@@ -104,7 +104,7 @@ class SearchController extends AppController {
 	public function results() {
 		App::uses('Helpers', 'Model');
 		$query = htmlentities($this->request->params['pass'][0]);
-		$defaultCommunity = Configure::read('byuCommunity');
+		$defaultCommunity = Configure::read('Collibra.byuCommunity');
 
 		// set community filter based on querystring value
 		///////////////////////////////////////////////////////
@@ -188,7 +188,7 @@ class SearchController extends AppController {
 
 	// Called from search landing page
 	public function loadCommunityData($community = null){
-		if(!$community) $community = Configure::read('byuCommunity');
+		if(!$community) $community = Configure::read('Collibra.byuCommunity');
 		$this->autoRender = false;
 		$resp = '';
 		if ($this->request->is('post')) {
@@ -360,7 +360,7 @@ class SearchController extends AppController {
 			$obj = new SearchController();
 
 			// create JSON request string
-			$request = '{"query": "'.$query.'*", "filter": { "community": ["'.Configure::read('byuCommunity').'"], "category": ["TE"], "vocabulary": [], "type": { "asset":["00000000-0000-0000-0000-000000011001","ed82f17f-c1e7-4d6d-83cc-50f6b529c296"], "domain":[] },';
+			$request = '{"query": "'.$query.'*", "filter": { "community": ["'.Configure::read('Collibra.byuCommunity').'"], "category": ["TE"], "vocabulary": [], "type": { "asset":["00000000-0000-0000-0000-000000011001","ed82f17f-c1e7-4d6d-83cc-50f6b529c296"], "domain":[] },';
 			if(!Configure::read('allowUnapprovedeTerms')){
 				$request .= '"status": ["00000000-0000-0000-0000-000000005009"], ';
 			}
@@ -503,7 +503,7 @@ class SearchController extends AppController {
 		///////////////////////////////////
 		// set filter to community selected or the "BYU" community by default
 		if($communityFilter == ''){
-			$communityFilter = Configure::read('byuCommunity');
+			$communityFilter = Configure::read('Collibra.byuCommunity');
 		}
 		// call search API limiting results to business term and synonym types
 		$request = '{"query":"'.$query.'", "filter": { "community": ["'.$communityFilter.'"], "category":["TE"], "vocabulary":[], "type":{"asset":["00000000-0000-0000-0000-000000011001","ed82f17f-c1e7-4d6d-83cc-50f6b529c296"]},';

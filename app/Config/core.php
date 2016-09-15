@@ -28,9 +28,9 @@ if (!function_exists('denv')) {
 	}
 }
 
-	Configure::write('Collibra.APICommunity', denv('COLLIBRA_API_COMMUNITY', '9091816c-9b8b-45ba-8422-5e9fa36088be'));
-	Configure::write('byuCommunity', denv('COLLIBRA_BYU_COMMUNITY', '4e756e1e-11ee-4d1e-bfaa-fb0ada974fc5'));
-	Configure::write('isaWorkflow', denv('COLLIBRA_ISA_WORKFLOW', '62d6b6a4-0fa6-4335-89c7-e822beb920d6'));
+	Configure::write('Collibra.apiCommunity', denv('COLLIBRA_API_COMMUNITY', '9091816c-9b8b-45ba-8422-5e9fa36088be'));
+	Configure::write('Collibra.byuCommunity', denv('COLLIBRA_BYU_COMMUNITY', '4e756e1e-11ee-4d1e-bfaa-fb0ada974fc5'));
+	Configure::write('Collibra.isaWorkflow', denv('COLLIBRA_ISA_WORKFLOW', '62d6b6a4-0fa6-4335-89c7-e822beb920d6'));
 	Configure::write('allowUnapprovedeTerms', true);
 	Configure::write('allowUnrequestableTerms', true);
 

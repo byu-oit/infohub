@@ -206,7 +206,7 @@ class RequestController extends AppController {
 		}
 
 		$formResp = $this->CollibraAPI->request(array(
-			'url'=>'workflow/'.Configure::read('isaWorkflow').'/start',
+			'url'=>'workflow/'.Configure::read('Collibra.isaWorkflow').'/start',
 			'post'=>true,
 			'params'=>$postData
 		));
@@ -310,7 +310,7 @@ class RequestController extends AppController {
 		array_multisort($domains, SORT_ASC, $termNames, SORT_ASC, $termResp->aaData);
 
 		// load form fields for ISA workflow
-		$formResp = $this->CollibraAPI->request(array('url'=>'workflow/'.Configure::read('isaWorkflow').'/form/start'));
+		$formResp = $this->CollibraAPI->request(array('url'=>'workflow/'.Configure::read('Collibra.isaWorkflow').'/form/start'));
 		$formResp = json_decode($formResp);
 
 		$this->set('formFields', $formResp);

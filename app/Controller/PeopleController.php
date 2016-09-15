@@ -10,7 +10,7 @@ class PeopleController extends AppController {
 	}
 
 	private function getParentCommunities($communityData, $parentID, $objCommunity, $level=0){
-		if($parentID != Configure::read('byuCommunity')){
+		if($parentID != Configure::read('Collibra.byuCommunity')){
 			if($level==0) $objCommunity->parents = array();
 			foreach($communityData->aaData[0]->Subcommunities as $co){
 				if($parentID == $co->subcommunityid){
@@ -47,7 +47,7 @@ class PeopleController extends AppController {
 		// get all parent communities for left nav
 		$this->loadModel('CollibraAPI');
 		$resp = $this->CollibraAPI->request(
-			array('url'=>'community/'.Configure::read('byuCommunity').'/sub-communities')
+			array('url'=>'community/'.Configure::read('Collibra.byuCommunity').'/sub-communities')
 		);
 		$parentCommunities = json_decode($resp);
 		usort($parentCommunities->communityReference, 'self::sortCommunities');
@@ -134,7 +134,7 @@ class PeopleController extends AppController {
 		// get all parent communities for left nav
 		$this->loadModel('CollibraAPI');
 		$resp = $this->CollibraAPI->request(
-			array('url'=>'community/'.Configure::read('byuCommunity').'/sub-communities')
+			array('url'=>'community/'.Configure::read('Collibra.byuCommunity').'/sub-communities')
 		);
 		$parentCommunities = json_decode($resp);
 		usort($parentCommunities->communityReference, 'self::sortCommunities');
@@ -148,7 +148,7 @@ class PeopleController extends AppController {
 				$query = preg_replace('/[^ \w]+/', '', $query);
 			}
 
-			$request = '{"query":"'.$query.'*", "filter": { "community": ["'.Configure::read('byuCommunity').'"], "category":["CO", "VC", "UR"], "vocabulary":[], "type":{"asset":[]},';
+			$request = '{"query":"'.$query.'*", "filter": { "community": ["'.Configure::read('Collibra.byuCommunity').'"], "category":["CO", "VC", "UR"], "vocabulary":[], "type":{"asset":[]},';
 			if(!Configure::read('allowUnapprovedeTerms')){
 				$request .= '"status": ["00000000-0000-0000-0000-000000005009"], ';
 			}
@@ -244,7 +244,7 @@ class PeopleController extends AppController {
 			$tmpCommunities = array();
 			foreach($communities->aaData[0]->Subcommunities as $c){
 				$include = false;
-				if($c->parentCommunityId != Configure::read('byuCommunity')){
+				if($c->parentCommunityId != Configure::read('Collibra.byuCommunity')){
 					// add community based on previous search resulta
 					if(in_array($c->subcommunityid, $arrCommunityResults)){
 						$include = true;
@@ -311,7 +311,7 @@ class PeopleController extends AppController {
 		// get all parent communities for left nav
 		$this->loadModel('CollibraAPI');
 		$resp = $this->CollibraAPI->request(
-			array('url'=>'community/'.Configure::read('byuCommunity').'/sub-communities')
+			array('url'=>'community/'.Configure::read('Collibra.byuCommunity').'/sub-communities')
 		);
 		$parentCommunities = json_decode($resp);
 		usort($parentCommunities->communityReference, 'self::sortCommunities');
