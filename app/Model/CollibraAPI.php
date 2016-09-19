@@ -3,6 +3,7 @@
 App::uses('HttpSocket', 'Network/Http');
 App::uses('Model', 'Model');
 App::uses('String', 'Utility');
+App::uses('CakeSession', 'Model/Datasource');
 
 class CollibraAPI extends Model {
 	public $useTable = false;
@@ -29,7 +30,12 @@ class CollibraAPI extends Model {
 	 */
 	protected function client() {
 		if (empty($this->_client)) {
-			$this->_client = new HttpSocket();
+			$config = [];
+			$cookies = CakeSession::read('Collibra.cookies');
+			if (!empty($cookies)) {
+				$config['request']['cookies'] = $cookies;
+			}
+			$this->_client = new HttpSocket($config);
 			$this->_client->configAuth('Basic', $this->settings['username'], $this->settings['password']);
 		}
 		return $this->_client;
@@ -37,11 +43,28 @@ class CollibraAPI extends Model {
 
 	public function get($url, $options = []) {
 		$response = $this->client()->get($this->settings['url'] . $url);
-		return empty($options['raw']) ? $response->body() : $response;
+		if (!empty($response) && !empty($response->cookies)) {
+			$this->_updateSessionCookies();
+		}
+		if (!empty($options['raw'])) {
+			return $response;
+		}
+		if (!$response->isOk()) {
+			$this->errors[] = $response->body();
+			return false;
+		}
+		if (!empty($options['json'])) {
+			return json_decode($response->body());
+		}
+		return $response->body();
 	}
 
 	public function post($url, $data = [], $options = []) {
-		return $this->client()->post($this->settings['url'] . $url, $data, $options);
+		$response = $this->client()->post($this->settings['url'] . $url, $data, $options);
+		if (!empty($response) && !empty($response->cookies)) {
+			$this->_updateSessionCookies();
+		}
+		return $response;
 	}
 
 	public function dataTable($config) {
@@ -236,6 +259,15 @@ class CollibraAPI extends Model {
 			return null;
 		}
 		return $files->file[0];
+	}
+
+	protected function _updateSessionCookies() {
+		$config = $this->client()->config;
+		if (empty($config['request']['cookies'])) {
+			CakeSession::delete('Collibra.cookies');
+		} else {
+			CakeSession::write('Collibra.cookies', $config['request']['cookies']);
+		}
 	}
 
 	public function request($options=array()){
