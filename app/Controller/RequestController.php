@@ -62,7 +62,7 @@ class RequestController extends AppController {
 				if($termID != '' && !$exists){
 					$requestable = true;
 					$this->loadModel('CollibraAPI');
-					$termResp = $this->CollibraAPI->request(array('url'=>'term/'.$termID));
+					$termResp = $this->CollibraAPI->get('term/'.$termID);
 					$termResp = json_decode($termResp);
 
 					// verify that the term is requestable
@@ -177,39 +177,40 @@ class RequestController extends AppController {
 		$dataRequested = '';
 
 		// create guest user to use for submitting request
-		/*$guestUserResp = $this->CollibraAPI->request(
-			array(
-				'url'=>'user/guest',
-				'post'=>true,
-				'params'=>'firstName='.$firstName.'&lastName='.$lastName.'&email='.$this->request->data['email'].''
-			)
+		/*
+		$guestUserResp = $this->CollibraAPI->post(
+				'user/guest',
+				['firstName' => $firstName, 'lastName' => $lastName, 'email' => $this->request->data['email']]
 		);
 		$guestUserResp = json_decode($guestUserResp);
 		$guestID = $guestUserResp->resourceId;
 		*/
 
-		$postData = '';//'user='.$guestID;
+		$postData = [];//'user' => $guestID;
 		foreach($this->request->data as $key => $val){
-			if($key!='name' && $key!='phone' && $key!='email' && $key!='role' && $key!='terms' && $key!='requestSubmit' && $key!='collibraUser'){
-				$postData .= '&'.$key.'='.$val;
+			if (!in_array($key, ['name', 'phone', 'email', 'role', 'terms', 'requestSubmit', 'collibraUser'])) {
+				$postData[$key] = $val;
 			}
 		}
 		// add user's contact info to post
-		$postData .= '&requesterName='.$firstName.' '.$lastName.
-			'&requesterEmail='.$email.
-			'&requesterPhone='.$phone.
-			'&requesterRole='.$role;
+		$postData['requesterName'] = $firstName.' '.$lastName;
+		$postData['requesterEmail'] = $email;
+		$postData['requesterPhone'] = $phone;
+		$postData['requesterRole'] = $role;
+
 		// add requested terms to post
+		//For array data, PHP's http_build_query creates query/POST string in a format Collibra doesn't like,
+		//so we're manually building the remaining POST string
+		$postString = http_build_query($postData);
 		foreach($this->request->data['terms'] as $term){
-			$postData .= '&informationElements='.$term;
+			$postString .= '&informationElements=' . urlencode($term);
 			$dataRequested .= $term.',';
 		}
 
-		$formResp = $this->CollibraAPI->request(array(
-			'url'=>'workflow/'.Configure::read('Collibra.isaWorkflow').'/start',
-			'post'=>true,
-			'params'=>$postData
-		));
+		$formResp = $this->CollibraAPI->post(
+			'workflow/'.Configure::read('Collibra.isaWorkflow').'/start',
+			$postString
+		);
 		$formResp = json_decode($formResp);
 		//print_r($postData);
 		//exit;
@@ -218,21 +219,7 @@ class RequestController extends AppController {
 			$processID = $formResp->startWorkflowResponses[0]->processInstanceId;
 
 			// attempt to reindex source to make sure latest requests are displayed
-			$resp = $this->CollibraAPI->request(
-				array(
-					'url'=>'search/re-index',
-					'post'=>true
-				)
-			);
-
-			// store user's request
-			/*$this->loadModel('ISARequests');
-			$isaReq = new ISARequests();
-			$isaReq->create();
-			$isaReq->set('processId', $processID);
-			$isaReq->set('request', $dataRequested);
-			$isaReq->set('personId', $this->request->data['requesterPersonId']);
-			$isaReq->save();*/
+			$resp = $this->CollibraAPI->post('search/re-index');
 
 			// clear items in queue
 			setcookie('queue', '', time()-3600, "/");
@@ -292,15 +279,7 @@ class RequestController extends AppController {
 			'}'.
 			'},"displayStart":0,"displayLength":10}}';
 
-		$termResp = $this->CollibraAPI->request(
-			array(
-				'url'=>'output/data_table',
-				//'url'=>'output/csv-raw',
-				'post'=>true,
-				'json'=>true,
-				'params'=>$requestFilter
-			)
-		);
+		$termResp = $this->CollibraAPI->postJSON('output/data_table', $requestFilter);
 		$termResp = json_decode($termResp);
 		//usort($termResp->aaData, 'self::sortTermsByDomain');
 		foreach ($termResp->aaData as $term) {
@@ -310,7 +289,7 @@ class RequestController extends AppController {
 		array_multisort($domains, SORT_ASC, $termNames, SORT_ASC, $termResp->aaData);
 
 		// load form fields for ISA workflow
-		$formResp = $this->CollibraAPI->request(array('url'=>'workflow/'.Configure::read('Collibra.isaWorkflow').'/form/start'));
+		$formResp = $this->CollibraAPI->get('workflow/'.Configure::read('Collibra.isaWorkflow').'/form/start');
 		$formResp = json_decode($formResp);
 
 		$this->set('formFields', $formResp);

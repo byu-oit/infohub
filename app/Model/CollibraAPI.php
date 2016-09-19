@@ -67,12 +67,13 @@ class CollibraAPI extends Model {
 		return $response;
 	}
 
+	public function postJSON($url, $data, $options = []) {
+		$options['header']['Content-Type'] = 'application/json';
+		return $this->post($url, $data, $options);
+	}
+
 	public function dataTable($config) {
-		$response = $this->post(
-				"output/data_table",
-				json_encode($config),
-				['header' => [
-					'Content-Type' => "application/json"]]);
+		$response = $this->postJSON("output/data_table", json_encode($config));
 		if (!($response && $response->isOk())) {
 			return null;
 		}
