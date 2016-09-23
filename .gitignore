@@ -10,7 +10,14 @@
 /dist
 /tags
 *.mo
+/composer.phar
 /docker-compose.yml
+# INTENTIONALLY adding /vendor to version control
+# Technically recreatable via composer, but actual
+# number of libraries in this case is extremely
+# small, and keeping /vendor in git reduces
+# number of deployment steps
+# /vendor/*
 
 # IDE and editor specific files #
 #################################

@@ -1,0 +1,56 @@
+[
+    {
+        "name": "php-jsonpointer/php-jsonpointer",
+        "version": "v2.0.1",
+        "version_normalized": "2.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/raphaelstolt/php-jsonpointer.git",
+            "reference": "e1d4bcd40ccdc7dc5ba1f239bf9196173e1e09a0"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/raphaelstolt/php-jsonpointer/zipball/e1d4bcd40ccdc7dc5ba1f239bf9196173e1e09a0",
+            "reference": "e1d4bcd40ccdc7dc5ba1f239bf9196173e1e09a0",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.4"
+        },
+        "require-dev": {
+            "friendsofphp/php-cs-fixer": "^1.11",
+            "phpunit/phpunit": "4.6.*"
+        },
+        "time": "2016-08-12 08:58:14",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Rs\\Json": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Raphael Stolt",
+                "email": "raphael.stolt@gmail.com",
+                "homepage": "http://raphaelstolt.blogspot.com/"
+            }
+        ],
+        "description": "Implementation of JSON Pointer (http://tools.ietf.org/html/rfc6901)",
+        "homepage": "https://github.com/raphaelstolt/php-jsonpointer",
+        "keywords": [
+            "json",
+            "json pointer",
+            "json traversal"
+        ]
+    }
+]

@@ -39,6 +39,10 @@ if (!defined('ROOT')) {
 	define('ROOT', dirname(dirname(dirname(__FILE__))));
 }
 
+if (is_readable(ROOT . DS . 'vendor' . DS . 'autoload.php')) {
+	include_once ROOT . DS . 'vendor' . DS . 'autoload.php';
+}
+
 /**
  * The actual directory name for the "app".
  *

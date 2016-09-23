@@ -262,6 +262,150 @@ class CollibraAPI extends Model {
 		return $files->file[0];
 	}
 
+	public function importSwagger($swagger) {
+		$hostCommunityId = $this->findCommunityByName($swagger['host'], Configure::read('Collibra.apiCommunity'));
+		if (empty($hostCommunityId)) {
+			$this->errors[] = "Host \"{$swagger['host']}\" does not exist in Collibra";
+			return false;
+		}
+
+		$vocabularyId = $this->createVocabulary($swagger['basePath'], $hostCommunityId);
+		if (empty($vocabularyId)) {
+			$this->errors[] = "Unable to create vocabulary \"{$swagger['basePath']}\" in community \"{$swagger['host']}\"";
+			return false;
+		}
+
+		//Add terms
+		$query = http_build_query(['vocabulary' => $vocabularyId, 'conceptType' => Configure::read('Collibra.fieldTypeId')]);
+		//For array data, PHP's http_build_query creates query/POST string in a format Collibra doesn't like,
+		//so we're manually building the remaining POST string
+		$signifiers = [];
+		foreach ($swagger['elements'] as $field) {
+			if (!empty($signifiers[$field['name']])) {
+				continue;
+			}
+			$signifiers[$field['name']] = $field;
+			$query .= '&signifier=' . urlencode($field['name']);
+		}
+		$termsResult = $this->post('term/multiple', $query);
+		if (empty($termsResult) || !$termsResult->isOk()) {
+			$this->deleteVocabulary($vocabularyId);
+			$this->errors[] = "Error adding fields to \"{$swagger['basePath']}\"";
+			return false;
+		}
+
+		//Link created terms to selected Business Terms
+		$terms = json_decode($termsResult->body());
+		if (empty($terms->termReference)) {
+			return true;
+		}
+		$relationshipTypeId = Configure::read('Collibra.businessTermToFieldRelationId');
+		foreach ($terms->termReference as $term) {
+			if (empty($term->signifier) || empty($term->resourceId) || empty($signifiers[$term->signifier]['business_term'])) {
+				continue;
+			}
+			$success = $this->post("term/{$term->resourceId}/relations", [
+				'type' => $relationshipTypeId,
+				'target' => $signifiers[$term->signifier]['business_term'],
+				'inverse' => 'true'
+			]);
+			if (empty($success) || !$success->isOk()) {
+				$foo = $success->body();
+			}
+		}
+		return true;
+	}
+
+	public function findCommunityByName($name, $parentCommunity = null) {
+		$query = ['searchName' => $name];
+		if (!empty($parentCommunity)) {
+			$query['community'] = $parentCommunity;
+		}
+
+		$search = $this->get('community/find?' . http_build_query($query), ['json' => true]);
+		if (empty($search) || empty($search->communityReference)) {
+			return null;
+		}
+
+		$match = null;
+		foreach ($search->communityReference as $community) {
+			if (!empty($community->name) && $community->name == $name) {
+				$match = $community->resourceId;
+				break;
+			}
+		}
+		return $match;
+	}
+
+	public function createVocabulary($name, $communityId) {
+		$success = $this->post('vocabulary', [
+			'name' => $name,
+			'community' => $communityId,
+			'type' => Configure::read('Collibra.vocabularyTypeId')
+		]);
+		if (empty($success)) {
+			return false;
+		}
+		if (!$success->isOk()) {
+			if (strpos($success->body(), 'already exists') !== false) {
+				$this->errors[] = "Vocabulary \"{$name}\" already exists";
+			}
+			return false;
+		}
+
+		$response = json_decode($success->body());
+		return (empty($response) || empty($response->resourceId)) ? false : $response->resourceId;
+	}
+
+	public function deleteVocabulary($vocabularyId) {
+		$response = $this->post(
+			'vocabulary/remove/async',
+			['resource' => $vocabularyId],
+			['method' => 'DELETE']);
+	}
+
+	public function searchStandardLabel($term) {
+		$query = [
+			'query' => $term,
+			'filter' => [
+				'category' => ['TE'],
+				'type' => [
+					'asset' => [Configure::read('Collibra.businessTermTypeId')]],
+				'community' => [Configure::read('Collibra.byuCommunity')]],
+			'fields' => [Configure::read('Collibra.standardDataElementLabelTypeId')],
+			'order' => [
+				'by' => 'score',
+				'sort' => 'desc'],
+			'offset' => 0,
+			'limit' => 20,
+			'highlight' => false,
+			'relativeUrl' => false];
+		$response = $this->postJSON('search', json_encode($query));
+		if (empty($response)) {
+			return false;
+		}
+		if (!$response->isOk()) {
+			$this->errors[] = $response->body();
+			return false;
+		}
+		$results = json_decode($response->body());
+		if (empty($results->results)) {
+			return [];
+		}
+		$output = [];
+		foreach ($results->results as $result) {
+			if (!empty($result->attributes)) {
+				foreach ($result->attributes as $attribute) {
+					if ($attribute->type == 'Definition') {
+						$result->definition = $attribute;
+					}
+				}
+			}
+			unset($result->attributes);
+		}
+		return $results->results;
+	}
+
 	protected function _updateSessionCookies() {
 		$config = $this->client()->config;
 		if (empty($config['request']['cookies'])) {
