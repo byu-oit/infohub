@@ -33,8 +33,7 @@
 
 	Router::connect('/resources/*', array('controller' => 'cmsPages', 'action' => 'index'));
 
-	Router::connect('/search', array('controller' => 'search', 'action' => 'index'));
-	Router::connect('/search/:action/*', array('controller' => 'search', 'action' => 'index'));
+	Router::connect('/login', array('controller' => 'myaccount', 'action' => 'login'));
 
 	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 

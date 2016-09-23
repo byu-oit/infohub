@@ -19,6 +19,10 @@ class MyaccountController extends AppController {
 		return strcmp($a->labelReference->signifier, $b->labelReference->signifier);
 	}
 
+	public function login() {
+		$this->redirect('/');
+	}
+
 	public function logout() {
 		$this->Auth->logout();
 		$this->redirect('/');
