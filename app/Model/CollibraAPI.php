@@ -80,6 +80,21 @@ class CollibraAPI extends Model {
 		return @json_decode($response->body());
 	}
 
+	public function fullDataTable($config) {
+		$config['TableViewConfig']['displayStart'] = 0;
+		$data = [];
+		while (true) {
+			$chunk = $this->dataTable($config);
+			if (empty($chunk->aaData)) {
+				return $data;
+			}
+			$data = array_merge($data, $chunk->aaData);
+			if (count($data) == $chunk->iTotalDisplayRecords) {
+				return $data;
+			}
+			$config['TableViewConfig']['displayStart'] += intval($chunk->iTotalRecords);
+		}
+	}
 	protected function buildTableConfig($config) {
 		$output = [];
 		foreach((array)$config as $resourceName => $resource) {
@@ -262,14 +277,72 @@ class CollibraAPI extends Model {
 		return $files->file[0];
 	}
 
+	public function getApiHosts() {
+		$hosts = [];
+		$hostsRaw = $this->get('community/' . Configure::read('Collibra.apiCommunity') . '/sub-communities', ['json' => true]);
+		if (empty($hostsRaw->communityReference)) {
+			return $hosts;
+		}
+		foreach ($hostsRaw->communityReference as $host) {
+			if (empty($host->name) || !preg_match('/^[a-zA-Z][a-zA-Z0-9\.]*$/', $host->name)) {
+				continue;
+			}
+			$hosts[] = $host->name;
+		}
+		return $hosts;
+	}
+
+	public function getApiTerms($host, $path) {
+		$hostCommunity = $this->findTypeByName('community', $host);
+		if (empty($hostCommunity->resourceId)) {
+			return null;
+		}
+		$vocabulary = $this->findTypeByName('vocabulary', $path, ['parent' => $hostCommunity->resourceId]);
+		if (empty($vocabulary->resourceId)) {
+			return null;
+		}
+		$termsQuery = [
+			'TableViewConfig' => [
+				'Columns' => [
+					['Column' => ['fieldName' => 'id']],
+					['Column' => ['fieldName' => 'name']],
+					['Group' => [
+						'name' => 'businessTerm',
+						'Columns' => [
+							['Column' => ['fieldName' => 'termId']],
+							['Column' => ['fieldName' => 'term']]]]]],
+				'Resources' => [
+					'Term' => [
+						'Id' => ['name' => 'id'],
+						'Signifier' => ['name' => 'name'],
+						'Relation' => [[ /* Yes, intentional [[ there */
+							'typeId' => Configure::read('Collibra.businessTermToFieldRelationId'),
+							'type' => 'TARGET',
+							'Source' => [
+								'Id' => ['name' => 'termId'],
+								'Signifier' => ['name' => 'term']]]],
+						'Vocabulary' => [
+							'Id' => ['name' => 'domainId']],
+						'Filter' => [
+							'Field' => [
+								'name' => 'domainId',
+								'operator' => 'EQUALS',
+								'value' => $vocabulary->resourceId]],
+						'Order' => [[ /* Yes, intentional [[ there */
+							'Field' => [
+								'name' => 'name',
+								'order' => 'ASC']]]]]]];
+		$terms = $this->fullDataTable($termsQuery);
+		return $terms;
+	}
+
 	public function importSwagger($swagger) {
-		$hostCommunityId = $this->findCommunityByName($swagger['host'], Configure::read('Collibra.apiCommunity'));
-		if (empty($hostCommunityId)) {
+		$hostCommunity = $this->findTypeByName('community', $swagger['host']);
+		if (empty($hostCommunity->resourceId)) {
 			$this->errors[] = "Host \"{$swagger['host']}\" does not exist in Collibra";
 			return false;
 		}
-
-		$vocabularyId = $this->createVocabulary($swagger['basePath'], $hostCommunityId);
+		$vocabularyId = $this->createVocabulary($swagger['basePath'], $hostCommunity->resourceId);
 		if (empty($vocabularyId)) {
 			$this->errors[] = "Unable to create vocabulary \"{$swagger['basePath']}\" in community \"{$swagger['host']}\"";
 			return false;
@@ -316,22 +389,45 @@ class CollibraAPI extends Model {
 		return true;
 	}
 
-	public function findCommunityByName($name, $parentCommunity = null) {
+	public function findTypeByName($type, $name, $options = []) {
 		$query = ['searchName' => $name];
-		if (!empty($parentCommunity)) {
-			$query['community'] = $parentCommunity;
+		if (array_key_exists('parent', $options)) {
+			if (!empty($options['parent'])) {
+				$query['community'] = $options['parent'];
+			}
+		} else {
+			//default restricted to API community
+			//override to no parent by passing option ['parent' => false]
+			$query['community'] = Configure::read('Collibra.apiCommunity');
 		}
 
-		$search = $this->get('community/find?' . http_build_query($query), ['json' => true]);
-		if (empty($search) || empty($search->communityReference)) {
+		$key = $type;
+		$url = $type . '/find';
+		if (empty($options['full'])) {
+			$key .= 'Reference';
+		} else {
+			$url .= '/full';
+		}
+
+		$search = $this->get($url . '?' . http_build_query($query), ['json' => true]);
+		if (empty($search) || empty($search->{$key})) {
 			return null;
 		}
 
 		$match = null;
-		foreach ($search->communityReference as $community) {
-			if (!empty($community->name) && $community->name == $name) {
-				$match = $community->resourceId;
+		foreach ($search->{$key} as $item) {
+			if (!empty($item->name) && $item->name == $name) {
+				$match = $item;
 				break;
+			}
+		}
+		if (!$match && $type == 'vocabulary') {
+			//Slightly looser matching, ignoring leading or trailing "/" character
+			foreach ($search->{$key} as $item) {
+				if (!empty($item->name) && trim($item->name, "\t\r\n\0\x0B/") == trim($name, "\t\r\n\0\x0B/")) {
+					$match = $item;
+					break;
+				}
 			}
 		}
 		return $match;
@@ -341,7 +437,7 @@ class CollibraAPI extends Model {
 		$success = $this->post('vocabulary', [
 			'name' => $name,
 			'community' => $communityId,
-			'type' => Configure::read('Collibra.vocabularyTypeId')
+			'type' => Configure::read('Collibra.dataAssetDomainTypeId')
 		]);
 		if (empty($success)) {
 			return false;

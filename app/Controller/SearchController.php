@@ -58,12 +58,10 @@ class SearchController extends AppController {
 		$this->set('commonSearches', $this->getCommonSearches());
 	}
 
-	public function term() {
-		if(!isset($this->request->params['pass'][0])){
-			header('location: /search');
-			exit;
+	public function term($query = null) {
+		if (empty($query)) {
+			return $this->redirect(['action' => 'index']);
 		}
-		$query = $this->request->params['pass'][0];
 		$terms = $this->getTermDetails($query);
 
 		$this->set('commonSearches', $this->getCommonSearches());
