@@ -337,32 +337,35 @@ class SearchController extends AppController {
 	}
 
 	public function autoCompleteTerm() {
-		$query= $this->request->query['q'];
-		if($query!=''){
-			// create JSON request string
-			$request = '{"query": "'.$query.'*", "filter": { "community": ["'.Configure::read('Collibra.byuCommunity').'"], "category": ["TE"], "vocabulary": [], "type": { "asset":["00000000-0000-0000-0000-000000011001","ed82f17f-c1e7-4d6d-83cc-50f6b529c296"], "domain":[] },';
-			if(!Configure::read('allowUnapprovedeTerms')){
-				$request .= '"status": ["00000000-0000-0000-0000-000000005009"], ';
-			}
-			$request .= '"includeMeta": true }, "fields": ["name"], "order": { "by": "score", "sort": "desc" }, "limit": 5, "offset": 0, "highlight": false, "relativeUrl": true, "withParents": true }';
+		$query= $this->request->query('q');
+		if(empty($query)){
+			return new CakeResponse(['type' => 'application/javascript', 'body' => []]);
+		}
 
-			$resp = $this->CollibraAPI->postJSON('search', $request);
-			$jsonResp = json_decode($resp);
-			for($i=0; $i<sizeof($jsonResp->results); $i++){
-				$requestable = true;
-				// don't show non-requestable items
-				foreach($jsonResp->results[$i]->attributes as $attr){
-					if($attr->type == 'Requestable' && $attr->val == 'false'){
-						$requestable = false;
-						break;
-					}
+		$results = [];
+		// create JSON request string
+		$request = '{"query": "'.$query.'*", "filter": { "community": ["'.Configure::read('Collibra.byuCommunity').'"], "category": ["TE"], "vocabulary": [], "type": { "asset":["00000000-0000-0000-0000-000000011001","ed82f17f-c1e7-4d6d-83cc-50f6b529c296"], "domain":[] },';
+		if(!Configure::read('allowUnapprovedeTerms')){
+			$request .= '"status": ["00000000-0000-0000-0000-000000005009"], ';
+		}
+		$request .= '"includeMeta": true }, "fields": ["name"], "order": { "by": "score", "sort": "desc" }, "limit": 5, "offset": 0, "highlight": false, "relativeUrl": true, "withParents": true }';
+
+		$resp = $this->CollibraAPI->postJSON('search', $request);
+		$jsonResp = json_decode($resp);
+		for($i=0; $i<sizeof($jsonResp->results); $i++){
+			$requestable = true;
+			// don't show non-requestable items
+			foreach($jsonResp->results[$i]->attributes as $attr){
+				if($attr->type == 'Requestable' && $attr->val == 'false'){
+					$requestable = false;
+					break;
 				}
-				if($requestable){
-					echo '<li>'.$jsonResp->results[$i]->name->val.'</li>';
-				}
+			}
+			if($requestable){
+				$results[] = $jsonResp->results[$i];
 			}
 		}
-		exit;
+		return new CakeResponse(['type' => 'application/javascript', 'body' => json_encode($results)]);
 	}
 
 	public function getCommonSearches(){

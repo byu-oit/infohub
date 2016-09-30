@@ -187,9 +187,12 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 					}
 					else{
 						var val = $('#searchInput').val();
-						$.get( "/search/autoCompleteTerm", { q: val } )
+						$.getJSON( "/search/autoCompleteTerm", { q: val } )
 						.done(function( data ) {
-								$('.autoComplete .results').html(data);
+								$('.autoComplete .results').html('');
+								for (var i in data) {
+									$('.autoComplete .results').append($('<li>', {text: data[i].name.val}));
+								}
 								$('.autoComplete li').click(function(){
 									$('#searchInput').val($(this).text());
 									$('#searchInput').parent().submit();
