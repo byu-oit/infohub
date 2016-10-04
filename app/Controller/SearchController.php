@@ -342,6 +342,8 @@ class SearchController extends AppController {
 			return new CakeResponse(['type' => 'application/javascript', 'body' => []]);
 		}
 
+		$definitionAttributeTypeId = Configure::read('Collibra.definitionAttributeTypeId');
+
 		$results = [];
 		// create JSON request string
 		$request = '{"query": "'.$query.'*", "filter": { "community": ["'.Configure::read('Collibra.byuCommunity').'"], "category": ["TE"], "vocabulary": [], "type": { "asset":["00000000-0000-0000-0000-000000011001","ed82f17f-c1e7-4d6d-83cc-50f6b529c296"], "domain":[] },';
@@ -362,7 +364,15 @@ class SearchController extends AppController {
 				}
 			}
 			if($requestable){
-				$results[] = $jsonResp->results[$i];
+				$result = $jsonResp->results[$i];
+				if (empty($result->definition) && !empty($result->attributes)) {
+					foreach ($result->attributes as $attribute) {
+						if ($attribute->typeId == $definitionAttributeTypeId) {
+							$result->definition = $attribute;
+						}
+					}
+				}
+				$results[] = $result;
 			}
 		}
 		return new CakeResponse(['type' => 'application/javascript', 'body' => json_encode($results)]);
