@@ -252,7 +252,7 @@ class SearchController extends AppController {
 			$term = $jsonResp->aaData[$i];
 			$termName = $term->termsignifier;
 			$termID = $term->termrid;
-			$termDef = addslashes(strip_tags($term->Attr00000000000000000000000000000202longExpr));
+			$termDef = nl2br(str_replace("\n\n\n", "\n\n", htmlentities(strip_tags(str_replace(['<div>', '<br>', '<br/>'], "\n", $term->Attr00000000000000000000000000000202longExpr)))));
 			if(Configure::read('allowUnrequestableTerms')){
 				$disabled = '';
 			}else{
