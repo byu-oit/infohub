@@ -18,7 +18,7 @@
 									continue;
 								}
 							?>
-							<li><?= $this->Html->link($endpoint->name, array_merge(['action' => 'api', 'api' => $hostname], explode('/', $endpoint->name))) ?></li>
+							<li><?= $this->Html->link($endpoint->name, array_merge(['action' => 'view', 'hostname' => $hostname], explode('/', $endpoint->name))) ?></li>
 						<?php endforeach ?>
 					</ul>
 				<?php endif ?>

@@ -35,8 +35,8 @@
 
 	Router::connect('/login', array('controller' => 'myaccount', 'action' => 'login'));
 
-	Router::connect('/apis/:api', ['controller' => 'apis', 'action' => 'host'], ['pass' => ['api']]);
-	Router::connect('/apis/:api/*', ['controller' => 'apis', 'action' => 'api'], ['pass' => ['api']]);
+	Router::connect('/apis/:hostname', ['controller' => 'apis', 'action' => 'host'], ['pass' => ['hostname']]);
+	Router::connect('/apis/:hostname/*', ['controller' => 'apis', 'action' => 'view'], ['pass' => ['hostname']]);
 
 	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 

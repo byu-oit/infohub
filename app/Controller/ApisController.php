@@ -6,9 +6,9 @@ class ApisController extends AppController {
 	public function index() {
 		$hosts = $this->CollibraAPI->getApiHosts();
 		if (count($hosts) == 1) {
-			return $this->redirect(['action' => 'host', 'api' => $hosts[0]]);
+			return $this->redirect(['action' => 'host', 'hostname' => $hosts[0]]);
 		}
-		$this->set('hosts', $this->CollibraAPI->getApiHosts());//'community/' . Configure::read('Collibra.apiCommunity') . '/sub-communities');
+		$this->set('hosts', $hosts);
 	}
 
 	public function host($hostname) {
@@ -21,13 +21,13 @@ class ApisController extends AppController {
 		$this->set(compact('hostname', 'community', 'dataAssetDomainTypeId', 'techAssetDomainTypeId'));
 	}
 
-	public function api() {
+	public function view() {
 		$args = func_get_args();
 		$hostname = array_shift($args);
 		$basePath = '/' . implode('/', $args);
 		$terms = $this->CollibraAPI->getApiTerms($hostname, $basePath);
 		if (empty($terms)) {
-			return $this->redirect(['action' => 'host', 'api' => $hostname]);
+			return $this->redirect(['action' => 'host', 'hostname' => $hostname]);
 		}
 
 		$this->set(compact('hostname', 'basePath', 'terms'));
