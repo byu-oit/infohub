@@ -122,9 +122,9 @@ class Swagger extends AppModel {
 	}
 
 	protected function _addElement($parents, $property, $type = 'field') {
-//		if (count($parents) > 1) {
-//			$this->_addElement(array_slice($parents, 0, -1), [], 'fieldset');
-//		}
+		if (count($parents) > 1) {
+			$this->_addElement(array_slice($parents, 0, -1), [], 'fieldset');
+		}
 		$key = implode('.', $parents);
 		if (!array_key_exists($key, $this->elements)) {
 			$this->elements[$key] = ['name' => $key, 'type' => $type];
