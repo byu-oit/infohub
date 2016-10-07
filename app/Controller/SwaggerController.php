@@ -41,7 +41,7 @@ class SwaggerController extends AppController {
 
 	public function process() {
 		if ($this->request->is('post')) {
-			$import = $this->CollibraAPI->importSwagger($this->request->data('Swagger'));
+			$import = $this->CollibraAPI->importSwagger($this->request->data('Api'));
 			if (!empty($import)) {
 				unlink($this->_swaggerFilename());
 				$this->Session->setFlash('Swagger data imported successfully');
@@ -49,8 +49,8 @@ class SwaggerController extends AppController {
 			}
 			$this->Session->setFlash('Error: ' . implode('<br>', $this->CollibraAPI->errors), 'default', ['class' => 'error']);
 		} else {
-			$this->request->data['Swagger'] = $this->_getUploadedSwagger();
-			if (empty($this->request->data['Swagger'])) {
+			$this->request->data['Api'] = $this->_getUploadedSwagger();
+			if (empty($this->request->data['Api'])) {
 				$this->Session->setFlash('Error: ' . implode('<br>', $this->Swagger->parseErrors), 'default', ['class' => 'error']);
 				return $this->redirect(['action' => 'index']);
 			}
