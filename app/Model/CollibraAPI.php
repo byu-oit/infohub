@@ -377,14 +377,26 @@ class CollibraAPI extends Model {
 			if (empty($term->signifier) || empty($term->resourceId) || empty($signifiers[$term->signifier]['business_term'])) {
 				continue;
 			}
-			$success = $this->post("term/{$term->resourceId}/relations", [
+			$this->post("term/{$term->resourceId}/relations", [
 				'type' => $relationshipTypeId,
 				'target' => $signifiers[$term->signifier]['business_term'],
 				'inverse' => 'true'
 			]);
-			if (empty($success) || !$success->isOk()) {
-				$foo = $success->body();
+		}
+		return true;
+	}
+
+	public function updateApiBusinessTermLinks($terms) {
+		$relationshipTypeId = Configure::read('Collibra.businessTermToFieldRelationId');
+		foreach ($terms as $term) {
+			if (empty($term['id']) || empty($term['business_term'])) {
+				continue;
 			}
+			$this->post("term/{$term['id']}/relations", [
+				'type' => $relationshipTypeId,
+				'target' => $term['business_term'],
+				'inverse' => 'true'
+			]);
 		}
 		return true;
 	}
