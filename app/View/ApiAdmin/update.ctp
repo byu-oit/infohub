@@ -42,6 +42,12 @@
 							</tr>
 						<?php endforeach ?>
 					</table>
+					<div style="float: right">
+						<?= $this->Html->link(
+							'Cancel',
+							array_merge(['controller' => 'apis', 'action' => 'view', 'hostname' => $hostname], explode('/', $basePath)),
+							['class' => 'inputButton']) ?>
+					</div>
 					<?= $this->Form->submit('Save') ?>
 				<?= $this->Form->end() ?>
 			</div>

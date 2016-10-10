@@ -16,6 +16,14 @@
 		<div class="clear"></div>
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
+				<?php if ($isAdmin): ?>
+					<div style="float: right">
+						<?= $this->Html->link(
+							'Update Unlinked Terms',
+							array_merge(['controller' => 'api_admin', 'action' => 'update', $hostname], explode('/', $basePath)),
+							['class' => 'inputButton']) ?>
+					</div>
+				<?php endif ?>
 				<table class="api-terms">
 					<tr class="header">
 						<th>Field</th>
