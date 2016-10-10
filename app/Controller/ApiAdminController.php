@@ -3,6 +3,11 @@
 class ApiAdminController extends AppController {
 	public $uses = ['CollibraAPI'];
 
+	function beforeFilter() {
+		parent::beforeFilter();
+		$this->Auth->deny();
+	}
+
 	public function update() {
 		$args = func_get_args();
 		$hostname = array_shift($args);
