@@ -10,7 +10,7 @@
 		var termSelect;
 		$('#apiForm')
 			.append($('<input>', {type: 'hidden', name: 'data[Api][labelCache]', id: 'ApiLabelCache', val: JSON.stringify(labelCache)}))
-			.append($('<input>', {type: 'hidden', name: 'data[Api][idCache]', id: 'ApiIdCache', val: JSON.stringify(labelCache)}));
+			.append($('<input>', {type: 'hidden', name: 'data[Api][idCache]', id: 'ApiIdCache', val: JSON.stringify(idCache)}));
 
 		$('.searchDialog').dialog({
 			autoOpen: false,
@@ -44,15 +44,6 @@
 				  .append( "<div>" + item.name.val + "<br>" + item.context.val + "</div>" )
 				  .appendTo( ul );
 			};
-
-		$('.data-label').change(function() {
-			var $this = $(this);
-			var full = $this.val();
-			var period = full.lastIndexOf('.');
-			var label = full.substring(period + 1);
-			$this.data('label', label);
-			setOptions($this);
-		}).change();
 
 		$('.bt-select').change(function() {
 			var $this = $(this);
@@ -93,6 +84,15 @@
 				$('.view-definition' + index).html(idCache[selected].definition);
 			}
 		});
+
+		$('.data-label').change(function() {
+			var $this = $(this);
+			var full = $this.val();
+			var period = full.lastIndexOf('.');
+			var label = full.substring(period + 1);
+			$this.data('label', label);
+			setOptions($this);
+		}).change();
 
 		function setOptions($name) {
 			var index = $name.data('index');
