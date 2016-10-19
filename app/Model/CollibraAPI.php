@@ -309,6 +309,7 @@ class CollibraAPI extends Model {
 					['Group' => [
 						'name' => 'businessTerm',
 						'Columns' => [
+							['Column' => ['fieldName' => 'termCommunityId']],
 							['Column' => ['fieldName' => 'termId']],
 							['Column' => ['fieldName' => 'term']]]]]],
 				'Resources' => [
@@ -320,6 +321,9 @@ class CollibraAPI extends Model {
 							'type' => 'TARGET',
 							'Source' => [
 								'Id' => ['name' => 'termId'],
+								'Vocabulary' => [
+									'Community' => [
+										'Id' => ['name' => 'termCommunityId']]],
 								'Signifier' => ['name' => 'term']]]],
 						'Vocabulary' => [
 							'Id' => ['name' => 'domainId']],
