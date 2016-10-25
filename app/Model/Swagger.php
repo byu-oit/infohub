@@ -81,7 +81,11 @@ class Swagger extends AppModel {
 				}
 			}
 			if (empty($property['type'])) {
-				continue;
+				if (!empty($property['properties'])) {
+					$property['type'] = 'object';
+				} else {
+					continue;
+				}
 			}
 
 			$parents = $mainParents;
