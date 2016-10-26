@@ -358,6 +358,9 @@ class CollibraAPI extends Model {
 		//so we're manually building the remaining POST string
 		$signifiers = [];
 		foreach ($swagger['elements'] as $field) {
+			if (empty($field['name'])) {
+				continue;
+			}
 			if (!empty($signifiers[$field['name']])) {
 				continue;
 			}
