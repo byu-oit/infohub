@@ -38,7 +38,11 @@ class Swagger extends AppModel {
 			$this->_addElements([], $schema);
 		}
 
-		$host = $this->_getRef('/host');
+		$hostRaw = $this->_getRef('/host');
+		$host = $hostRaw[1];
+		if (preg_match('/:443$/', $host)) {
+			$host = substr($host, 0, strlen($host) - 4);
+		}
 		$basePath = $this->_getRef('/basePath');
 
 		if (empty($this->elements)) {
@@ -47,7 +51,7 @@ class Swagger extends AppModel {
 		}
 
 		return [
-			'host' => $host[1],
+			'host' => $host,
 			'basePath' => $basePath[1],
 			'elements' => array_values($this->elements)
 		];
