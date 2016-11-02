@@ -320,7 +320,10 @@ img.resultBodyLoading {
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody p,
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody p,
-#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody p {
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody p,
+#searchBody #searchResults #srLower .resultItem .resultContent .resultBody div,
+#searchBody #requestForm #srLower .resultItem .resultContent .resultBody div,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody div {
   font-size: 14px;
   width: 100%;
 }
@@ -747,7 +750,9 @@ img.resultBodyLoading {
   display: block;
 }
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody p,
-#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody p {
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody p,
+#searchBody #requestForm #srLower .resultItem .resultContent .resultBody div,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody div {
   width: 125%;
 }
 #searchBody #requestForm #srLower .resultItem .irLower,
@@ -1000,7 +1005,8 @@ form#request #mobileReqd {
   #searchBody #requestForm #srLower .resultItem .resultContent .requestMeta {
     display: none;
   }
-  #searchBody #requestForm #srLower .resultItem .resultContent .resultBody p {
+  #searchBody #requestForm #srLower .resultItem .resultContent .resultBody p,
+  #searchBody #requestForm #srLower .resultItem .resultContent .resultBody div {
     font-size: 11.5px;
   }
   #searchBody #requestForm #srLower .resultItem .irLower {
