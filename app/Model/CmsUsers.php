@@ -15,7 +15,6 @@ class CmsUsers extends AppModel {
     );
     
     public function authUser($username, $pass){
-        App::uses('Helpers', 'Model');
         App::uses('Bcrypt', 'Model');
         $cmsUser = '';
         $cmsUser = $this->find('first', array(
@@ -30,7 +29,6 @@ class CmsUsers extends AppModel {
     }
     
     public function loadUser($userID){
-        App::uses('Helpers', 'Model');
         App::uses('Bcrypt', 'Model');
         $cmsUser = '';
         $cmsUser = $this->find('first', array(

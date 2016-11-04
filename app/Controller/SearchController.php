@@ -79,10 +79,9 @@ class SearchController extends AppController {
 			exit;
 		}
 
-		App::uses('Helpers', 'Model');
 		$page = 0;
 		if(isset($this->request->params['pass'][1])){
-			$page = Helpers::getInt($this->request->params['pass'][1]);
+			$page = intval($this->request->params['pass'][1]);
 		}
 		if($page==0) $page=1;
 
@@ -100,7 +99,6 @@ class SearchController extends AppController {
 	}
 
 	public function results() {
-		App::uses('Helpers', 'Model');
 		$query = htmlentities($this->request->params['pass'][0]);
 		$defaultCommunity = Configure::read('Collibra.byuCommunity');
 
@@ -139,7 +137,7 @@ class SearchController extends AppController {
 
 		$page = 0;
 		if(isset($this->request->params['pass'][1])){
-			$page = Helpers::getInt($this->request->params['pass'][1]);
+			$page = intval($this->request->params['pass'][1]);
 		}
 		if($page==0) $page=1;
 		//$query = str_replace('%2B', 'ss', $this->request->params['pass'][0]);

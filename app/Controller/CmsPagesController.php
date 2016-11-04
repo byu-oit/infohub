@@ -50,8 +50,7 @@ class CmsPagesController extends AppController {
 
 	public function updatePage(){
 		if ($this->request->data) {
-			App::uses('Helpers', 'Model');
-			$pgID = Helpers::getInt($this->request->data['pgID']);
+			$pgID = intval($this->request->data['pgID']);
 			$pgBody = $this->request->data['pgBody'];
 
 			$this->loadModel('CmsPage');

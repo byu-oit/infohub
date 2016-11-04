@@ -16,9 +16,7 @@ class ISARequests extends AppModel{
     );
     
     public function loadRequestsByUser($personID){
-        App::uses('Helpers', 'Model');
-        $personID = Helpers::getInt($personID);
-        $requests = '';
+        $personID = intval($personID);
         $requests = $this->find('all', array(
             'conditions'=>array('personId'=>$personID),
             'order'=>array('date'=>'DESC')

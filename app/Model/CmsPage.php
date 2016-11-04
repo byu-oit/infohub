@@ -16,8 +16,7 @@ class CmsPage extends AppModel {
     );
 
     public function loadPage($pageID=0){
-        App::uses('Helpers', 'Model');
-        $pageID = Helpers::getInt($pageID);
+        $pageID = intval($pageID);
         $cmsPage = '';
         if($pageID==0){
             $cmsPage = $this->find('first', array(
@@ -34,10 +33,9 @@ class CmsPage extends AppModel {
     }
 
     public function listPages($pageID=0, $parentID=0, $level=0, $html=''){
-        App::uses('Helpers', 'Model');
-        $parentID = Helpers::getInt($parentID);
-        $level = Helpers::getInt($level);
-        $pageID = Helpers::getInt($pageID);
+        $parentID = intval($parentID);
+        $level = intval($level);
+        $pageID = intval($pageID);
         $hasSubpages = false;
 
         $parentTitle = "";
@@ -96,10 +94,9 @@ class CmsPage extends AppModel {
     }
 
     public function listAdminPages($pageID=0, $parentID=0, $level=0, $html=''){
-        App::uses('Helpers', 'Model');
-        $parentID = Helpers::getInt($parentID);
-        $level = Helpers::getInt($level);
-        $pageID = Helpers::getInt($pageID);
+        $parentID = intval($parentID);
+        $level = intval($level);
+        $pageID = intval($pageID);
 
         $hasSubpages = false;
         $results = $this->query("SELECT P.*, (SELECT COUNT(*) FROM cms_pages WHERE parentID=P.id) AS ChildPages FROM cms_pages P WHERE P.parentID=".$parentID." ORDER BY P.rank");
