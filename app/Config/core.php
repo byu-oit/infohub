@@ -39,7 +39,7 @@ if (!function_exists('denv')) {
 	Configure::write('Collibra.fieldTypeId', denv('COLLIBRA_FIELD_TYPE_ID', '069a3e64-e2ca-4225-83b2-a67ebde07805'));
 	Configure::write('Collibra.businessTermToFieldRelationId', denv('COLLIBRA_BUSINESS_TERM_TO_FIELD_RELATION_ID', 'f5891dd0-3f80-44a2-ad87-882558fd0d71'));
 	Configure::write('allowUnapprovedeTerms', true);
-	Configure::write('allowUnrequestableTerms', true);
+	Configure::write('allowUnrequestableTerms', false);
 
 	Configure::write('Datasources', [
 		'default' => [
