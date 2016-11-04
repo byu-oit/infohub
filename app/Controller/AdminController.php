@@ -210,22 +210,19 @@ class AdminController extends AppController {
 				$arrPageIDs = explode("::", $page);
 				$parentID = intval($arrPageIDs[2]);
 				$pageID = intval($arrPageIDs[0]);
-				$this->CmsPage->query("UPDATE cms_pages SET parentID=".$parentID.",rank=".$rank." WHERE id=".$pageID);
+				$this->CmsPage->save(['id' => $pageID, 'parentID' => $parentID, 'rank' => $rank]);
 				$rank++;
 			}
 
 			//update home page's rank to 1
-			$this->CmsPage->query("UPDATE cms_pages SET rank=1 WHERE id=1");
+			$this->CmsPage->id = 1;
+			$this->CmsPage->saveField('rank', 1);
 		}
 		exit;
 	}
 
 	private function getNextRank($parentID){
-		$results = $this->CmsPage->query("SELECT MAX(rank) as rank FROM cms_pages WHERE parentID=".$parentID);
-		$nextRank = 0;
-		foreach($results as $result){
-			$nextRank  = $result[0]['rank']+1;
-		}
-		return $nextRank;
+		$results = $this->CmsPage->find('first', ['fields' => ['MAX(rank) as rank'], 'conditions' => ['parentID' => $parentID]]);
+		return empty($results) ? 0 : $results[0]['rank'] + 1;
 	}
 }

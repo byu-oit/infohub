@@ -31,15 +31,13 @@ class CmsPagesController extends AppController {
 		}
 
 		// load template file
-		App::uses('CmsTemplate', 'Model');
-		$objTemplates = new CmsTemplate();
-		$templateResults = $objTemplates->find('all', array(
+		$this->loadModel('CmsTemplate');
+		$templateResults = $this->CmsTemplate->find('all', array(
 			'conditions'=>array('id'=>$page['templateID']),
 			'fields'=>'file'
 		));
 		$templateFile = str_replace('.ctp', '', $templateResults[0]['CmsTemplate']['file']);
 
-		$this->loadModel('CmsPage');
 		$pageNav = $this->CmsPage->listPages(0,1);
 		$page['body'] = $this->CmsPage->loadCmsBody($page['id'], $page['body'], $this->viewVars['isAdmin']);
 

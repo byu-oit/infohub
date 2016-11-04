@@ -148,13 +148,14 @@ class SearchController extends AppController {
 
 		// save search and delete anything over 300 entries
 		if(!empty($terms->aaData)){
+			$this->loadModel('CommonSearch');
 			// delete last record
-			$results = $this->CmsPage->query("SELECT * FROM common_searches");
-			if(sizeof($results)>=300){
-				$this->CmsPage->query("DELETE FROM common_searches WHERE id=".$results[0]['common_searches']['id']);
+			$results = $this->CommonSearch->find('all', ['order' => 'id']);
+			if(count($results)>=300){
+				$this->CommonSearch->delete($results[0]['CommonSearch']['id']);
 			}
 			// add new record
-			$this->CmsPage->query("INSERT INTO common_searches (query) VALUES('".$query."')");
+			$this->CommonSearch->save(['query' => $query]);
 		}
 		///////////////////////////////////////////////////////
 
@@ -378,9 +379,14 @@ class SearchController extends AppController {
 
 	public function getCommonSearches(){
 		$commonSearches = array();
-		$results = $this->CmsPage->query("SELECT query, COUNT(*) total FROM common_searches GROUP BY query ORDER BY COUNT(*) DESC LIMIT 0,4");
+		$this->loadModel('CommonSearch');
+		$results = $this->CommonSearch->find('all', [
+			'fields' => 'query',
+			'group' => 'query',
+			'order' => ['COUNT(*)' => 'DESC'],
+			'limit' => 4]);
 		foreach($results as $result){
-			array_push($commonSearches, ucfirst($result['common_searches']['query']));
+			array_push($commonSearches, ucfirst($result['CommonSearch']['query']));
 		}
 		return $commonSearches;
 	}
