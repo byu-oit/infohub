@@ -137,7 +137,7 @@ class PeopleController extends AppController {
 			}
 
 			$request = '{"query":"'.$query.'*", "filter": { "community": ["'.Configure::read('Collibra.byuCommunity').'"], "category":["CO", "VC", "UR"], "vocabulary":[], "type":{"asset":[]},';
-			if(!Configure::read('allowUnapprovedeTerms')){
+			if(!Configure::read('allowUnapprovedTerms')){
 				$request .= '"status": ["00000000-0000-0000-0000-000000005009"], ';
 			}
 			$request .= '"includeMeta":false}, "fields":["name","attributes"], "order":{"by":"score","sort": "desc"}, "limit":500, "offset":0, "highlight":false}';

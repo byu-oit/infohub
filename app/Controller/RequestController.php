@@ -75,7 +75,7 @@ class RequestController extends AppController {
 					}
 
 					// verify that the term is approved
-					if(!Configure::read('allowUnapprovedeTerms')){
+					if(!Configure::read('allowUnapprovedTerms')){
 						$requestable = $termResp->statusReference->signifier == 'Accepted';
 					}
 
