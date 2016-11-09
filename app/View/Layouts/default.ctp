@@ -418,6 +418,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 				<li><a href="/search" id="searchLink">Search</a></li>
 				<li><a href="/people" id="findLink">Find People</a></li>
 				<li><a href="/resources" id="resourceLink">Resources</a></li>
+				<li><a href="/apis" id="apisLink">APIs</a></li>
 				<?php
 					if($casAuthenticated){
 						echo '<li><a href="/myaccount" id="resourceLink">My Requests</a></li>';
