@@ -19,6 +19,7 @@
 			<div class="resultItem">
 				<?php //TODO: make this a deep link directly to this particular API ?>
 				<a href="https://api.byu.edu/store/" class="inputButton" target="_blank">View this API in the store</a>
+				<a href="https://developer-dev.byu.edu/api/api-list" class="inputButton" target="_blank">Read API documentation</a>
 				<?php if ($isAdmin): ?>
 					<div style="float: right">
 						<?= $this->Html->link(
