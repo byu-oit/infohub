@@ -32,7 +32,7 @@ App::uses('Controller', 'Controller');
  */
 class AppController extends Controller {
 	private $quickLinks;
-	public $components = array('Session', 'Auth' => array('authorize' => 'Controller'));
+	public $components = array('Session', 'Cookie', 'Auth' => array('authorize' => 'Controller'));
 
 	public function initBeforeFilter(){
 		$byuUsername = '';
@@ -59,15 +59,10 @@ class AppController extends Controller {
 
 		//$this->disableCache();
 
-		App::import('Controller', 'QuickLinks');
-		$objQuickLinks = new QuickLinksController;
-		$quickLinks = $objQuickLinks->load();
+		$quickLinks = (array)$this->Cookie->read('QL');
 
-		$requestedTermCount = 0;
-		if(isset($_COOKIE['queue'])) {
-			$arrQueue = unserialize($_COOKIE['queue']);
-			$requestedTermCount = sizeof($arrQueue);
-		}
+		$arrQueue = $this->Cookie->read('queue');
+		$requestedTermCount = sizeof($arrQueue);
 
 		$this->set('byuUsername', $byuUsername);
 		$this->set('quickLinks', $quickLinks);
@@ -79,6 +74,7 @@ class AppController extends Controller {
 	public function beforeFilter() {
 		parent::beforeFilter();
 
+		$this->Cookie->name = 'Infohub';
 		$this->Auth->authenticate = array('Cas' => array('hostname' => 'cas.byu.edu', 'uri' => 'cas'));
 		$this->Auth->allow();
 		if($this->name != 'CakeError'){

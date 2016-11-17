@@ -29,17 +29,16 @@ class RequestController extends AppController {
 			$arrVocabIDs = $this->request->data['vocab'];
 			$clearRelated = $this->request->data['clearRelated']=='true';
 
-			$arrQueue = array();
-			if(isset($_COOKIE['queue'])) {
-				$arrQueue = unserialize($_COOKIE['queue']);
+			$arrQueue = (array)$this->Cookie->read('queue');
+			if(!empty($arrQueue)) {
 
 				// Remove all terms in vocabularies passed and then re-add the ones selected by the user.
 				if($clearRelated){
 					$arrIdx = array();
 					for($i=0; $i<sizeof($arrVocabIDs); $i++){
-						for($j=sizeof($arrQueue)-1; $j>=0; $j--){
-							if($arrQueue[$j][2] == $arrVocabIDs[$i]){
-								array_splice($arrQueue, $j, 1);
+						foreach($arrQueue as $queueKey => $term) {
+							if($term[2] == $arrVocabIDs[$i]){
+								unset($arrQueue[$queueKey]);
 							}
 						}
 					}
@@ -50,16 +49,8 @@ class RequestController extends AppController {
 				$term = $arrTerms[$i];
 				$termID = $arrTermIDs[$i];
 				$vocabID = $arrVocabIDs[$i];
-				$exists = false;
 
-				for($j=0; $j<sizeof($arrQueue); $j++){
-					if($arrQueue[$j][1] == $termID){
-						$exists = true;
-						break;
-					}
-				}
-
-				if($termID != '' && !$exists){
+				if($termID != '' && empty($arrQueue[$termID])){
 					$requestable = true;
 					$this->loadModel('CollibraAPI');
 					$termResp = $this->CollibraAPI->get('term/'.$termID);
@@ -81,12 +72,12 @@ class RequestController extends AppController {
 
 					if($requestable){
 						$newTermsAdded++;
-						array_push($arrQueue, array($term, $termID, $vocabID));
+						$arrQueue[$termID] = array($term, $termID, $vocabID);
 					}
 				}
 			}
 
-			setcookie('queue', serialize($arrQueue), time() + (60*60*24*90), "/"); // 90 days
+			$this->Cookie->write('queue', $arrQueue, true, '90 days');
 			echo $newTermsAdded;
 		}
 	}
@@ -95,16 +86,10 @@ class RequestController extends AppController {
 		$this->autoRender = false;
 		if($this->request->is('post')){
 			$termID = $this->request->data['id'];
-			if(isset($_COOKIE['queue'])) {
-				$arrQueue = unserialize($_COOKIE['queue']);
-				for($i=0; $i<sizeof($arrQueue); $i++){
-					if($arrQueue[$i][1] == $termID){
-						array_splice($arrQueue, $i, 1);
-						break;
-					}
-				}
-
-				setcookie('queue', serialize($arrQueue), time() + (60*60*24*90), "/"); // 90 days
+			$arrQueue = $this->Cookie->read('queue');
+			if(array_key_exists($termID, $arrQueue)) {
+				unset($arrQueue[$termID]);
+				$this->Cookie->write('queue', $arrQueue, true, '90 days');
 			}
 		}
 	}
@@ -113,10 +98,10 @@ class RequestController extends AppController {
 		$this->autoRender = false;
 		$JS = '';
 
-		if(isset($_COOKIE['queue'])) {
-			$arrQueue = unserialize($_COOKIE['queue']);
-			for($j=0; $j<sizeof($arrQueue); $j++){
-				$JS .= ','.$arrQueue[$j][1];
+		$arrQueue = $this->Cookie->read('queue');
+		if(!empty($arrQueue)) {
+			foreach ($arrQueue as $term){
+				$JS .= ','.$term[1];
 			}
 		}
 		echo $JS;
@@ -126,18 +111,11 @@ class RequestController extends AppController {
 		$this->autoRender = false;
 		$listHTML = '';
 		$responseHTML = '';
-		$emptyQueue = true;
 
-		if(isset($_COOKIE['queue'])) {
-			$emptyQueue = false;
-			$arrQueue = unserialize($_COOKIE['queue']);
-			if(sizeof($arrQueue)>=1){
-				for($j=0; $j<sizeof($arrQueue); $j++){
-					$listHTML .= '<li id="requestItem'.$arrQueue[$j][1].'" data-title="'.$arrQueue[$j][0].'" data-rid="'.$arrQueue[$j][1].'" data-vocabID="'.$arrQueue[$j][2].'">'.$arrQueue[$j][0].'<a class="delete" href="javascript:removeFromRequestQueue(\''.$arrQueue[$j][1].'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a></li>';
-				}
-			}else{
-				$emptyQueue = true;
-				$listHTML = 'No request items found.';
+		$arrQueue = $this->Cookie->read('queue');
+		if(!empty($arrQueue)) {
+			foreach ($arrQueue as $term){
+				$listHTML .= '<li id="requestItem'.$term[1].'" data-title="'.$term[0].'" data-rid="'.$term[1].'" data-vocabID="'.$term[2].'">'.$term[0].'<a class="delete" href="javascript:removeFromRequestQueue(\''.$term[1].'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a></li>';
 			}
 		}else{
 			$listHTML = 'No request items found.';
@@ -148,7 +126,7 @@ class RequestController extends AppController {
 			'<ul>'.
 			$listHTML.//'    <li>Information Domain </li>'.//<a class="delete" href=""><img src="/img/icon-delete.gif" width="11" /></a>
 			'</ul>';
-		if(!$emptyQueue){
+		if(!empty($arrQueue)){
 			$responseHTML .= '<a class="btn-orange" href="/request">Submit Request</a>';
 		}
 		echo $responseHTML;
@@ -222,13 +200,12 @@ class RequestController extends AppController {
 			$resp = $this->CollibraAPI->post('search/re-index');
 
 			// clear items in queue
-			setcookie('queue', '', time()-3600, "/");
+			$this->Cookie->delete('queue');
 
-			header('location: /request/success');
+			$this->redirect(['action' => 'success']);
 		}else{
-			header('location: /request/?err=1');
+			$this->redirect(['action' => 'index', '?' => ['err' => 1]]);
 		}
-		exit;
 	}
 
 	public function index() {
@@ -238,14 +215,8 @@ class RequestController extends AppController {
 		$supervisorInfo = $this->BYUWS->supervisorLookup($netID);
 
 		// make sure terms have been added to the users's queue
-		if(!isset($_COOKIE['queue'])) {
-			header('location: /search');
-			exit;
-		}
-
-		// redirect if cookie is set but not empty
-		$arrQueue = unserialize($_COOKIE['queue']);
-		if(sizeof($arrQueue)<=0){
+		$arrQueue = $this->Cookie->read('queue');
+		if(empty($arrQueue)) {
 			header('location: /search');
 			exit;
 		}
@@ -260,11 +231,11 @@ class RequestController extends AppController {
 			'        {'.
 			'           "OR":[';
 
-		for($i=0; $i<sizeof($arrQueue); $i++){
+		foreach ($arrQueue as $term){
 			$requestFilter .= '{"Field":{'.
 				'   "name":"termrid",'.
 				'   "operator":"EQUALS",'.
-				'   "value":"'.$arrQueue[$i][1].'"'.
+				'   "value":"'.$term[1].'"'.
 				'}},';
 		}
 		$requestFilter = substr($requestFilter, 0, strlen($requestFilter)-1);

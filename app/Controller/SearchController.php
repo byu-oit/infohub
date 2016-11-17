@@ -452,16 +452,8 @@ class SearchController extends AppController {
 				$term[$i]->communityname = $fullCommunityName;
 
 				// check to see if this terms is stored in user's quick links cookie
-				if(isset($_COOKIE['QL'])){
-					$term[$i]->saved = '0';
-					$arrQl = unserialize($_COOKIE['QL']);
-					for($j=0; $j<sizeof($arrQl); $j++){
-						if($arrQl[$j][1] == $term[$i]->termrid){
-							$term[$i]->saved = '1';
-							break;
-						}
-					}
-				}
+				$arrQl = (array)$this->Cookie->read('QL');
+				$term[$i]->saved = !empty($arrQl[$term[$i]->termrid]);
 			}
 		}
 
@@ -610,20 +602,11 @@ class SearchController extends AppController {
 				$term[$i]->communityname = $fullCommunityName;
 
 				// check to see if this terms is stored in user's quick links cookie
-				if(isset($_COOKIE['QL'])){
-					$term[$i]->saved = '0';
-					$arrQl = unserialize($_COOKIE['QL']);
-					for($j=0; $j<sizeof($arrQl); $j++){
-						if($arrQl[$j][1] == $term[$i]->termrid){
-							$term[$i]->saved = '1';
-							break;
-						}
-					}
-				}
+				$arrQl = (array)$this->Cookie->read('QL');
+				$term[$i]->saved = !empty($arrQl[$term[$i]->termrid]);
 			}
 		}
 
-		//print_r($resp);exit;
 		return $resp;
 	}
 
@@ -712,16 +695,8 @@ class SearchController extends AppController {
 				$term[$i]->communityname = $fullCommunityName;
 
 				// check to see if this terms is stored in user's quick links cookie
-				if(isset($_COOKIE['QL'])){
-					$term[$i]->saved = '0';
-					$arrQl = unserialize($_COOKIE['QL']);
-					for($j=0; $j<sizeof($arrQl); $j++){
-						if($arrQl[$j][1] == $term[$i]->termrid){
-							$term[$i]->saved = '1';
-							break;
-						}
-					}
-				}
+				$arrQl = (array)$this->Cookie->read('QL');
+				$term[$i]->saved = !empty($arrQl[$term[$i]->termrid]);
 			}
 		}
 		return $resp;

@@ -1,62 +1,33 @@
 <?php
 
 class QuickLinksController extends AppController {
-	public function load(){
-		$this->autoRender = false;
-
-		if(isset($_COOKIE['QL'])) {
-			return unserialize($_COOKIE['QL']);
-		}else{
-			return array();
-		}
-	}
-
 	public function add(){
 		$this->autoRender = false;
 		if ($this->request->is('post')) {
 			$ql = $this->request->data['ql'];
 			$id = $this->request->data['id'];
 
-			$arrQl = array();
-			if(isset($_COOKIE['QL'])) {
-				$arrQl = unserialize($_COOKIE['QL']);
-			}
-
-			$qlExists = false;
-			for($i=0; $i<sizeof($arrQl); $i++){
-				if($arrQl[$i][1] == $id){
-					$qlExists = true;
-					break;
-				}
-			}
-
-			if(!$qlExists){
-				array_push($arrQl, array($ql, $id));
-				echo '1';
-			}else{
+			$arrQl = (array)$this->Cookie->read('QL');
+			if (array_key_exists($id, $arrQl)) {
 				echo '0';
+				return;
 			}
 
-			setcookie('QL', serialize($arrQl), time() + (60*60*24*90), "/"); // 90 days
+			$arrQl[$id] = array($ql, $id);
+			$this->Cookie->write('QL', $arrQl, true, '90 days');
+			echo '1';
 		}
 	}
 
 	public function remove(){
 		$this->autoRender = false;
-		if ($this->request->is('post') || 1==1) {
+		if ($this->request->is('post')) {
 			$id = $this->request->data['id'];
 
-			if(isset($_COOKIE['QL'])) {
-				$arrQl = unserialize($_COOKIE['QL']);
-				for($i=0; $i<sizeof($arrQl); $i++){
-					if($arrQl[$i][1] == $id){
-						//unset($arrQl[$i]);
-						array_splice($arrQl, $i, 1);
-						break;
-					}
-				}
-
-				setcookie('QL', serialize($arrQl), time() + (60*60*24*90), "/"); // 90 days
+			$arrQl = $this->Cookie->read('QL');
+			if(array_key_exists($id, $arrQl)) {
+				unset($arrQl[$id]);
+				$this->Cookie->write('QL', $arrQl, true, '90 days');
 			}
 		}
 	}
