@@ -31,5 +31,25 @@ class ApisController extends AppController {
 		}
 
 		$this->set(compact('hostname', 'basePath', 'terms'));
+
+		if (array_key_exists('checkout', $this->request->query)) {
+			return $this->_autoCheckout($terms);
+		}
+	}
+
+	protected function _autoCheckout($terms) {
+		$queue = (array)$this->Cookie->read('queue');
+		foreach ($terms as $term) {
+			if (empty($term->businessTerm[0])) {
+				continue;
+			}
+			$queue[$term->businessTerm[0]->termId] = [
+				$term->businessTerm[0]->term,
+				$term->businessTerm[0]->termId,
+				$term->businessTerm[0]->termCommunityId];
+		}
+
+		$this->Cookie->write('queue', $queue, true, '90 days');
+		return $this->redirect(['controller' => 'request', 'action' => 'index']);
 	}
 }
