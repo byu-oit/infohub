@@ -5,13 +5,13 @@ class ISARequests extends AppModel{
     
     public $validate = array(
         'personId' => array(
-            'rule' => 'notEmpty'
+            'rule' => 'notBlank'
         ),
         'processId' => array(
-            'rule' => 'notEmpty'
+            'rule' => 'notBlank'
         ),
         'collibraUser' => array(
-            'rule' => 'notEmpty'
+            'rule' => 'notBlank'
         )
     );
     
