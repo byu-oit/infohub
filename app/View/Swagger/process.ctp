@@ -24,7 +24,10 @@
 			</tr>
 			<?php foreach ($this->request->data['Api']['elements'] as $index => $element): ?>
 				<tr>
-					<td><?= $this->Form->input("Api.elements.{$index}.name", ['label' => false, 'class' => 'data-label', 'data-index' => $index]) ?></td>
+					<td>
+						<?= $this->Form->input("Api.elements.{$index}.name", ['label' => false, 'class' => 'data-label', 'data-index' => $index]) ?>
+						<?= $this->Form->input("Api.elements.{$index}.type", ['type' => 'hidden']) ?>
+					</td>
 					<td>
 						<?= $this->Form->input("Api.elements.{$index}.business_term", ['type' => 'hidden', 'id' => "origTerm{$index}"]) ?>
 						<?= $this->Form->input("Api.elements.{$index}.business_term", ['label' => false, 'class' => 'bt-select', 'data-index' => $index, 'type' => 'select']) ?>

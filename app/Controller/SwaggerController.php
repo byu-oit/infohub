@@ -6,6 +6,9 @@ class SwaggerController extends AppController {
 
 	function beforeFilter() {
 		parent::beforeFilter();
+		if ($this->request->param('action') == 'import') {
+			$this->Auth->authenticate = ['QuickDirty'];
+		}
 		$this->Auth->deny();
 	}
 
@@ -20,7 +23,7 @@ class SwaggerController extends AppController {
 					$this->Session->setFlash('Error downloading from URL', 'default', ['class' => 'error']);
 					return;
 				}
-				if (!file_put_contents($filename, file_get_contents($swagUrl))) {
+				if (!file_put_contents($filename, $swag)) {
 					$this->Session->setFlash('Error saving swagger file locally', 'default', ['class' => 'error']);
 					return;
 				}
@@ -70,8 +73,42 @@ class SwaggerController extends AppController {
 		}
 		$response = $this->CollibraAPI->searchStandardLabel($label);
 		return new CakeResponse(['type' => 'json', 'body' => json_encode($response)]);
-
 	}
+
+	public function import() {
+		return new CakeResponse(['type' => 'json', 'body' => json_encode($this->_import())]);
+	}
+
+	protected function _import() {
+		if (!$this->request->is('post')) {
+			return ['error' => ['messages' => ['POST only']]];
+		}
+
+		if (!empty($this->request->query['url'])) {
+			$json = @file_get_contents($this->request->query['url']);
+			if (empty($json)) {
+				return ['error' => ['messages' => ["Unable to download swagger from {$this->request->query['url']}"]]];
+			}
+		} else {
+			$json = $this->request->input();
+			if (empty($json)) {
+				return ['error' => ['messages' => ["No swagger document specified"]]];
+			}
+		}
+
+		$swagger = $this->Swagger->parse($json);
+		if (empty($swagger)) {
+			return ['error' => ['messages' => $this->Swagger->parseErrors]];
+		}
+
+		$import = $this->CollibraAPI->importSwagger($swagger);
+		if (empty($import)) {
+			return ['error' => ['messages' => $this->CollibraAPI->errors]];
+		}
+
+		return ['status' => 'success'];
+	}
+
 	protected function _getUploadedSwagger() {
 		$filename = $this->_swaggerFilename();
 		if (!file_exists($filename)) {

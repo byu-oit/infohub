@@ -352,45 +352,73 @@ class CollibraAPI extends Model {
 			return false;
 		}
 
-		//Add terms
-		$query = http_build_query(['vocabulary' => $vocabularyId, 'conceptType' => Configure::read('Collibra.fieldTypeId')]);
-		//For array data, PHP's http_build_query creates query/POST string in a format Collibra doesn't like,
-		//so we're manually building the remaining POST string
-		$signifiers = [];
-		foreach ($swagger['elements'] as $field) {
-			if (empty($field['name'])) {
+		$fields = [];
+		$fieldSets = [];
+		$elements = [];
+		foreach ($swagger['elements'] as $element) {
+			if (empty($element['name'])) {
 				continue;
 			}
-			if (!empty($signifiers[$field['name']])) {
+			$name = trim($element['name']);
+			if (empty($name)) {
 				continue;
 			}
-			$signifiers[$field['name']] = $field;
-			$query .= '&signifier=' . urlencode($field['name']);
+			if (!empty($element['type']) && $element['type'] == 'fieldset') {
+				$fieldSets[$name] = $name;
+			} else {
+				$fields[$name] = $name;
+			}
+			$elements[$name] = $element;
 		}
-		$termsResult = $this->post('term/multiple', $query);
-		if (empty($termsResult) || !$termsResult->isOk()) {
-			$this->deleteVocabulary($vocabularyId);
+		//Add fields
+		$fieldsResult = $this->addTermsToVocabulary($vocabularyId, Configure::read('Collibra.fieldTypeId'), $fields);
+		if (empty($fieldsResult) || !$fieldsResult->isOk()) {
 			$this->errors[] = "Error adding fields to \"{$swagger['basePath']}\"";
+			$this->deleteVocabulary($vocabularyId);
+			return false;
+		}
+		$fieldSetsResult = $this->addTermsToVocabulary($vocabularyId, Configure::read('Collibra.fieldSetTypeId'), $fieldSets);
+		if (empty($fieldSetsResult) || !$fieldSetsResult->isOk()) {
+			$this->errors[] = "Error adding fieldSets to \"{$swagger['basePath']}\"";
+			$this->deleteVocabulary($vocabularyId);
 			return false;
 		}
 
 		//Link created terms to selected Business Terms
-		$terms = json_decode($termsResult->body());
-		if (empty($terms->termReference)) {
-			return true;
-		}
-		$relationshipTypeId = Configure::read('Collibra.businessTermToFieldRelationId');
-		foreach ($terms->termReference as $term) {
-			if (empty($term->signifier) || empty($term->resourceId) || empty($signifiers[$term->signifier]['business_term'])) {
+		foreach (['fieldsResult', 'fieldSetsResult'] as $result) {
+			$terms = json_decode(${$result}->body());
+			if (empty($terms->termReference)) {
 				continue;
 			}
-			$this->post("term/{$term->resourceId}/relations", [
-				'type' => $relationshipTypeId,
-				'target' => $signifiers[$term->signifier]['business_term'],
-				'inverse' => 'true'
-			]);
+			$relationshipTypeId = Configure::read('Collibra.businessTermToFieldRelationId');
+			foreach ($terms->termReference as $term) {
+				if (empty($term->signifier) || empty($term->resourceId) || empty($elements[$term->signifier]['business_term'])) {
+					continue;
+				}
+				$this->post("term/{$term->resourceId}/relations", [
+					'type' => $relationshipTypeId,
+					'target' => $elements[$term->signifier]['business_term'],
+					'inverse' => 'true'
+				]);
+			}
 		}
 		return true;
+	}
+
+	public function addTermsToVocabulary($vocabularyId, $conceptType, $terms) {
+		if (empty($terms)) {
+			return true;
+		}
+		$query = http_build_query(['vocabulary' => $vocabularyId, 'conceptType' => $conceptType]);
+		//For array data, PHP's http_build_query creates query/POST string in a format Collibra doesn't like,
+		//so we're manually building the remaining POST string
+		foreach ($terms as $term) {
+			if (empty($term)) {
+				continue;
+			}
+			$query .= '&signifier=' . urlencode($term);
+		}
+		return $this->post('term/multiple', $query);
 	}
 
 	public function updateApiBusinessTermLinks($terms) {
