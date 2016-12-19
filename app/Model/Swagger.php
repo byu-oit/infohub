@@ -32,10 +32,12 @@ class Swagger extends AppModel {
 			}
 			$schema = $path['get']['responses'][200]['schema'];
 			if (!empty($schema['$ref'])) {
-				list($name, $schema) = $this->_getRef($schema['$ref']);
-				$schema = [$name => $schema];
+				list($name, $refProperties) = $this->_getRef($schema['$ref']);
+				$properties = [$name => $refProperties];
+			} else {
+				$properties = ["result" => $schema];
 			}
-			$this->_addElements([], $schema);
+			$this->_addElements([], $properties);
 		}
 
 		$hostRaw = $this->_getRef('/host');
@@ -93,7 +95,7 @@ class Swagger extends AppModel {
 			}
 
 			$parents = $mainParents;
-			if (substr($propertyName, -5) != 'basic' && $propertyName != 'identity') {
+			if (substr($propertyName, -5) != 'basic' && $propertyName != 'identity' && $propertyName != 'result') {
 				//conditionalize this
 				$parents[] = $propertyName;
 			}
