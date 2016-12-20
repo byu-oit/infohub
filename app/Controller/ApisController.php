@@ -27,7 +27,21 @@ class ApisController extends AppController {
 		$basePath = '/' . implode('/', $args);
 		$terms = $this->CollibraAPI->getApiTerms($hostname, $basePath);
 		if (empty($terms)) {
-			return $this->redirect(['action' => 'host', 'hostname' => $hostname]);
+			//Check if non-existent API, or simply empty API
+			$community = $this->CollibraAPI->findTypeByName('community', $hostname, ['full' => true]);
+			if (empty($community->vocabularyReferences->vocabularyReference)) {
+				return $this->redirect(['action' => 'host', 'hostname' => $hostname]);
+			}
+			$found = false;
+			foreach ($community->vocabularyReferences->vocabularyReference as $endpoint) {
+				if ($endpoint->name == $basePath) {
+					$found = true;
+					break;
+				}
+			}
+			if (!$found) {
+				return $this->redirect(['action' => 'host', 'hostname' => $hostname]);
+			}
 		}
 
 		$this->set(compact('hostname', 'basePath', 'terms'));

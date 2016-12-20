@@ -28,34 +28,38 @@
 							['class' => 'inputButton']) ?>
 					</div>
 				<?php endif ?>
-				<table class="api-terms checkBoxes">
-					<tr class="header">
-						<th>Field</th>
-						<th>Business Term</th>
-					</tr>
-					<?php foreach ($terms as $term): ?>
-						<tr>
-							<td><?= $term->name ?></td>
-							<td>
-								<?php if (!empty($term->businessTerm[0])): ?>
-									<?php $hasSelectable = true; ?>
-									<?= $this->Html->link($term->businessTerm[0]->term, ['controller' => 'search', 'action' => 'term', $term->businessTerm[0]->termId]) ?>
-								<?php endif ?>
-							</td>
-							<td>
-								<?php if (!empty($term->businessTerm[0])): ?>
-									<input
-										type="checkbox"
-										name="terms[]"
-										data-title="<?= h($term->businessTerm[0]->term) ?>"
-										data-vocabID="<?= h($term->businessTerm[0]->termCommunityId) ?>"
-										value="<?= h($term->businessTerm[0]->termId) ?>"
-										checked="checked">
-								<?php endif ?>
-							</td>
+				<?php if (empty($terms)): ?>
+					<h3>No available output fields</h3>
+				<?php else: ?>
+					<table class="api-terms checkBoxes">
+						<tr class="header">
+							<th>Field</th>
+							<th>Business Term</th>
 						</tr>
-					<?php endforeach ?>
-				</table>
+						<?php foreach ($terms as $term): ?>
+							<tr>
+								<td><?= $term->name ?></td>
+								<td>
+									<?php if (!empty($term->businessTerm[0])): ?>
+										<?php $hasSelectable = true; ?>
+										<?= $this->Html->link($term->businessTerm[0]->term, ['controller' => 'search', 'action' => 'term', $term->businessTerm[0]->termId]) ?>
+									<?php endif ?>
+								</td>
+								<td>
+									<?php if (!empty($term->businessTerm[0])): ?>
+										<input
+											type="checkbox"
+											name="terms[]"
+											data-title="<?= h($term->businessTerm[0]->term) ?>"
+											data-vocabID="<?= h($term->businessTerm[0]->termCommunityId) ?>"
+											value="<?= h($term->businessTerm[0]->termId) ?>"
+											checked="checked">
+									<?php endif ?>
+								</td>
+							</tr>
+						<?php endforeach ?>
+					</table>
+				<?php endif ?>
 				<?php if ($hasSelectable): ?>
 					<input type="button" onclick="addToQueue(this, false)" class="requestAccess grow mainRequestBtn" value="Add To Request">
 				<?php endif ?>
