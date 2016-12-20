@@ -12,7 +12,7 @@ class BYUAPI extends Model {
 		$basePath = urlencode($basePathRaw);
 		$response = $this->_get("https://{$config['host']}/domains/api-management/wso2/v1/apis?context={$basePath}");
 		if (!$response || !$response->isOk()) {
-			return array();
+			return false;
 		}
 
 		$data = json_decode($response->body());
