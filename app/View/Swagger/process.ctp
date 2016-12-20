@@ -16,6 +16,7 @@
 	<?= $this->Form->create('Api', ['id' => 'apiForm']) ?>
 		<?= $this->Form->input('host') ?>
 		<?= $this->Form->input('basePath') ?>
+		<?= $this->Form->input('version') ?>
 		<table class="swagger">
 			<tr>
 				<th>Field</th>

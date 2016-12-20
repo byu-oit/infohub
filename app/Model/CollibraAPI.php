@@ -346,9 +346,9 @@ class CollibraAPI extends Model {
 			$this->errors[] = "Host \"{$swagger['host']}\" does not exist in Collibra";
 			return false;
 		}
-		$vocabularyId = $this->createVocabulary($swagger['basePath'], $hostCommunity->resourceId);
+		$vocabularyId = $this->createVocabulary("{$swagger['basePath']}/{$swagger['version']}", $hostCommunity->resourceId);
 		if (empty($vocabularyId)) {
-			$this->errors[] = "Unable to create vocabulary \"{$swagger['basePath']}\" in community \"{$swagger['host']}\"";
+			$this->errors[] = "Unable to create vocabulary \"{$swagger['basePath']}/{$swagger['version']}\" in community \"{$swagger['host']}\"";
 			return false;
 		}
 
@@ -373,13 +373,13 @@ class CollibraAPI extends Model {
 		//Add fields
 		$fieldsResult = $this->addTermsToVocabulary($vocabularyId, Configure::read('Collibra.fieldTypeId'), $fields);
 		if (empty($fieldsResult) || !$fieldsResult->isOk()) {
-			$this->errors[] = "Error adding fields to \"{$swagger['basePath']}\"";
+			$this->errors[] = "Error adding fields to \"{$swagger['basePath']}/{$swagger['version']}\"";
 			$this->deleteVocabulary($vocabularyId);
 			return false;
 		}
 		$fieldSetsResult = $this->addTermsToVocabulary($vocabularyId, Configure::read('Collibra.fieldSetTypeId'), $fieldSets);
 		if (empty($fieldSetsResult) || !$fieldSetsResult->isOk()) {
-			$this->errors[] = "Error adding fieldSets to \"{$swagger['basePath']}\"";
+			$this->errors[] = "Error adding fieldSets to \"{$swagger['basePath']}/{$swagger['version']}\"";
 			$this->deleteVocabulary($vocabularyId);
 			return false;
 		}

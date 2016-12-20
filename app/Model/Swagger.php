@@ -46,6 +46,7 @@ class Swagger extends AppModel {
 			$host = substr($host, 0, strlen($host) - 4);
 		}
 		$basePath = $this->_getRef('/basePath');
+		$version = $this->_getRef('/info/version')[1];
 
 		if (empty($this->elements)) {
 			$this->parseErrors[] = "No fields found in Swagger";
@@ -55,6 +56,7 @@ class Swagger extends AppModel {
 		return [
 			'host' => $host,
 			'basePath' => $basePath[1],
+			'version' => $version,
 			'elements' => array_values($this->elements)
 		];
 	}
