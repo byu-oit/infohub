@@ -1,7 +1,7 @@
 <?php
 
 class ApisController extends AppController {
-	public $uses = ['CollibraAPI'];
+	public $uses = ['CollibraAPI', 'BYUAPI'];
 
 	public function index() {
 		$hosts = $this->CollibraAPI->getApiHosts();
@@ -72,5 +72,13 @@ class ApisController extends AppController {
 
 		$this->Cookie->write('queue', $queue, true, '90 days');
 		return $this->redirect(['controller' => 'request', 'action' => 'index']);
+	}
+
+	public function store_link() {
+		$args = func_get_args();
+		$hostname = array_shift($args);
+		$basePath = '/' . implode('/', $args);
+		$link = $this->BYUAPI->storeLink($basePath);
+		return new CakeResponse(['type' => 'json', 'body' => json_encode(compact('link'))]);
 	}
 }

@@ -35,6 +35,7 @@
 
 	Router::connect('/login', array('controller' => 'myaccount', 'action' => 'login'));
 
+	Router::connect('/apis/store_link/*', ['controller' => 'apis', 'action' => 'store_link']);
 	Router::connect('/apis/:hostname', ['controller' => 'apis', 'action' => 'host'], ['pass' => ['hostname']]);
 	Router::connect('/apis/:hostname/*', ['controller' => 'apis', 'action' => 'view'], ['pass' => ['hostname']]);
 

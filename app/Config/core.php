@@ -60,7 +60,11 @@ if (!function_exists('denv')) {
 			'datasource' => 'DataSource',
 			'url'       =>  denv('CAKE_COLLIBRA_HOST', 'https://byu.collibra.com/rest/latest/'),
 			'username'  => denv('CAKE_COLLIBRA_USERNAME', '***REQUIRED***'),
-			'password'  => denv('CAKE_COLLIBRA_PASSWORD', '***REQUIRED***')]]);
+			'password'  => denv('CAKE_COLLIBRA_PASSWORD', '***REQUIRED***')],
+		'apiStore' => [
+			'datasource' => 'DataSource',
+			'host' => denv('CAKE_BYU_API_HOST', 'api.byu.edu'),
+			'bearer' => denv('CAKE_BYU_API_BEARER', '***REQUIRED***')]]);
 /**
  * CakePHP Debug Level:
  *
