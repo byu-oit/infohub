@@ -18,8 +18,8 @@
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
 				<?php //TODO: make this a deep link directly to this particular API ?>
-				<a href="https://api.byu.edu/store/" class="inputButton" target="_blank">View this API in the store</a>
 				<a href="https://developer-dev.byu.edu/api/api-list" class="inputButton" target="_blank">Read API documentation</a>
+				<a href="https://api.byu.edu/store/" id="store_link" class="inputButton" target="_blank">View this API in the store</a>
 				<?php if ($isAdmin): ?>
 					<div style="float: right">
 						<?= $this->Html->link(
@@ -67,3 +67,14 @@
 		</div>
 	</div>
 </div>
+<script type="text/javascript">
+	$(document).ready(function () {
+		$.get('<?= $this->Html->url(array_merge(['action' => 'store_link', 'hostname' => $hostname], explode('/', $basePath))) ?>')
+			.then(function(response) {
+				if (!response.link) {
+					return;
+				}
+				$('#store_link').attr('href', response.link);
+			});
+	});
+</script>
