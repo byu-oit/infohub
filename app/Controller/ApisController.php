@@ -16,6 +16,13 @@ class ApisController extends AppController {
 		if (empty($community->resourceId)) {
 			$this->redirect(['action' => 'index']);
 		}
+		if (!empty($community->vocabularyReferences->vocabularyReference)) {
+			usort(
+				$community->vocabularyReferences->vocabularyReference,
+				function ($a, $b) {
+					return strcmp(strtolower($a->name), strtolower($b->name));
+				});
+		}
 		$dataAssetDomainTypeId = Configure::read('Collibra.dataAssetDomainTypeId');
 		$techAssetDomainTypeId = Configure::read('Collibra.techAssetDomainTypeId');
 		$this->set(compact('hostname', 'community', 'dataAssetDomainTypeId', 'techAssetDomainTypeId'));
