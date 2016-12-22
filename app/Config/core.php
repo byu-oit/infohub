@@ -64,7 +64,8 @@ if (!function_exists('denv')) {
 		'apiStore' => [
 			'datasource' => 'DataSource',
 			'host' => denv('CAKE_BYU_API_HOST', 'api.byu.edu'),
-			'bearer' => denv('CAKE_BYU_API_BEARER', '***REQUIRED***')]]);
+			'key' => denv('CAKE_BYU_API_KEY', '***REQUIRED***'),
+			'secret' => denv('CAKE_BYU_API_SECRET', '***REQUIRED***')]]);
 /**
  * CakePHP Debug Level:
  *

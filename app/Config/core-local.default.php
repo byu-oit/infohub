@@ -22,6 +22,10 @@ $config = [
 			'api_key' => 'KEY',
 			'shared_secret' => 'SECRET'
 		],
+		'apiStore' => [
+			'key' => 'KEY',
+			'secret' => 'SECRET'
+		],
 		'collibra' => [
 			'url'       =>  'https://byu-dev.collibra.com/rest/latest/',
 			'username'  => 'SOME USERNAME',
