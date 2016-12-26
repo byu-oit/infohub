@@ -7,7 +7,7 @@ class BYUAPI extends Model {
 	public $useDbConfig = 'apiStore';
 
 
-	public function storeLink($basePathRaw){
+	public function deepLinks($basePathRaw){
 		$config = $this->getDataSource()->config;
 		$basePath = urlencode($basePathRaw);
 		$response = $this->_get("https://{$config['host']}/domains/api-management/wso2/v1/apis?context={$basePath}");
@@ -16,7 +16,10 @@ class BYUAPI extends Model {
 		}
 
 		$data = json_decode($response->body());
-		return empty($data->data[0]->Links->Store) ? null : $data->data[0]->Links->Store;
+		return [
+			'name' => empty($data->data[0]->Name) ? null : $data->data[0]->Name,
+			'link' => empty($data->data[0]->Links->Store) ? null : $data->data[0]->Links->Store
+		];
 	}
 
 	protected function _get($url) {

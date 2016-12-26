@@ -18,7 +18,7 @@
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
 				<?php //TODO: make this a deep link directly to this particular API ?>
-				<a href="https://developer-dev.byu.edu/api/api-list" class="inputButton" target="_blank">Read API documentation</a>
+				<a href="https://developer-dev.byu.edu/api/api-list" id="doc_link" class="inputButton" target="_blank">Read API documentation</a>
 				<a href="https://api.byu.edu/store/" id="store_link" class="inputButton" target="_blank">View this API in the store</a>
 				<?php if ($isAdmin): ?>
 					<div style="float: right">
@@ -69,12 +69,15 @@
 </div>
 <script type="text/javascript">
 	$(document).ready(function () {
-		$.get('<?= $this->Html->url(array_merge(['action' => 'store_link', 'hostname' => $hostname], explode('/', $basePath))) ?>')
+		$.get('<?= $this->Html->url(array_merge(['action' => 'deep_links', 'hostname' => $hostname], explode('/', $basePath))) ?>')
 			.then(function(response) {
-				if (!response.link) {
-					return;
+				if (response.link) {
+					$('#store_link').attr('href', response.link);
 				}
-				$('#store_link').attr('href', response.link);
+				if (response.name) {
+					var href = $('#doc_link').attr('href');
+					$('#doc_link').attr('href', href.replace('api-list', response.name));
+				}
 			});
 	});
 </script>

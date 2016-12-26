@@ -74,11 +74,10 @@ class ApisController extends AppController {
 		return $this->redirect(['controller' => 'request', 'action' => 'index']);
 	}
 
-	public function store_link() {
+	public function deep_links() {
 		$args = func_get_args();
 		$hostname = array_shift($args);
 		$basePath = '/' . implode('/', $args);
-		$link = $this->BYUAPI->storeLink($basePath);
-		return new CakeResponse(['type' => 'json', 'body' => json_encode(compact('link'))]);
+		return new CakeResponse(['type' => 'json', 'body' => json_encode($this->BYUAPI->deepLinks($basePath))]);
 	}
 }
