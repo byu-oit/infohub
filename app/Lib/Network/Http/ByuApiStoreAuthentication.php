@@ -11,13 +11,13 @@ class ByuApiStoreAuthentication {
  * @param array $authInfo
  * @return void
  */
-    public static function authentication(HttpSocket $http, &$authInfo) {
+	public static function authentication(HttpSocket $http, &$authInfo) {
 		$token = self::_getBearerToken($authInfo);
 		if (empty($token)) {
 			return;
 		}
 		$http->request['header']['Authorization'] = "Bearer {$token}";
-    }
+	}
 
 	protected static function _getBearerToken($authInfo) {
 		$tokenInfo = CakeSession::read('ByuApiBearerToken');
@@ -43,16 +43,16 @@ class ByuApiStoreAuthentication {
 		if (empty($authInfo['key']) || empty($authInfo['secret'])) {
 			return null;
 		}
-        $ch = curl_init();
+		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, 'https://api.byu.edu/token');
 		curl_setopt($ch, CURLOPT_USERPWD, "{$authInfo['key']}:{$authInfo['secret']}");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, 'grant_type=client_credentials');
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_POST, true);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, 'grant_type=client_credentials');
 
-        $tokenRaw = curl_exec($ch);
-        curl_close($ch);
-        $tokenInfo = @json_decode($tokenRaw);
+		$tokenRaw = curl_exec($ch);
+		curl_close($ch);
+		$tokenInfo = @json_decode($tokenRaw);
 		if (empty($tokenInfo->access_token)) {
 			return null;
 		}
@@ -68,15 +68,15 @@ class ByuApiStoreAuthentication {
 		if (empty($authInfo['key']) || empty($authInfo['secret'])) {
 			return null;
 		}
-        $ch = curl_init();
+		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, 'https://api.byu.edu/token/revoke');
 		curl_setopt($ch, CURLOPT_USERPWD, "{$authInfo['key']}:{$authInfo['secret']}");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, 'grant_type=client_credentials');
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_POST, true);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, 'grant_type=client_credentials');
 
-        $revokeRaw = curl_exec($ch);
-        curl_close($ch);
+		$revokeRaw = curl_exec($ch);
+		curl_close($ch);
 
 		return self::_generateBearerToken($authInfo);
 	}
