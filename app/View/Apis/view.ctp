@@ -76,7 +76,7 @@
 				}
 				if (response.name) {
 					var href = $('#doc_link').attr('href');
-					$('#doc_link').attr('href', href.replace('api-list', response.name));
+					$('#doc_link').attr('href', href.replace('api-list', response.name.replace('.', '')));
 				}
 			});
 	});
