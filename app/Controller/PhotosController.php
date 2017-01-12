@@ -47,29 +47,6 @@ class PhotosController extends AppController {
 		return $this->response;
 	}
 
-	public function compare($netId = null) {
-		session_write_close();
-		if ($this->request->is(['post', 'put'])) {
-			$byuPhoto = $this->Photo->get($netId);
-			if (empty($byuPhoto)) {
-				$this->Session->setFlash('BYU Photo not found', 'default', ['class' => 'error']);
-				return $this->redirect($this->request->here());
-			}
-			$userResourceId = $this->CollibraAPI->userResourceFromUsername($netId);
-			if (empty($userResourceId)) {
-				$this->Session->setFlash('Collibra user not found', 'default', ['class' => 'error']);
-				return $this->redirect($this->request->here());
-			}
-			if ($this->CollibraAPI->photo($userResourceId, $byuPhoto)) {
-				$this->Session->setFlash('Updated!');
-			} else {
-				$this->Session->setFlash('Problem updating photo in Collibra', 'default', ['class' => 'error']);
-			}
-			return $this->redirect($this->request->here());
-		}
-		$this->set(compact('netId'));
-	}
-
 	public function view($netId = null) {
 		session_write_close();
 		$photo = $this->Photo->get($netId);
@@ -81,22 +58,12 @@ class PhotosController extends AppController {
 		exit();
 	}
 
-	public function cview($netId = null) {
-		session_write_close();
-		if (empty($netId)) {
-			exit("No photo found");
-		}
-
-		return $this->rview($this->CollibraAPI->userResourceFromUsername($netId));
-	}
-
-	public function rview($userResourceId = null) {
+	public function collibraview($userResourceId = null) {
 		session_write_close();
 		if (empty($userResourceId)) {
 			exit("No photo found");
 		}
 
-		/* @var $photo HttpSocketResponse */
 		$photo = $this->CollibraAPI->photo($userResourceId);
 		if (empty($photo)) {
 			exit("No photo found");

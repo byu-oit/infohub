@@ -52,8 +52,8 @@
                             <img
                                 style="width: 100%; height: auto"
                                 class="matchy matchy-collibra collibraphoto-<?= $idx ?>"
-                                src="<?= $this->Html->url(['action' => 'rview', $user->UserId]) ?>"
-                                data-orig-src="<?= $this->Html->url(['action' => 'rview', $user->UserId]) ?>"
+                                src="<?= $this->Html->url(['action' => 'collibraview', $user->UserId]) ?>"
+                                data-orig-src="<?= $this->Html->url(['action' => 'collibraview', $user->UserId]) ?>"
                                 data-net-id="<?= h($user->UserUserName) ?>"
                                 data-source="Collibra">
                         </td>
