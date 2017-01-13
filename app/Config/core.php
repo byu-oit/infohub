@@ -28,17 +28,32 @@ if (!function_exists('denv')) {
 	}
 }
 
-	Configure::write('Collibra.apiCommunity', denv('COLLIBRA_API_COMMUNITY', '9091816c-9b8b-45ba-8422-5e9fa36088be'));
-	Configure::write('Collibra.byuCommunity', denv('COLLIBRA_BYU_COMMUNITY', '4e756e1e-11ee-4d1e-bfaa-fb0ada974fc5'));
-	Configure::write('Collibra.isaWorkflow', denv('COLLIBRA_ISA_WORKFLOW', '62d6b6a4-0fa6-4335-89c7-e822beb920d6'));
-	Configure::write('Collibra.definitionAttributeTypeId', denv('COLLIBRA_DEFINITION_ATTRIBUTE_TYPE_ID', '00000000-0000-0000-0000-000000000202'));
-	Configure::write('Collibra.dataAssetDomainTypeId', denv('COLLIBRA_DATA_ASSET_DOMAIN_TYPE_ID', '00000000-0000-0000-0000-000000030001'));
-	Configure::write('Collibra.techAssetDomainTypeId', denv('COLLIBRA_TECH_ASSET_DOMAIN_TYPE_ID', '00000000-0000-0000-0000-000000030004'));
-	Configure::write('Collibra.businessTermTypeId', denv('COLLIBRA_BUSINESS_TERM_TYPE_ID', '00000000-0000-0000-0000-000000011001'));
-	Configure::write('Collibra.standardDataElementLabelTypeId', denv('COLLIBRA_STANDARD_DATA_ELEMENT_LABEL_TYPE_ID', '3de2b1d8-1c88-444f-b2e1-d0fb29ebabed'));
-	Configure::write('Collibra.fieldTypeId', denv('COLLIBRA_FIELD_TYPE_ID', '069a3e64-e2ca-4225-83b2-a67ebde07805'));
-	Configure::write('Collibra.fieldSetTypeId', denv('COLLIBRA_FIELD_TYPE_ID', '66338390-f105-47ef-b7f9-02c71a84c300'));
-	Configure::write('Collibra.businessTermToFieldRelationId', denv('COLLIBRA_BUSINESS_TERM_TO_FIELD_RELATION_ID', 'f5891dd0-3f80-44a2-ad87-882558fd0d71'));
+	Configure::write('Collibra', [
+		'community' => [
+			'byu' => '4e756e1e-11ee-4d1e-bfaa-fb0ada974fc5',
+			'api' => '9091816c-9b8b-45ba-8422-5e9fa36088be'
+		],
+		'isaWorkflow' => '62d6b6a4-0fa6-4335-89c7-e822beb920d6',
+		'definitionAttributeTypeId' => '00000000-0000-0000-0000-000000000202',
+		'dataAssetDomainTypeId' => '00000000-0000-0000-0000-000000030001',
+		'techAssetDomainTypeId' => '00000000-0000-0000-0000-000000030004',
+		'businessTermTypeId' => '00000000-0000-0000-0000-000000011001',
+		'standardDataElementLabelTypeId' => '3de2b1d8-1c88-444f-b2e1-d0fb29ebabed',
+		'fieldTypeId' => '069a3e64-e2ca-4225-83b2-a67ebde07805',
+		'fieldSetTypeId' => '66338390-f105-47ef-b7f9-02c71a84c300',
+		'businessTermToFieldRelationId' => 'f5891dd0-3f80-44a2-ad87-882558fd0d71',
+		'relationship' => [
+			'synonym' => 'c06ed0b7-032f-4d0f-ae40-5824c12f94a6'
+		],
+		'type' => [
+			'synonym' => 'ed82f17f-c1e7-4d6d-83cc-50f6b529c296'
+		],
+		'attribute' => [
+			'classification' => 'e0937764-544a-4d21-98ce-dc0c1936b465',
+			'requestable' => '0d798f70-b3ca-4af2-b283-54f84c4714aa'
+		]
+	]);
+
 	Configure::write('allowUnapprovedTerms', true);
 	Configure::write('allowUnrequestableTerms', false);
 

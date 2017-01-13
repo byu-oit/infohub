@@ -10,7 +10,7 @@ class PeopleController extends AppController {
 	}
 
 	private function getParentCommunities($communityData, $parentID, $objCommunity, $level=0){
-		if($parentID != Configure::read('Collibra.byuCommunity')){
+		if($parentID != Configure::read('Collibra.community.byu')){
 			if($level==0) $objCommunity->parents = array();
 			foreach($communityData->aaData[0]->Subcommunities as $co){
 				if($parentID == $co->subcommunityid){
@@ -46,14 +46,14 @@ class PeopleController extends AppController {
 	public function index(){
 		// get all parent communities for left nav
 		$this->loadModel('CollibraAPI');
-		$resp = $this->CollibraAPI->get('community/'.Configure::read('Collibra.byuCommunity').'/sub-communities');
+		$resp = $this->CollibraAPI->get('community/'.Configure::read('Collibra.community.byu').'/sub-communities');
 		$parentCommunities = json_decode($resp);
 		usort($parentCommunities->communityReference, 'self::sortCommunities');
 
 		// get user data for specified user groups including their phone and email
 		$resp = $this->CollibraAPI->postJSON(
 				'output/data_table',
-				'{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"userrid"}},{"Column":{"fieldName":"userenabled"}},{"Column":{"fieldName":"userfirstname"}},{"Group":{"name":"groupname","Columns":[{"Column":{"fieldName":"groupgroupname"}},{"Column":{"fieldName":"grouprid"}}]}},{"Column":{"fieldName":"userlastname"}},{"Column":{"fieldName":"emailemailaddress"}},{"Group":{"name":"phonenumber","Columns":[{"Column":{"fieldName":"phonephonenumber"}},{"Column":{"fieldName":"phonerid"}}]}},{"Column":{"fieldName":"useractivated"}},{"Column":{"fieldName":"isuserldap"}},{"Group":{"Columns":[{"Column":{"label":"Custodian User ID","fieldId":"8a0a6c89-106c-4adb-9936-f09f29b747ac","fieldName":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbrid"}},{"Column":{"label":"Custodian Gender","fieldName":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbgender"}},{"Column":{"label":"Custodian First Name","fieldName":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbfn"}},{"Column":{"label":"Custodian Last Name","fieldName":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbln"}}],"name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afb"}},{"Group":{"Columns":[{"Column":{"label":"Custodian Group ID","fieldName":"groupRolef86d1d3abc2e4beeb17fe0e9985d5afbgrid"}},{"Column":{"label":"Custodian Group Name","fieldName":"groupRolef86d1d3abc2e4beeb17fe0e9985d5afbggn"}}],"name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afbg"}},{"Group":{"Columns":[{"Column":{"label":"Steward User ID","fieldId":"8a0a6c89-106c-4adb-9936-f09f29b747ac","fieldName":"userRole8a0a6c89106c4adb9936f09f29b747acrid"}},{"Column":{"label":"Steward Gender","fieldName":"userRole8a0a6c89106c4adb9936f09f29b747acgender"}},{"Column":{"label":"Steward First Name","fieldName":"userRole8a0a6c89106c4adb9936f09f29b747acfn"}},{"Column":{"label":"Steward Last Name","fieldName":"userRole8a0a6c89106c4adb9936f09f29b747acln"}}],"name":"Role8a0a6c89106c4adb9936f09f29b747ac"}},{"Group":{"Columns":[{"Column":{"label":"Steward Group ID","fieldName":"groupRole8a0a6c89106c4adb9936f09f29b747acgrid"}},{"Column":{"label":"Steward Group Name","fieldName":"groupRole8a0a6c89106c4adb9936f09f29b747acggn"}}],"name":"Role8a0a6c89106c4adb9936f09f29b747acg"}}],"Resources":{"User":{"Enabled":{"name":"userenabled"},"UserName":{"name":"userusername"},"FirstName":{"name":"userfirstname"},"LastName":{"name":"userlastname"},"Emailaddress":{"name":"emailemailaddress"},"Phone":{"Phonenumber":{"name":"phonephonenumber"},"Id":{"name":"phonerid"}},"Group":{"Groupname":{"name":"groupgroupname"},"Id":{"name":"grouprid"},"Filter":{"AND":[{"FIELD":{"name":"grouprid","operator":"NOT_EQUALS","value":"00000000-0000-0000-0000-000001000001"}},{"FIELD":{"name":"grouprid","operator":"NOT_EQUALS","value":"00000000-0000-0000-0000-000001000002"}}]}},"Activated":{"name":"useractivated"},"LDAPUser":{"name":"isuserldap"},"Id":{"name":"userrid"},"Member":[{"User":{"Gender":{"name":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbgender"},"FirstName":{"name":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbfn"},"Id":{"name":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbrid"},"LastName":{"name":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbln"}},"Role":{"Signifier":{"hidden":"true","name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afbsig"},"name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afb","Id":{"hidden":"true","name":"roleRolef86d1d3abc2e4beeb17fe0e9985d5afbrid"}},"roleId":"f86d1d3a-bc2e-4bee-b17f-e0e9985d5afb"},{"Role":{"Signifier":{"hidden":"true","name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afbg"},"Id":{"hidden":"true","name":"roleRolef86d1d3abc2e4beeb17fe0e9985d5afbgrid"}},"Group":{"GroupName":{"name":"groupRolef86d1d3abc2e4beeb17fe0e9985d5afbggn"},"Id":{"name":"groupRolef86d1d3abc2e4beeb17fe0e9985d5afbgrid"}},"roleId":"f86d1d3a-bc2e-4bee-b17f-e0e9985d5afb"},{"User":{"Gender":{"name":"userRole8a0a6c89106c4adb9936f09f29b747acgender"},"FirstName":{"name":"userRole8a0a6c89106c4adb9936f09f29b747acfn"},"Id":{"name":"userRole8a0a6c89106c4adb9936f09f29b747acrid"},"LastName":{"name":"userRole8a0a6c89106c4adb9936f09f29b747acln"}},"Role":{"Signifier":{"hidden":"true","name":"Role8a0a6c89106c4adb9936f09f29b747acsig"},"name":"Role8a0a6c89106c4adb9936f09f29b747ac","Id":{"hidden":"true","name":"roleRole8a0a6c89106c4adb9936f09f29b747acrid"}},"roleId":"8a0a6c89-106c-4adb-9936-f09f29b747ac"},{"Role":{"Signifier":{"hidden":"true","name":"Role8a0a6c89106c4adb9936f09f29b747acg"},"Id":{"hidden":"true","name":"roleRole8a0a6c89106c4adb9936f09f29b747acgrid"}},"Group":{"GroupName":{"name":"groupRole8a0a6c89106c4adb9936f09f29b747acggn"},"Id":{"name":"groupRole8a0a6c89106c4adb9936f09f29b747acgrid"}},"roleId":"8a0a6c89-106c-4adb-9936-f09f29b747ac"}],"Filter":{"AND":[{"OR":[{"Field":{"name":"userRole8a0a6c89106c4adb9936f09f29b747acrid","operator":"NOT_NULL"}},{"Field":{"name":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbrid","operator":"NOT_NULL"}},]},{"AND":[{"Field":{"name":"userenabled","operator":"EQUALS","value":"true"}}]}]}}},"Order":[{"Field":{"name":"userlasttname","order":"ASC"}}],"displayStart":0,"displayLength":1000}}'
+				'{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"userrid"}},{"Column":{"fieldName":"userenabled"}},{"Column":{"fieldName":"userfirstname"}},{"Group":{"name":"groupname","Columns":[{"Column":{"fieldName":"groupgroupname"}},{"Column":{"fieldName":"grouprid"}}]}},{"Column":{"fieldName":"userlastname"}},{"Column":{"fieldName":"emailemailaddress"}},{"Group":{"name":"phonenumber","Columns":[{"Column":{"fieldName":"phonephonenumber"}},{"Column":{"fieldName":"phonerid"}}]}},{"Column":{"fieldName":"useractivated"}},{"Column":{"fieldName":"isuserldap"}},{"Group":{"Columns":[{"Column":{"label":"Custodian User ID","fieldId":"8a0a6c89-106c-4adb-9936-f09f29b747ac","fieldName":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbrid"}},{"Column":{"label":"Custodian Gender","fieldName":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbgender"}},{"Column":{"label":"Custodian First Name","fieldName":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbfn"}},{"Column":{"label":"Custodian Last Name","fieldName":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbln"}}],"name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afb"}},{"Group":{"Columns":[{"Column":{"label":"Custodian Group ID","fieldName":"groupRolef86d1d3abc2e4beeb17fe0e9985d5afbgrid"}},{"Column":{"label":"Custodian Group Name","fieldName":"groupRolef86d1d3abc2e4beeb17fe0e9985d5afbggn"}}],"name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afbg"}},{"Group":{"Columns":[{"Column":{"label":"Steward User ID","fieldId":"8a0a6c89-106c-4adb-9936-f09f29b747ac","fieldName":"userRole8a0a6c89106c4adb9936f09f29b747acrid"}},{"Column":{"label":"Steward Gender","fieldName":"userRole8a0a6c89106c4adb9936f09f29b747acgender"}},{"Column":{"label":"Steward First Name","fieldName":"userRole8a0a6c89106c4adb9936f09f29b747acfn"}},{"Column":{"label":"Steward Last Name","fieldName":"userRole8a0a6c89106c4adb9936f09f29b747acln"}}],"name":"Role8a0a6c89106c4adb9936f09f29b747ac"}},{"Group":{"Columns":[{"Column":{"label":"Steward Group ID","fieldName":"groupRole8a0a6c89106c4adb9936f09f29b747acgrid"}},{"Column":{"label":"Steward Group Name","fieldName":"groupRole8a0a6c89106c4adb9936f09f29b747acggn"}}],"name":"Role8a0a6c89106c4adb9936f09f29b747acg"}}],"Resources":{"User":{"Enabled":{"name":"userenabled"},"UserName":{"name":"userusername"},"FirstName":{"name":"userfirstname"},"LastName":{"name":"userlastname"},"Emailaddress":{"name":"emailemailaddress"},"Phone":{"Phonenumber":{"name":"phonephonenumber"},"Id":{"name":"phonerid"}},"Group":{"Groupname":{"name":"groupgroupname"},"Id":{"name":"grouprid"}},"Activated":{"name":"useractivated"},"LDAPUser":{"name":"isuserldap"},"Id":{"name":"userrid"},"Member":[{"User":{"Gender":{"name":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbgender"},"FirstName":{"name":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbfn"},"Id":{"name":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbrid"},"LastName":{"name":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbln"}},"Role":{"Signifier":{"hidden":"true","name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afbsig"},"name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afb","Id":{"hidden":"true","name":"roleRolef86d1d3abc2e4beeb17fe0e9985d5afbrid"}},"roleId":"f86d1d3a-bc2e-4bee-b17f-e0e9985d5afb"},{"Role":{"Signifier":{"hidden":"true","name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afbg"},"Id":{"hidden":"true","name":"roleRolef86d1d3abc2e4beeb17fe0e9985d5afbgrid"}},"Group":{"GroupName":{"name":"groupRolef86d1d3abc2e4beeb17fe0e9985d5afbggn"},"Id":{"name":"groupRolef86d1d3abc2e4beeb17fe0e9985d5afbgrid"}},"roleId":"f86d1d3a-bc2e-4bee-b17f-e0e9985d5afb"},{"User":{"Gender":{"name":"userRole8a0a6c89106c4adb9936f09f29b747acgender"},"FirstName":{"name":"userRole8a0a6c89106c4adb9936f09f29b747acfn"},"Id":{"name":"userRole8a0a6c89106c4adb9936f09f29b747acrid"},"LastName":{"name":"userRole8a0a6c89106c4adb9936f09f29b747acln"}},"Role":{"Signifier":{"hidden":"true","name":"Role8a0a6c89106c4adb9936f09f29b747acsig"},"name":"Role8a0a6c89106c4adb9936f09f29b747ac","Id":{"hidden":"true","name":"roleRole8a0a6c89106c4adb9936f09f29b747acrid"}},"roleId":"8a0a6c89-106c-4adb-9936-f09f29b747ac"},{"Role":{"Signifier":{"hidden":"true","name":"Role8a0a6c89106c4adb9936f09f29b747acg"},"Id":{"hidden":"true","name":"roleRole8a0a6c89106c4adb9936f09f29b747acgrid"}},"Group":{"GroupName":{"name":"groupRole8a0a6c89106c4adb9936f09f29b747acggn"},"Id":{"name":"groupRole8a0a6c89106c4adb9936f09f29b747acgrid"}},"roleId":"8a0a6c89-106c-4adb-9936-f09f29b747ac"}],"Filter":{"AND":[{"OR":[{"Field":{"name":"userRole8a0a6c89106c4adb9936f09f29b747acrid","operator":"NOT_NULL"}},{"Field":{"name":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbrid","operator":"NOT_NULL"}},]},{"AND":[{"Field":{"name":"userenabled","operator":"EQUALS","value":"true"}}]}]}}},"Order":[{"Field":{"name":"userlasttname","order":"ASC"}}],"displayStart":0,"displayLength":1000}}'
 		);
 		$resp = json_decode($resp);
 		usort($resp->aaData, 'self::sortUsers');
@@ -123,7 +123,7 @@ class PeopleController extends AppController {
 	public function lookup(){
 		// get all parent communities for left nav
 		$this->loadModel('CollibraAPI');
-		$resp = $this->CollibraAPI->get('community/'.Configure::read('Collibra.byuCommunity').'/sub-communities');
+		$resp = $this->CollibraAPI->get('community/'.Configure::read('Collibra.community.byu').'/sub-communities');
 		$parentCommunities = json_decode($resp);
 		usort($parentCommunities->communityReference, 'self::sortCommunities');
 
@@ -136,7 +136,7 @@ class PeopleController extends AppController {
 				$query = preg_replace('/[^ \w]+/', '', $query);
 			}
 
-			$request = '{"query":"'.$query.'*", "filter": { "community": ["'.Configure::read('Collibra.byuCommunity').'"], "category":["CO", "VC", "UR"], "vocabulary":[], "type":{"asset":[]},';
+			$request = '{"query":"'.$query.'*", "filter": { "community": ["'.Configure::read('Collibra.community.byu').'"], "category":["CO", "VC", "UR"], "vocabulary":[], "type":{"asset":[]},';
 			if(!Configure::read('allowUnapprovedTerms')){
 				$request .= '"status": ["00000000-0000-0000-0000-000000005009"], ';
 			}
@@ -222,7 +222,7 @@ class PeopleController extends AppController {
 			$tmpCommunities = array();
 			foreach($communities->aaData[0]->Subcommunities as $c){
 				$include = false;
-				if($c->parentCommunityId != Configure::read('Collibra.byuCommunity')){
+				if($c->parentCommunityId != Configure::read('Collibra.community.byu')){
 					// add community based on previous search resulta
 					if(in_array($c->subcommunityid, $arrCommunityResults)){
 						$include = true;
@@ -288,7 +288,7 @@ class PeopleController extends AppController {
 	public function dept() {
 		// get all parent communities for left nav
 		$this->loadModel('CollibraAPI');
-		$resp = $this->CollibraAPI->get('community/'.Configure::read('Collibra.byuCommunity').'/sub-communities');
+		$resp = $this->CollibraAPI->get('community/'.Configure::read('Collibra.community.byu').'/sub-communities');
 		$parentCommunities = json_decode($resp);
 		usort($parentCommunities->communityReference, 'self::sortCommunities');
 
@@ -298,7 +298,6 @@ class PeopleController extends AppController {
 		}else{
 			$community = $parentCommunities->communityReference[0]->resourceId;
 		}
-		//$community = '4e756e1e-11ee-4d1e-bfaa-fb0ada974fc5';
 
 		// get all communities in the system
 		$resp = $this->CollibraAPI->postJSON(

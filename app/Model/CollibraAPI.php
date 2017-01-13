@@ -279,7 +279,7 @@ class CollibraAPI extends Model {
 
 	public function getApiHosts() {
 		$hosts = [];
-		$hostsRaw = $this->get('community/' . Configure::read('Collibra.apiCommunity') . '/sub-communities', ['json' => true]);
+		$hostsRaw = $this->get('community/' . Configure::read('Collibra.community.api') . '/sub-communities', ['json' => true]);
 		if (empty($hostsRaw->communityReference)) {
 			return $hosts;
 		}
@@ -338,6 +338,152 @@ class CollibraAPI extends Model {
 								'order' => 'ASC']]]]]]];
 		$terms = $this->fullDataTable($termsQuery);
 		return $terms;
+	}
+
+	public function searchTerms($query, $limit = 5, $community = null) {
+		if (empty($community)) {
+			$community = Configure::read('Collibra.community.byu');
+		}
+		if (substr($query, -1) !== '*') {
+			$query .= '*';
+		}
+		$request = [
+			'query' => $query,
+			'filter' => [
+				'community' => [$community],
+				'category' => ['TE'],
+				'type' => [
+					'asset' => [
+						'00000000-0000-0000-0000-000000011001',
+						Configure::read('Collibra.type.synonym')]],
+				'includeMeta' => true],
+			'fields' => ['name', 'attributes'],
+			'order' => [
+				'by' => 'score',
+				'sort' => 'desc'],
+			'limit' => $limit,
+			'offset' => 0,
+			'highlight' => false,
+			'relativeUrl' => true,
+			'withParents' => true
+		];
+		if(!Configure::read('allowUnapprovedTerms')){
+			$request['filter']['status'] = '00000000-0000-0000-0000-000000005009';
+		}
+
+		$resp = $this->postJSON('search', json_encode($request));
+		return json_decode($resp);
+	}
+
+	public function getTerms($vocabularyId = null, $passedOptions = []) {
+		$defaults = [
+			'sortField' => 'termsignifier',
+			'sortOrder' => 'ASC',
+			'start' => 0,
+			'length' => 25];
+		$options = array_merge($defaults, $passedOptions);
+
+		$tableConfig = ["TableViewConfig" => [
+			"Columns" => [
+				["Column" => ["fieldName" => "termrid"]],
+				["Column" => ["fieldName" => "termsignifier"]],
+				["Column" => ["fieldName" => "description"]],
+				["Column" => ["fieldName" => "lastModified"]],
+				["Column" => ["fieldName" => "domainrid"]],
+				["Column" => ["fieldName" => "domainname"]],
+				["Column" => ["fieldName" => "requestable"]],
+				["Column" => ["fieldName" => "classification"]],
+				["Column" => ["fieldName" => "commrid"]],
+				["Column" => ["fieldName" => "communityname"]],
+				["Group" => [
+					"Columns" => [
+						["Column" => ["fieldName" => "userRole00000000000000000000000000005016fn"]],
+						["Column" => ["fieldName" => "userRole00000000000000000000000000005016ln"]]],
+					"name" => "Role00000000000000000000000000005016"]],
+				["Group" => [
+					"name" => "synonym_for",
+					"Columns" => [
+						["Column" => ["fieldName" => "synonymname"]],
+						["Column" => ["fieldName" => "synonymrelid"]],
+						["Column" => ["fieldName" => "synonymid"]]]]]],
+			"Resources" => [
+				"Term" => [
+					"Id" => ["name" => "termrid"],
+					"Signifier" => ["name" => "termsignifier"],
+					"LastModified" => ["name" => "lastModified"],
+					"BooleanAttribute" => [[
+						"Value" => ["name" => "requestable"],
+						"labelId" => Configure::read('Collibra.attribute.requestable')]],
+					"StringAttribute" => [[
+						"LongExpression" => ["name" => "description"]]],
+					"SingleValueListAttribute" => [[
+							"Value" => ["name" => "classification"],
+							"labelId" => Configure::read('Collibra.attribute.classification')]],
+					"Status" => [
+						"Signifier" => ["name" => "statusname"]],
+					"Vocabulary" => [
+						"Community" => [
+							"Name" => ["name" => "communityname"],
+							"Id" => ["name" => "commrid"]],
+						"Id" => ["name" => "domainrid"],
+						"Name" => ["name" => "domainname"]
+					],
+					"ConceptType" => [[
+						"Signifier" => ["name" => "concepttypename"]]],
+					"Member" => [[
+						"User" => [
+							"FirstName" => ["name" => "userRole00000000000000000000000000005016fn"],
+							"LastName" => ["name" => "userRole00000000000000000000000000005016ln"]],
+						"Role" => ["name" => "Role00000000000000000000000000005016"],
+						"roleId" => "00000000-0000-0000-0000-000000005016"]],
+					"Relation" => [[
+						"typeId" => Configure::read('Collibra.relationship.synonym'),
+						"type" => "TARGET",
+						"Id" => ["name" => "synonymrelid"],
+						"Source" => [
+							"Id" => ["name" => "synonymid"],
+							"Signifier" => ["name" => "synonymname"]]]],
+					"Filter" => [
+						"AND" => [
+							["OR" => [
+								["Field" => [
+									"name" => "concepttypename",
+									"operator" => "INCLUDES",
+									"value" => "Business Term"]],
+								["Field" => [
+									"name" => "concepttypename",
+									"operator" => "INCLUDES",
+									"value" => "Synonym"]]]]]],
+					"Order" => [
+						["Field" => [
+							"name" => $options['sortField'],
+							"order" => $options['sortOrder']]]]]],
+			"displayStart" => $options['start'],
+			"displayLength" => $options['length']]];
+		if (!empty($vocabularyId)) {
+			$tableConfig['TableViewConfig']['Resources']['Term']['Filter']['AND'][] = [
+				'AND' =>
+					['Field' => [
+						'name' => 'domainrid',
+						'operator' => 'EQUALS',
+						'value' => $vocabularyId]]];
+		}
+		if (!empty($options['additionalFilters'])) {
+			foreach($options['additionalFilters'] as $filter) {
+				if (!empty($filter)) {
+					$tableConfig['TableViewConfig']['Resources']['Term']['Filter']['AND'][] = $filter;
+				}
+			}
+		}
+		if(!Configure::read('allowUnapprovedTerms')){
+			$tableConfig['TableViewConfig']['Resources']['Term']['Filter']['AND'][] = [
+				['Field' => [
+					'name' => 'statusname',
+					'operator' => 'EQUALS',
+					'value' => 'Accepted']]];
+		}
+
+		return $this->dataTable($tableConfig);
 	}
 
 	public function importSwagger($swagger) {
@@ -445,7 +591,7 @@ class CollibraAPI extends Model {
 		} else {
 			//default restricted to API community
 			//override to no parent by passing option ['parent' => false]
-			$query['community'] = Configure::read('Collibra.apiCommunity');
+			$query['community'] = Configure::read('Collibra.community.api');
 		}
 
 		$key = $type;
@@ -514,7 +660,7 @@ class CollibraAPI extends Model {
 				'category' => ['TE'],
 				'type' => [
 					'asset' => [Configure::read('Collibra.businessTermTypeId')]],
-				'community' => [Configure::read('Collibra.byuCommunity')]],
+				'community' => [Configure::read('Collibra.community.byu')]],
 			'fields' => [Configure::read('Collibra.standardDataElementLabelTypeId')],
 			'order' => [
 				'by' => 'score',

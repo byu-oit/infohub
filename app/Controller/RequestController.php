@@ -59,7 +59,7 @@ class RequestController extends AppController {
 					// verify that the term is requestable
 					if(!Configure::read('allowUnrequestableTerms')){
 						foreach($termResp->attributeReferences->attributeReference as $attr){
-							if($attr->labelReference->resourceId == '0d798f70-b3ca-4af2-b283-54f84c4714aa'){
+							if($attr->labelReference->resourceId == Configure::read('Collibra.attribute.requestable')){
 								$requestable = $attr->value == 'true';
 							}
 						}

@@ -100,7 +100,7 @@ class SearchController extends AppController {
 
 	public function results() {
 		$query = htmlentities($this->request->params['pass'][0]);
-		$defaultCommunity = Configure::read('Collibra.byuCommunity');
+		$defaultCommunity = Configure::read('Collibra.community.byu');
 
 		// set community filter based on querystring value
 		///////////////////////////////////////////////////////
@@ -130,7 +130,7 @@ class SearchController extends AppController {
 				$sortOrder = 'DESC';
 				break;
 			case 3:
-				$sortField = 'Attre0937764544a4d2198cedc0c1936b465';
+				$sortField = 'classification';
 				break;
 		}
 		///////////////////////////////////////////////////////
@@ -185,21 +185,20 @@ class SearchController extends AppController {
 
 	// Called from search landing page
 	public function loadCommunityData($community = null){
-		if(!$community) $community = Configure::read('Collibra.byuCommunity');
+		if(!$community) $community = Configure::read('Collibra.community.byu');
 		$this->autoRender = false;
-		$resp = '';
+
 		if ($this->request->is('post')) {
 			if(isset($this->request->data['c']) && $this->request->data['c'] != ''){
 				$community = $this->request->data['c'];
 			}
 		}
 
-		$request = '{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldId":"00000000-0000-0000-0000-000000000202","fieldName":"Attr00000000000000000000000000000202"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202longExpr"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202rid"}},{"Column":{"fieldName":"Attr0d798f70b3ca4af2b28354f84c4714aarid"}},{"Column":{"fieldName":"Attr0d798f70b3ca4af2b28354f84c4714aa","fieldId":"0d798f70-b3ca-4af2-b283-54f84c4714aa"}},{"Column":{"fieldName":"statusname"}},{"Column":{"fieldName":"statusrid"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldId":"e0937764-544a-4d21-98ce-dc0c1936b465","fieldName":"Attre0937764544a4d2198cedc0c1936b465"}},{"Column":{"fieldName":"Attre0937764544a4d2198cedc0c1936b465rid"}},{"Group":{"name":"synonym_for","Columns":[{"Column":{"fieldName":"Relc06ed0b7032f4d0fae405824c12f94a6T","fieldId":"c06ed0b7-032f-4d0f-ae40-5824c12f94a6T","label":"Business Term"}},{"Column":{"fieldName":"relRelc06ed0b7032f4d0fae405824c12f94a6Trid","label":"Business Term ID"}},{"Column":{"fieldName":"Relc06ed0b7032f4d0fae405824c12f94a6Trid","label":"Business Term Business Term ID"}}]}}],"Resources":{"Term":{"Id":{"name":"termrid"},"Signifier":{"name":"termsignifier"},"StringAttribute":[{"Value":{"name":"Attr00000000000000000000000000000202"},"LongExpression":{"name":"Attr00000000000000000000000000000202longExpr"},"Id":{"name":"Attr00000000000000000000000000000202rid"},"labelId":"00000000-0000-0000-0000-000000000202"}],"BooleanAttribute":[{"Id":{"name":"Attr0d798f70b3ca4af2b28354f84c4714aarid"},"labelId":"0d798f70-b3ca-4af2-b283-54f84c4714aa","Value":{"name":"Attr0d798f70b3ca4af2b28354f84c4714aa"}}],"Status":{"Signifier":{"name":"statusname"},"Id":{"name":"statusrid"}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"},"Id":{"name":"concepttyperid"}}],"SingleValueListAttribute":[{"Value":{"name":"Attre0937764544a4d2198cedc0c1936b465"},"Id":{"name":"Attre0937764544a4d2198cedc0c1936b465rid"},"labelId":"e0937764-544a-4d21-98ce-dc0c1936b465"}],"Relation":[{"typeId":"c06ed0b7-032f-4d0f-ae40-5824c12f94a6","type":"TARGET","Id":{"name":"relRelc06ed0b7032f4d0fae405824c12f94a6Trid"},"Source":{"Id":{"name":"Relc06ed0b7032f4d0fae405824c12f94a6Trid"},"Signifier":{"name":"Relc06ed0b7032f4d0fae405824c12f94a6T"}}}],"Filter":{"AND":[{"OR":[{"Field":{"name":"concepttypename","operator":"INCLUDES","value":"Business Term"}},{"Field":{"name":"concepttypename","operator":"INCLUDES","value":"Synonym"}}]},';
 		if(!Configure::read('allowUnapprovedTerms')){
 		}
 		$resp = $this->CollibraAPI->postJSON(
 				'output/data_table',
-				'{"TableViewConfig":{"Columns":[{"Community":{"name":"Subcommunities","Columns":[{"Column":{"fieldName":"subcommunityid"}},{"Column":{"fieldName":"subcommunity"}},{"Column":{"fieldName":"hasNonMetaChildren"}},{"Group":{"Columns":[{"Column":{"label":"Admin User ID","fieldId":"00000000-0000-0000-0000-000000005015","fieldName":"userRole00000000000000000000000000005015rid"}},{"Column":{"label":"Admin Gender","fieldName":"userRole00000000000000000000000000005015gender"}},{"Column":{"label":"Admin First Name","fieldName":"userRole00000000000000000000000000005015fn"}},{"Column":{"label":"Admin Last Name","fieldName":"userRole00000000000000000000000000005015ln"}}],"name":"Role00000000000000000000000000005015"}},{"Group":{"Columns":[{"Column":{"label":"Admin Group ID","fieldName":"groupRole00000000000000000000000000005015grid"}},{"Column":{"label":"Admin Group Name","fieldName":"groupRole00000000000000000000000000005015ggn"}}],"name":"Role00000000000000000000000000005015g"}},{"Group":{"Columns":[{"Column":{"label":"Collibra Steward User ID","fieldId":"00000000-0000-0000-0000-000000005016","fieldName":"userRole00000000000000000000000000005016rid"}},{"Column":{"label":"Collibra Steward Gender","fieldName":"userRole00000000000000000000000000005016gender"}},{"Column":{"label":"Collibra Steward First Name","fieldName":"userRole00000000000000000000000000005016fn"}},{"Column":{"label":"Collibra Steward Last Name","fieldName":"userRole00000000000000000000000000005016ln"}}],"name":"Role00000000000000000000000000005016"}},{"Group":{"Columns":[{"Column":{"label":"Collibra Steward Group ID","fieldName":"groupRole00000000000000000000000000005016grid"}},{"Column":{"label":"Collibra Steward Group Name","fieldName":"groupRole00000000000000000000000000005016ggn"}}],"name":"Role00000000000000000000000000005016g"}},{"Group":{"Columns":[{"Column":{"label":"Stakeholder User ID","fieldId":"00000000-0000-0000-0000-000000005018","fieldName":"userRole00000000000000000000000000005018rid"}},{"Column":{"label":"Stakeholder Gender","fieldName":"userRole00000000000000000000000000005018gender"}},{"Column":{"label":"Stakeholder First Name","fieldName":"userRole00000000000000000000000000005018fn"}},{"Column":{"label":"Stakeholder Last Name","fieldName":"userRole00000000000000000000000000005018ln"}}],"name":"Role00000000000000000000000000005018"}},{"Group":{"Columns":[{"Column":{"label":"Stakeholder Group ID","fieldName":"groupRole00000000000000000000000000005018grid"}},{"Column":{"label":"Stakeholder Group Name","fieldName":"groupRole00000000000000000000000000005018ggn"}}],"name":"Role00000000000000000000000000005018g"}}]}},{"Vocabulary":{"name":"Vocabularies","Columns":[{"Column":{"fieldName":"vocabulary"}},{"Column":{"fieldName":"vocabularyid"}},{"Column":{"fieldName":"domainType"}},{"Group":{"Columns":[{"Column":{"label":"Admin User ID","fieldId":"00000000-0000-0000-0000-000000005015","fieldName":"userRole00000000000000000000000000005015VOCSUFFIXrid"}},{"Column":{"label":"Admin Gender","fieldName":"userRole00000000000000000000000000005015VOCSUFFIXgender"}},{"Column":{"label":"Admin First Name","fieldName":"userRole00000000000000000000000000005015VOCSUFFIXfn"}},{"Column":{"label":"Admin Last Name","fieldName":"userRole00000000000000000000000000005015VOCSUFFIXln"}}],"name":"Role00000000000000000000000000005015VOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Admin Group ID","fieldName":"groupRole00000000000000000000000000005015gVOCSUFFIXrid"}},{"Column":{"label":"Admin Group Name","fieldName":"groupRole00000000000000000000000000005015gVOCSUFFIXgn"}}],"name":"Role00000000000000000000000000005015gVOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Collibra Steward User ID","fieldId":"00000000-0000-0000-0000-000000005016","fieldName":"userRole00000000000000000000000000005016VOCSUFFIXrid"}},{"Column":{"label":"Collibra Steward Gender","fieldName":"userRole00000000000000000000000000005016VOCSUFFIXgender"}},{"Column":{"label":"Collibra Steward First Name","fieldName":"userRole00000000000000000000000000005016VOCSUFFIXfn"}},{"Column":{"label":"Collibra Steward Last Name","fieldName":"userRole00000000000000000000000000005016VOCSUFFIXln"}}],"name":"Role00000000000000000000000000005016VOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Collibra Steward Group ID","fieldName":"groupRole00000000000000000000000000005016gVOCSUFFIXrid"}},{"Column":{"label":"Collibra Steward Group Name","fieldName":"groupRole00000000000000000000000000005016gVOCSUFFIXgn"}}],"name":"Role00000000000000000000000000005016gVOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Stakeholder User ID","fieldId":"00000000-0000-0000-0000-000000005018","fieldName":"userRole00000000000000000000000000005018VOCSUFFIXrid"}},{"Column":{"label":"Stakeholder Gender","fieldName":"userRole00000000000000000000000000005018VOCSUFFIXgender"}},{"Column":{"label":"Stakeholder First Name","fieldName":"userRole00000000000000000000000000005018VOCSUFFIXfn"}},{"Column":{"label":"Stakeholder Last Name","fieldName":"userRole00000000000000000000000000005018VOCSUFFIXln"}}],"name":"Role00000000000000000000000000005018VOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Stakeholder Group ID","fieldName":"groupRole00000000000000000000000000005018gVOCSUFFIXrid"}},{"Column":{"label":"Stakeholder Group Name","fieldName":"groupRole00000000000000000000000000005018gVOCSUFFIXgn"}}],"name":"Role00000000000000000000000000005018gVOCSUFFIX"}}]}}],"Resources":{"Community":{"Id":{"name":"subcommunityid"},"Name":{"name":"subcommunity"},"Meta":{"name":"issubmeta"},"hasNonMetaChildren":{"name":"hasNonMetaChildren"},"ParentCommunity":{"Id":{"name":"parentCommunityId"}},"Member":[{"User":{"Gender":{"name":"userRole00000000000000000000000000005015gender"},"FirstName":{"name":"userRole00000000000000000000000000005015fn"},"Id":{"name":"userRole00000000000000000000000000005015rid"},"LastName":{"name":"userRole00000000000000000000000000005015ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005015sig"},"name":"Role00000000000000000000000000005015","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005015rid"}},"roleId":"00000000-0000-0000-0000-000000005015"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005015g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005015grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005015ggn"},"Id":{"name":"groupRole00000000000000000000000000005015grid"}},"roleId":"00000000-0000-0000-0000-000000005015"},{"User":{"Gender":{"name":"userRole00000000000000000000000000005016gender"},"FirstName":{"name":"userRole00000000000000000000000000005016fn"},"Id":{"name":"userRole00000000000000000000000000005016rid"},"LastName":{"name":"userRole00000000000000000000000000005016ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016sig"},"name":"Role00000000000000000000000000005016","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016rid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005016ggn"},"Id":{"name":"groupRole00000000000000000000000000005016grid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"User":{"Gender":{"name":"userRole00000000000000000000000000005018gender"},"FirstName":{"name":"userRole00000000000000000000000000005018fn"},"Id":{"name":"userRole00000000000000000000000000005018rid"},"LastName":{"name":"userRole00000000000000000000000000005018ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005018sig"},"name":"Role00000000000000000000000000005018","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005018rid"}},"roleId":"00000000-0000-0000-0000-000000005018"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005018g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005018grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005018ggn"},"Id":{"name":"groupRole00000000000000000000000000005018grid"}},"roleId":"00000000-0000-0000-0000-000000005018"}],"Filter":{"AND":[{"AND":[{"Field":{"name":"issubmeta","operator":"EQUALS","value":false}}]},{"AND":[{"Field":{"name":"parentCommunityId","operator":"EQUALS","value":"'.$community.'"}}]}]},"Order":[{"Field":{"name":"subcommunity","order":"ASC"}}]},"Vocabulary":{"Name":{"name":"vocabulary"},"Id":{"name":"vocabularyid"},"Meta":{"name":"isvocmeta"},"Community":{"Id":{"name":"vocabularyParentCommunityId"}},"VocabularyType":{"Signifier":{"name":"domainType"}},"Member":[{"User":{"Gender":{"name":"userRole00000000000000000000000000005015VOCSUFFIXgender"},"FirstName":{"name":"userRole00000000000000000000000000005015VOCSUFFIXfn"},"Id":{"name":"userRole00000000000000000000000000005015VOCSUFFIXrid"},"LastName":{"name":"userRole00000000000000000000000000005015VOCSUFFIXln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005015VOCSUFFIXsig"},"name":"Role00000000000000000000000000005015VOCSUFFIX","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005015VOCSUFFIXrid"}},"roleId":"00000000-0000-0000-0000-000000005015"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005015gVOCSUFFIX"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005015gVOCSUFFIXrid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005015gVOCSUFFIXgn"},"Id":{"name":"groupRole00000000000000000000000000005015gVOCSUFFIXrid"}},"roleId":"00000000-0000-0000-0000-000000005015"},{"User":{"Gender":{"name":"userRole00000000000000000000000000005016VOCSUFFIXgender"},"FirstName":{"name":"userRole00000000000000000000000000005016VOCSUFFIXfn"},"Id":{"name":"userRole00000000000000000000000000005016VOCSUFFIXrid"},"LastName":{"name":"userRole00000000000000000000000000005016VOCSUFFIXln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016VOCSUFFIXsig"},"name":"Role00000000000000000000000000005016VOCSUFFIX","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016VOCSUFFIXrid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016gVOCSUFFIX"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016gVOCSUFFIXrid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005016gVOCSUFFIXgn"},"Id":{"name":"groupRole00000000000000000000000000005016gVOCSUFFIXrid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"User":{"Gender":{"name":"userRole00000000000000000000000000005018VOCSUFFIXgender"},"FirstName":{"name":"userRole00000000000000000000000000005018VOCSUFFIXfn"},"Id":{"name":"userRole00000000000000000000000000005018VOCSUFFIXrid"},"LastName":{"name":"userRole00000000000000000000000000005018VOCSUFFIXln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005018VOCSUFFIXsig"},"name":"Role00000000000000000000000000005018VOCSUFFIX","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005018VOCSUFFIXrid"}},"roleId":"00000000-0000-0000-0000-000000005018"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005018gVOCSUFFIX"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005018gVOCSUFFIXrid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005018gVOCSUFFIXgn"},"Id":{"name":"groupRole00000000000000000000000000005018gVOCSUFFIXrid"}},"roleId":"00000000-0000-0000-0000-000000005018"}],"Filter":{"AND":[{"AND":[{"Field":{"name":"isvocmeta","operator":"EQUALS","value":false}}]},{"AND":[{"Field":{"name":"vocabularyParentCommunityId","operator":"EQUALS","value":"'.$community.'"}}]},{"AND":[{"Field":{"name":"domainType","operator":"EQUALS","value":"Glossary"}}]}]},"Order":[{"Field":{"name":"vocabulary","order":"ASC"}}]}},"displayStart":0,"displayLength":100,"generalConceptId":"4e756e1e-11ee-4d1e-bfaa-fb0ada974fc5"}}'
+				'{"TableViewConfig":{"Columns":[{"Community":{"name":"Subcommunities","Columns":[{"Column":{"fieldName":"subcommunityid"}},{"Column":{"fieldName":"subcommunity"}},{"Column":{"fieldName":"hasNonMetaChildren"}},{"Group":{"Columns":[{"Column":{"label":"Admin User ID","fieldId":"00000000-0000-0000-0000-000000005015","fieldName":"userRole00000000000000000000000000005015rid"}},{"Column":{"label":"Admin Gender","fieldName":"userRole00000000000000000000000000005015gender"}},{"Column":{"label":"Admin First Name","fieldName":"userRole00000000000000000000000000005015fn"}},{"Column":{"label":"Admin Last Name","fieldName":"userRole00000000000000000000000000005015ln"}}],"name":"Role00000000000000000000000000005015"}},{"Group":{"Columns":[{"Column":{"label":"Admin Group ID","fieldName":"groupRole00000000000000000000000000005015grid"}},{"Column":{"label":"Admin Group Name","fieldName":"groupRole00000000000000000000000000005015ggn"}}],"name":"Role00000000000000000000000000005015g"}},{"Group":{"Columns":[{"Column":{"label":"Collibra Steward User ID","fieldId":"00000000-0000-0000-0000-000000005016","fieldName":"userRole00000000000000000000000000005016rid"}},{"Column":{"label":"Collibra Steward Gender","fieldName":"userRole00000000000000000000000000005016gender"}},{"Column":{"label":"Collibra Steward First Name","fieldName":"userRole00000000000000000000000000005016fn"}},{"Column":{"label":"Collibra Steward Last Name","fieldName":"userRole00000000000000000000000000005016ln"}}],"name":"Role00000000000000000000000000005016"}},{"Group":{"Columns":[{"Column":{"label":"Collibra Steward Group ID","fieldName":"groupRole00000000000000000000000000005016grid"}},{"Column":{"label":"Collibra Steward Group Name","fieldName":"groupRole00000000000000000000000000005016ggn"}}],"name":"Role00000000000000000000000000005016g"}},{"Group":{"Columns":[{"Column":{"label":"Stakeholder User ID","fieldId":"00000000-0000-0000-0000-000000005018","fieldName":"userRole00000000000000000000000000005018rid"}},{"Column":{"label":"Stakeholder Gender","fieldName":"userRole00000000000000000000000000005018gender"}},{"Column":{"label":"Stakeholder First Name","fieldName":"userRole00000000000000000000000000005018fn"}},{"Column":{"label":"Stakeholder Last Name","fieldName":"userRole00000000000000000000000000005018ln"}}],"name":"Role00000000000000000000000000005018"}},{"Group":{"Columns":[{"Column":{"label":"Stakeholder Group ID","fieldName":"groupRole00000000000000000000000000005018grid"}},{"Column":{"label":"Stakeholder Group Name","fieldName":"groupRole00000000000000000000000000005018ggn"}}],"name":"Role00000000000000000000000000005018g"}}]}},{"Vocabulary":{"name":"Vocabularies","Columns":[{"Column":{"fieldName":"vocabulary"}},{"Column":{"fieldName":"vocabularyid"}},{"Column":{"fieldName":"domainType"}},{"Group":{"Columns":[{"Column":{"label":"Admin User ID","fieldId":"00000000-0000-0000-0000-000000005015","fieldName":"userRole00000000000000000000000000005015VOCSUFFIXrid"}},{"Column":{"label":"Admin Gender","fieldName":"userRole00000000000000000000000000005015VOCSUFFIXgender"}},{"Column":{"label":"Admin First Name","fieldName":"userRole00000000000000000000000000005015VOCSUFFIXfn"}},{"Column":{"label":"Admin Last Name","fieldName":"userRole00000000000000000000000000005015VOCSUFFIXln"}}],"name":"Role00000000000000000000000000005015VOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Admin Group ID","fieldName":"groupRole00000000000000000000000000005015gVOCSUFFIXrid"}},{"Column":{"label":"Admin Group Name","fieldName":"groupRole00000000000000000000000000005015gVOCSUFFIXgn"}}],"name":"Role00000000000000000000000000005015gVOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Collibra Steward User ID","fieldId":"00000000-0000-0000-0000-000000005016","fieldName":"userRole00000000000000000000000000005016VOCSUFFIXrid"}},{"Column":{"label":"Collibra Steward Gender","fieldName":"userRole00000000000000000000000000005016VOCSUFFIXgender"}},{"Column":{"label":"Collibra Steward First Name","fieldName":"userRole00000000000000000000000000005016VOCSUFFIXfn"}},{"Column":{"label":"Collibra Steward Last Name","fieldName":"userRole00000000000000000000000000005016VOCSUFFIXln"}}],"name":"Role00000000000000000000000000005016VOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Collibra Steward Group ID","fieldName":"groupRole00000000000000000000000000005016gVOCSUFFIXrid"}},{"Column":{"label":"Collibra Steward Group Name","fieldName":"groupRole00000000000000000000000000005016gVOCSUFFIXgn"}}],"name":"Role00000000000000000000000000005016gVOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Stakeholder User ID","fieldId":"00000000-0000-0000-0000-000000005018","fieldName":"userRole00000000000000000000000000005018VOCSUFFIXrid"}},{"Column":{"label":"Stakeholder Gender","fieldName":"userRole00000000000000000000000000005018VOCSUFFIXgender"}},{"Column":{"label":"Stakeholder First Name","fieldName":"userRole00000000000000000000000000005018VOCSUFFIXfn"}},{"Column":{"label":"Stakeholder Last Name","fieldName":"userRole00000000000000000000000000005018VOCSUFFIXln"}}],"name":"Role00000000000000000000000000005018VOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Stakeholder Group ID","fieldName":"groupRole00000000000000000000000000005018gVOCSUFFIXrid"}},{"Column":{"label":"Stakeholder Group Name","fieldName":"groupRole00000000000000000000000000005018gVOCSUFFIXgn"}}],"name":"Role00000000000000000000000000005018gVOCSUFFIX"}}]}}],"Resources":{"Community":{"Id":{"name":"subcommunityid"},"Name":{"name":"subcommunity"},"Meta":{"name":"issubmeta"},"hasNonMetaChildren":{"name":"hasNonMetaChildren"},"ParentCommunity":{"Id":{"name":"parentCommunityId"}},"Member":[{"User":{"Gender":{"name":"userRole00000000000000000000000000005015gender"},"FirstName":{"name":"userRole00000000000000000000000000005015fn"},"Id":{"name":"userRole00000000000000000000000000005015rid"},"LastName":{"name":"userRole00000000000000000000000000005015ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005015sig"},"name":"Role00000000000000000000000000005015","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005015rid"}},"roleId":"00000000-0000-0000-0000-000000005015"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005015g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005015grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005015ggn"},"Id":{"name":"groupRole00000000000000000000000000005015grid"}},"roleId":"00000000-0000-0000-0000-000000005015"},{"User":{"Gender":{"name":"userRole00000000000000000000000000005016gender"},"FirstName":{"name":"userRole00000000000000000000000000005016fn"},"Id":{"name":"userRole00000000000000000000000000005016rid"},"LastName":{"name":"userRole00000000000000000000000000005016ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016sig"},"name":"Role00000000000000000000000000005016","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016rid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005016ggn"},"Id":{"name":"groupRole00000000000000000000000000005016grid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"User":{"Gender":{"name":"userRole00000000000000000000000000005018gender"},"FirstName":{"name":"userRole00000000000000000000000000005018fn"},"Id":{"name":"userRole00000000000000000000000000005018rid"},"LastName":{"name":"userRole00000000000000000000000000005018ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005018sig"},"name":"Role00000000000000000000000000005018","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005018rid"}},"roleId":"00000000-0000-0000-0000-000000005018"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005018g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005018grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005018ggn"},"Id":{"name":"groupRole00000000000000000000000000005018grid"}},"roleId":"00000000-0000-0000-0000-000000005018"}],"Filter":{"AND":[{"AND":[{"Field":{"name":"issubmeta","operator":"EQUALS","value":false}}]},{"AND":[{"Field":{"name":"parentCommunityId","operator":"EQUALS","value":"'.$community.'"}}]}]},"Order":[{"Field":{"name":"subcommunity","order":"ASC"}}]},"Vocabulary":{"Name":{"name":"vocabulary"},"Id":{"name":"vocabularyid"},"Meta":{"name":"isvocmeta"},"Community":{"Id":{"name":"vocabularyParentCommunityId"}},"VocabularyType":{"Signifier":{"name":"domainType"}},"Member":[{"User":{"Gender":{"name":"userRole00000000000000000000000000005015VOCSUFFIXgender"},"FirstName":{"name":"userRole00000000000000000000000000005015VOCSUFFIXfn"},"Id":{"name":"userRole00000000000000000000000000005015VOCSUFFIXrid"},"LastName":{"name":"userRole00000000000000000000000000005015VOCSUFFIXln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005015VOCSUFFIXsig"},"name":"Role00000000000000000000000000005015VOCSUFFIX","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005015VOCSUFFIXrid"}},"roleId":"00000000-0000-0000-0000-000000005015"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005015gVOCSUFFIX"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005015gVOCSUFFIXrid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005015gVOCSUFFIXgn"},"Id":{"name":"groupRole00000000000000000000000000005015gVOCSUFFIXrid"}},"roleId":"00000000-0000-0000-0000-000000005015"},{"User":{"Gender":{"name":"userRole00000000000000000000000000005016VOCSUFFIXgender"},"FirstName":{"name":"userRole00000000000000000000000000005016VOCSUFFIXfn"},"Id":{"name":"userRole00000000000000000000000000005016VOCSUFFIXrid"},"LastName":{"name":"userRole00000000000000000000000000005016VOCSUFFIXln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016VOCSUFFIXsig"},"name":"Role00000000000000000000000000005016VOCSUFFIX","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016VOCSUFFIXrid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016gVOCSUFFIX"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016gVOCSUFFIXrid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005016gVOCSUFFIXgn"},"Id":{"name":"groupRole00000000000000000000000000005016gVOCSUFFIXrid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"User":{"Gender":{"name":"userRole00000000000000000000000000005018VOCSUFFIXgender"},"FirstName":{"name":"userRole00000000000000000000000000005018VOCSUFFIXfn"},"Id":{"name":"userRole00000000000000000000000000005018VOCSUFFIXrid"},"LastName":{"name":"userRole00000000000000000000000000005018VOCSUFFIXln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005018VOCSUFFIXsig"},"name":"Role00000000000000000000000000005018VOCSUFFIX","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005018VOCSUFFIXrid"}},"roleId":"00000000-0000-0000-0000-000000005018"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005018gVOCSUFFIX"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005018gVOCSUFFIXrid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005018gVOCSUFFIXgn"},"Id":{"name":"groupRole00000000000000000000000000005018gVOCSUFFIXrid"}},"roleId":"00000000-0000-0000-0000-000000005018"}],"Filter":{"AND":[{"AND":[{"Field":{"name":"isvocmeta","operator":"EQUALS","value":false}}]},{"AND":[{"Field":{"name":"vocabularyParentCommunityId","operator":"EQUALS","value":"'.$community.'"}}]},{"AND":[{"Field":{"name":"domainType","operator":"EQUALS","value":"Glossary"}}]}]},"Order":[{"Field":{"name":"vocabulary","order":"ASC"}}]}},"displayStart":0,"displayLength":100,"generalConceptId":"' . Configure::read('Collibra.community.byu') . '"}}'
 		);
 
 		return $resp;
@@ -208,42 +207,9 @@ class SearchController extends AppController {
 	// get list of all other terms within a vocabulary/glossary
 	public function getFullVocab() {
 		$vocabRID= $this->request->query['rid'];
-		$resp = $this->CollibraAPI->get('vocabulary/'.$vocabRID.'/terms');
-		$jsonResp = json_decode($resp);
 
-		// create request JSON string
-		$request = '{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldId":"00000000-0000-0000-0000-000000000202","fieldName":"Attr00000000000000000000000000000202"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202longExpr"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202rid"}},{"Column":{"fieldName":"Attr0d798f70b3ca4af2b28354f84c4714aarid"}},{"Column":{"fieldName":"Attr0d798f70b3ca4af2b28354f84c4714aa","fieldId":"0d798f70-b3ca-4af2-b283-54f84c4714aa"}},{"Column":{"fieldName":"statusname"}},{"Column":{"fieldName":"statusrid"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldId":"e0937764-544a-4d21-98ce-dc0c1936b465","fieldName":"Attre0937764544a4d2198cedc0c1936b465"}},{"Column":{"fieldName":"Attre0937764544a4d2198cedc0c1936b465rid"}},{"Group":{"name":"synonym_for","Columns":[{"Column":{"fieldName":"Relc06ed0b7032f4d0fae405824c12f94a6T","fieldId":"c06ed0b7-032f-4d0f-ae40-5824c12f94a6T","label":"Business Term"}},{"Column":{"fieldName":"relRelc06ed0b7032f4d0fae405824c12f94a6Trid","label":"Business Term ID"}},{"Column":{"fieldName":"Relc06ed0b7032f4d0fae405824c12f94a6Trid","label":"Business Term Business Term ID"}}]}}],"Resources":{"Term":{"Id":{"name":"termrid"},"Signifier":{"name":"termsignifier"},"StringAttribute":[{"Value":{"name":"Attr00000000000000000000000000000202"},"LongExpression":{"name":"Attr00000000000000000000000000000202longExpr"},"Id":{"name":"Attr00000000000000000000000000000202rid"},"labelId":"00000000-0000-0000-0000-000000000202"}],"BooleanAttribute":[{"Id":{"name":"Attr0d798f70b3ca4af2b28354f84c4714aarid"},"labelId":"0d798f70-b3ca-4af2-b283-54f84c4714aa","Value":{"name":"Attr0d798f70b3ca4af2b28354f84c4714aa"}}],"Status":{"Signifier":{"name":"statusname"},"Id":{"name":"statusrid"}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"},"Id":{"name":"concepttyperid"}}],"SingleValueListAttribute":[{"Value":{"name":"Attre0937764544a4d2198cedc0c1936b465"},"Id":{"name":"Attre0937764544a4d2198cedc0c1936b465rid"},"labelId":"e0937764-544a-4d21-98ce-dc0c1936b465"}],"Relation":[{"typeId":"c06ed0b7-032f-4d0f-ae40-5824c12f94a6","type":"TARGET","Id":{"name":"relRelc06ed0b7032f4d0fae405824c12f94a6Trid"},"Source":{"Id":{"name":"Relc06ed0b7032f4d0fae405824c12f94a6Trid"},"Signifier":{"name":"Relc06ed0b7032f4d0fae405824c12f94a6T"}}}],"Filter":{"AND":[{"OR":[{"Field":{"name":"concepttypename","operator":"INCLUDES","value":"Business Term"}},{"Field":{"name":"concepttypename","operator":"INCLUDES","value":"Synonym"}}]},';
-		if(!Configure::read('allowUnapprovedTerms')){
-			$request .= '	{  '.
-				'	 "AND":[  '.
-				'		{  '.
-				'		   "Field":{  '.
-				'			  "name":"statusname",'.
-				'			  "operator":"EQUALS",'.
-				'			  "value":"Accepted"'.
-				'		   }'.
-				'		}'.
-				'	 ]'.
-				'	},';
-		}
-		$request .= '	{  '.
-			'	 "AND":[  '.
-			'		{  '.
-			'		   "Field":{  '.
-			'			  "name":"domainrid",'.
-			'			  "operator":"EQUALS",'.
-			'			  "value":"'.$vocabRID.'"'.
-			'		   }'.
-			'		}'.
-			'	 ]'.
-			'  }'.
-			']},"Order":[{"Field":{"name":"termsignifier","order":"ASC"}}]}},"displayStart":0,"displayLength":1000,"relationTypeId":"bc80a28c-57f6-49a7-9d2b-063e91614824","roleDirection":true}}';
+		$jsonResp = $this->CollibraAPI->getTerms($vocabRID, ['length' => 1000]);
 
-		$resp = $this->CollibraAPI->postJSON('output/data_table', $request);
-
-		$jsonResp = json_decode($resp);
-		//print_r($jsonResp);
-		//exit;
 
 		echo '<div class="checkCol">';
 		$itemCount = 0;
@@ -251,19 +217,19 @@ class SearchController extends AppController {
 			$term = $jsonResp->aaData[$i];
 			$termName = $term->termsignifier;
 			$termID = $term->termrid;
-			$termDef = nl2br(str_replace("\n\n\n", "\n\n", htmlentities(strip_tags(str_replace(['<div>', '<br>', '<br/>'], "\n", $term->Attr00000000000000000000000000000202longExpr)))));
+			$termDef = nl2br(str_replace("\n\n\n", "\n\n", htmlentities(strip_tags(str_replace(['<div>', '<br>', '<br/>'], "\n", $term->description)))));
 			if(Configure::read('allowUnrequestableTerms')){
 				$disabled = '';
 			}else{
-				$disabled = $term->Attr0d798f70b3ca4af2b28354f84c4714aa == 'false'?'disabled':'';
+				$disabled = $term->requestable == 'false'?'disabled':'';
 			}
 			if(!$disabled){
 				if(sizeof($term->synonym_for)!=0){
-					$termDef = 'Synonym for '.$term->synonym_for[0]->Relc06ed0b7032f4d0fae405824c12f94a6T;
+					$termDef = 'Synonym for '.$term->synonym_for[0]->synonymname;
 				}
 
 				$random = uniqid(rand(111111,999999));
-				$classification = $term->Attre0937764544a4d2198cedc0c1936b465;
+				$classification = $term->classification;
 				switch($classification){
 					case '1 - Public':
 						$classificationIcon = '<img src="/img/iconPublic.png" title="Public" alt="Public" width="9" />';
@@ -310,10 +276,9 @@ class SearchController extends AppController {
 		$searchInput= html_entity_decode($this->request->query['searchInput']);
 		$searchInput = addslashes($searchInput);
 
-		$resp = $this->CollibraAPI->get('term/'.$vocabRID);
-		$jsonResp = json_decode($resp);
+		$resp = $this->CollibraAPI->get('term/'.$vocabRID, ['json' => true]);
 		$def = '';
-		foreach($jsonResp->attributeReferences->attributeReference as $attr){
+		foreach($resp->attributeReferences->attributeReference as $attr){
 			if($attr->labelReference->signifier == 'Definition'){
 				$def = $attr->value;
 				break;
@@ -345,14 +310,7 @@ class SearchController extends AppController {
 
 		$results = [];
 		// create JSON request string
-		$request = '{"query": "'.$query.'*", "filter": { "community": ["'.Configure::read('Collibra.byuCommunity').'"], "category": ["TE"], "vocabulary": [], "type": { "asset":["00000000-0000-0000-0000-000000011001","ed82f17f-c1e7-4d6d-83cc-50f6b529c296"], "domain":[] },';
-		if(!Configure::read('allowUnapprovedTerms')){
-			$request .= '"status": ["00000000-0000-0000-0000-000000005009"], ';
-		}
-		$request .= '"includeMeta": true }, "fields": ["name"], "order": { "by": "score", "sort": "desc" }, "limit": 5, "offset": 0, "highlight": false, "relativeUrl": true, "withParents": true }';
-
-		$resp = $this->CollibraAPI->postJSON('search', $request);
-		$jsonResp = json_decode($resp);
+		$jsonResp = $this->CollibraAPI->searchTerms($query);
 		for($i=0; $i<sizeof($jsonResp->results); $i++){
 			$requestable = true;
 			// don't show non-requestable items
@@ -399,37 +357,12 @@ class SearchController extends AppController {
 		$resp = $this->CollibraAPI->get('community/all');
 		$jsonAllCommunities = json_decode($resp);
 
-		$requestFilter = '{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"createdOn"}},{"Column":{"fieldName":"Attr0d798f70b3ca4af2b28354f84c4714aarid"}},{"Column":{"fieldName":"Attr0d798f70b3ca4af2b28354f84c4714aa","fieldId":"0d798f70-b3ca-4af2-b283-54f84c4714aa"}},{"Column":{"fieldName":"lastModified"}},{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldId":"e0937764-544a-4d21-98ce-dc0c1936b465", "fieldName":"Attre0937764544a4d2198cedc0c1936b465"}},{"Column":{"fieldName":"Attre0937764544a4d2198cedc0c1936b465rid"}},{"Column":{"fieldId":"00000000-0000-0000-0000-000000000202","fieldName":"Attr00000000000000000000000000000202"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202longExpr"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202rid"}},{"Group":{"Columns":[{"Column":{"label":"Steward User ID","fieldId":"00000000-0000-0000-0000-000000005016","fieldName":"userRole00000000000000000000000000005016rid"}},{"Column":{"label":"Steward Gender","fieldName":"userRole00000000000000000000000000005016gender"}},{"Column":{"label":"Steward First Name","fieldName":"userRole00000000000000000000000000005016fn"}},{"Column":{"label":"Steward Last Name","fieldName":"userRole00000000000000000000000000005016ln"}}],"name":"Role00000000000000000000000000005016"}},{"Group":{"Columns":[{"Column":{"label":"Steward Group ID","fieldName":"groupRole00000000000000000000000000005016grid"}},{"Column":{"label":"Steward Group Name","fieldName":"groupRole00000000000000000000000000005016ggn"}}],"name":"Role00000000000000000000000000005016g"}},{"Column":{"fieldName":"statusname"}},{"Column":{"fieldName":"statusrid"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldName":"concepttyperid"}}, {"Group":{"name":"synonym_for","Columns":[{"Column":{"fieldName":"Relc06ed0b7032f4d0fae405824c12f94a6T","fieldId":"c06ed0b7-032f-4d0f-ae40-5824c12f94a6T","label":"Business Term"}},{"Column":{"fieldName":"relRelc06ed0b7032f4d0fae405824c12f94a6Trid","label":"Business Term ID"}},{"Column":{"fieldName":"Relc06ed0b7032f4d0fae405824c12f94a6Trid","label":"Business Term Business Term ID"}}]}}],'.
-			'"Resources":{"Term":{"CreatedOn":{"name":"createdOn"},"LastModified":{"name":"lastModified"},"Id":{"name":"termrid"},"BooleanAttribute":[{"Id":{"name":"Attr0d798f70b3ca4af2b28354f84c4714aarid"},"labelId":"0d798f70-b3ca-4af2-b283-54f84c4714aa","Value":{"name":"Attr0d798f70b3ca4af2b28354f84c4714aa"}}], "SingleValueListAttribute":[{"Value":{"name":"Attre0937764544a4d2198cedc0c1936b465"}, "Id":{"name":"Attre0937764544a4d2198cedc0c1936b465rid"}, "labelId":"e0937764-544a-4d21-98ce-dc0c1936b465"}],"Signifier":{"name":"termsignifier"},"StringAttribute":[{"Value":{"name":"Attr00000000000000000000000000000202"},"LongExpression":{"name":"Attr00000000000000000000000000000202longExpr"},"Id":{"name":"Attr00000000000000000000000000000202rid"},"labelId":"00000000-0000-0000-0000-000000000202"}],"Member":[{"User":{"Gender":{"name":"userRole00000000000000000000000000005016gender"},"FirstName":{"name":"userRole00000000000000000000000000005016fn"},"Id":{"name":"userRole00000000000000000000000000005016rid"},"LastName":{"name":"userRole00000000000000000000000000005016ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016sig"},"name":"Role00000000000000000000000000005016","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016rid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005016ggn"},"Id":{"name":"groupRole00000000000000000000000000005016grid"}},"roleId":"00000000-0000-0000-0000-000000005016"}],"Status":{"Signifier":{"name":"statusname"},"Id":{"name":"statusrid"}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"},"Id":{"name":"concepttyperid"}}],"Relation":[{"typeId":"c06ed0b7-032f-4d0f-ae40-5824c12f94a6","type":"TARGET","Id":{"name":"relRelc06ed0b7032f4d0fae405824c12f94a6Trid"},"Source":{"Id":{"name":"Relc06ed0b7032f4d0fae405824c12f94a6Trid"},"Signifier":{"name":"Relc06ed0b7032f4d0fae405824c12f94a6T"}}}],'.
-			'"Filter":{'.
-			'   "AND":['.
-			'        {'.
-			'           "OR":['.
-			'              {'.
-			'                 "Field":{'.
-			'                    "name":"termrid",'.
-			'                    "operator":"EQUALS",'.
-			'                    "value":"'.$query.'"'.
-			'                 }'.
-			'              }'.
-			'           ]'.
-			'        }';
-		if(!Configure::read('allowUnapprovedTerms')){
-			$requestFilter .= '        ,'.
-				'        {'.
-				'           "AND":[{"Field":{"name":"statusname","operator":"EQUALS","value":"Accepted"}}]'.
-				'        }';
-		}
-		$requestFilter .= '     ]'.
-			'}'.
-			',"Order":['.
-			'   {"Field":{"name":"termsignifier","order":"ASC"}}'.
-			']'.
-			'}'.
-			'},"displayStart":0,"displayLength":10}}';
-
-		$resp = $this->CollibraAPI->postJSON('output/data_table', $requestFilter);
-		$resp = json_decode($resp);
+		$resp = $this->CollibraAPI->getTerms(null, ['additionalFilters' => [[
+			'OR' => [['Field' => [
+				'name' => 'termrid',
+				'operator' => 'EQUALS',
+				'value' => $query
+			]]]]]]);
 
 		// loop through terms to check for quick links and also to build domain breadcrumb
 		if(sizeof($resp->aaData)>0){
@@ -461,104 +394,40 @@ class SearchController extends AppController {
 	}
 
 	private function searchTerms($query, $page=0, $displayLength=20, $sortField='termsignifier', $sortOrder='ASC', $communityFilter='', $termOnly=false){
-		$query = addslashes($query);
-		if(substr($query, 0, 2)!='\"' && substr($query, strlen($query)-2, 2)!='\"' && substr($query, strlen($query)-1, 1)!='*'){
-			$query .= '*';
-		}
-
 		$displayStart = $page*$displayLength;
 
 		// use API search call to query based on user input
-		///////////////////////////////////
-		// set filter to community selected or the "BYU" community by default
-		if($communityFilter == ''){
-			$communityFilter = Configure::read('Collibra.byuCommunity');
-		}
-		// call search API limiting results to business term and synonym types
-		$request = '{"query":"'.$query.'", "filter": { "community": ["'.$communityFilter.'"], "category":["TE"], "vocabulary":[], "type":{"asset":["00000000-0000-0000-0000-000000011001","ed82f17f-c1e7-4d6d-83cc-50f6b529c296"]},';
-		if(!Configure::read('allowUnapprovedTerms')){
-			$request .= '"status": ["00000000-0000-0000-0000-000000005009"], ';
-		}
-		$request .= '"includeMeta":false}, "fields":["name","attributes"], "order":{"by":"score","sort": "desc"}, "limit":200, "offset":0, "highlight":false}';
-		//die($request);
-		$searchResp = $this->CollibraAPI->postJSON('search', $request);
-		$searchResp = json_decode($searchResp);
+		$searchResp = $this->CollibraAPI->searchTerms($query, 200, $communityFilter);
 
 		// build filter string of term ID used to full detail search below
-		$ridFilter = '';
+		$ridFilter = [];
 		foreach($searchResp->results as $result){
-			$ridFilter .= '{"Field":{"name":"termrid","operator":"EQUALS","value":"'.$result->name->id.'"}},';
+			$ridFilter[] = ['Field' => [
+				'name' => 'termrid',
+				'operator' => 'EQUALS',
+				'value' => $result->name->id]];
 		}
-		if($ridFilter!='') $ridFilter = substr($ridFilter, 0, strlen($ridFilter)-1);
-		//die($ridFilter);
-		///////////////////////////////////
-
-		$requestFilter = '{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"lastModified"}},{"Column":{"fieldName":"createdOn"}},{"Column":{"fieldName":"Attr0d798f70b3ca4af2b28354f84c4714aarid"}},{"Column":{"fieldName":"Attr0d798f70b3ca4af2b28354f84c4714aa","fieldId":"0d798f70-b3ca-4af2-b283-54f84c4714aa"}},{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldId":"00000000-0000-0000-0000-000000000202","fieldName":"Attr00000000000000000000000000000202"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202longExpr"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202rid"}},{"Column":{"fieldId":"e0937764-544a-4d21-98ce-dc0c1936b465","fieldName":"Attre0937764544a4d2198cedc0c1936b465"}},{"Column":{"fieldName":"Attre0937764544a4d2198cedc0c1936b465rid"}},{"Group":{"Columns":[{"Column":{"label":"Steward User ID","fieldId":"00000000-0000-0000-0000-000000005016","fieldName":"userRole00000000000000000000000000005016rid"}},{"Column":{"label":"Steward Gender","fieldName":"userRole00000000000000000000000000005016gender"}},{"Column":{"label":"Steward First Name","fieldName":"userRole00000000000000000000000000005016fn"}},{"Column":{"label":"Steward Last Name","fieldName":"userRole00000000000000000000000000005016ln"}}],"name":"Role00000000000000000000000000005016"}},{"Group":{"Columns":[{"Column":{"label":"Steward Group ID","fieldName":"groupRole00000000000000000000000000005016grid"}},{"Column":{"label":"Steward Group Name","fieldName":"groupRole00000000000000000000000000005016ggn"}}],"name":"Role00000000000000000000000000005016g"}},{"Column":{"fieldName":"statusname"}},{"Column":{"fieldName":"statusrid"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldName":"concepttyperid"}}, {"Group":{"name":"synonym_for","Columns":[{"Column":{"fieldName":"Relc06ed0b7032f4d0fae405824c12f94a6T","fieldId":"c06ed0b7-032f-4d0f-ae40-5824c12f94a6T","label":"Business Term"}},{"Column":{"fieldName":"relRelc06ed0b7032f4d0fae405824c12f94a6Trid","label":"Business Term ID"}},{"Column":{"fieldName":"Relc06ed0b7032f4d0fae405824c12f94a6Trid","label":"Business Term Business Term ID"}}]}}],'.
-			'"Resources":{"Term":{"CreatedOn":{"name":"createdOn"},"LastModified":{"name":"lastModified"},"Id":{"name":"termrid"},"BooleanAttribute":[{"Id":{"name":"Attr0d798f70b3ca4af2b28354f84c4714aarid"},"labelId":"0d798f70-b3ca-4af2-b283-54f84c4714aa","Value":{"name":"Attr0d798f70b3ca4af2b28354f84c4714aa"}}],"Signifier":{"name":"termsignifier"},"StringAttribute":[{"Value":{"name":"Attr00000000000000000000000000000202"},"LongExpression":{"name":"Attr00000000000000000000000000000202longExpr"},"Id":{"name":"Attr00000000000000000000000000000202rid"},"labelId":"00000000-0000-0000-0000-000000000202"}],"Member":[{"User":{"Gender":{"name":"userRole00000000000000000000000000005016gender"},"FirstName":{"name":"userRole00000000000000000000000000005016fn"},"Id":{"name":"userRole00000000000000000000000000005016rid"},"LastName":{"name":"userRole00000000000000000000000000005016ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016sig"},"name":"Role00000000000000000000000000005016","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016rid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005016ggn"},"Id":{"name":"groupRole00000000000000000000000000005016grid"}},"roleId":"00000000-0000-0000-0000-000000005016"}],"SingleValueListAttribute":[{"Value":{"name":"Attre0937764544a4d2198cedc0c1936b465"},"Id":{"name":"Attre0937764544a4d2198cedc0c1936b465rid"},"labelId":"e0937764-544a-4d21-98ce-dc0c1936b465"}],"Status":{"Signifier":{"name":"statusname"},"Id":{"name":"statusrid"}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"},"Id":{"name":"concepttyperid"}}],"Relation":[{"typeId":"c06ed0b7-032f-4d0f-ae40-5824c12f94a6","type":"TARGET","Id":{"name":"relRelc06ed0b7032f4d0fae405824c12f94a6Trid"},"Source":{"Id":{"name":"Relc06ed0b7032f4d0fae405824c12f94a6Trid"},"Signifier":{"name":"Relc06ed0b7032f4d0fae405824c12f94a6T"}}}],'.
-			'"Filter":{'.
-			'   "AND":['.
-			'		  {'.
-			'			 "OR":['.
-			'				{  '.
-			'				   "Field":{  '.
-			'					  "name":"concepttypename",'.
-			'					  "operator":"INCLUDES",'.
-			'					  "value":"Business Term"'.
-			'				   }'.
-			'				},'.
-			'				{  '.
-			'				   "Field":{  '.
-			'					  "name":"concepttypename",'.
-			'					  "operator":"INCLUDES",'.
-			'					  "value":"Synonym"'.
-			'				   }'.
-			'				}'.
-			'			 ]'.
-			'       },'.
-			'		{'.
-			'			"OR":['.$ridFilter.']'.
-			'		}';
-
+		$filters = [['OR' => $ridFilter]];
 		if(!Configure::read('allowUnrequestableTerms')){
-			$requestFilter .= ',{  '.
-			'	   "OR":[  '.
-			'		  {  '.
-			'			 "Field":{  '.
-			'				"name":"Attr0d798f70b3ca4af2b28354f84c4714aa",'.
-			'				"operator":"NULL"'.
-			'			 }'.
-			'		  },'.
-			'		  {  '.
-			'			 "Field":{  '.
-			'				"name":"Attr0d798f70b3ca4af2b28354f84c4714aa",'.
-			'				"operator":"EQUALS",'.
-			'				"value":true'.
-			'			 }'.
-			'		  }'.
-			'	   ]'.
-			'	}';
+			$filters[] = [
+				'OR' => [
+					['Field' => [
+						'name' => 'requestable',
+						'operator' => 'NULL']],
+					['Field' => [
+						'name' => 'requestable',
+						'operator' => 'EQUALS',
+						'value' => true]]]];
 		}
-
-		if(!Configure::read('allowUnapprovedTerms')){
-			$requestFilter .= ',{"AND":[{"Field":{"name":"statusname","operator":"EQUALS","value":"Accepted"}}]}';
-		}
-
-		$requestFilter .= ']'.
-			'}'.
-			',"Order":[';
-
 		// set sort if not sorting by score
+		$options = [
+			'length' => 100,
+			'additionalFilters' => $filters];
 		if($sortField != 'score'){
-			$requestFilter .= '{"Field":{"name":"'.$sortField.'","order":"'.$sortOrder.'"}}';
+			$options['sortField'] = $sortField;
+			$options['sortOrder'] = $sortOrder;
 		}
-
-		// set paging
-		$displayStart = 0;
-		$displayLength = 100;
-		$requestFilter .= ']}},"displayStart":'.$displayStart.',"displayLength":'.$displayLength.'}}';
-
-		$resp = $this->CollibraAPI->postJSON('output/data_table', $requestFilter);
-		$resp = @json_decode($resp);
+		$resp = $this->CollibraAPI->getTerms(null, $options);
 		if (empty($resp)) {
 			return false;
 		}
@@ -610,78 +479,23 @@ class SearchController extends AppController {
 		return $resp;
 	}
 
-	private function getDomainTerms($domainFilter='', $page=0, $displayLength=20, $sortField='termsignifier', $sortOrder='ASC'){
-		$arrResp = '';
-		$displayStart = $page*$displayLength;
+	private function getDomainTerms($domainFilter='', $page=0, $length=20, $sortField='termsignifier', $sortOrder='ASC'){
+		$start = $page*$length;
+		$options = compact('sortField', 'sortOrder', 'start', 'length');
 
 		// get all communities to use for bread crumbs in results page
-		$resp = $this->CollibraAPI->get('community/all');
-		$jsonAllCommunities = json_decode($resp);
+		$communities = $this->CollibraAPI->get('community/all', ['json' => true]);
 
-
-		$requestFilter = '{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"createdOn"}},{"Column":{"fieldName":"lastModified"}},{"Column":{"fieldName":"Attr0d798f70b3ca4af2b28354f84c4714aarid"}},{"Column":{"fieldName":"Attr0d798f70b3ca4af2b28354f84c4714aa","fieldId":"0d798f70-b3ca-4af2-b283-54f84c4714aa"}},{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldId":"e0937764-544a-4d21-98ce-dc0c1936b465", "fieldName":"Attre0937764544a4d2198cedc0c1936b465"}},{"Column":{"fieldName":"Attre0937764544a4d2198cedc0c1936b465rid"}},{"Column":{"fieldId":"00000000-0000-0000-0000-000000000202","fieldName":"Attr00000000000000000000000000000202"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202longExpr"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202rid"}},{"Group":{"Columns":[{"Column":{"label":"Steward User ID","fieldId":"00000000-0000-0000-0000-000000005016","fieldName":"userRole00000000000000000000000000005016rid"}},{"Column":{"label":"Steward Gender","fieldName":"userRole00000000000000000000000000005016gender"}},{"Column":{"label":"Steward First Name","fieldName":"userRole00000000000000000000000000005016fn"}},{"Column":{"label":"Steward Last Name","fieldName":"userRole00000000000000000000000000005016ln"}}],"name":"Role00000000000000000000000000005016"}},{"Group":{"Columns":[{"Column":{"label":"Steward Group ID","fieldName":"groupRole00000000000000000000000000005016grid"}},{"Column":{"label":"Steward Group Name","fieldName":"groupRole00000000000000000000000000005016ggn"}}],"name":"Role00000000000000000000000000005016g"}},{"Column":{"fieldName":"statusname"}},{"Column":{"fieldName":"statusrid"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldName":"concepttyperid"}},{"Group":{"name":"synonym_for","Columns":[{"Column":{"fieldName":"Relc06ed0b7032f4d0fae405824c12f94a6T","fieldId":"c06ed0b7-032f-4d0f-ae40-5824c12f94a6T","label":"Business Term"}},{"Column":{"fieldName":"relRelc06ed0b7032f4d0fae405824c12f94a6Trid","label":"Business Term ID"}},{"Column":{"fieldName":"Relc06ed0b7032f4d0fae405824c12f94a6Trid","label":"Business Term Business Term ID"}}]}}],'.
-			'"Resources":{"Term":{"CreatedOn":{"name":"createdOn"},"LastModified":{"name":"lastModified"},"Id":{"name":"termrid"},"BooleanAttribute":[{"Id":{"name":"Attr0d798f70b3ca4af2b28354f84c4714aarid"},"labelId":"0d798f70-b3ca-4af2-b283-54f84c4714aa","Value":{"name":"Attr0d798f70b3ca4af2b28354f84c4714aa"}}],"Signifier":{"name":"termsignifier"},"StringAttribute":[{"Value":{"name":"Attr00000000000000000000000000000202"},"LongExpression":{"name":"Attr00000000000000000000000000000202longExpr"},"Id":{"name":"Attr00000000000000000000000000000202rid"},"labelId":"00000000-0000-0000-0000-000000000202"}],"Member":[{"User":{"Gender":{"name":"userRole00000000000000000000000000005016gender"},"FirstName":{"name":"userRole00000000000000000000000000005016fn"},"Id":{"name":"userRole00000000000000000000000000005016rid"},"LastName":{"name":"userRole00000000000000000000000000005016ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016sig"},"name":"Role00000000000000000000000000005016","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016rid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005016ggn"},"Id":{"name":"groupRole00000000000000000000000000005016grid"}},"roleId":"00000000-0000-0000-0000-000000005016"}], "SingleValueListAttribute":[{"Value":{"name":"Attre0937764544a4d2198cedc0c1936b465"}, "Id":{"name":"Attre0937764544a4d2198cedc0c1936b465rid"}, "labelId":"e0937764-544a-4d21-98ce-dc0c1936b465"}],"Status":{"Signifier":{"name":"statusname"},"Id":{"name":"statusrid"}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"},"Id":{"name":"concepttyperid"}}],"Relation":[{"typeId":"c06ed0b7-032f-4d0f-ae40-5824c12f94a6","type":"TARGET","Id":{"name":"relRelc06ed0b7032f4d0fae405824c12f94a6Trid"},"Source":{"Id":{"name":"Relc06ed0b7032f4d0fae405824c12f94a6Trid"},"Signifier":{"name":"Relc06ed0b7032f4d0fae405824c12f94a6T"}}}],'.
-
-		/*$requestFilter = '{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"createdOn"}},{"Column":{"fieldName":"lastModified"}},{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldId":"e0937764-544a-4d21-98ce-dc0c1936b465", "fieldName":"Attre0937764544a4d2198cedc0c1936b465"}},{"Column":{"fieldName":"Attre0937764544a4d2198cedc0c1936b465rid"}},{"Column":{"fieldId":"00000000-0000-0000-0000-000000000202","fieldName":"Attr00000000000000000000000000000202"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202longExpr"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202rid"}},{"Group":{"Columns":[{"Column":{"label":"Steward User ID","fieldId":"00000000-0000-0000-0000-000000005016","fieldName":"userRole00000000000000000000000000005016rid"}},{"Column":{"label":"Steward Gender","fieldName":"userRole00000000000000000000000000005016gender"}},{"Column":{"label":"Steward First Name","fieldName":"userRole00000000000000000000000000005016fn"}},{"Column":{"label":"Steward Last Name","fieldName":"userRole00000000000000000000000000005016ln"}}],"name":"Role00000000000000000000000000005016"}},{"Group":{"Columns":[{"Column":{"label":"Steward Group ID","fieldName":"groupRole00000000000000000000000000005016grid"}},{"Column":{"label":"Steward Group Name","fieldName":"groupRole00000000000000000000000000005016ggn"}}],"name":"Role00000000000000000000000000005016g"}},{"Column":{"fieldName":"statusname"}},{"Column":{"fieldName":"statusrid"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldName":"concepttyperid"}}],'.
-			'"Resources":{"Term":{"CreatedOn":{"name":"createdOn"},"LastModified":{"name":"lastModified"},"Id":{"name":"termrid"},"Signifier":{"name":"termsignifier"},"StringAttribute":[{"Value":{"name":"Attr00000000000000000000000000000202"},"LongExpression":{"name":"Attr00000000000000000000000000000202longExpr"},"Id":{"name":"Attr00000000000000000000000000000202rid"},"labelId":"00000000-0000-0000-0000-000000000202"}],"Member":[{"User":{"Gender":{"name":"userRole00000000000000000000000000005016gender"},"FirstName":{"name":"userRole00000000000000000000000000005016fn"},"Id":{"name":"userRole00000000000000000000000000005016rid"},"LastName":{"name":"userRole00000000000000000000000000005016ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016sig"},"name":"Role00000000000000000000000000005016","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016rid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005016ggn"},"Id":{"name":"groupRole00000000000000000000000000005016grid"}},"roleId":"00000000-0000-0000-0000-000000005016"}], "SingleValueListAttribute":[{"Value":{"name":"Attre0937764544a4d2198cedc0c1936b465"}, "Id":{"name":"Attre0937764544a4d2198cedc0c1936b465rid"}, "labelId":"e0937764-544a-4d21-98ce-dc0c1936b465"}],"Status":{"Signifier":{"name":"statusname"},"Id":{"name":"statusrid"}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"},"Id":{"name":"concepttyperid"}}],'.
-		*/	'"Filter":{'.
-			'   "AND":['.
-			'		  {'.
-			'			 "OR":['.
-			'				{  '.
-			'				   "Field":{  '.
-			'					  "name":"concepttypename",'.
-			'					  "operator":"INCLUDES",'.
-			'					  "value":"Business Term"'.
-			'				   }'.
-			'				},'.
-			'				{  '.
-			'				   "Field":{  '.
-			'					  "name":"concepttypename",'.
-			'					  "operator":"INCLUDES",'.
-			'					  "value":"Synonym"'.
-			'				   }'.
-			'				}'.
-			'			 ]'.
-			'       },'.
-			'        {'.
-			'           "AND":['.
-			'               {"Field":{"name":"domainrid","operator":"EQUALS","value":"'.$domainFilter.'"}}'.
-			'           ]'.
-			'        }';
-		if(!Configure::read('allowUnapprovedTerms')){
-			$requestFilter .= '        ,'.
-				'        {'.
-				'           "AND":[{"Field":{"name":"statusname","operator":"EQUALS","value":"Accepted"}}]'.
-				'        }';
-		}
-		$requestFilter .=''.
-			'     ]'.
-			'}'.
-			',"Order":[';
-
-		// set sort options
-		$requestFilter .= '{"Field":{"name":"'.$sortField.'","order":"'.$sortOrder.'"}}';
-		// set paging options
-		$requestFilter .= ']}},"displayStart":'.$displayStart.',"displayLength":'.$displayLength.'}}';
-
-		$resp = $this->CollibraAPI->postJSON('output/data_table', $requestFilter);
-		$resp = json_decode($resp);
+		$resp = $this->CollibraAPI->getTerms($domainFilter, $options);
 
 		// loop through terms to check for quick links and also to build domain breadcrumb
 		if(sizeof($resp->aaData)>0){
 			$term = $resp->aaData;
 			for($i=0; $i<sizeof($term); $i++){
-				// add terms reference for synonym terms
-				/*if(sizeof($term[$i]->synonym_for)!=0){
-					$synonymRid = $term[$i]->synonym_for[0]->Relc06ed0b7032f4d0fae405824c12f94a6Trid;
-					$term[$i]->synonym_for[0]->definition = $synonymRid.'--'.$this->getTermDefinition($synonymRid);
-				}*/
-
 				// add parent community names to breadcrumb
 				$fullCommunityName = '';
-				for($j=0; $j<sizeof($jsonAllCommunities->communityReference); $j++){
-					$parentObj = $jsonAllCommunities->communityReference[$j];
+				for($j=0; $j<sizeof($communities->communityReference); $j++){
+					$parentObj = $communities->communityReference[$j];
 					if($parentObj->resourceId == $term[$i]->commrid){
 						while(isset($parentObj->parentReference)){
 							$parentObj = $parentObj->parentReference;

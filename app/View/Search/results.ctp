@@ -102,7 +102,7 @@
 		<div class="clear"></div>
 		<div id="srLower" class="whiteBox">
 <?php
-	if(sizeof($communities->communityReference)>0){
+	if(!empty($communities->communityReference)){
 ?>
 			<div id="searchFilters">
 				<label for="filerBy">Filter By:</label>
@@ -136,13 +136,12 @@
 	}else{
 		for($i=0; $i<sizeof($terms->aaData); $i++){
 			$term = $terms->aaData[$i];
-			$notRequestable = $term->Attr0d798f70b3ca4af2b28354f84c4714aa == 'false';
+			$notRequestable = $term->requestable == 'false';
 			// don't display non-requestable terms
 			if(!$notRequestable){
 				$lastModified = $term->lastModified/1000;
 				$lastModified = date('m/d/Y', $lastModified);
-				$classification = $term->Attre0937764544a4d2198cedc0c1936b465;
-				$termDesc = $term->Attr00000000000000000000000000000202longExpr;
+				$classification = $term->classification;
 				$classificationTitle = '';
 				$txtColor = 'blueText';
 				switch($classification){
@@ -172,18 +171,9 @@
 				$termRequestTitle = $term->termsignifier;
 				$synonymFor = '';
 				if(sizeof($term->synonym_for)!=0){
-					$synonymFor = $term->synonym_for[0]->Relc06ed0b7032f4d0fae405824c12f94a6T;
+					$synonymFor = $term->synonym_for[0]->synonymname;
 					$termRequestTitle = $synonymFor;
-					$termRequestID = $term->synonym_for[0]->Relc06ed0b7032f4d0fae405824c12f94a6Trid;
-					$termDesc = $term->synonym_for[0]->definition;
-				}
-
-				// add div around searched words 
-				if($searchInput != ''){
-					$termDesc = stripslashes(strip_tags($termDesc));
-					$wrapBefore = '<span class="highlight">';
-					$wrapAfter  = '</span>';
-					$termDesc = preg_replace("/(".$searchInput.")/i", "$wrapBefore$1$wrapAfter", $termDesc);
+					$termRequestID = $term->synonym_for[0]->synonymid;
 				}
 ?>
 			<div id="term<?php echo $term->termrid; ?>" class="resultItem">

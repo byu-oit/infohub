@@ -6,13 +6,6 @@
 	$(document).ready(function() {
 		$("#searchLink").addClass('active');
 		resultsWidth();
-		// populare form fields for testing
-		/*$('#request input, #request textarea').each(function(i) {
-			if($(this).val()==''){
-				$(this).val('TEST DATA '+i);
-			}
-		})*/
-		//$('#request select').val('7c04c361-7a87-4f25-8238-ee50f0afa377');
 
 		<?php
 			if($submitErr){
