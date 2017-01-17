@@ -317,7 +317,7 @@ class CollibraAPI extends Model {
 						'Id' => ['name' => 'id'],
 						'Signifier' => ['name' => 'name'],
 						'Relation' => [[ /* Yes, intentional [[ there */
-							'typeId' => Configure::read('Collibra.businessTermToFieldRelationId'),
+							'typeId' => Configure::read('Collibra.relationship.termToField'),
 							'type' => 'TARGET',
 							'Source' => [
 								'Id' => ['name' => 'termId'],
@@ -437,7 +437,7 @@ class CollibraAPI extends Model {
 						"Role" => ["name" => "Role00000000000000000000000000005016"],
 						"roleId" => "00000000-0000-0000-0000-000000005016"]],
 					"Relation" => [[
-						"typeId" => Configure::read('Collibra.relationship.synonym'),
+						"typeId" => Configure::read('Collibra.relationship.termToSynonym'),
 						"type" => "TARGET",
 						"Id" => ["name" => "synonymrelid"],
 						"Source" => [
@@ -486,6 +486,18 @@ class CollibraAPI extends Model {
 		return $this->dataTable($tableConfig);
 	}
 
+	public function getTermDefinition($termId) {
+		$termInfo = $this->get("term/{$termId}", ['json' => true]);
+		if (!empty($termInfo->attributeReferences->attributeReference)) {
+			foreach ($termInfo->attributeReferences->attributeReference as $attribute) {
+				if ($attribute->labelReference->resourceId == '00000000-0000-0000-0000-000000000202') { //"Definition"
+					return $attribute->value;
+				}
+			}
+		}
+		return null;
+	}
+
 	public function importSwagger($swagger) {
 		$hostCommunity = $this->findTypeByName('community', $swagger['host']);
 		if (empty($hostCommunity->resourceId)) {
@@ -517,13 +529,13 @@ class CollibraAPI extends Model {
 			$elements[$name] = $element;
 		}
 		//Add fields
-		$fieldsResult = $this->addTermsToVocabulary($vocabularyId, Configure::read('Collibra.fieldTypeId'), $fields);
+		$fieldsResult = $this->addTermsToVocabulary($vocabularyId, Configure::read('Collibra.type.field'), $fields);
 		if (empty($fieldsResult) || !$fieldsResult->isOk()) {
 			$this->errors[] = "Error adding fields to \"{$swagger['basePath']}/{$swagger['version']}\"";
 			$this->deleteVocabulary($vocabularyId);
 			return false;
 		}
-		$fieldSetsResult = $this->addTermsToVocabulary($vocabularyId, Configure::read('Collibra.fieldSetTypeId'), $fieldSets);
+		$fieldSetsResult = $this->addTermsToVocabulary($vocabularyId, Configure::read('Collibra.type.fieldSet'), $fieldSets);
 		if (empty($fieldSetsResult) || !$fieldSetsResult->isOk()) {
 			$this->errors[] = "Error adding fieldSets to \"{$swagger['basePath']}/{$swagger['version']}\"";
 			$this->deleteVocabulary($vocabularyId);
@@ -536,7 +548,7 @@ class CollibraAPI extends Model {
 			if (empty($terms->termReference)) {
 				continue;
 			}
-			$relationshipTypeId = Configure::read('Collibra.businessTermToFieldRelationId');
+			$relationshipTypeId = Configure::read('Collibra.relationship.termToField');
 			foreach ($terms->termReference as $term) {
 				if (empty($term->signifier) || empty($term->resourceId) || empty($elements[$term->signifier]['business_term'])) {
 					continue;
@@ -568,7 +580,7 @@ class CollibraAPI extends Model {
 	}
 
 	public function updateApiBusinessTermLinks($terms) {
-		$relationshipTypeId = Configure::read('Collibra.businessTermToFieldRelationId');
+		$relationshipTypeId = Configure::read('Collibra.relationship.termToField');
 		foreach ($terms as $term) {
 			if (empty($term['id']) || empty($term['business_term'])) {
 				continue;
