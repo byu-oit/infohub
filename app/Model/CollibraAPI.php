@@ -415,7 +415,8 @@ class CollibraAPI extends Model {
 						"Value" => ["name" => "requestable"],
 						"labelId" => Configure::read('Collibra.attribute.requestable')]],
 					"StringAttribute" => [[
-						"LongExpression" => ["name" => "description"]]],
+						"LongExpression" => ["name" => "description"],
+						"labelId" => Configure::read('Collibra.attribute.definition')]],
 					"SingleValueListAttribute" => [[
 							"Value" => ["name" => "classification"],
 							"labelId" => Configure::read('Collibra.attribute.classification')]],
@@ -488,9 +489,10 @@ class CollibraAPI extends Model {
 
 	public function getTermDefinition($termId) {
 		$termInfo = $this->get("term/{$termId}", ['json' => true]);
+		$definitionAttributeId = Configure::read('Collibra.attribute.definition');
 		if (!empty($termInfo->attributeReferences->attributeReference)) {
 			foreach ($termInfo->attributeReferences->attributeReference as $attribute) {
-				if ($attribute->labelReference->resourceId == '00000000-0000-0000-0000-000000000202') { //"Definition"
+				if ($attribute->labelReference->resourceId == $definitionAttributeId) {
 					return $attribute->value;
 				}
 			}

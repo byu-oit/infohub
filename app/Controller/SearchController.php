@@ -306,7 +306,7 @@ class SearchController extends AppController {
 			return new CakeResponse(['type' => 'application/javascript', 'body' => []]);
 		}
 
-		$definitionAttributeTypeId = Configure::read('Collibra.definitionAttributeTypeId');
+		$definitionAttributeTypeId = Configure::read('Collibra.attribute.definition');
 
 		$results = [];
 		// create JSON request string
