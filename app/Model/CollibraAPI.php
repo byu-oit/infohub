@@ -464,10 +464,10 @@ class CollibraAPI extends Model {
 		if (!empty($vocabularyId)) {
 			$tableConfig['TableViewConfig']['Resources']['Term']['Filter']['AND'][] = [
 				'AND' =>
-					['Field' => [
+					[['Field' => [
 						'name' => 'domainrid',
 						'operator' => 'EQUALS',
-						'value' => $vocabularyId]]];
+						'value' => $vocabularyId]]]];
 		}
 		if (!empty($options['additionalFilters'])) {
 			foreach($options['additionalFilters'] as $filter) {
