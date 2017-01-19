@@ -132,7 +132,7 @@ class CollibraAPI extends Model {
 	}
 
 	public function updateUserFromByu($netId) {
-		$byuInfo = ClassRegistry::init('BYUWS')->personalSummary($netId);
+		$byuInfo = ClassRegistry::init('BYUAPI')->personalSummary($netId);
 		if (empty($byuInfo)) {
 			$this->errors[] = "BYU info not found for Net ID {$netId}";
 			return false;
@@ -418,8 +418,8 @@ class CollibraAPI extends Model {
 						"LongExpression" => ["name" => "description"],
 						"labelId" => Configure::read('Collibra.attribute.definition')]],
 					"SingleValueListAttribute" => [[
-							"Value" => ["name" => "classification"],
-							"labelId" => Configure::read('Collibra.attribute.classification')]],
+						"Value" => ["name" => "classification"],
+						"labelId" => Configure::read('Collibra.attribute.classification')]],
 					"Status" => [
 						"Signifier" => ["name" => "statusname"]],
 					"Vocabulary" => [

@@ -85,11 +85,6 @@ if (!function_exists('denv')) {
 			'password' => denv('CAKE_DEFAULT_DB_PASSWORD', '***REQUIRED***'),
 			'database' => denv('CAKE_DEFAULT_DB_DATABASE', 'infohub'),
 			'prefix' => ''],
-		'byuApi' => [
-			'datasource' => 'DataSource',
-			'host' => denv('CAKE_BYU_WS_HOST', 'api.byu.edu'),
-			'api_key' => denv('CAKE_BYU_WS_AUTH_KEY', '***REQUIRED***'),
-			'shared_secret' => denv('CAKE_BYU_WS_AUTH_SHARED_SECRET', '***REQUIRED***')],
 		'collibra' => [
 			'datasource' => 'DataSource',
 			'url'       =>  denv('CAKE_COLLIBRA_HOST', 'https://byu.collibra.com/rest/latest/'),

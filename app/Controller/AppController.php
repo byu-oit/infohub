@@ -43,8 +43,8 @@ class AppController extends Controller {
 			// get username from BYU web service to display in to navigation
 			if(empty($_SESSION["byuUsername"])){
 				$netID = $authUser['username'];
-				$this->loadModel('BYUWS');
-				$byuUser = $this->BYUWS->personalSummary($netID);
+				$this->loadModel('BYUAPI');
+				$byuUser = $this->BYUAPI->personalSummary($netID);
 				if(isset($byuUser->names->preferred_name)){
 					$byuUsername = $byuUser->names->preferred_name;
 					$_SESSION["byuUsername"] = $byuUsername;

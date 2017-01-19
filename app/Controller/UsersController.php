@@ -1,7 +1,7 @@
 <?php
 
 class UsersController extends AppController {
-	public $uses = ['CollibraAPI', 'Photo', 'BYUWS'];
+	public $uses = ['CollibraAPI', 'Photo'];
 
 	function beforeFilter() {
 		parent::beforeFilter();

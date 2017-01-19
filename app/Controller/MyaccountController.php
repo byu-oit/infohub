@@ -48,8 +48,8 @@ class MyaccountController extends AppController {
 		}
 
 		$netID = $this->Auth->user('username');
-		$this->loadModel('BYUWS');
-		$byuUser = $this->BYUWS->personalSummary($netID);
+		$this->loadModel('BYUAPI');
+		$byuUser = $this->BYUAPI->personalSummary($netID);
 		$personID = $byuUser->identifiers->person_id;
 
 		$this->loadModel('CollibraAPI');

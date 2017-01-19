@@ -210,9 +210,9 @@ class RequestController extends AppController {
 
 	public function index() {
 		$netID = $this->Auth->user('username');
-		$this->loadModel('BYUWS');
-		$byuUser = $this->BYUWS->personalSummary($netID);
-		$supervisorInfo = $this->BYUWS->supervisorLookup($netID);
+		$this->loadModel('BYUAPI');
+		$byuUser = $this->BYUAPI->personalSummary($netID);
+		$supervisorInfo = $this->BYUAPI->supervisorLookup($netID);
 
 		// make sure terms have been added to the users's queue
 		$arrQueue = $this->Cookie->read('queue');
