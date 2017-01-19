@@ -4,7 +4,7 @@ App::uses('Model', 'Model');
 
 class BYUAPI extends Model {
 	public $useTable = false;
-	public $useDbConfig = 'apiStore';
+	public $useDbConfig = 'byuApi';
 	private $personSummaryCache = [];
 
 	public function personalSummary($netidRaw){
@@ -61,7 +61,7 @@ class BYUAPI extends Model {
 	protected function _get($url) {
 		$config = $this->getDataSource()->config;
 		$http = new HttpSocket();
-		$http->configAuth('ByuApiStore', $config);
+		$http->configAuth('ByuApi', $config);
 		return $http->get("https://{$config['host']}/{$url}");
 	}
 }

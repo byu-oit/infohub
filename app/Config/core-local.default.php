@@ -19,10 +19,6 @@ $config = [
 			'password' => 'PASSWORD',
 		],
 		'byuApi' => [
-			'api_key' => 'KEY',
-			'shared_secret' => 'SECRET'
-		],
-		'apiStore' => [
 			'key' => 'KEY',
 			'secret' => 'SECRET'
 		],

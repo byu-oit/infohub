@@ -90,7 +90,7 @@ if (!function_exists('denv')) {
 			'url'       =>  denv('CAKE_COLLIBRA_HOST', 'https://byu.collibra.com/rest/latest/'),
 			'username'  => denv('CAKE_COLLIBRA_USERNAME', '***REQUIRED***'),
 			'password'  => denv('CAKE_COLLIBRA_PASSWORD', '***REQUIRED***')],
-		'apiStore' => [
+		'byuApi' => [
 			'datasource' => 'DataSource',
 			'host' => denv('CAKE_BYU_API_HOST', 'api.byu.edu'),
 			'key' => denv('CAKE_BYU_API_KEY', '***REQUIRED***'),
