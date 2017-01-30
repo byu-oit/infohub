@@ -33,7 +33,7 @@ img.resultBodyLoading {
 	display: block;
 }
 
-#searchBody {
+#searchBody, #apiBody {
 	position: relative;
 
 	#searchTop {
@@ -669,6 +669,40 @@ img.resultBodyLoading {
 		}
 	}
 }
+
+#apiBody {
+	padding: 57px 0 47px;
+	.btnLinks {
+		padding: 10px 0px;
+		a {
+			text-decoration: none;
+		}
+	}
+	#searchResults #srLower .resultItem .requestAccess {
+		bottom: -45px;
+	}
+	.inputButton {
+		background-color: rgba(14, 50, 100, 0.85);
+		font-size: 18px;
+		border: inherit;
+		padding: 0 30px;
+	}
+	.api-terms {
+		padding: 4px;
+		font-size: 14px;
+
+		a {
+			color: #234e77;
+		}
+		a:hover {
+			color: #10375b;
+		}
+		tbody .header {
+			text-align: left;
+		}
+	}
+}
+
 form#request {
 	position: relative;
 	
@@ -712,13 +746,17 @@ form#request {
 	}
 }
 @media screen and (max-width: 800px)  {
-	#searchBody #catalogLink {
-		width: 135px;
-		clear: both;
-		margin: -25px 0 23px 28%;
+	#searchBody, #apiBody {
+		#catalogLink {
+			width: 135px;
+			clear: both;
+			margin: -25px 0 23px 28%;
+		}
 	}
-	#searchBody #requestForm #srLower .fieldGroup {
-		width: 104%;
+	#searchBody, #apiBody {
+		#requestForm #srLower .fieldGroup {
+			width: 104%;
+		}
 	}
 }
 @media screen and (max-width: 750px) {
@@ -729,7 +767,7 @@ form#request {
 		width: 90%;
 		padding: 8px 5% !important;
 	}
-	#searchBody {
+	#searchBody, #apiBody {
 		#catalogLink {
 			float: none;
 			margin: 0 auto 30px;
@@ -769,7 +807,7 @@ form#request {
 	}
 }
 @media screen and (max-width: 680px)  {
-	#searchBody {
+	#searchBody, #apiBody {
 		#searchResults {
 
 			h2 {
@@ -812,22 +850,23 @@ form#request {
 	}
 }
 @media screen and (max-width: 650px) {
-	#searchBody #requestForm #srLower .fieldGroup {
-		width: 100%;
-        
-        .field-continer{
-            float: none;
-            width: 100%;
-            margin: 0;
-        }
-		input, select {
+	#searchBody, #apiBody {
+		#requestForm #srLower .fieldGroup {
 			width: 100%;
-  			margin: 0 0% 12px 0;
+			.field-continer{
+				float: none;
+				width: 100%;
+				margin: 0;
+			}
+			input, select {
+				width: 100%;
+				margin: 0 0% 12px 0;
+			}
 		}
 	}
 }
 @media screen and (max-width: 500px)   {
-	#searchBody {
+	#searchBody, #apiBody {
 		#searchResults {
 			#srLower {
 				.highlyClassified:before,

@@ -11,15 +11,17 @@
 		background-color: inherit;
 	}
 </style>
-<div id="searchBody" class="innerLower">
+<div id="apiBody" class="innerLower">
 	<div id="searchResults">
 		<h1 class="headerTab"><?= $hostname . '/' . trim($basePath, '/') ?></h1>
 		<div class="clear"></div>
+		<div class="btnLinks">
+			<a href="https://developer-dev.byu.edu/api/api-list" id="doc_link" class="inputButton" target="_blank">Read API documentation</a>
+			<a href="https://api.byu.edu/store/" id="store_link" class="inputButton" target="_blank">View this API in the store</a>
+		</div>
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
 				<?php //TODO: make this a deep link directly to this particular API ?>
-				<a href="https://developer-dev.byu.edu/api/api-list" id="doc_link" class="inputButton" target="_blank">Read API documentation</a>
-				<a href="https://api.byu.edu/store/" id="store_link" class="inputButton" target="_blank">View this API in the store</a>
 				<?php if ($isAdmin): ?>
 					<div style="float: right">
 						<?= $this->Html->link(

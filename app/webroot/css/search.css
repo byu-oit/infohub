@@ -1,9 +1,6 @@
 /*============= LOAD LESS FILES =============*/
-
-/*=====Variables====*/
 /*=====Variables====*/
 /*===========  SEARCH & SEACH-RESULTS STYLES ============*/
-
 .headerTab {
   font-size: 30px;
   padding: 8px 30px;
@@ -28,87 +25,108 @@ img.resultBodyLoading {
   margin: 20px auto 40px auto;
   display: block;
 }
-#searchBody {
+#searchBody,
+#apiBody {
   position: relative;
 }
-#searchBody #searchTop {
+#searchBody #searchTop,
+#apiBody #searchTop {
   width: 560px;
   padding: 57px 0 47px;
   float: left;
 }
-#searchBody #searchTop #stLower {
+#searchBody #searchTop #stLower,
+#apiBody #searchTop #stLower {
   padding: 30px 35px;
 }
-#searchBody #searchTop #stLower form {
+#searchBody #searchTop #stLower form,
+#apiBody #searchTop #stLower form {
   position: relative;
 }
-#searchBody #searchTop #stLower input[type=text] {
+#searchBody #searchTop #stLower input[type=text],
+#apiBody #searchTop #stLower input[type=text] {
   width: 397px;
   position: relative;
   float: left;
   z-index: 10;
 }
-#searchBody #searchTop #stLower input[type=submit] {
+#searchBody #searchTop #stLower input[type=submit],
+#apiBody #searchTop #stLower input[type=submit] {
   margin-left: -3px;
 }
 #searchBody #searchTop #stLower input.text,
+#apiBody #searchTop #stLower input.text,
 #searchBody #searchTop #stLower input[type="text"],
+#apiBody #searchTop #stLower input[type="text"],
 #searchBody #searchTop #stLower input[type="button"],
+#apiBody #searchTop #stLower input[type="button"],
 #searchBody #searchTop #stLower input[type="submit"],
-#searchBody #searchTop #stLower .input-checkbox {
+#apiBody #searchTop #stLower input[type="submit"],
+#searchBody #searchTop #stLower .input-checkbox,
+#apiBody #searchTop #stLower .input-checkbox {
   -webkit-appearance: none;
   border-radius: 0;
 }
-#searchBody #catalogLink {
+#searchBody #catalogLink,
+#apiBody #catalogLink {
   width: 19%;
   display: block;
   float: left;
   margin: 57px 0 0 3%;
 }
-#searchBody #catalogLink img {
+#searchBody #catalogLink img,
+#apiBody #catalogLink img {
   width: 100%;
 }
-#searchBody #searchMain {
+#searchBody #searchMain,
+#apiBody #searchMain {
   width: 100%;
   clear: left;
 }
-#searchBody #searchMain h2 {
+#searchBody #searchMain h2,
+#apiBody #searchMain h2 {
   font-size: 18px;
   padding: 8px 20px;
 }
-#searchBody #searchMain #smLower {
-  background-color: white;
+#searchBody #searchMain #smLower,
+#apiBody #searchMain #smLower {
+  background-color: #fff;
   background-color: rgba(255, 255, 255, 0.87);
   padding: 23px 4% 30px;
   -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
-#searchBody #searchMain #smLower ul {
+#searchBody #searchMain #smLower ul,
+#apiBody #searchMain #smLower ul {
   margin: 0;
   padding: 0;
   width: 100%;
   font-size: 14px;
 }
-#searchBody #searchMain #smLower ul li {
+#searchBody #searchMain #smLower ul li,
+#apiBody #searchMain #smLower ul li {
   list-style-type: none;
   padding: 5px 0 0;
 }
-#searchBody #searchMain #smLower ul li a {
+#searchBody #searchMain #smLower ul li a,
+#apiBody #searchMain #smLower ul li a {
   color: #282828;
   display: block;
   padding: 5px 12px;
-  background-color: white;
+  background-color: #fff;
   -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   cursor: pointer;
   text-decoration: none;
 }
-#searchBody #searchMain #smLower ul li a:hover {
+#searchBody #searchMain #smLower ul li a:hover,
+#apiBody #searchMain #smLower ul li a:hover {
   text-decoration: underline;
 }
-#searchBody #searchMain #smLower ul li a.hasChildren:before {
+#searchBody #searchMain #smLower ul li a.hasChildren:before,
+#apiBody #searchMain #smLower ul li a.hasChildren:before {
   content: "";
   padding: 0 3px 4px;
   background: url('/img/iconRight.png') no-repeat;
@@ -120,16 +138,19 @@ img.resultBodyLoading {
   height: 20px;
   width: 20px;
 }
-#searchBody #searchMain #smLower ul li a.active:before {
+#searchBody #searchMain #smLower ul li a.active:before,
+#apiBody #searchMain #smLower ul li a.active:before {
   background: url('/img/iconDown.png') no-repeat;
   background-size: 11px;
   background-position: 6px;
 }
-#searchBody #searchMain #smLower ul.subList {
+#searchBody #searchMain #smLower ul.subList,
+#apiBody #searchMain #smLower ul.subList {
   display: none;
   position: relative;
 }
-#searchBody #searchMain #smLower ul.grandChild:before {
+#searchBody #searchMain #smLower ul.grandChild:before,
+#apiBody #searchMain #smLower ul.grandChild:before {
   content: "";
   position: absolute;
   left: -25px;
@@ -139,12 +160,14 @@ img.resultBodyLoading {
   height: 100%;
   width: 4px;
 }
-#searchBody #searchMain #smLower ul.subList li {
+#searchBody #searchMain #smLower ul.subList li,
+#apiBody #searchMain #smLower ul.subList li {
   padding-left: 25px;
   position: relative;
   left: 11px;
 }
-#searchBody #searchMain #smLower ul.subList li:before {
+#searchBody #searchMain #smLower ul.subList li:before,
+#apiBody #searchMain #smLower ul.subList li:before {
   content: "";
   position: absolute;
   left: 0;
@@ -158,26 +181,36 @@ img.resultBodyLoading {
   height: 33px;
   width: 20px;
 }
-#searchBody #searchMain #smLower ul.subList li:last-child:before {
+#searchBody #searchMain #smLower ul.subList li:last-child:before,
+#apiBody #searchMain #smLower ul.subList li:last-child:before {
   background: url('/img/nestedLast.png') no-repeat;
   background-size: 20px 16px;
   background-position: 4px 0;
 }
 #searchBody #searchResults,
+#apiBody #searchResults,
 #searchBody #requestForm,
-#searchBody #searchSuccess {
+#apiBody #requestForm,
+#searchBody #searchSuccess,
+#apiBody #searchSuccess {
   width: 100%;
 }
 #searchBody #searchResults h2,
+#apiBody #searchResults h2,
 #searchBody #requestForm h2,
-#searchBody #searchSuccess h2 {
+#apiBody #requestForm h2,
+#searchBody #searchSuccess h2,
+#apiBody #searchSuccess h2 {
   font-size: 18px;
   padding: 8px 20px;
 }
 #searchBody #searchResults #srLower,
+#apiBody #searchResults #srLower,
 #searchBody #requestForm #srLower,
-#searchBody #searchSuccess #srLower {
-  background-color: white;
+#apiBody #requestForm #srLower,
+#searchBody #searchSuccess #srLower,
+#apiBody #searchSuccess #srLower {
+  background-color: #fff;
   background-color: rgba(243, 243, 243, 0.89);
   padding: 23px 3% 30px;
   -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
@@ -185,28 +218,40 @@ img.resultBodyLoading {
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
 #searchBody #searchResults #srLower #searchFilters,
+#apiBody #searchResults #srLower #searchFilters,
 #searchBody #requestForm #srLower #searchFilters,
-#searchBody #searchSuccess #srLower #searchFilters {
+#apiBody #requestForm #srLower #searchFilters,
+#searchBody #searchSuccess #srLower #searchFilters,
+#apiBody #searchSuccess #srLower #searchFilters {
   margin-bottom: 20px;
 }
 #searchBody #searchResults #srLower #searchFilters label,
+#apiBody #searchResults #srLower #searchFilters label,
 #searchBody #requestForm #srLower #searchFilters label,
-#searchBody #searchSuccess #srLower #searchFilters label {
+#apiBody #requestForm #srLower #searchFilters label,
+#searchBody #searchSuccess #srLower #searchFilters label,
+#apiBody #searchSuccess #srLower #searchFilters label {
   font-size: 12px;
   font-weight: bold;
   color: #224e7d;
   padding-right: 6px;
 }
 #searchBody #searchResults #srLower #searchFilters select,
+#apiBody #searchResults #srLower #searchFilters select,
 #searchBody #requestForm #srLower #searchFilters select,
-#searchBody #searchSuccess #srLower #searchFilters select {
+#apiBody #requestForm #srLower #searchFilters select,
+#searchBody #searchSuccess #srLower #searchFilters select,
+#apiBody #searchSuccess #srLower #searchFilters select {
   height: 26px;
   margin-right: 10px;
   padding-right: 5px;
 }
 #searchBody #searchResults #srLower .resultItem,
+#apiBody #searchResults #srLower .resultItem,
 #searchBody #requestForm #srLower .resultItem,
-#searchBody #searchSuccess #srLower .resultItem {
+#apiBody #requestForm #srLower .resultItem,
+#searchBody #searchSuccess #srLower .resultItem,
+#apiBody #searchSuccess #srLower .resultItem {
   background-color: white;
   position: relative;
   padding: 20px 3% 20px 60px;
@@ -216,59 +261,86 @@ img.resultBodyLoading {
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
 #searchBody #searchResults #srLower .resultItem h4,
+#apiBody #searchResults #srLower .resultItem h4,
 #searchBody #requestForm #srLower .resultItem h4,
-#searchBody #searchSuccess #srLower .resultItem h4 {
+#apiBody #requestForm #srLower .resultItem h4,
+#searchBody #searchSuccess #srLower .resultItem h4,
+#apiBody #searchSuccess #srLower .resultItem h4 {
   font-size: 16px;
   margin: 0;
   padding: 0;
   color: #114477;
 }
 #searchBody #searchResults #srLower .resultItem h5,
+#apiBody #searchResults #srLower .resultItem h5,
 #searchBody #requestForm #srLower .resultItem h5,
-#searchBody #searchSuccess #srLower .resultItem h5 {
+#apiBody #requestForm #srLower .resultItem h5,
+#searchBody #searchSuccess #srLower .resultItem h5,
+#apiBody #searchSuccess #srLower .resultItem h5 {
   font-size: 14px;
   margin: 0;
   padding: 0;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent,
+#apiBody #searchResults #srLower .resultItem .resultContent,
 #searchBody #requestForm #srLower .resultItem .resultContent,
-#searchBody #searchSuccess #srLower .resultItem .resultContent {
+#apiBody #requestForm #srLower .resultItem .resultContent,
+#searchBody #searchSuccess #srLower .resultItem .resultContent,
+#apiBody #searchSuccess #srLower .resultItem .resultContent {
   width: 100%;
   padding-right: 5%;
   margin-bottom: 40px;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent ul,
+#apiBody #searchResults #srLower .resultItem .resultContent ul,
 #searchBody #requestForm #srLower .resultItem .resultContent ul,
-#searchBody #searchSuccess #srLower .resultItem .resultContent ul {
+#apiBody #requestForm #srLower .resultItem .resultContent ul,
+#searchBody #searchSuccess #srLower .resultItem .resultContent ul,
+#apiBody #searchSuccess #srLower .resultItem .resultContent ul {
   margin: 0;
   padding: 0;
   list-style: none;
   *zoom: 1;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent ul:before,
+#apiBody #searchResults #srLower .resultItem .resultContent ul:before,
 #searchBody #requestForm #srLower .resultItem .resultContent ul:before,
+#apiBody #requestForm #srLower .resultItem .resultContent ul:before,
 #searchBody #searchSuccess #srLower .resultItem .resultContent ul:before,
+#apiBody #searchSuccess #srLower .resultItem .resultContent ul:before,
 #searchBody #searchResults #srLower .resultItem .resultContent ul:after,
+#apiBody #searchResults #srLower .resultItem .resultContent ul:after,
 #searchBody #requestForm #srLower .resultItem .resultContent ul:after,
-#searchBody #searchSuccess #srLower .resultItem .resultContent ul:after {
+#apiBody #requestForm #srLower .resultItem .resultContent ul:after,
+#searchBody #searchSuccess #srLower .resultItem .resultContent ul:after,
+#apiBody #searchSuccess #srLower .resultItem .resultContent ul:after {
   content: "";
   display: table;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent ul:after,
+#apiBody #searchResults #srLower .resultItem .resultContent ul:after,
 #searchBody #requestForm #srLower .resultItem .resultContent ul:after,
-#searchBody #searchSuccess #srLower .resultItem .resultContent ul:after {
+#apiBody #requestForm #srLower .resultItem .resultContent ul:after,
+#searchBody #searchSuccess #srLower .resultItem .resultContent ul:after,
+#apiBody #searchSuccess #srLower .resultItem .resultContent ul:after {
   clear: both;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent ul li,
+#apiBody #searchResults #srLower .resultItem .resultContent ul li,
 #searchBody #requestForm #srLower .resultItem .resultContent ul li,
-#searchBody #searchSuccess #srLower .resultItem .resultContent ul li {
+#apiBody #requestForm #srLower .resultItem .resultContent ul li,
+#searchBody #searchSuccess #srLower .resultItem .resultContent ul li,
+#apiBody #searchSuccess #srLower .resultItem .resultContent ul li {
   float: left;
   margin: 0;
   padding: 0;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent ul li,
+#apiBody #searchResults #srLower .resultItem .resultContent ul li,
 #searchBody #requestForm #srLower .resultItem .resultContent ul li,
-#searchBody #searchSuccess #srLower .resultItem .resultContent ul li {
+#apiBody #requestForm #srLower .resultItem .resultContent ul li,
+#searchBody #searchSuccess #srLower .resultItem .resultContent ul li,
+#apiBody #searchSuccess #srLower .resultItem .resultContent ul li {
   display: inline;
   font-size: 12px;
   font-weight: bold;
@@ -276,101 +348,158 @@ img.resultBodyLoading {
   margin-right: 10px;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent ul li .listLabel,
+#apiBody #searchResults #srLower .resultItem .resultContent ul li .listLabel,
 #searchBody #requestForm #srLower .resultItem .resultContent ul li .listLabel,
-#searchBody #searchSuccess #srLower .resultItem .resultContent ul li .listLabel {
+#apiBody #requestForm #srLower .resultItem .resultContent ul li .listLabel,
+#searchBody #searchSuccess #srLower .resultItem .resultContent ul li .listLabel,
+#apiBody #searchSuccess #srLower .resultItem .resultContent ul li .listLabel {
   color: #224d7d;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent ul li.synonym,
+#apiBody #searchResults #srLower .resultItem .resultContent ul li.synonym,
 #searchBody #requestForm #srLower .resultItem .resultContent ul li.synonym,
-#searchBody #searchSuccess #srLower .resultItem .resultContent ul li.synonym {
+#apiBody #requestForm #srLower .resultItem .resultContent ul li.synonym,
+#searchBody #searchSuccess #srLower .resultItem .resultContent ul li.synonym,
+#apiBody #searchSuccess #srLower .resultItem .resultContent ul li.synonym {
   color: #b5b5b5;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent ul li.synonym .listLabel,
+#apiBody #searchResults #srLower .resultItem .resultContent ul li.synonym .listLabel,
 #searchBody #requestForm #srLower .resultItem .resultContent ul li.synonym .listLabel,
+#apiBody #requestForm #srLower .resultItem .resultContent ul li.synonym .listLabel,
 #searchBody #searchSuccess #srLower .resultItem .resultContent ul li.synonym .listLabel,
+#apiBody #searchSuccess #srLower .resultItem .resultContent ul li.synonym .listLabel,
 #searchBody #searchResults #srLower .resultItem .resultContent ul li.synonym .classificationTitle,
+#apiBody #searchResults #srLower .resultItem .resultContent ul li.synonym .classificationTitle,
 #searchBody #requestForm #srLower .resultItem .resultContent ul li.synonym .classificationTitle,
+#apiBody #requestForm #srLower .resultItem .resultContent ul li.synonym .classificationTitle,
 #searchBody #searchSuccess #srLower .resultItem .resultContent ul li.synonym .classificationTitle,
+#apiBody #searchSuccess #srLower .resultItem .resultContent ul li.synonym .classificationTitle,
 #searchBody #searchResults #srLower .resultItem .resultContent ul li.synonym a,
+#apiBody #searchResults #srLower .resultItem .resultContent ul li.synonym a,
 #searchBody #requestForm #srLower .resultItem .resultContent ul li.synonym a,
-#searchBody #searchSuccess #srLower .resultItem .resultContent ul li.synonym a {
+#apiBody #requestForm #srLower .resultItem .resultContent ul li.synonym a,
+#searchBody #searchSuccess #srLower .resultItem .resultContent ul li.synonym a,
+#apiBody #searchSuccess #srLower .resultItem .resultContent ul li.synonym a {
   color: #b5b5b5;
   text-decoration: none;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent ul li.new-line,
+#apiBody #searchResults #srLower .resultItem .resultContent ul li.new-line,
 #searchBody #requestForm #srLower .resultItem .resultContent ul li.new-line,
-#searchBody #searchSuccess #srLower .resultItem .resultContent ul li.new-line {
+#apiBody #requestForm #srLower .resultItem .resultContent ul li.new-line,
+#searchBody #searchSuccess #srLower .resultItem .resultContent ul li.new-line,
+#apiBody #searchSuccess #srLower .resultItem .resultContent ul li.new-line {
   clear: left;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody,
+#apiBody #searchResults #srLower .resultItem .resultContent .resultBody,
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody,
-#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody {
+#apiBody #requestForm #srLower .resultItem .resultContent .resultBody,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody,
+#apiBody #searchSuccess #srLower .resultItem .resultContent .resultBody {
   display: none;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody .term-desc ul,
+#apiBody #searchResults #srLower .resultItem .resultContent .resultBody .term-desc ul,
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody .term-desc ul,
-#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .term-desc ul {
+#apiBody #requestForm #srLower .resultItem .resultContent .resultBody .term-desc ul,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .term-desc ul,
+#apiBody #searchSuccess #srLower .resultItem .resultContent .resultBody .term-desc ul {
   list-style: inside disc;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody .term-desc ul li,
+#apiBody #searchResults #srLower .resultItem .resultContent .resultBody .term-desc ul li,
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody .term-desc ul li,
-#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .term-desc ul li {
+#apiBody #requestForm #srLower .resultItem .resultContent .resultBody .term-desc ul li,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .term-desc ul li,
+#apiBody #searchSuccess #srLower .resultItem .resultContent .resultBody .term-desc ul li {
   display: list-item;
   float: none;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody p,
+#apiBody #searchResults #srLower .resultItem .resultContent .resultBody p,
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody p,
+#apiBody #requestForm #srLower .resultItem .resultContent .resultBody p,
 #searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody p,
+#apiBody #searchSuccess #srLower .resultItem .resultContent .resultBody p,
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody div,
+#apiBody #searchResults #srLower .resultItem .resultContent .resultBody div,
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody div,
-#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody div {
+#apiBody #requestForm #srLower .resultItem .resultContent .resultBody div,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody div,
+#apiBody #searchSuccess #srLower .resultItem .resultContent .resultBody div {
   font-size: 14px;
   width: 100%;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody h5,
+#apiBody #searchResults #srLower .resultItem .resultContent .resultBody h5,
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody h5,
-#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody h5 {
+#apiBody #requestForm #srLower .resultItem .resultContent .resultBody h5,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody h5,
+#apiBody #searchSuccess #srLower .resultItem .resultContent .resultBody h5 {
   font-size: 13px;
   font-weight: bold;
   color: #114477;
   margin-bottom: 4px;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody form,
+#apiBody #searchResults #srLower .resultItem .resultContent .resultBody form,
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody form,
-#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody form {
+#apiBody #requestForm #srLower .resultItem .resultContent .resultBody form,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody form,
+#apiBody #searchSuccess #srLower .resultItem .resultContent .resultBody form {
   margin-bottom: 5px;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes,
+#apiBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes,
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes,
-#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes {
+#apiBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes,
+#apiBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes {
   max-height: 400px;
   overflow: auto;
   *zoom: 1;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes:before,
+#apiBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes:before,
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes:before,
+#apiBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes:before,
 #searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes:before,
+#apiBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes:before,
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes:after,
+#apiBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes:after,
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes:after,
-#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes:after {
+#apiBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes:after,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes:after,
+#apiBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes:after {
   content: "";
   display: table;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes:after,
+#apiBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes:after,
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes:after,
-#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes:after {
+#apiBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes:after,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes:after,
+#apiBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes:after {
   clear: both;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol,
+#apiBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol,
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol,
-#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol {
+#apiBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol,
+#apiBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol {
   width: 395px;
   float: left;
   padding-left: 5px;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol label,
+#apiBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol label,
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol label,
-#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol label {
+#apiBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol label,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol label,
+#apiBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol label {
   max-width: 92%;
   overflow: hidden;
   white-space: nowrap;
@@ -380,39 +509,57 @@ img.resultBodyLoading {
   display: inline-block;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol input,
+#apiBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol input,
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol input,
-#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol input {
+#apiBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol input,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol input,
+#apiBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol input {
   margin-left: 0;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol img,
+#apiBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol img,
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol img,
-#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol img {
+#apiBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol img,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol img,
+#apiBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol img {
   position: relative;
   top: -2px;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol img.denied,
+#apiBody #searchResults #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol img.denied,
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol img.denied,
-#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol img.denied {
+#apiBody #requestForm #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol img.denied,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol img.denied,
+#apiBody #searchSuccess #srLower .resultItem .resultContent .resultBody .checkBoxes .checkCol img.denied {
   top: 0;
   margin: 3px 3px 0 0;
 }
 #searchBody #searchResults #srLower .resultItem .addQuickLink,
+#apiBody #searchResults #srLower .resultItem .addQuickLink,
 #searchBody #requestForm #srLower .resultItem .addQuickLink,
-#searchBody #searchSuccess #srLower .resultItem .addQuickLink {
+#apiBody #requestForm #srLower .resultItem .addQuickLink,
+#searchBody #searchSuccess #srLower .resultItem .addQuickLink,
+#apiBody #searchSuccess #srLower .resultItem .addQuickLink {
   position: absolute;
   top: 20px;
   right: 3%;
   display: block;
 }
 #searchBody #searchResults #srLower .resultItem .addQuickLink img,
+#apiBody #searchResults #srLower .resultItem .addQuickLink img,
 #searchBody #requestForm #srLower .resultItem .addQuickLink img,
-#searchBody #searchSuccess #srLower .resultItem .addQuickLink img {
+#apiBody #requestForm #srLower .resultItem .addQuickLink img,
+#searchBody #searchSuccess #srLower .resultItem .addQuickLink img,
+#apiBody #searchSuccess #srLower .resultItem .addQuickLink img {
   width: 17px;
 }
 #searchBody #searchResults #srLower .resultItem .requestAccess,
+#apiBody #searchResults #srLower .resultItem .requestAccess,
 #searchBody #requestForm #srLower .resultItem .requestAccess,
-#searchBody #searchSuccess #srLower .resultItem .requestAccess {
-  color: white;
+#apiBody #requestForm #srLower .resultItem .requestAccess,
+#searchBody #searchSuccess #srLower .resultItem .requestAccess,
+#apiBody #searchSuccess #srLower .resultItem .requestAccess {
+  color: #fff;
   font-size: 12.5px;
   text-decoration: none;
   padding: 6px 15px;
@@ -433,9 +580,12 @@ img.resultBodyLoading {
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
 #searchBody #searchResults #srLower .resultItem .unrequestable,
+#apiBody #searchResults #srLower .resultItem .unrequestable,
 #searchBody #requestForm #srLower .resultItem .unrequestable,
-#searchBody #searchSuccess #srLower .resultItem .unrequestable {
-  color: white;
+#apiBody #requestForm #srLower .resultItem .unrequestable,
+#searchBody #searchSuccess #srLower .resultItem .unrequestable,
+#apiBody #searchSuccess #srLower .resultItem .unrequestable {
+  color: #fff;
   font-size: 12.5px;
   text-decoration: none;
   padding: 6px 15px;
@@ -455,24 +605,33 @@ img.resultBodyLoading {
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
 #searchBody #searchResults #srLower .resultItem .inactive,
+#apiBody #searchResults #srLower .resultItem .inactive,
 #searchBody #requestForm #srLower .resultItem .inactive,
-#searchBody #searchSuccess #srLower .resultItem .inactive {
+#apiBody #requestForm #srLower .resultItem .inactive,
+#searchBody #searchSuccess #srLower .resultItem .inactive,
+#apiBody #searchSuccess #srLower .resultItem .inactive {
   background-color: #cccaca;
 }
 #searchBody #searchResults #srLower .resultItem .detailsRequestBtn,
+#apiBody #searchResults #srLower .resultItem .detailsRequestBtn,
 #searchBody #requestForm #srLower .resultItem .detailsRequestBtn,
-#searchBody #searchSuccess #srLower .resultItem .detailsRequestBtn {
+#apiBody #requestForm #srLower .resultItem .detailsRequestBtn,
+#searchBody #searchSuccess #srLower .resultItem .detailsRequestBtn,
+#apiBody #searchSuccess #srLower .resultItem .detailsRequestBtn {
   display: none;
 }
 #searchBody #searchResults #srLower .resultItem .detailsTab,
+#apiBody #searchResults #srLower .resultItem .detailsTab,
 #searchBody #requestForm #srLower .resultItem .detailsTab,
-#searchBody #searchSuccess #srLower .resultItem .detailsTab {
+#apiBody #requestForm #srLower .resultItem .detailsTab,
+#searchBody #searchSuccess #srLower .resultItem .detailsTab,
+#apiBody #searchSuccess #srLower .resultItem .detailsTab {
   background-color: #cccaca;
   padding: 4px 30px 5px 12px;
   position: absolute;
   bottom: -24px;
   left: 15px;
-  color: white;
+  color: #fff;
   font-weight: bold;
   text-decoration: none;
   font-size: 11px;
@@ -483,8 +642,11 @@ img.resultBodyLoading {
   transition: all 0.2s ease-in-out;
 }
 #searchBody #searchResults #srLower .resultItem .detailsTab:before,
+#apiBody #searchResults #srLower .resultItem .detailsTab:before,
 #searchBody #requestForm #srLower .resultItem .detailsTab:before,
-#searchBody #searchSuccess #srLower .resultItem .detailsTab:before {
+#apiBody #requestForm #srLower .resultItem .detailsTab:before,
+#searchBody #searchSuccess #srLower .resultItem .detailsTab:before,
+#apiBody #searchSuccess #srLower .resultItem .detailsTab:before {
   content: '';
   position: absolute;
   width: 100%;
@@ -494,8 +656,11 @@ img.resultBodyLoading {
   left: 0;
 }
 #searchBody #searchResults #srLower .resultItem .detailsTab:after,
+#apiBody #searchResults #srLower .resultItem .detailsTab:after,
 #searchBody #requestForm #srLower .resultItem .detailsTab:after,
-#searchBody #searchSuccess #srLower .resultItem .detailsTab:after {
+#apiBody #requestForm #srLower .resultItem .detailsTab:after,
+#searchBody #searchSuccess #srLower .resultItem .detailsTab:after,
+#apiBody #searchSuccess #srLower .resultItem .detailsTab:after {
   content: "";
   position: absolute;
   right: 14px;
@@ -507,56 +672,89 @@ img.resultBodyLoading {
   background-size: 8px;
 }
 #searchBody #searchResults #srLower .resultItem .detailsTab .detailsLess,
+#apiBody #searchResults #srLower .resultItem .detailsTab .detailsLess,
 #searchBody #requestForm #srLower .resultItem .detailsTab .detailsLess,
-#searchBody #searchSuccess #srLower .resultItem .detailsTab .detailsLess {
+#apiBody #requestForm #srLower .resultItem .detailsTab .detailsLess,
+#searchBody #searchSuccess #srLower .resultItem .detailsTab .detailsLess,
+#apiBody #searchSuccess #srLower .resultItem .detailsTab .detailsLess {
   display: none;
   float: left;
 }
 #searchBody #searchResults #srLower .resultItem .detailsTab:hover,
+#apiBody #searchResults #srLower .resultItem .detailsTab:hover,
 #searchBody #requestForm #srLower .resultItem .detailsTab:hover,
-#searchBody #searchSuccess #srLower .resultItem .detailsTab:hover {
+#apiBody #requestForm #srLower .resultItem .detailsTab:hover,
+#searchBody #searchSuccess #srLower .resultItem .detailsTab:hover,
+#apiBody #searchSuccess #srLower .resultItem .detailsTab:hover {
   padding-top: 9px;
   bottom: -29px;
 }
 #searchBody #searchResults #srLower .resultItem .detailsTab:hover:after,
+#apiBody #searchResults #srLower .resultItem .detailsTab:hover:after,
 #searchBody #requestForm #srLower .resultItem .detailsTab:hover:after,
-#searchBody #searchSuccess #srLower .resultItem .detailsTab:hover:after {
+#apiBody #requestForm #srLower .resultItem .detailsTab:hover:after,
+#searchBody #searchSuccess #srLower .resultItem .detailsTab:hover:after,
+#apiBody #searchSuccess #srLower .resultItem .detailsTab:hover:after {
   top: 16px;
 }
 #searchBody #searchResults #srLower .resultItem .detailsTab.active .detailsLess,
+#apiBody #searchResults #srLower .resultItem .detailsTab.active .detailsLess,
 #searchBody #requestForm #srLower .resultItem .detailsTab.active .detailsLess,
-#searchBody #searchSuccess #srLower .resultItem .detailsTab.active .detailsLess {
+#apiBody #requestForm #srLower .resultItem .detailsTab.active .detailsLess,
+#searchBody #searchSuccess #srLower .resultItem .detailsTab.active .detailsLess,
+#apiBody #searchSuccess #srLower .resultItem .detailsTab.active .detailsLess {
   display: block;
 }
 #searchBody #searchResults #srLower .resultItem .detailsTab.active .detailsMore,
+#apiBody #searchResults #srLower .resultItem .detailsTab.active .detailsMore,
 #searchBody #requestForm #srLower .resultItem .detailsTab.active .detailsMore,
-#searchBody #searchSuccess #srLower .resultItem .detailsTab.active .detailsMore {
+#apiBody #requestForm #srLower .resultItem .detailsTab.active .detailsMore,
+#searchBody #searchSuccess #srLower .resultItem .detailsTab.active .detailsMore,
+#apiBody #searchSuccess #srLower .resultItem .detailsTab.active .detailsMore {
   display: none;
 }
 #searchBody #searchResults #srLower .resultItem .detailsTab.active:after,
+#apiBody #searchResults #srLower .resultItem .detailsTab.active:after,
 #searchBody #requestForm #srLower .resultItem .detailsTab.active:after,
-#searchBody #searchSuccess #srLower .resultItem .detailsTab.active:after {
+#apiBody #requestForm #srLower .resultItem .detailsTab.active:after,
+#searchBody #searchSuccess #srLower .resultItem .detailsTab.active:after,
+#apiBody #searchSuccess #srLower .resultItem .detailsTab.active:after {
   background: url('/img/iconUpArrow.png') no-repeat;
   background-size: 8px;
   top: 9px;
 }
 #searchBody #searchResults #srLower .resultItem .detailsTab.active:hover:after,
+#apiBody #searchResults #srLower .resultItem .detailsTab.active:hover:after,
 #searchBody #requestForm #srLower .resultItem .detailsTab.active:hover:after,
-#searchBody #searchSuccess #srLower .resultItem .detailsTab.active:hover:after {
+#apiBody #requestForm #srLower .resultItem .detailsTab.active:hover:after,
+#searchBody #searchSuccess #srLower .resultItem .detailsTab.active:hover:after,
+#apiBody #searchSuccess #srLower .resultItem .detailsTab.active:hover:after {
   top: 15px;
 }
 #searchBody #searchResults #srLower .highlyClassified:before,
+#apiBody #searchResults #srLower .highlyClassified:before,
 #searchBody #requestForm #srLower .highlyClassified:before,
+#apiBody #requestForm #srLower .highlyClassified:before,
 #searchBody #searchSuccess #srLower .highlyClassified:before,
+#apiBody #searchSuccess #srLower .highlyClassified:before,
 #searchBody #searchResults #srLower .classified:before,
+#apiBody #searchResults #srLower .classified:before,
 #searchBody #requestForm #srLower .classified:before,
+#apiBody #requestForm #srLower .classified:before,
 #searchBody #searchSuccess #srLower .classified:before,
+#apiBody #searchSuccess #srLower .classified:before,
 #searchBody #searchResults #srLower .public:before,
+#apiBody #searchResults #srLower .public:before,
 #searchBody #requestForm #srLower .public:before,
+#apiBody #requestForm #srLower .public:before,
 #searchBody #searchSuccess #srLower .public:before,
+#apiBody #searchSuccess #srLower .public:before,
 #searchBody #searchResults #srLower .internal:before,
+#apiBody #searchResults #srLower .internal:before,
 #searchBody #requestForm #srLower .internal:before,
-#searchBody #searchSuccess #srLower .internal:before {
+#apiBody #requestForm #srLower .internal:before,
+#searchBody #searchSuccess #srLower .internal:before,
+#apiBody #searchSuccess #srLower .internal:before {
   content: "";
   position: absolute;
   left: 20px;
@@ -564,52 +762,79 @@ img.resultBodyLoading {
   width: 26px;
 }
 #searchBody #searchResults #srLower .highlyClassified .classificationTitle,
+#apiBody #searchResults #srLower .highlyClassified .classificationTitle,
 #searchBody #requestForm #srLower .highlyClassified .classificationTitle,
-#searchBody #searchSuccess #srLower .highlyClassified .classificationTitle {
+#apiBody #requestForm #srLower .highlyClassified .classificationTitle,
+#searchBody #searchSuccess #srLower .highlyClassified .classificationTitle,
+#apiBody #searchSuccess #srLower .highlyClassified .classificationTitle {
   color: #f72525;
 }
 #searchBody #searchResults #srLower .highlyClassified:before,
+#apiBody #searchResults #srLower .highlyClassified:before,
 #searchBody #requestForm #srLower .highlyClassified:before,
-#searchBody #searchSuccess #srLower .highlyClassified:before {
+#apiBody #requestForm #srLower .highlyClassified:before,
+#searchBody #searchSuccess #srLower .highlyClassified:before,
+#apiBody #searchSuccess #srLower .highlyClassified:before {
   background: url('/img/iconHighClassified.png') no-repeat;
   background-size: 26px;
 }
 #searchBody #searchResults #srLower .classified .classificationTitle,
+#apiBody #searchResults #srLower .classified .classificationTitle,
 #searchBody #requestForm #srLower .classified .classificationTitle,
-#searchBody #searchSuccess #srLower .classified .classificationTitle {
-  color: #ffa900;
+#apiBody #requestForm #srLower .classified .classificationTitle,
+#searchBody #searchSuccess #srLower .classified .classificationTitle,
+#apiBody #searchSuccess #srLower .classified .classificationTitle {
+  color: #FFA900;
 }
 #searchBody #searchResults #srLower .classified:before,
+#apiBody #searchResults #srLower .classified:before,
 #searchBody #requestForm #srLower .classified:before,
-#searchBody #searchSuccess #srLower .classified:before {
+#apiBody #requestForm #srLower .classified:before,
+#searchBody #searchSuccess #srLower .classified:before,
+#apiBody #searchSuccess #srLower .classified:before {
   background: url('/img/iconClassified.png') no-repeat;
   background-size: 26px;
 }
 #searchBody #searchResults #srLower .public .classificationTitle,
+#apiBody #searchResults #srLower .public .classificationTitle,
 #searchBody #requestForm #srLower .public .classificationTitle,
-#searchBody #searchSuccess #srLower .public .classificationTitle {
-  color: #b5d45d;
+#apiBody #requestForm #srLower .public .classificationTitle,
+#searchBody #searchSuccess #srLower .public .classificationTitle,
+#apiBody #searchSuccess #srLower .public .classificationTitle {
+  color: #B5D45D;
 }
 #searchBody #searchResults #srLower .public:before,
+#apiBody #searchResults #srLower .public:before,
 #searchBody #requestForm #srLower .public:before,
-#searchBody #searchSuccess #srLower .public:before {
+#apiBody #requestForm #srLower .public:before,
+#searchBody #searchSuccess #srLower .public:before,
+#apiBody #searchSuccess #srLower .public:before {
   background: url('/img/iconPublic.png') no-repeat;
   background-size: 26px;
 }
 #searchBody #searchResults #srLower .internal .classificationTitle,
+#apiBody #searchResults #srLower .internal .classificationTitle,
 #searchBody #requestForm #srLower .internal .classificationTitle,
-#searchBody #searchSuccess #srLower .internal .classificationTitle {
+#apiBody #requestForm #srLower .internal .classificationTitle,
+#searchBody #searchSuccess #srLower .internal .classificationTitle,
+#apiBody #searchSuccess #srLower .internal .classificationTitle {
   color: #1b7bdb;
 }
 #searchBody #searchResults #srLower .internal:before,
+#apiBody #searchResults #srLower .internal:before,
 #searchBody #requestForm #srLower .internal:before,
-#searchBody #searchSuccess #srLower .internal:before {
+#apiBody #requestForm #srLower .internal:before,
+#searchBody #searchSuccess #srLower .internal:before,
+#apiBody #searchSuccess #srLower .internal:before {
   background: url('/img/iconInternal.png') no-repeat;
   background-size: 26px;
 }
 #searchBody #searchResults .page-nav,
+#apiBody #searchResults .page-nav,
 #searchBody #requestForm .page-nav,
-#searchBody #searchSuccess .page-nav {
+#apiBody #requestForm .page-nav,
+#searchBody #searchSuccess .page-nav,
+#apiBody #searchSuccess .page-nav {
   margin: 0;
   padding: 0;
   list-style: none;
@@ -618,69 +843,98 @@ img.resultBodyLoading {
   float: right;
 }
 #searchBody #searchResults .page-nav:before,
+#apiBody #searchResults .page-nav:before,
 #searchBody #requestForm .page-nav:before,
+#apiBody #requestForm .page-nav:before,
 #searchBody #searchSuccess .page-nav:before,
+#apiBody #searchSuccess .page-nav:before,
 #searchBody #searchResults .page-nav:after,
+#apiBody #searchResults .page-nav:after,
 #searchBody #requestForm .page-nav:after,
-#searchBody #searchSuccess .page-nav:after {
+#apiBody #requestForm .page-nav:after,
+#searchBody #searchSuccess .page-nav:after,
+#apiBody #searchSuccess .page-nav:after {
   content: "";
   display: table;
 }
 #searchBody #searchResults .page-nav:after,
+#apiBody #searchResults .page-nav:after,
 #searchBody #requestForm .page-nav:after,
-#searchBody #searchSuccess .page-nav:after {
+#apiBody #requestForm .page-nav:after,
+#searchBody #searchSuccess .page-nav:after,
+#apiBody #searchSuccess .page-nav:after {
   clear: both;
 }
 #searchBody #searchResults .page-nav li,
+#apiBody #searchResults .page-nav li,
 #searchBody #requestForm .page-nav li,
-#searchBody #searchSuccess .page-nav li {
+#apiBody #requestForm .page-nav li,
+#searchBody #searchSuccess .page-nav li,
+#apiBody #searchSuccess .page-nav li {
   float: left;
   margin: 0;
   padding: 0;
 }
 #searchBody #searchResults .page-nav li a,
+#apiBody #searchResults .page-nav li a,
 #searchBody #requestForm .page-nav li a,
-#searchBody #searchSuccess .page-nav li a {
+#apiBody #requestForm .page-nav li a,
+#searchBody #searchSuccess .page-nav li a,
+#apiBody #searchSuccess .page-nav li a {
   width: 10px;
   height: 15px;
   text-align: center;
-  color: #f3f3f3;
+  color: #F3F3F3;
   display: block;
   padding: 2px 5px;
   margin: 0 5px 5px 0;
   float: left;
-  background-color: #4775ab;
+  background-color: #4775AB;
   text-decoration: none;
   -webkit-box-shadow: 3px 3px 6px 0px rgba(50, 50, 50, 0.15);
   -moz-box-shadow: 3px 3px 6px 0px rgba(50, 50, 50, 0.15);
   box-shadow: 3px 3px 6px 0px rgba(50, 50, 50, 0.15);
 }
 #searchBody #searchResults .page-nav li.active a,
+#apiBody #searchResults .page-nav li.active a,
 #searchBody #requestForm .page-nav li.active a,
+#apiBody #requestForm .page-nav li.active a,
 #searchBody #searchSuccess .page-nav li.active a,
+#apiBody #searchSuccess .page-nav li.active a,
 #searchBody #searchResults .page-nav li a:hover,
+#apiBody #searchResults .page-nav li a:hover,
 #searchBody #requestForm .page-nav li a:hover,
-#searchBody #searchSuccess .page-nav li a:hover {
+#apiBody #requestForm .page-nav li a:hover,
+#searchBody #searchSuccess .page-nav li a:hover,
+#apiBody #searchSuccess .page-nav li a:hover {
   color: #224d7d;
   font-weight: bold;
-  background-color: white;
+  background-color: #fff;
 }
 #searchBody #requestForm h2,
-#searchBody #searchSuccess h2 {
+#apiBody #requestForm h2,
+#searchBody #searchSuccess h2,
+#apiBody #searchSuccess h2 {
   font-size: 30px;
   padding: 8px 25px;
   margin-top: 75px;
 }
 #searchBody #requestForm #srLower,
-#searchBody #searchSuccess #srLower {
+#apiBody #requestForm #srLower,
+#searchBody #searchSuccess #srLower,
+#apiBody #searchSuccess #srLower {
   float: left;
   width: 94%;
   padding: 23px 3% 0;
 }
 #searchBody #requestForm #srLower h3,
+#apiBody #requestForm #srLower h3,
 #searchBody #searchSuccess #srLower h3,
+#apiBody #searchSuccess #srLower h3,
 #searchBody #requestForm #srLower label.headerTab,
-#searchBody #searchSuccess #srLower label.headerTab {
+#apiBody #requestForm #srLower label.headerTab,
+#searchBody #searchSuccess #srLower label.headerTab,
+#apiBody #searchSuccess #srLower label.headerTab {
   font-size: 18px;
   margin-bottom: 20px;
   padding: 4px 18px;
@@ -690,11 +944,17 @@ img.resultBodyLoading {
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
 #searchBody #requestForm #srLower textarea,
+#apiBody #requestForm #srLower textarea,
 #searchBody #searchSuccess #srLower textarea,
+#apiBody #searchSuccess #srLower textarea,
 #searchBody #requestForm #srLower select,
+#apiBody #requestForm #srLower select,
 #searchBody #searchSuccess #srLower select,
+#apiBody #searchSuccess #srLower select,
 #searchBody #requestForm #srLower input.full,
-#searchBody #searchSuccess #srLower input.full {
+#apiBody #requestForm #srLower input.full,
+#searchBody #searchSuccess #srLower input.full,
+#apiBody #searchSuccess #srLower input.full {
   width: 100%;
   height: 8em;
   padding: 10px;
@@ -704,92 +964,134 @@ img.resultBodyLoading {
   box-shadow: 0px 0px 7px 1px rgba(50, 50, 50, 0.22);
 }
 #searchBody #requestForm #srLower select,
+#apiBody #requestForm #srLower select,
 #searchBody #searchSuccess #srLower select,
+#apiBody #searchSuccess #srLower select,
 #searchBody #requestForm #srLower input.full,
-#searchBody #searchSuccess #srLower input.full {
+#apiBody #requestForm #srLower input.full,
+#searchBody #searchSuccess #srLower input.full,
+#apiBody #searchSuccess #srLower input.full {
   height: auto;
 }
 #searchBody #requestForm #srLower .fieldGroup,
-#searchBody #searchSuccess #srLower .fieldGroup {
+#apiBody #requestForm #srLower .fieldGroup,
+#searchBody #searchSuccess #srLower .fieldGroup,
+#apiBody #searchSuccess #srLower .fieldGroup {
   width: 75%;
   margin-bottom: 10px;
   *zoom: 1;
 }
 #searchBody #requestForm #srLower .fieldGroup:before,
+#apiBody #requestForm #srLower .fieldGroup:before,
 #searchBody #searchSuccess #srLower .fieldGroup:before,
+#apiBody #searchSuccess #srLower .fieldGroup:before,
 #searchBody #requestForm #srLower .fieldGroup:after,
-#searchBody #searchSuccess #srLower .fieldGroup:after {
+#apiBody #requestForm #srLower .fieldGroup:after,
+#searchBody #searchSuccess #srLower .fieldGroup:after,
+#apiBody #searchSuccess #srLower .fieldGroup:after {
   content: "";
   display: table;
 }
 #searchBody #requestForm #srLower .fieldGroup:after,
-#searchBody #searchSuccess #srLower .fieldGroup:after {
+#apiBody #requestForm #srLower .fieldGroup:after,
+#searchBody #searchSuccess #srLower .fieldGroup:after,
+#apiBody #searchSuccess #srLower .fieldGroup:after {
   clear: both;
 }
 #searchBody #requestForm #srLower .fieldGroup .field-continer,
-#searchBody #searchSuccess #srLower .fieldGroup .field-continer {
+#apiBody #requestForm #srLower .fieldGroup .field-continer,
+#searchBody #searchSuccess #srLower .fieldGroup .field-continer,
+#apiBody #searchSuccess #srLower .fieldGroup .field-continer {
   float: left;
   width: 47%;
   margin: 0 3% 0 0;
 }
 #searchBody #requestForm #srLower .fieldGroup label,
-#searchBody #searchSuccess #srLower .fieldGroup label {
+#apiBody #requestForm #srLower .fieldGroup label,
+#searchBody #searchSuccess #srLower .fieldGroup label,
+#apiBody #searchSuccess #srLower .fieldGroup label {
   display: block;
   font-size: bold;
   font-size: 11px;
 }
 #searchBody #requestForm #srLower .fieldGroup input,
+#apiBody #requestForm #srLower .fieldGroup input,
 #searchBody #searchSuccess #srLower .fieldGroup input,
+#apiBody #searchSuccess #srLower .fieldGroup input,
 #searchBody #requestForm #srLower .fieldGroup select,
-#searchBody #searchSuccess #srLower .fieldGroup select {
+#apiBody #requestForm #srLower .fieldGroup select,
+#searchBody #searchSuccess #srLower .fieldGroup select,
+#apiBody #searchSuccess #srLower .fieldGroup select {
   width: 100%;
   margin: 0 0 12px 0;
 }
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody,
-#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody {
+#apiBody #requestForm #srLower .resultItem .resultContent .resultBody,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody,
+#apiBody #searchSuccess #srLower .resultItem .resultContent .resultBody {
   display: block;
 }
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody p,
+#apiBody #requestForm #srLower .resultItem .resultContent .resultBody p,
 #searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody p,
+#apiBody #searchSuccess #srLower .resultItem .resultContent .resultBody p,
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody div,
-#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody div {
+#apiBody #requestForm #srLower .resultItem .resultContent .resultBody div,
+#searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody div,
+#apiBody #searchSuccess #srLower .resultItem .resultContent .resultBody div {
   width: 125%;
 }
 #searchBody #requestForm #srLower .resultItem .irLower,
-#searchBody #searchSuccess #srLower .resultItem .irLower {
+#apiBody #requestForm #srLower .resultItem .irLower,
+#searchBody #searchSuccess #srLower .resultItem .irLower,
+#apiBody #searchSuccess #srLower .resultItem .irLower {
   margin-left: -30px;
 }
 #searchBody #requestForm #srLower .resultItem .irLower .checkBoxes,
-#searchBody #searchSuccess #srLower .resultItem .irLower .checkBoxes {
+#apiBody #requestForm #srLower .resultItem .irLower .checkBoxes,
+#searchBody #searchSuccess #srLower .resultItem .irLower .checkBoxes,
+#apiBody #searchSuccess #srLower .resultItem .irLower .checkBoxes {
   max-height: 400px;
   overflow: auto;
   *zoom: 1;
 }
 #searchBody #requestForm #srLower .resultItem .irLower .checkBoxes:before,
+#apiBody #requestForm #srLower .resultItem .irLower .checkBoxes:before,
 #searchBody #searchSuccess #srLower .resultItem .irLower .checkBoxes:before,
+#apiBody #searchSuccess #srLower .resultItem .irLower .checkBoxes:before,
 #searchBody #requestForm #srLower .resultItem .irLower .checkBoxes:after,
-#searchBody #searchSuccess #srLower .resultItem .irLower .checkBoxes:after {
+#apiBody #requestForm #srLower .resultItem .irLower .checkBoxes:after,
+#searchBody #searchSuccess #srLower .resultItem .irLower .checkBoxes:after,
+#apiBody #searchSuccess #srLower .resultItem .irLower .checkBoxes:after {
   content: "";
   display: table;
 }
 #searchBody #requestForm #srLower .resultItem .irLower .checkBoxes:after,
-#searchBody #searchSuccess #srLower .resultItem .irLower .checkBoxes:after {
+#apiBody #requestForm #srLower .resultItem .irLower .checkBoxes:after,
+#searchBody #searchSuccess #srLower .resultItem .irLower .checkBoxes:after,
+#apiBody #searchSuccess #srLower .resultItem .irLower .checkBoxes:after {
   clear: both;
 }
 #searchBody #requestForm #srLower .resultItem .irLower h5,
-#searchBody #searchSuccess #srLower .resultItem .irLower h5 {
+#apiBody #requestForm #srLower .resultItem .irLower h5,
+#searchBody #searchSuccess #srLower .resultItem .irLower h5,
+#apiBody #searchSuccess #srLower .resultItem .irLower h5 {
   font-size: 14px;
   margin: 22px 0 7px;
   padding: 0;
   color: #114477;
 }
 #searchBody #requestForm #srLower .resultItem .irLower .checkCol,
-#searchBody #searchSuccess #srLower .resultItem .irLower .checkCol {
+#apiBody #requestForm #srLower .resultItem .irLower .checkCol,
+#searchBody #searchSuccess #srLower .resultItem .irLower .checkCol,
+#apiBody #searchSuccess #srLower .resultItem .irLower .checkCol {
   width: 50%;
   float: left;
 }
 #searchBody #requestForm #srLower .resultItem .irLower .checkCol label,
-#searchBody #searchSuccess #srLower .resultItem .irLower .checkCol label {
+#apiBody #requestForm #srLower .resultItem .irLower .checkCol label,
+#searchBody #searchSuccess #srLower .resultItem .irLower .checkCol label,
+#apiBody #searchSuccess #srLower .resultItem .irLower .checkCol label {
   white-space: nowrap;
   font-size: 10px;
   vertical-align: top;
@@ -797,21 +1099,29 @@ img.resultBodyLoading {
   display: inline-block;
 }
 #searchBody #requestForm #srLower .resultItem .irLower .checkCol input,
-#searchBody #searchSuccess #srLower .resultItem .irLower .checkCol input {
+#apiBody #requestForm #srLower .resultItem .irLower .checkCol input,
+#searchBody #searchSuccess #srLower .resultItem .irLower .checkCol input,
+#apiBody #searchSuccess #srLower .resultItem .irLower .checkCol input {
   margin-left: 0;
 }
 #searchBody #requestForm #srLower .resultItem .irLower .checkCol img,
-#searchBody #searchSuccess #srLower .resultItem .irLower .checkCol img {
+#apiBody #requestForm #srLower .resultItem .irLower .checkCol img,
+#searchBody #searchSuccess #srLower .resultItem .irLower .checkCol img,
+#apiBody #searchSuccess #srLower .resultItem .irLower .checkCol img {
   position: relative;
   top: -2px;
 }
 #searchBody #requestForm #srLower .resultItem .irLower .checkCol img.denied,
-#searchBody #searchSuccess #srLower .resultItem .irLower .checkCol img.denied {
+#apiBody #requestForm #srLower .resultItem .irLower .checkCol img.denied,
+#searchBody #searchSuccess #srLower .resultItem .irLower .checkCol img.denied,
+#apiBody #searchSuccess #srLower .resultItem .irLower .checkCol img.denied {
   top: 0;
   margin-right: 3px;
 }
 #searchBody #requestForm #srLower .taBox,
-#searchBody #searchSuccess #srLower .taBox {
+#apiBody #requestForm #srLower .taBox,
+#searchBody #searchSuccess #srLower .taBox,
+#apiBody #searchSuccess #srLower .taBox {
   background-color: white;
   position: relative;
   padding: 20px 3%;
@@ -820,25 +1130,61 @@ img.resultBodyLoading {
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
-#searchBody #searchSuccess {
+#searchBody #searchSuccess,
+#apiBody #searchSuccess {
   width: 450px;
   margin: 0 auto;
   padding-bottom: 30px;
 }
-#searchBody #searchSuccess h2 {
+#searchBody #searchSuccess h2,
+#apiBody #searchSuccess h2 {
   margin-top: 40px;
 }
-#searchBody #searchSuccess #successLower {
+#searchBody #searchSuccess #successLower,
+#apiBody #searchSuccess #successLower {
   float: left;
   padding: 12px 7% 23px 6%;
   font-size: 16px;
 }
-#searchBody #searchSuccess #successLower a {
+#searchBody #searchSuccess #successLower a,
+#apiBody #searchSuccess #successLower a {
   color: #3d73b0;
   text-decoration: none;
 }
-#searchBody #searchSuccess #successLower a:hover {
+#searchBody #searchSuccess #successLower a:hover,
+#apiBody #searchSuccess #successLower a:hover {
   text-decoration: underline;
+}
+#apiBody {
+  padding: 57px 0 47px;
+}
+#apiBody .btnLinks {
+  padding: 10px 0px;
+}
+#apiBody .btnLinks a {
+  text-decoration: none;
+}
+#apiBody #searchResults #srLower .resultItem .requestAccess {
+  bottom: -45px;
+}
+#apiBody .inputButton {
+  background-color: rgba(14, 50, 100, 0.85);
+  font-size: 18px;
+  border: inherit;
+  padding: 0 30px;
+}
+#apiBody .api-terms {
+  padding: 4px;
+  font-size: 14px;
+}
+#apiBody .api-terms a {
+  color: #234e77;
+}
+#apiBody .api-terms a:hover {
+  color: #10375b;
+}
+#apiBody .api-terms tbody .header {
+  text-align: left;
 }
 form#request {
   position: relative;
@@ -849,7 +1195,7 @@ form#request #formSubmit {
 form#request #formSubmit #requestSubmit {
   float: right;
   margin: 0 6% 0 8px;
-  color: white;
+  color: #fff;
   font-size: 12.5px;
   text-decoration: none;
   padding: 6px 15px;
@@ -877,12 +1223,14 @@ form#request #mobileReqd {
   }
 }
 @media screen and (max-width: 800px) {
-  #searchBody #catalogLink {
+  #searchBody #catalogLink,
+  #apiBody #catalogLink {
     width: 135px;
     clear: both;
     margin: -25px 0 23px 28%;
   }
-  #searchBody #requestForm #srLower .fieldGroup {
+  #searchBody #requestForm #srLower .fieldGroup,
+  #apiBody #requestForm #srLower .fieldGroup {
     width: 104%;
   }
 }
@@ -894,62 +1242,79 @@ form#request #mobileReqd {
     width: 90%;
     padding: 8px 5% !important;
   }
-  #searchBody #catalogLink {
+  #searchBody #catalogLink,
+  #apiBody #catalogLink {
     float: none;
     margin: 0 auto 30px;
   }
-  #searchBody #searchTop {
+  #searchBody #searchTop,
+  #apiBody #searchTop {
     width: 100%;
     padding: 25px 0 13px;
   }
-  #searchBody #searchTop h1 {
+  #searchBody #searchTop h1,
+  #apiBody #searchTop h1 {
     font-size: 25px;
   }
-  #searchBody #searchTop #stLower {
+  #searchBody #searchTop #stLower,
+  #apiBody #searchTop #stLower {
     padding: 19px 20px;
   }
-  #searchBody #searchTop #stLower .autoComplete {
+  #searchBody #searchTop #stLower .autoComplete,
+  #apiBody #searchTop #stLower .autoComplete {
     width: 100%;
   }
-  #searchBody #searchTop #stLower input[type=text] {
+  #searchBody #searchTop #stLower input[type=text],
+  #apiBody #searchTop #stLower input[type=text] {
     width: 100%;
     margin-bottom: 20px;
   }
-  #searchBody #searchTop #stLower input[type=submit] {
+  #searchBody #searchTop #stLower input[type=submit],
+  #apiBody #searchTop #stLower input[type=submit] {
     margin: 0 auto;
     display: block;
   }
-  #searchBody #searchMain h2 {
+  #searchBody #searchMain h2,
+  #apiBody #searchMain h2 {
     padding: 8px 5%;
   }
   #searchBody #requestForm #srLower h3,
-  #searchBody #requestForm #srLower label.headerTab {
+  #apiBody #requestForm #srLower h3,
+  #searchBody #requestForm #srLower label.headerTab,
+  #apiBody #requestForm #srLower label.headerTab {
     width: initial;
     margin-bottom: 15px;
   }
 }
 @media screen and (max-width: 680px) {
-  #searchBody #searchResults h2 {
+  #searchBody #searchResults h2,
+  #apiBody #searchResults h2 {
     padding: 8px 5%;
   }
-  #searchBody #searchResults #srLower {
+  #searchBody #searchResults #srLower,
+  #apiBody #searchResults #srLower {
     padding: 23px 6% 30px;
   }
-  #searchBody #searchResults #srLower #searchFilters label {
+  #searchBody #searchResults #srLower #searchFilters label,
+  #apiBody #searchResults #srLower #searchFilters label {
     clear: left;
     display: block;
     margin: 10px 0 5px;
   }
-  #searchBody #searchResults #srLower #searchFilters label:first-of-type {
+  #searchBody #searchResults #srLower #searchFilters label:first-of-type,
+  #apiBody #searchResults #srLower #searchFilters label:first-of-type {
     margin-top: 0;
   }
-  #searchBody #searchResults #srLower #searchFilters select {
+  #searchBody #searchResults #srLower #searchFilters select,
+  #apiBody #searchResults #srLower #searchFilters select {
     width: 100%;
   }
-  #searchBody #searchResults #srLower .resultItem {
+  #searchBody #searchResults #srLower .resultItem,
+  #apiBody #searchResults #srLower .resultItem {
     padding: 20px 3% 75px 60px;
   }
-  #searchBody #searchResults #srLower .resultItem .requestAccess {
+  #searchBody #searchResults #srLower .resultItem .requestAccess,
+  #apiBody #searchResults #srLower .resultItem .requestAccess {
     bottom: 25px;
     right: inherit;
     left: 50%;
@@ -957,68 +1322,90 @@ form#request #mobileReqd {
   }
 }
 @media screen and (max-width: 650px) {
-  #searchBody #requestForm #srLower .fieldGroup {
+  #searchBody #requestForm #srLower .fieldGroup,
+  #apiBody #requestForm #srLower .fieldGroup {
     width: 100%;
   }
-  #searchBody #requestForm #srLower .fieldGroup .field-continer {
+  #searchBody #requestForm #srLower .fieldGroup .field-continer,
+  #apiBody #requestForm #srLower .fieldGroup .field-continer {
     float: none;
     width: 100%;
     margin: 0;
   }
   #searchBody #requestForm #srLower .fieldGroup input,
-  #searchBody #requestForm #srLower .fieldGroup select {
+  #apiBody #requestForm #srLower .fieldGroup input,
+  #searchBody #requestForm #srLower .fieldGroup select,
+  #apiBody #requestForm #srLower .fieldGroup select {
     width: 100%;
     margin: 0 0% 12px 0;
   }
 }
 @media screen and (max-width: 500px) {
   #searchBody #searchResults #srLower .highlyClassified:before,
+  #apiBody #searchResults #srLower .highlyClassified:before,
   #searchBody #searchResults #srLower .classified:before,
+  #apiBody #searchResults #srLower .classified:before,
   #searchBody #searchResults #srLower .public:before,
-  #searchBody #searchResults #srLower .internal:before {
+  #apiBody #searchResults #srLower .public:before,
+  #searchBody #searchResults #srLower .internal:before,
+  #apiBody #searchResults #srLower .internal:before {
     left: 6%;
   }
-  #searchBody #searchResults #srLower .resultItem {
+  #searchBody #searchResults #srLower .resultItem,
+  #apiBody #searchResults #srLower .resultItem {
     padding: 20px 3% 75px 6%;
   }
-  #searchBody #searchResults #srLower .resultItem h4 {
+  #searchBody #searchResults #srLower .resultItem h4,
+  #apiBody #searchResults #srLower .resultItem h4 {
     margin-left: 35px;
     margin-bottom: 13px;
     margin-top: 3px;
   }
-  #searchBody #requestForm #srLower {
+  #searchBody #requestForm #srLower,
+  #apiBody #requestForm #srLower {
     width: 88%;
     padding: 23px 6% 0;
   }
-  #searchBody #requestForm #srLower .resultItem {
+  #searchBody #requestForm #srLower .resultItem,
+  #apiBody #requestForm #srLower .resultItem {
     padding: 20px 6%;
   }
-  #searchBody #requestForm #srLower .resultItem h4 {
+  #searchBody #requestForm #srLower .resultItem h4,
+  #apiBody #requestForm #srLower .resultItem h4 {
     font-size: 13px;
   }
-  #searchBody #requestForm #srLower .resultItem h5 {
+  #searchBody #requestForm #srLower .resultItem h5,
+  #apiBody #requestForm #srLower .resultItem h5 {
     font-size: 12px;
   }
-  #searchBody #requestForm #srLower .resultItem:before {
+  #searchBody #requestForm #srLower .resultItem:before,
+  #apiBody #requestForm #srLower .resultItem:before {
     background: none;
   }
-  #searchBody #requestForm #srLower .resultItem .resultContent .requestMeta {
+  #searchBody #requestForm #srLower .resultItem .resultContent .requestMeta,
+  #apiBody #requestForm #srLower .resultItem .resultContent .requestMeta {
     display: none;
   }
   #searchBody #requestForm #srLower .resultItem .resultContent .resultBody p,
-  #searchBody #requestForm #srLower .resultItem .resultContent .resultBody div {
+  #apiBody #requestForm #srLower .resultItem .resultContent .resultBody p,
+  #searchBody #requestForm #srLower .resultItem .resultContent .resultBody div,
+  #apiBody #requestForm #srLower .resultItem .resultContent .resultBody div {
     font-size: 11.5px;
   }
-  #searchBody #requestForm #srLower .resultItem .irLower {
+  #searchBody #requestForm #srLower .resultItem .irLower,
+  #apiBody #requestForm #srLower .resultItem .irLower {
     margin-left: 0;
   }
-  #searchBody #requestForm #srLower .taBox {
+  #searchBody #requestForm #srLower .taBox,
+  #apiBody #requestForm #srLower .taBox {
     padding: 20px 6%;
   }
-  #searchBody #searchSuccess {
+  #searchBody #searchSuccess,
+  #apiBody #searchSuccess {
     width: 88%;
   }
-  #searchBody #searchSuccess #successLower {
+  #searchBody #searchSuccess #successLower,
+  #apiBody #searchSuccess #successLower {
     padding: 5px 7% 16px 7%;
     font-size: 14px;
   }
