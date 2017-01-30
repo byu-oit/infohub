@@ -30,7 +30,7 @@
                     <tr>
                         <td><?= $user->UserFirstName ?></td>
                         <td><?= $user->UserLastName ?></td>
-                        <td><?= $user->UserUserName ?></td>
+                        <td><?= substr($user->UserUserName, 0, 10) ?></td>
                         <td><?= $user->UserEmailaddress ?></td>
                         <td width="50px">
                             <img
