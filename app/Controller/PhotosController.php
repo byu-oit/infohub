@@ -66,7 +66,9 @@ class PhotosController extends AppController {
 
 		$photo = $this->CollibraAPI->photo($userResourceId);
 		if (empty($photo)) {
-			exit("No photo found");
+			$photo = [
+				'body' => file_get_contents(IMAGES . 'icon-question.png'),
+				'type' => 'image/png'];
 		}
 		header('Content-Type: ' . $photo['type']);
 		echo $photo['body'];

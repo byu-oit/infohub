@@ -245,7 +245,7 @@ class CollibraAPI extends Model {
 			$response = $this->post("user/{$userResourceId}/avatar", ['file' => $fileId]);
 			return ($response && $response->isOk());
 		}
-		$photo = $this->get("user/{$userResourceId}/avatar", ['raw' => true]);
+		$photo = $this->get("user/{$userResourceId}/avatar?width=300&height=300", ['raw' => true]);
 		if (!($photo && $photo->isOk())) {
 			return null;
 		}
