@@ -16,7 +16,7 @@
 		<h1 class="headerTab"><?= $hostname . '/' . trim($basePath, '/') ?></h1>
 		<div class="clear"></div>
 		<div class="btnLinks">
-			<a href="https://developer-dev.byu.edu/api/api-list" id="doc_link" class="inputButton" target="_blank">Read API documentation</a>
+			<a href="https://developer.byu.edu/api/api-list" id="doc_link" class="inputButton" target="_blank">Read API documentation</a>
 			<a href="https://api.byu.edu/store/" id="store_link" class="inputButton" target="_blank">View this API in the store</a>
 		</div>
 		<div id="srLower" class="whiteBox">

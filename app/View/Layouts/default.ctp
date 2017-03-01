@@ -29,6 +29,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 		echo $this->Html->meta('icon');
 		// echo $this->Html->css('cake.generic');
 		echo $this->Html->css('styles');
+		echo $this->Html->css('font-awesome.min');
 		echo $this->Html->css('admin-nav');
 		echo $this->fetch('meta');
 		echo $this->fetch('css');
@@ -419,6 +420,18 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 				<li><a href="/people" id="findLink">Find People</a></li>
 				<li><a href="/resources" id="resourceLink">Resources</a></li>
 				<li><a href="/apis" id="apisLink">APIs</a></li>
+				<li>
+					<a href="https://developer.byu.edu/api/api-list" target="_blank">
+						<i class="fa fa-external-link" aria-hidden="true"></i>
+						API Documentation
+					</a>
+				</li>
+				<li>
+					<a href="https://api.byu.edu/store/" target="_blank">
+						<i class="fa fa-external-link" aria-hidden="true"></i>
+						API Store
+					</a>
+				</li>
 				<?php
 					if($casAuthenticated){
 						echo '<li><a href="/myaccount" id="resourceLink">My Requests</a></li>';
