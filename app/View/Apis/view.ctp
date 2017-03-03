@@ -63,7 +63,7 @@
 					</table>
 				<?php endif ?>
 				<?php if ($hasSelectable): ?>
-					<input type="button" onclick="addToQueue(this, false)" class="requestAccess grow mainRequestBtn" value="Add To Request">
+					<input type="button" data-apiPage="<?= htmlentities($hostname . '/' . trim($basePath, '/'), ENT_QUOTES) ?>" onclick="addToQueue(this, false)" class="requestAccess grow mainRequestBtn" value="Add To Request">
 				<?php endif ?>
 			</div>
 		</div>

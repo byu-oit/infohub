@@ -2,6 +2,7 @@
 
 class RequestController extends AppController {
 	public $helpers = array('Html', 'Form');
+	public $uses = array('CollibraAPI', 'BYUAPI');
 
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -28,6 +29,7 @@ class RequestController extends AppController {
 			$arrTermIDs = $this->request->data['id'];
 			$arrVocabIDs = $this->request->data['vocab'];
 			$clearRelated = $this->request->data['clearRelated']=='true';
+			$apiPage = empty($this->request->data['apiPage']) ? null : $this->request->data['apiPage'];
 
 			$arrQueue = (array)$this->Cookie->read('queue');
 			if(!empty($arrQueue)) {
@@ -50,9 +52,8 @@ class RequestController extends AppController {
 				$termID = $arrTermIDs[$i];
 				$vocabID = $arrVocabIDs[$i];
 
-				if($termID != '' && empty($arrQueue[$termID])){
+				if(!empty($termID) && empty($arrQueue[$termID])){
 					$requestable = true;
-					$this->loadModel('CollibraAPI');
 					$termResp = $this->CollibraAPI->get('term/'.$termID);
 					$termResp = json_decode($termResp);
 
@@ -72,7 +73,7 @@ class RequestController extends AppController {
 
 					if($requestable){
 						$newTermsAdded++;
-						$arrQueue[$termID] = array($term, $termID, $vocabID);
+						$arrQueue[$termID] = array($term, $termID, $vocabID, $apiPage);
 					}
 				}
 			}
@@ -143,8 +144,6 @@ class RequestController extends AppController {
 			exit;
 		}
 
-		$this->loadModel('CollibraAPI');
-
 		$name = explode(' ',$this->request->data['name']);
 		$firstName = $name[0];
 		$lastName = '';
@@ -210,7 +209,6 @@ class RequestController extends AppController {
 
 	public function index() {
 		$netID = $this->Auth->user('username');
-		$this->loadModel('BYUAPI');
 		$byuUser = $this->BYUAPI->personalSummary($netID);
 		$supervisorInfo = $this->BYUAPI->supervisorLookup($netID);
 
@@ -222,8 +220,6 @@ class RequestController extends AppController {
 		}
 
 		//$termID = $this->request->params['pass'][0];
-		$this->loadModel('CollibraAPI');
-
 		$requestFilter = '{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"createdOn"}},{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202longExpr"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202rid"}},{"Group":{"Columns":[{"Column":{"label":"Steward User ID","fieldName":"userRole00000000000000000000000000005016rid"}},{"Column":{"label":"Steward Gender","fieldName":"userRole00000000000000000000000000005016gender"}},{"Column":{"label":"Steward First Name","fieldName":"userRole00000000000000000000000000005016fn"}},{"Column":{"label":"Steward Last Name","fieldName":"userRole00000000000000000000000000005016ln"}}],"name":"Role00000000000000000000000000005016"}},{"Group":{"Columns":[{"Column":{"label":"Steward Group ID","fieldName":"groupRole00000000000000000000000000005016grid"}},{"Column":{"label":"Steward Group Name","fieldName":"groupRole00000000000000000000000000005016ggn"}}],"name":"Role00000000000000000000000000005016g"}},{"Column":{"fieldName":"statusname"}},{"Column":{"fieldName":"statusrid"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldName":"concepttyperid"}}],'.
 			'"Resources":{"Term":{"CreatedOn":{"name":"createdOn"},"Id":{"name":"termrid"},"Signifier":{"name":"termsignifier"},"StringAttribute":[{"Value":{"name":"Attr00000000000000000000000000000202"},"LongExpression":{"name":"Attr00000000000000000000000000000202longExpr"},"Id":{"name":"Attr00000000000000000000000000000202rid"},"labelId":"' . Configure::read('Collibra.attribute.definition') . '"}],"Member":[{"User":{"Gender":{"name":"userRole00000000000000000000000000005016gender"},"FirstName":{"name":"userRole00000000000000000000000000005016fn"},"Id":{"name":"userRole00000000000000000000000000005016rid"},"LastName":{"name":"userRole00000000000000000000000000005016ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016sig"},"name":"Role00000000000000000000000000005016","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016rid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005016ggn"},"Id":{"name":"groupRole00000000000000000000000000005016grid"}},"roleId":"00000000-0000-0000-0000-000000005016"}],"Status":{"Signifier":{"name":"statusname"},"Id":{"name":"statusrid"}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"},"Id":{"name":"concepttyperid"}}],'.
 			'"Filter":{'.

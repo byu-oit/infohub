@@ -228,6 +228,7 @@ function addToQueue(elem, clearRelated){
 	var arrTitles = [$(elem).attr('data-title')];
 	var arrIDs = [$(elem).attr('data-rid')];
 	var arrVocabIDs = [$(elem).attr('data-vocabID')];
+	var apiPage = $(elem).attr('data-apiPage');
 
 	$(elem).parent().find('.checkBoxes').find('input').each(function(){
 		if($(this).prop("checked")){
@@ -236,7 +237,7 @@ function addToQueue(elem, clearRelated){
 			arrVocabIDs.push($(this).attr('data-vocabID'));
 		}
 	});
-	$.post("/request/addToQueue", {t:arrTitles, id:arrIDs, vocab:arrVocabIDs, clearRelated:clearRelated})
+	$.post("/request/addToQueue", {t:arrTitles, id:arrIDs, vocab:arrVocabIDs, clearRelated:clearRelated, apiPage: apiPage})
 		.done(function(data){
 			$(elem).attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
 			var oldCount = parseInt($('#request-queue .request-num').text());
