@@ -55,6 +55,7 @@
 											data-title="<?= h($term->businessTerm[0]->term) ?>"
 											data-vocabID="<?= h($term->businessTerm[0]->termCommunityId) ?>"
 											value="<?= h($term->businessTerm[0]->termId) ?>"
+											class="chk<?= h($term->businessTerm[0]->termId) ?>"
 											checked="checked">
 									<?php endif ?>
 								</td>
@@ -63,7 +64,7 @@
 					</table>
 				<?php endif ?>
 				<?php if ($hasSelectable): ?>
-					<input type="button" data-apiPage="<?= htmlentities($hostname . '/' . trim($basePath, '/'), ENT_QUOTES) ?>" onclick="addToQueue(this, false)" class="requestAccess grow mainRequestBtn" value="Add To Request">
+					<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" onclick="addToQueue(this, false)" class="requestAccess grow mainRequestBtn" value="Add To Request">
 				<?php endif ?>
 			</div>
 		</div>

@@ -29,7 +29,8 @@ class RequestController extends AppController {
 			$arrTermIDs = $this->request->data['id'];
 			$arrVocabIDs = $this->request->data['vocab'];
 			$clearRelated = $this->request->data['clearRelated']=='true';
-			$apiPage = empty($this->request->data['apiPage']) ? null : $this->request->data['apiPage'];
+			$apiHost = empty($this->request->data['apiHost']) ? null : $this->request->data['apiHost'];
+			$apiPath = empty($this->request->data['apiPath']) ? null : $this->request->data['apiPath'];
 
 			$arrQueue = (array)$this->Cookie->read('queue');
 			if(!empty($arrQueue)) {
@@ -37,10 +38,10 @@ class RequestController extends AppController {
 				// Remove all terms in vocabularies passed and then re-add the ones selected by the user.
 				if($clearRelated){
 					$arrIdx = array();
-					for($i=0; $i<sizeof($arrVocabIDs); $i++){
-						foreach($arrQueue as $queueKey => $term) {
-							if($term[2] == $arrVocabIDs[$i]){
-								unset($arrQueue[$queueKey]);
+					foreach ($arrVocabIDs as $communityId){
+						foreach ($arrQueue as $termId => $term) {
+							if ($term['communityId'] == $communityId) {
+								unset($arrQueue[$termId]);
 							}
 						}
 					}
@@ -73,7 +74,7 @@ class RequestController extends AppController {
 
 					if($requestable){
 						$newTermsAdded++;
-						$arrQueue[$termID] = array($term, $termID, $vocabID, $apiPage);
+						$arrQueue[$termID] = array('term' => $term, 'communityId' => $vocabID, 'apiHost' => $apiHost, 'apiPath' => $apiPath);
 					}
 				}
 			}
@@ -101,9 +102,7 @@ class RequestController extends AppController {
 
 		$arrQueue = $this->Cookie->read('queue');
 		if(!empty($arrQueue)) {
-			foreach ($arrQueue as $term){
-				$JS .= ','.$term[1];
-			}
+			$JS = implode(',', array_keys($arrQueue));
 		}
 		echo $JS;
 	}
@@ -115,8 +114,8 @@ class RequestController extends AppController {
 
 		$arrQueue = $this->Cookie->read('queue');
 		if(!empty($arrQueue)) {
-			foreach ($arrQueue as $term){
-				$listHTML .= '<li id="requestItem'.$term[1].'" data-title="'.$term[0].'" data-rid="'.$term[1].'" data-vocabID="'.$term[2].'">'.$term[0].'<a class="delete" href="javascript:removeFromRequestQueue(\''.$term[1].'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a></li>';
+			foreach ($arrQueue as $termId => $term){
+				$listHTML .= '<li id="requestItem'.$termId.'" data-title="'.$term['term'].'" data-rid="'.$termId.'" data-vocabID="'.$term['communityId'].'">'.$term['term'].'<a class="delete" href="javascript:removeFromRequestQueue(\''.$termId.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a></li>';
 			}
 		}else{
 			$listHTML = 'No request items found.';
@@ -227,13 +226,48 @@ class RequestController extends AppController {
 			'        {'.
 			'           "OR":[';
 
-		foreach ($arrQueue as $term){
+		$apis = [];
+		foreach ($arrQueue as $termId => $term){
 			$requestFilter .= '{"Field":{'.
 				'   "name":"termrid",'.
 				'   "operator":"EQUALS",'.
-				'   "value":"'.$term[1].'"'.
+				'   "value":"'.$termId.'"'.
 				'}},';
+			if (!empty($term['apiPath']) && !empty($term['apiHost'])) {
+				$apis[$term['apiHost']][$term['apiPath']] = null;
+			}
 		}
+
+		$preFilled = [];
+		foreach ($apis as $apiHost => $apiPaths) {
+			foreach ($apiPaths as $apiPath => $ignore) {
+				$apiTerms = $this->CollibraAPI->getApiTerms($apiHost, $apiPath);
+				foreach ($apiTerms as $term) {
+					if (empty($term->businessTerm[0]->termId)) {
+						$apis[$apiHost][$apiPath]['unmapped'][] = $term->name;
+					} elseif (!array_key_exists($term->businessTerm[0]->termId, $arrQueue)) {
+						$apis[$apiHost][$apiPath]['unrequested'][] = $term->businessTerm[0]->term;
+					}
+				}
+			}
+		}
+		$apis = array_filter(array_map('array_filter', $apis));
+		if (!empty($apis)) {
+			$apiList = "Additional fields included in requested APIs:\n";
+			foreach ($apis as $apiHost => $apiPaths) {
+				foreach ($apiPaths as $apiPath => $term) {
+					$apiList .= "    {$apiHost}/{$apiPath}\n";
+					if (!empty($term['unrequested'])) {
+						$apiList .= "        Unrequested fields:\n            " . implode("\n            ", $term['unrequested']) . "\n";
+					}
+					if (!empty($term['unmapped'])) {
+						$apiList .= "        Fields with no Business Terms:\n            " . implode("\n            ", $term['unmapped']) . "\n";
+					}
+				}
+			}
+			$preFilled['descriptionOfInformation'] = $apiList;
+		}
+
 		$requestFilter = substr($requestFilter, 0, strlen($requestFilter)-1);
 
 		$requestFilter .= ']'.
@@ -288,14 +322,7 @@ class RequestController extends AppController {
 			$psDepartment = $byuUser->employee_information->department;
 		}
 
-		$this->set('psName', $psName);
-		$this->set('psPhone', $psPhone);
-		$this->set('psEmail', $psEmail);
-		$this->set('psRole', $psRole);
-		$this->set('psDepartment', $psDepartment);
-		$this->set('psPersonID', $psPersonID);
-		$this->set('psReportsToName', $psReportsToName);
-		$this->set('supervisorInfo', $supervisorInfo);
+		$this->set(compact('preFilled', 'psName', 'psPhone', 'psEmail', 'psRole', 'psDepartment', 'psPersonID', 'psReportsToName', 'supervisorInfo'));
 		$this->set('submitErr', isset($this->request->query['err']));
 	}
 }

@@ -58,16 +58,17 @@ class ApisController extends AppController {
 		}
 	}
 
-	protected function _autoCheckout($terms) {
+	protected function _autoCheckout($hostname, $basePath, $terms) {
 		$queue = (array)$this->Cookie->read('queue');
 		foreach ($terms as $term) {
 			if (empty($term->businessTerm[0])) {
 				continue;
 			}
 			$queue[$term->businessTerm[0]->termId] = [
-				$term->businessTerm[0]->term,
-				$term->businessTerm[0]->termId,
-				$term->businessTerm[0]->termCommunityId];
+				'term' => $term->businessTerm[0]->term,
+				'communityId' => $term->businessTerm[0]->termCommunityId,
+				'apiHost' => $hostname,
+				'apiPath' => $basePath];
 		}
 
 		$this->Cookie->write('queue', $queue, true, '90 days');
