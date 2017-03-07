@@ -142,6 +142,9 @@
 								}
 								$i++;
 							}
+							foreach ($apiAllTerms as $termId) {
+								echo "<input type='hidden' value='{$termId}' name='apiTerms[]'/>";
+							}
 						?>
 							</div>
 							<div class="clear"></div>
@@ -150,20 +153,21 @@
 				</div>
 
 				<?php
+					$arrNonDisplay = array(
+						"requesterName",
+						"requesterEmail",
+						"requesterPhone",
+						"requesterRole",
+						"requesterPersonId",
+						"requestingOrganization",
+						"sponsorName",
+						"sponsorRole",
+						"sponsorEmail",
+						"sponsorPhone",
+						Configure::read('Collibra.isaWorkflow.requiredElementsString'),
+						Configure::read('Collibra.isaWorkflow.additionalElementsString')
+					);
 					foreach($formFields->formProperties as $field){
-						$arrNonDisplay = array(
-							"requesterName",
-							"requesterEmail",
-							"requesterPhone",
-							"informationElements",
-							"requesterRole",
-							"requesterPersonId",
-							"requestingOrganization",
-							"sponsorName",
-							"sponsorRole",
-							"sponsorEmail",
-							"sponsorPhone"
-						);
 						if(in_array($field->id, $arrNonDisplay)){
 							continue;
 						}

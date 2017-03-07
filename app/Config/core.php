@@ -36,7 +36,11 @@ if (!function_exists('denv')) {
 		'vocabulary' => [
 			'isaRequest' => 'b1ae53a6-46a1-4fdc-a4fb-5dcfcd9c61a1'
 		],
-		'isaWorkflow' => '62d6b6a4-0fa6-4335-89c7-e822beb920d6',
+		'isaWorkflow' => [
+			'id' => '62d6b6a4-0fa6-4335-89c7-e822beb920d6',
+			'requiredElementsString' => 'informationElements',
+			'additionalElementsString' => ''
+		],
 		'dataAssetDomainTypeId' => '00000000-0000-0000-0000-000000030001',
 		'techAssetDomainTypeId' => '00000000-0000-0000-0000-000000030004',
 		'businessTermTypeId' => '00000000-0000-0000-0000-000000011001',

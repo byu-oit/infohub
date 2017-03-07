@@ -150,7 +150,6 @@ class RequestController extends AppController {
 		$email = $this->request->data['email'];
 		$phone = $this->request->data['phone'];
 		$role = $this->request->data['role'];
-		$dataRequested = '';
 
 		// create guest user to use for submitting request
 		/*
@@ -164,7 +163,7 @@ class RequestController extends AppController {
 
 		$postData = [];//'user' => $guestID;
 		foreach($this->request->data as $key => $val){
-			if (!in_array($key, ['name', 'phone', 'email', 'role', 'terms', 'requestSubmit', 'collibraUser'])) {
+			if (!in_array($key, ['name', 'phone', 'email', 'role', 'terms', 'apiTerms', 'requestSubmit', 'collibraUser'])) {
 				$postData[$key] = $val;
 			}
 		}
@@ -178,13 +177,19 @@ class RequestController extends AppController {
 		//For array data, PHP's http_build_query creates query/POST string in a format Collibra doesn't like,
 		//so we're manually building the remaining POST string
 		$postString = http_build_query($postData);
+		$requiredElementsString = Configure::read('Collibra.isaWorkflow.requiredElementsString');
+		$additionalElementsString = Configure::read('Collibra.isaWorkflow.additionalElementsString');
 		foreach($this->request->data['terms'] as $term){
-			$postString .= '&informationElements=' . urlencode($term);
-			$dataRequested .= $term.',';
+			$postString .= "&{$requiredElementsString}=" . urlencode($term);
+		}
+		foreach($this->request->data['apiTerms'] as $term) {
+			if (!empty($additionalElementsString) && !in_array($term, $this->request->data['terms'])) {
+				$postString .= "&{$additionalElementsString}=" . urlencode($term);
+			}
 		}
 
 		$formResp = $this->CollibraAPI->post(
-			'workflow/'.Configure::read('Collibra.isaWorkflow').'/start',
+			'workflow/'.Configure::read('Collibra.isaWorkflow.id').'/start',
 			$postString
 		);
 		$formResp = json_decode($formResp);
@@ -234,26 +239,30 @@ class RequestController extends AppController {
 				'   "value":"'.$termId.'"'.
 				'}},';
 			if (!empty($term['apiPath']) && !empty($term['apiHost'])) {
-				$apis[$term['apiHost']][$term['apiPath']] = null;
+				$apis[$term['apiHost']][$term['apiPath']] = [];
 			}
 		}
 
 		$preFilled = [];
+		$apiAllTerms = [];
+		$additionalElementsString = Configure::read('Collibra.isaWorkflow.additionalElementsString');
 		foreach ($apis as $apiHost => $apiPaths) {
 			foreach ($apiPaths as $apiPath => $ignore) {
 				$apiTerms = $this->CollibraAPI->getApiTerms($apiHost, $apiPath);
 				foreach ($apiTerms as $term) {
 					if (empty($term->businessTerm[0]->termId)) {
 						$apis[$apiHost][$apiPath]['unmapped'][] = $term->name;
-					} elseif (!array_key_exists($term->businessTerm[0]->termId, $arrQueue)) {
-						$apis[$apiHost][$apiPath]['unrequested'][] = $term->businessTerm[0]->term;
+					} else {
+						$apiAllTerms[$term->businessTerm[0]->termId] = $term->businessTerm[0]->termId;
+						if (!array_key_exists($term->businessTerm[0]->termId, $arrQueue)) {
+							$apis[$apiHost][$apiPath]['unrequested'][] = $term->businessTerm[0]->term;
+						}
 					}
 				}
 			}
 		}
-		$apis = array_filter(array_map('array_filter', $apis));
 		if (!empty($apis)) {
-			$apiList = "Additional fields included in requested APIs:\n";
+			$apiList = "Requested APIs:\n";
 			foreach ($apis as $apiHost => $apiPaths) {
 				foreach ($apiPaths as $apiPath => $term) {
 					$apiList .= "    {$apiHost}/{$apiPath}\n";
@@ -290,7 +299,7 @@ class RequestController extends AppController {
 		array_multisort($domains, SORT_ASC, $termNames, SORT_ASC, $termResp->aaData);
 
 		// load form fields for ISA workflow
-		$formResp = $this->CollibraAPI->get('workflow/'.Configure::read('Collibra.isaWorkflow').'/form/start');
+		$formResp = $this->CollibraAPI->get('workflow/'.Configure::read('Collibra.isaWorkflow.id').'/form/start');
 		$formResp = json_decode($formResp);
 
 		$this->set('formFields', $formResp);
@@ -322,7 +331,7 @@ class RequestController extends AppController {
 			$psDepartment = $byuUser->employee_information->department;
 		}
 
-		$this->set(compact('preFilled', 'psName', 'psPhone', 'psEmail', 'psRole', 'psDepartment', 'psPersonID', 'psReportsToName', 'supervisorInfo'));
+		$this->set(compact('apiAllTerms', 'preFilled', 'psName', 'psPhone', 'psEmail', 'psRole', 'psDepartment', 'psPersonID', 'psReportsToName', 'supervisorInfo'));
 		$this->set('submitErr', isset($this->request->query['err']));
 	}
 }
