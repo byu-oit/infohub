@@ -306,6 +306,7 @@ class CollibraAPI extends Model {
 				'Columns' => [
 					['Column' => ['fieldName' => 'id']],
 					['Column' => ['fieldName' => 'name']],
+					['Column' => ['fieldName' => 'assetType']],
 					['Group' => [
 						'name' => 'businessTerm',
 						'Columns' => [
@@ -316,6 +317,9 @@ class CollibraAPI extends Model {
 					'Term' => [
 						'Id' => ['name' => 'id'],
 						'Signifier' => ['name' => 'name'],
+						'ConceptType' => [
+							'Signifier' => ['name' => 'assetType'],
+							'Id' => ['name' => 'assetTypeId']],
 						'Relation' => [[ /* Yes, intentional [[ there */
 							'typeId' => Configure::read('Collibra.relationship.termToField'),
 							'type' => 'TARGET',
@@ -328,10 +332,20 @@ class CollibraAPI extends Model {
 						'Vocabulary' => [
 							'Id' => ['name' => 'domainId']],
 						'Filter' => [
-							'Field' => [
-								'name' => 'domainId',
-								'operator' => 'EQUALS',
-								'value' => $vocabulary->resourceId]],
+							'AND' => [
+								['OR' => [
+									['Field' => [
+										'name' => 'assetTypeId',
+										'operator' => 'EQUALS',
+										'value' => Configure::read('Collibra.type.field')]],
+									['Field' => [
+										'name' => 'assetTypeId',
+										'operator' => 'EQUALS',
+										'value' => Configure::read('Collibra.type.fieldSet')]]]],
+								['Field' => [
+									'name' => 'domainId',
+									'operator' => 'EQUALS',
+									'value' => $vocabulary->resourceId]]]],
 						'Order' => [[ /* Yes, intentional [[ there */
 							'Field' => [
 								'name' => 'name',

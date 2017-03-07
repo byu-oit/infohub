@@ -250,6 +250,9 @@ class RequestController extends AppController {
 			foreach ($apiPaths as $apiPath => $ignore) {
 				$apiTerms = $this->CollibraAPI->getApiTerms($apiHost, $apiPath);
 				foreach ($apiTerms as $term) {
+					if (!empty($term->assetType) && strtolower($term->assetType) == 'fieldset') {
+						continue;
+					}
 					if (empty($term->businessTerm[0]->termId)) {
 						$apis[$apiHost][$apiPath]['unmapped'][] = $term->name;
 					} else {
