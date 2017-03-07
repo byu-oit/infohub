@@ -40,7 +40,16 @@
 						</tr>
 						<?php foreach ($terms as $term): ?>
 							<tr>
-								<td><?= $term->name ?></td>
+								<td><?php
+									$termPath = explode('.', $term->name);
+									foreach ($termPath as $pathStep) {
+										if ($pathStep != end($termPath)) {
+											echo str_repeat('&nbsp;', 12);
+										} else {
+											echo $pathStep;
+										}
+									}
+								?></td>
 								<td>
 									<?php if (!empty($term->businessTerm[0])): ?>
 										<?php $hasSelectable = true; ?>
