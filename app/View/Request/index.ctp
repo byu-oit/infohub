@@ -142,6 +142,9 @@
 								}
 								$i++;
 							}
+							foreach ($apiAllTerms as $termId) {
+								echo "<input type='hidden' value='{$termId}' name='apiTerms[]'/>";
+							}
 						?>
 							</div>
 							<div class="clear"></div>
@@ -150,51 +153,44 @@
 				</div>
 
 				<?php
+					$arrNonDisplay = array(
+						"requesterName",
+						"requesterEmail",
+						"requesterPhone",
+						"requesterRole",
+						"requesterPersonId",
+						"requestingOrganization",
+						"sponsorName",
+						"sponsorRole",
+						"sponsorEmail",
+						"sponsorPhone",
+						Configure::read('Collibra.isaWorkflow.requiredElementsString'),
+						Configure::read('Collibra.isaWorkflow.additionalElementsString')
+					);
 					foreach($formFields->formProperties as $field){
-						$arrNonDisplay = array(
-							"requesterName",
-							"requesterEmail",
-							"requesterPhone",
-							"informationElements",
-							"requesterRole",
-							"requesterPersonId",
-							"requestingOrganization",
-							"sponsorName",
-							"sponsorRole",
-							"sponsorEmail",
-							"sponsorPhone"
-						);
-						if(!in_array($field->id, $arrNonDisplay)){
-							echo '<label class="headerTab" for="'.$field->id.'">'.$field->name.'</label>'.
-								'<div class="clear"></div>'.
-								'<div class="taBox">';
-
-							$val = '';
-							switch($field->id){
-								case 'requestingOrganization':
-									$val = $psDepartment;
-									break;
-								case 'sponsorName':
-									$val = $psReportsToName;
-									break;
-							}
-
-							if($field->type == 'textarea'){
-								echo '<textarea name="'.$field->id.'" id="'.$field->id.'"  class="inputShade noPlaceHolder">'.$val.'</textarea>';
-							}elseif($field->type == 'user'){
-								echo '<select name="'.$field->id.'" id="'.$field->id.'">';
-								foreach($sponsors->user as $sponsor){
-									if($sponsor->enabled==1){
-										echo '<option value="'.$sponsor->resourceId.'">'.$sponsor->firstName.' '.$sponsor->lastName.'</option>';
-									}
-								}
-								echo '</select>';
-							}else{
-								echo '<input type="text" name="'.$field->id.'" id="'.$field->id.'" value="'.$val.'" class="inputShade full noPlaceHolder" />';
-							}
-
-							echo '</div>';
+						if(in_array($field->id, $arrNonDisplay)){
+							continue;
 						}
+						echo '<label class="headerTab" for="'.$field->id.'">'.$field->name.'</label>'.
+							'<div class="clear"></div>'.
+							'<div class="taBox">';
+
+						$val = empty($preFilled[$field->id]) ? '' : h($preFilled[$field->id]);
+						if($field->type == 'textarea'){
+							echo '<textarea name="'.$field->id.'" id="'.$field->id.'"  class="inputShade noPlaceHolder">'.$val.'</textarea>';
+						}elseif($field->type == 'user'){
+							echo '<select name="'.$field->id.'" id="'.$field->id.'">';
+							foreach($sponsors->user as $sponsor){
+								if($sponsor->enabled==1){
+									echo '<option value="'.$sponsor->resourceId.'">'.$sponsor->firstName.' '.$sponsor->lastName.'</option>';
+								}
+							}
+							echo '</select>';
+						}else{
+							echo '<input type="text" name="'.$field->id.'" id="'.$field->id.'" value="'.$val.'" class="inputShade full noPlaceHolder" />';
+						}
+
+						echo '</div>';
 					}
 				?>
 				<label for="requestSubmit" id="mobileReqd">*All Fields Required</label>

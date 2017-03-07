@@ -16,7 +16,7 @@
 		<h1 class="headerTab"><?= $hostname . '/' . trim($basePath, '/') ?></h1>
 		<div class="clear"></div>
 		<div class="btnLinks">
-			<a href="https://developer-dev.byu.edu/api/api-list" id="doc_link" class="inputButton" target="_blank">Read API documentation</a>
+			<a href="https://developer.byu.edu/api/api-list" id="doc_link" class="inputButton" target="_blank">Read API documentation</a>
 			<a href="https://api.byu.edu/store/" id="store_link" class="inputButton" target="_blank">View this API in the store</a>
 		</div>
 		<div id="srLower" class="whiteBox">
@@ -64,6 +64,7 @@
 											data-title="<?= h($term->businessTerm[0]->term) ?>"
 											data-vocabID="<?= h($term->businessTerm[0]->termCommunityId) ?>"
 											value="<?= h($term->businessTerm[0]->termId) ?>"
+											class="chk<?= h($term->businessTerm[0]->termId) ?>"
 											checked="checked">
 									<?php endif ?>
 								</td>
@@ -72,7 +73,7 @@
 					</table>
 				<?php endif ?>
 				<?php if ($hasSelectable): ?>
-					<input type="button" onclick="addToQueue(this, false)" class="requestAccess grow mainRequestBtn" value="Add To Request">
+					<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" onclick="addToQueue(this, false)" class="requestAccess grow mainRequestBtn" value="Add To Request">
 				<?php endif ?>
 			</div>
 		</div>
