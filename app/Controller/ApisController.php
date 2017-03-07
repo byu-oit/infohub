@@ -54,7 +54,7 @@ class ApisController extends AppController {
 		$this->set(compact('hostname', 'basePath', 'terms'));
 
 		if (array_key_exists('checkout', $this->request->query)) {
-			return $this->_autoCheckout($terms);
+			return $this->_autoCheckout($hostname, $basePath, $terms);
 		}
 	}
 
