@@ -30,50 +30,50 @@ if (!function_exists('denv')) {
 
 	Configure::write('Collibra', [
 		'community' => [
-			'byu' => '4e756e1e-11ee-4d1e-bfaa-fb0ada974fc5',
-			'api' => '9091816c-9b8b-45ba-8422-5e9fa36088be'
+			'api' => 'd9f1c1bb-17cf-4fcb-9046-49d35f839623',
+			'byu' => 'c690b823-4341-4125-8a81-22d592c23773',
 		],
 		'vocabulary' => [
-			'isaRequest' => 'b1ae53a6-46a1-4fdc-a4fb-5dcfcd9c61a1'
+			'isaRequest' => '00000000-0000-0000-0000-000000031231'
 		],
 		'isaWorkflow' => [
-			'id' => '62d6b6a4-0fa6-4335-89c7-e822beb920d6',
-			'requiredElementsString' => 'informationElements',
-			'additionalElementsString' => ''
+			'id' => '1d0bf5bc-9379-48d8-9abe-71ca85084879',
+			'requiredElementsString' => 'requiredElements',
+			'additionalElementsString' => 'additionalElements'
 		],
-		'dataAssetDomainTypeId' => '00000000-0000-0000-0000-000000030001',
+		'dataAssetDomainTypeId' => '00000000-0000-0000-0000-000000030011',
 		'techAssetDomainTypeId' => '00000000-0000-0000-0000-000000030004',
 		'businessTermTypeId' => '00000000-0000-0000-0000-000000011001',
-		'standardDataElementLabelTypeId' => '3de2b1d8-1c88-444f-b2e1-d0fb29ebabed',
+		'standardDataElementLabelTypeId' => 'ea92faa8-685d-4cb0-8665-14808de08dd2',
 		'relationship' => [
-			'termToSynonym' => 'c06ed0b7-032f-4d0f-ae40-5824c12f94a6',
-			'isaRequestToTerm' => 'f4a6a8fe-8509-458a-9b60-417141a9abd4',
+			'termToSynonym' => '00000000-0000-0000-0000-000000007001',
+			'isaRequestToTerm' => 'edc9e81b-98dc-4bde-8191-1ae75161ab67',
 			'isaRequestToApproval' => '8750ed82-b3be-4a61-92ac-6df2e41b408c',
-			'termToField' => 'f5891dd0-3f80-44a2-ad87-882558fd0d71'
+			'termToField' => '00000000-0000-0000-0000-000000007038'
 		],
 		'type' => [
-			'synonym' => 'ed82f17f-c1e7-4d6d-83cc-50f6b529c296',
+			'synonym' => '2c2d6491-a41c-4e9e-af52-759b43948951',
 			'term' => '00000000-0000-0000-0000-000000011001',
-			'field' => '069a3e64-e2ca-4225-83b2-a67ebde07805',
-			'fieldSet' => '66338390-f105-47ef-b7f9-02c71a84c300'
+			'field' => '00000000-0000-0000-0001-000400000008',
+			'fieldSet' => '73bae222-220d-4342-94ba-6a8369797eac'
 		],
 		'attribute' => [
 			'definition' => '00000000-0000-0000-0000-000000000202',
-			'classification' => 'e0937764-544a-4d21-98ce-dc0c1936b465',
-			'requestable' => '0d798f70-b3ca-4af2-b283-54f84c4714aa',
-			'isaRequestPersonId' => 'f1d5726a-32a2-47c4-b48c-d3be43880462',
+			'classification' => '80cae8d4-856f-4b9a-971a-164514e79744',
+			'requestable' => '4f6ac2f0-6711-44f4-81d8-7e6e4dcb1701',
+			'isaRequestPersonId' => 'a368134f-ab44-4ce6-ac1d-1b69bfa37d6e',
 			'stewardPhone' => '9a18e247-c090-40c3-896e-ab97335ae759',
 			'stewardEmail' => '0cbbfd32-fc97-47ce-bef1-a89ae4e77ee8',
 			'stewardName' => '4331ec09-88a2-48e6-b096-9ece6648aff3'
 		],
 		'term' => [
-			'custodian' => '8ed41506-3eaf-47e1-b076-76bb49022059',
-			'steward' => 'f6b8b3cd-373c-43d7-8cbd-d8f03ff9048b'
+			'custodian' => '6f666b9e-be07-4521-95fa-36fecfe2ff71',
+			'steward' => 'c43795f0-5450-41ec-90fb-55d1d84a0efe'
 		],
 		'role' => [
-			'trustee' => 'fb97305e-00c0-459a-84cb-b3f5ea62d411',
-			'steward' => '8a0a6c89-106c-4adb-9936-f09f29b747ac',
-			'custodian' => 'f86d1d3a-bc2e-4bee-b17f-e0e9985d5afb'
+			'trustee' => 'f55b47bc-973a-462d-9a37-35395f20e52d',
+			'steward' => '00000000-0000-0000-0000-000000005016',
+			'custodian' => '00000000-0000-0000-0000-000000005041'
 		]
 	]);
 
@@ -91,7 +91,7 @@ if (!function_exists('denv')) {
 			'prefix' => ''],
 		'collibra' => [
 			'datasource' => 'DataSource',
-			'url'       =>  denv('CAKE_COLLIBRA_HOST', 'https://byu.collibra.com/rest/latest/'),
+			'url'       =>  denv('CAKE_COLLIBRA_HOST', 'https://byu-5.collibra.com/rest/latest/'),
 			'username'  => denv('CAKE_COLLIBRA_USERNAME', '***REQUIRED***'),
 			'password'  => denv('CAKE_COLLIBRA_PASSWORD', '***REQUIRED***')],
 		'byuApi' => [
