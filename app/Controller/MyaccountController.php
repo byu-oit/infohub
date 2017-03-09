@@ -115,7 +115,7 @@ class MyaccountController extends AppController {
 			foreach($workflowResp->formProperties as $wf){
 				foreach($r->attributeReferences->attributeReference as $attr){
 					if($attr->labelReference->signifier == $wf->name){
-						array_push($arrNewAttr, $attr);
+						$arrNewAttr[$attr->labelReference->signifier] = $attr;
 						break;
 					}
 				}
