@@ -723,6 +723,60 @@ class CollibraAPI extends Model {
 		return $results->results;
 	}
 
+	public function getResponsibilities($resourceId) {
+		$members = $this->get("member/find/all?resource={$resourceId}", ['json' => true]);
+		if (empty($members->memberReference)) {
+			return [];
+		}
+		$output = [];
+		foreach ($members->memberReference as $member) {
+			$output[$member->role->signifier] = $member->ownerUser;
+		}
+		return $output;
+	}
+
+	public function getDataUsages($dsaId) {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'id']],
+				['Column' => ['fieldName' => 'signifier']],
+				['Column' => ['fieldName' => 'status']]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'id'],
+					'Signifier' => ['name' => 'signifier'],
+					'Status' => [
+						'Signifier' => ['name' => 'status']],
+					'Relation' => [[
+						'typeId' => Configure::read('Collibra.relationship.dataUsageToDSA'),
+						'type' => 'SOURCE',
+						'Target' => [
+							'Id' => ['name' => 'dsaId']],
+						'Filter' => [
+							'AND' => [[
+								'Field' => [
+										'name' => 'dsaId',
+										'operator' => 'EQUALS',
+										'value' => $dsaId]]]]]],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+									'name' => 'dsaId',
+									'operator' => 'EQUALS',
+									'value' => $dsaId]]]],
+					'Order' => [
+						['Field' => [
+							'name' => 'signifier',
+							'order' => 'ASC']]]]],
+			'displayStart' => 0,
+			'displayLength' => -1]];
+		$usages = $this->fullDataTable($tableConfig);
+		foreach ($usages as &$usage) {
+			$usage->roles = $this->getResponsibilities($usage->id);
+		}
+		return $usages;
+	}
+
 	protected function _updateSessionCookies() {
 		$config = $this->client()->config;
 		if (empty($config['request']['cookies'])) {

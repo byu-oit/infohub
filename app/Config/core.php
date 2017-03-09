@@ -49,7 +49,8 @@ if (!function_exists('denv')) {
 			'termToSynonym' => '00000000-0000-0000-0000-000000007001',
 			'isaRequestToTerm' => 'edc9e81b-98dc-4bde-8191-1ae75161ab67',
 			'isaRequestToApproval' => '8750ed82-b3be-4a61-92ac-6df2e41b408c',
-			'termToField' => '00000000-0000-0000-0000-000000007038'
+			'termToField' => '00000000-0000-0000-0000-000000007038',
+			'dataUsageToDSA' => '00000000-0000-0000-0000-000000007055'
 		],
 		'type' => [
 			'synonym' => '2c2d6491-a41c-4e9e-af52-759b43948951',
