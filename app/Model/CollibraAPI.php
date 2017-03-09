@@ -14,6 +14,7 @@ class CollibraAPI extends Model {
 	private $requestTries = 0;
 
 	private $settings;
+	private $_rolesCache = [];
 
 	private static function cmp($a, $b){
 		return strcmp($a->name, $b->name);
@@ -724,6 +725,9 @@ class CollibraAPI extends Model {
 	}
 
 	public function getResponsibilities($resourceId) {
+		if (!empty($this->_rolesCache[$resourceId])) {
+			return $this->_rolesCache[$resourceId];
+		}
 		$members = $this->get("member/find/all?resource={$resourceId}", ['json' => true]);
 		if (empty($members->memberReference)) {
 			return [];
@@ -732,6 +736,7 @@ class CollibraAPI extends Model {
 		foreach ($members->memberReference as $member) {
 			$output[$member->role->signifier][] = $member->ownerUser;
 		}
+		$this->_rolesCache[$resourceId] = $output;
 		return $output;
 	}
 
@@ -739,6 +744,7 @@ class CollibraAPI extends Model {
 		$tableConfig = ['TableViewConfig' => [
 			'Columns' => [
 				['Column' => ['fieldName' => 'id']],
+				['Column' => ['fieldName' => 'vocabularyId']],
 				['Column' => ['fieldName' => 'signifier']],
 				['Column' => ['fieldName' => 'status']]],
 			'Resources' => [
@@ -747,6 +753,8 @@ class CollibraAPI extends Model {
 					'Signifier' => ['name' => 'signifier'],
 					'Status' => [
 						'Signifier' => ['name' => 'status']],
+					'Vocabulary' => [
+						'Id' => ['name' => 'vocabularyId']],
 					'Relation' => [[
 						'typeId' => Configure::read('Collibra.relationship.dataUsageToDSA'),
 						'type' => 'SOURCE',
@@ -772,7 +780,7 @@ class CollibraAPI extends Model {
 			'displayLength' => -1]];
 		$usages = $this->fullDataTable($tableConfig);
 		foreach ($usages as &$usage) {
-			$usage->roles = $this->getResponsibilities($usage->id);
+			$usage->roles = $this->getResponsibilities($usage->vocabularyId);
 		}
 		return $usages;
 	}
