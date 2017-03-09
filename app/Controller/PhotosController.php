@@ -58,13 +58,13 @@ class PhotosController extends AppController {
 		exit();
 	}
 
-	public function collibraview($userResourceId = null) {
+	public function collibraview($userResourceId = null, $size = null) {
 		session_write_close();
 		if (empty($userResourceId)) {
 			exit("No photo found");
 		}
 
-		$photo = $this->CollibraAPI->photo($userResourceId);
+		$photo = $this->CollibraAPI->photo($userResourceId, null, $size);
 		if (empty($photo)) {
 			$photo = [
 				'body' => file_get_contents(IMAGES . 'icon-question.png'),

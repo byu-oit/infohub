@@ -233,7 +233,7 @@ class CollibraAPI extends Model {
 		$config['TableViewConfig']['displayLength'] = $limit;
 		return $this->dataTable($config);
 	}
-	public function photo($userResourceId, $update = null) {
+	public function photo($userResourceId, $update = null, $requestedSize = null) {
 		if (!empty($update)) {
 			$type = explode(';', $update['type'])[0];
 			$typeSplit = explode('/', $type);
@@ -245,7 +245,11 @@ class CollibraAPI extends Model {
 			$response = $this->post("user/{$userResourceId}/avatar", ['file' => $fileId]);
 			return ($response && $response->isOk());
 		}
-		$photo = $this->get("user/{$userResourceId}/avatar?width=300&height=300", ['raw' => true]);
+		$size = intval($requestedSize);
+		if ($size == 0) {
+			$size = 300;
+		}
+		$photo = $this->get("user/{$userResourceId}/avatar?width={$size}&height={$size}", ['raw' => true]);
 		if (!($photo && $photo->isOk())) {
 			return null;
 		}
