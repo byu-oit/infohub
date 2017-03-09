@@ -113,23 +113,23 @@
 			<div class="clear"></div>
 			<div class="data-col">
 				<h5>Name:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference[6]->value ?>
+				<p><?php echo $req->attributeReferences->attributeReference['Requester Name']->value ?>
 			</div>
 			<div class="data-col">
 				<h5>Phone Number:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference[5]->value ?>
+				<p><?php echo $req->attributeReferences->attributeReference['Requester Phone']->value ?>
 			</div>
 			<div class="data-col">
 				<h5>Email:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference[12]->value ?>
+				<p><?php echo $req->attributeReferences->attributeReference['Requester Email']->value ?>
 			</div>
 			<div class="data-col">
 				<h5>Role:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference[11]->value ?>
+				<p><?php echo $req->attributeReferences->attributeReference['Requester Role']->value ?>
 			</div>
 			<div class="data-col">
 				<h5>Requesting Organization:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference[0]->value ?>
+				<p><?php echo $req->attributeReferences->attributeReference['Requesting Organization']->value ?>
 			</div>
 			<div class="clear"></div>
 
@@ -137,29 +137,29 @@
 			<div class="clear"></div>
 			<div class="data-col">
 				<h5>Sponsor Name:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference[2]->value ?>
+				<p><?php echo $req->attributeReferences->attributeReference['Sponsor Name']->value ?>
 			</div>
 			<div class="data-col">
 				<h5>Sponsor Role:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference[10]->value ?>
+				<p><?php echo $req->attributeReferences->attributeReference['Sponsor Role']->value ?>
 			</div>
 			<div class="data-col">
 				<h5>Sponsor Email:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference[14]->value ?>
+				<p><?php echo $req->attributeReferences->attributeReference['Sponsor Email']->value ?>
 			</div>
 			<div class="data-col">
 				<h5>Sponsor Phone:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference[7]->value ?>
+				<p><?php echo $req->attributeReferences->attributeReference['Sponsor Phone']->value ?>
 			</div>
 			<div class="clear"></div>
 <?php
 			$arrNonDisplay = array(
 				"Requester Name", 
-				"Requester Email", 
-				"Requester Phone", 
-				"Information Elements", 
-				"Requester Role", 
-				"Requester PersonId", 
+				"Requester Email",
+				"Requester Phone",
+				"Information Elements",
+				"Requester Role",
+				"Requester PersonId",
 				"Requesting Organization",
 				"Sponsor Name",
 				"Sponsor Role",
