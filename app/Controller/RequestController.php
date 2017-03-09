@@ -182,8 +182,8 @@ class RequestController extends AppController {
 		foreach($this->request->data['terms'] as $term){
 			$postString .= "&{$requiredElementsString}=" . urlencode($term);
 		}
-		foreach($this->request->data['apiTerms'] as $term) {
-			if (!empty($additionalElementsString) && !in_array($term, $this->request->data['terms'])) {
+		foreach($this->request->data['terms'] as $term) {
+			if (!empty($additionalElementsString)) {
 				$postString .= "&{$additionalElementsString}=" . urlencode($term);
 			}
 		}
@@ -193,8 +193,6 @@ class RequestController extends AppController {
 			$postString
 		);
 		$formResp = json_decode($formResp);
-		//print_r($postData);
-		//exit;
 
 		if(isset($formResp->startWorkflowResponses[0]->successmessage)){
 			$processID = $formResp->startWorkflowResponses[0]->processInstanceId;

@@ -83,25 +83,53 @@
 			////////////////////////////////////////
 			echo '<div class="riRight">'.
 				'<h4 class="riTitle">Reviewers of This Request</h4>';
-			foreach($req->approvals->aaData as $approval){
-				$approverName = $approval->Attr4331ec0988a248e6b0969ece6648aff3;
+			foreach($req->roles['Community Manager'] as $cm){
+				$approverName = $cm->firstName . " " . $cm->lastName;
 				if($approverName != ''){
-					$approverEmail = $approval->Attr0cbbfd32fc9747cebef1a89ae4e77ee8;
-					$approverPhone = $approval->Attr9a18e247c09040c3896eab97335ae759;
-					$approverStatus = strtolower($approval->statusname);
-
-					echo '<div class="approver '.$approverStatus.'">'.
+					$approverEmail = $cm->emailAddress;
+					echo '<div class="approver">'.
 						'	<div class="user-icon"></div>'.
 						'	<div class="info">'.
 						'		<div class="contactName">'.$approverName.'</div>'.
-						'		<div class="contactNumber"><div class="icon"></div><a href="tel:'.$approverPhone.'">'.$approverPhone.'</a></div>'.
 						'		<div class="contactEmail"><div class="icon"></div><a href="mailto:'.$approverEmail.'">'.$approverEmail.'</a></div>'.
-						'		<div class="status"><div class="icon '.$approverStatus.'"></div><p>'.ucfirst($approverStatus).'</p></div>'.
 						'	</div>'.
 						'</div>';
 				}
 			}
 			echo '</div>';
+			foreach($req->dataUsages as $du) {
+				echo '<div class="riRight" style="clear:both">';
+				$dsaName = $du->signifier;
+				$dsaDomain = end(explode(' ', $dsaName));
+				echo '<h6 class="riTitle">'.$dsaDomain.'</h4>';
+				$approverName = $du->roles['Custodian'][0]->firstName . " " . $du->roles['Custodian'][0]->lastName;
+				if($approverName != ''){
+					$approverEmail = $du->roles['Custodian'][0]->emailAddress;
+					$dsaStatus = strtolower($du->status);
+					echo '<div class="approver '.$dsaStatus.'">'.
+						'	<div class="user-icon"></div>'.
+						'	<div class="info">'.
+						'		<div class="contactName">'.$approverName.'</div>'.
+						'		<div class="contactEmail"><div class="icon"></div><a href="mailto:'.$approverEmail.'">'.$approverEmail.'</a></div>'.
+						'		<div class="status"><div class="icon '.$dsaStatus.'"></div><p>'.ucfirst($dsaStatus).'</p></div>'.
+						'	</div>'.
+						'</div>';
+				}
+				$approverName = $du->roles['Steward'][0]->firstName . " " . $du->roles['Steward'][0]->lastName;
+				if($approverName != ''){
+					$approverEmail = $du->roles['Steward'][0]->emailAddress;
+					$dsaStatus = strtolower($du->status);
+					echo '<div class="approver '.$dsaStatus.'">'.
+						'	<div class="user-icon"></div>'.
+						'	<div class="info">'.
+						'		<div class="contactName">'.$approverName.'</div>'.
+						'		<div class="contactEmail"><div class="icon"></div><a href="mailto:'.$approverEmail.'">'.$approverEmail.'</a></div>'.
+						'		<div class="status"><div class="icon '.$dsaStatus.'"></div><p>'.ucfirst($dsaStatus).'</p></div>'.
+						'	</div>'.
+						'</div>';
+				}
+				echo '</div>';
+			}
 			////////////////////////////////////////
 
 			// show request details
@@ -154,7 +182,7 @@
 			<div class="clear"></div>
 <?php
 			$arrNonDisplay = array(
-				"Requester Name", 
+				"Requester Name",
 				"Requester Email",
 				"Requester Phone",
 				"Information Elements",
