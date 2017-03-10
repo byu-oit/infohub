@@ -175,6 +175,7 @@
   float: left;
   background-image: url(../img/requests-user-icon.png);
   background-repeat: no-repeat;
+  background-size: contain;
   background-position: center center;
   background-color: #d8e8aa;
 }
@@ -235,6 +236,11 @@
   font-weight: bold;
   padding-bottom: 5px;
 }
+#accountMid #accountMain .requestItem .approver .info .approverRole .icon {
+  background-image: url(../img/requests-user-icon.png);
+  background-size: contain;
+  background-position: center;
+}
 #accountMid #accountMain .requestItem .approver .info .contactNumber .icon {
   background-image: url(../img/request-phone-icon.png);
 }
@@ -250,15 +256,25 @@
 #accountMid #accountMain .requestItem .approver .info .status .icon.denied {
   background-image: url(../img/request-pending-icon.png);
 }
-#accountMid #accountMain .requestItem .approver.approved .user-icon {
+#accountMid #accountMain .requestItem .approver.approved.custodian .user-icon {
   background-color: #b5d45d;
 }
-#accountMid #accountMain .requestItem .approver.approved .info {
+#accountMid #accountMain .requestItem .approver.approved.custodian .info {
   border-color: #b5d45d;
 }
-#accountMid #accountMain .requestItem .approver.approved .info:after,
-#accountMid #accountMain .requestItem .approver.approved .info .icon {
+#accountMid #accountMain .requestItem .approver.approved.custodian .info:after,
+#accountMid #accountMain .requestItem .approver.approved.custodian .info .icon {
   background-color: #b5d45d;
+}
+#accountMid #accountMain .requestItem .approver.approved.steward .user-icon {
+  background-color: #ffa900;
+}
+#accountMid #accountMain .requestItem .approver.approved.steward .info {
+  border-color: #ffa900;
+}
+#accountMid #accountMain .requestItem .approver.approved.steward .info:after,
+#accountMid #accountMain .requestItem .approver.approved.steward .info .icon {
+  background-color: #ffa900;
 }
 #accountMid #accountMain .requestItem .approver.denied .user-icon {
   background-color: #ee3839;
@@ -269,6 +285,15 @@
 #accountMid #accountMain .requestItem .approver.denied .info:after,
 #accountMid #accountMain .requestItem .approver.denied .info .icon {
   background-color: #ee3839;
+}
+#accountMid #accountMain .requestItem .riBelow {
+  width: 82%;
+  clear: both;
+  text-align: left;
+  margin-left: 18%;
+}
+#accountMid #accountMain .requestItem .riBelow .approver {
+  float: left;
 }
 #accountMid #accountMain .requestItem .detailsBody {
   display: none;

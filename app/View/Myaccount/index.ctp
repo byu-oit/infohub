@@ -30,7 +30,6 @@
 		});
 	});
 </script>
-
 <!-- Background image div -->
 <div id="accountBody" class="libOnebg">
 </div>
@@ -86,9 +85,10 @@
 			foreach($req->roles['Community Manager'] as $cm){
 				$approverName = $cm->firstName . " " . $cm->lastName;
 				if($approverName != ''){
+					$approverImage = '../photos/collibraview/'.$cm->resourceId;
 					$approverEmail = $cm->emailAddress;
 					echo '<div class="approver">'.
-						'	<div class="user-icon"></div>'.
+						'	<div class="user-icon" style="background-image: url('.$approverImage.');"></div>'.
 						'	<div class="info">'.
 						'		<div class="contactName">'.$approverName.'</div>'.
 						'		<div class="contactEmail"><div class="icon"></div><a href="mailto:'.$approverEmail.'">'.$approverEmail.'</a></div>'.
@@ -98,33 +98,33 @@
 			}
 			echo '</div>';
 			foreach($req->dataUsages as $du) {
-				echo '<div class="riRight" style="clear:both">';
+				echo '<div class="riBelow">';
 				$dsaName = $du->signifier;
-				$dsaDomain = end(explode(' ', $dsaName));
-				echo '<h6 class="riTitle">'.$dsaDomain.'</h4>';
+				$dsaStatus = strtolower($du->status);
+				echo '<h6 class="riTitle">'.$dsaName.'<br />'.ucfirst($dsaStatus).'</h4>';
 				$approverName = $du->roles['Custodian'][0]->firstName . " " . $du->roles['Custodian'][0]->lastName;
 				if($approverName != ''){
+					$approverImage = '../photos/collibraview/'.$du->roles['Custodian'][0]->resourceId;
 					$approverEmail = $du->roles['Custodian'][0]->emailAddress;
-					$dsaStatus = strtolower($du->status);
-					echo '<div class="approver '.$dsaStatus.'">'.
-						'	<div class="user-icon"></div>'.
+					echo '<div class="approver '.$dsaStatus.' custodian">'.
+						'	<div class="user-icon" style="background-image: url('.$approverImage.');"></div>'.
 						'	<div class="info">'.
 						'		<div class="contactName">'.$approverName.'</div>'.
+						'		<div class="approverRole"><div class="icon"></div>Custodian</div>'.
 						'		<div class="contactEmail"><div class="icon"></div><a href="mailto:'.$approverEmail.'">'.$approverEmail.'</a></div>'.
-						'		<div class="status"><div class="icon '.$dsaStatus.'"></div><p>'.ucfirst($dsaStatus).'</p></div>'.
 						'	</div>'.
 						'</div>';
 				}
 				$approverName = $du->roles['Steward'][0]->firstName . " " . $du->roles['Steward'][0]->lastName;
 				if($approverName != ''){
+					$approverImage = '../photos/collibraview/'.$du->roles['Steward'][0]->resourceId;
 					$approverEmail = $du->roles['Steward'][0]->emailAddress;
-					$dsaStatus = strtolower($du->status);
-					echo '<div class="approver '.$dsaStatus.'">'.
-						'	<div class="user-icon"></div>'.
+					echo '<div class="approver '.$dsaStatus.' steward">'.
+						'	<div class="user-icon" style="background-image: url('.$approverImage.');"></div>'.
 						'	<div class="info">'.
 						'		<div class="contactName">'.$approverName.'</div>'.
+						'		<div class="approverRole"><div class="icon"></div>Steward</div>'.
 						'		<div class="contactEmail"><div class="icon"></div><a href="mailto:'.$approverEmail.'">'.$approverEmail.'</a></div>'.
-						'		<div class="status"><div class="icon '.$dsaStatus.'"></div><p>'.ucfirst($dsaStatus).'</p></div>'.
 						'	</div>'.
 						'</div>';
 				}
@@ -197,7 +197,6 @@
 				"Request Date"
 			);
 			foreach($req->attributeReferences->attributeReference as $attrRef){
-				//print_r($attrRef);exit;
 				if(!in_array($attrRef->labelReference->signifier, $arrNonDisplay)){
 					echo '<h3 class="headerTab">'.$attrRef->labelReference->signifier.'</h3><div class="clear"></div>'.
 						'<p>'.$attrRef->value.'</p>';
