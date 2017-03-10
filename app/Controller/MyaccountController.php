@@ -40,7 +40,7 @@ class MyaccountController extends AppController {
 	}
 
 	public function index() {
-		$completedStatuses = ['Accepted', 'Implemented', 'Monitored', 'Invalid', 'Obsolete'];
+		$completedStatuses = ['Completed', 'Obsolete'];
 		$page = 'current';
 		if(isset($this->request->query['s'])){
 			$page = 'past';
