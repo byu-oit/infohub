@@ -173,19 +173,29 @@ class RequestController extends AppController {
 		$postData['requesterPhone'] = $phone;
 		$postData['requesterRole'] = $role;
 
-		// add requested terms to post
-		//For array data, PHP's http_build_query creates query/POST string in a format Collibra doesn't like,
-		//so we're manually building the remaining POST string
-		$postString = http_build_query($postData);
 		$requiredElementsString = Configure::read('Collibra.isaWorkflow.requiredElementsString');
 		$additionalElementsString = Configure::read('Collibra.isaWorkflow.additionalElementsString');
-		foreach($this->request->data['terms'] as $term){
-			$postString .= "&{$requiredElementsString}=" . urlencode($term);
-		}
-		foreach($this->request->data['terms'] as $term) {
-			if (!empty($additionalElementsString)) {
-				$postString .= "&{$additionalElementsString}=" . urlencode($term);
+		$postData[$requiredElementsString] = $this->request->data('terms');
+		if (!empty($additionalElementsString)) {
+			$postData[$additionalElementsString] = $this->request->data('apiTerms');
+			if (!empty($postData[$additionalElementsString])) {
+				$postData[$additionalElementsString] = array_diff($postData[$additionalElementsString], $postData[$requiredElementsString]);
 			}
+			if (empty($postData[$additionalElementsString])) {
+				//Collibra requires "additionalElements" field to exist, even if empty,
+				//but http_build_query throws out fields if null or empty array.
+				//So we'll put a blank space in, which http_build_query
+				//will not throw away
+				$postData[$additionalElementsString] = '';
+			}
+		}
+
+		//For array data, PHP's http_build_query creates query/POST string in a format Collibra doesn't like,
+		//so we have to tweak the output a bit
+		$postString = http_build_query($postData);
+		$postString = preg_replace("/{$requiredElementsString}%5B[0-9]*%5D/", $requiredElementsString, $postString);
+		if (!empty($additionalElementsString)) {
+			$postString = preg_replace("/{$additionalElementsString}%5B[0-9]*%5D/", $additionalElementsString, $postString);
 		}
 
 		$formResp = $this->CollibraAPI->post(
