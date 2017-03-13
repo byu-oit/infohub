@@ -10,7 +10,8 @@ class PhotosController extends AppController {
 	}
 
 	public function isAuthorized($user) {
-		return $this->isAdmin($user);
+		//All authenticated users allowed to see collibraview
+		return ($this->request->action == 'collibraview') ? true : $this->isAdmin($user);
 	}
 
 	public function index() {
