@@ -35,10 +35,12 @@
 				<?php else: ?>
 					<table class="api-terms checkBoxes">
 						<tr class="header">
-							<th>Field</th>
-							<th>Business Term</th>
+							<th class="fieldColumn">Field</th>
+							<th class="termColumn">Business Term</th>
+							<th>Classification</th>
 						</tr>
 						<?php foreach ($terms as $term): ?>
+
 							<tr>
 								<td><?php
 									$termPath = explode('.', $term->name);
@@ -55,6 +57,34 @@
 										<?php $hasSelectable = true; ?>
 										<?= $this->Html->link($term->businessTerm[0]->term, ['controller' => 'search', 'action' => 'term', $term->businessTerm[0]->termId]) ?>
 									<?php endif ?>
+								</td>
+								<td>
+									<?php if (!empty($term->businessTerm[0])):
+										$classification = $term->businessTerm[0]->termClassification;
+										switch($classification){
+											case '1 - Public':
+												$classificationTitle = 'Public';
+												$classification = 'Public';
+												break;
+											case '2 - Internal':
+												$classificationTitle = 'Internal';
+												$classification = 'Internal';
+												break;
+											case '3 - Confidential':
+												$classificationTitle = 'Confidential';
+												$classification = 'Classified';
+												break;
+											case '4 - Highly Confidential':
+												$classificationTitle = 'Highly Confidential';
+												$classification = 'HighClassified';
+												break;
+											default:
+												$classificationTitle = 'Public';
+												$classification = 'Public';
+												break;
+										}
+										echo '<img class="classIcon" src="/img/icon'.$classification.'.png">&nbsp;'.$classificationTitle;
+									endif ?>
 								</td>
 								<td>
 									<?php if (!empty($term->businessTerm[0])): ?>
