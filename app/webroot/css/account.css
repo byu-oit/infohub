@@ -124,6 +124,7 @@
   color: #114477;
   font-size: 16px;
   margin: 0;
+  display: inline-block;
 }
 #accountMid #accountMain .requestItem .riLeft {
   width: 65%;
@@ -142,9 +143,8 @@
   margin: 8px 0 15px;
 }
 #accountMid #accountMain .requestItem .riLeft img {
-  width: 256px;
-  padding-left: 50%;
-  margin-left: -128px;
+  width: 281px;
+  margin-left: -12px;
   display: block;
 }
 #accountMid #accountMain .requestItem .riRight {
@@ -157,7 +157,7 @@
 #accountMid #accountMain .requestItem .approver {
   position: relative;
   float: right;
-  margin: 5px 15px 10px 0;
+  margin: 5px 15px 10px 15px;
   *zoom: 1;
 }
 #accountMid #accountMain .requestItem .approver:before,
@@ -256,44 +256,42 @@
 #accountMid #accountMain .requestItem .approver .info .status .icon.denied {
   background-image: url(../img/request-pending-icon.png);
 }
-#accountMid #accountMain .requestItem .approver.approved.custodian .user-icon {
+#accountMid #accountMain .requestItem .approver.custodian .user-icon {
   background-color: #b5d45d;
 }
-#accountMid #accountMain .requestItem .approver.approved.custodian .info {
+#accountMid #accountMain .requestItem .approver.custodian .info {
   border-color: #b5d45d;
+  text-align: left;
 }
-#accountMid #accountMain .requestItem .approver.approved.custodian .info:after,
-#accountMid #accountMain .requestItem .approver.approved.custodian .info .icon {
+#accountMid #accountMain .requestItem .approver.custodian .info:after,
+#accountMid #accountMain .requestItem .approver.custodian .info .icon {
   background-color: #b5d45d;
 }
-#accountMid #accountMain .requestItem .approver.approved.steward .user-icon {
+#accountMid #accountMain .requestItem .approver.steward .user-icon {
   background-color: #ffa900;
 }
-#accountMid #accountMain .requestItem .approver.approved.steward .info {
+#accountMid #accountMain .requestItem .approver.steward .info {
   border-color: #ffa900;
+  text-align: left;
 }
-#accountMid #accountMain .requestItem .approver.approved.steward .info:after,
-#accountMid #accountMain .requestItem .approver.approved.steward .info .icon {
+#accountMid #accountMain .requestItem .approver.steward .info:after,
+#accountMid #accountMain .requestItem .approver.steward .info .icon {
   background-color: #ffa900;
-}
-#accountMid #accountMain .requestItem .approver.denied .user-icon {
-  background-color: #ee3839;
-}
-#accountMid #accountMain .requestItem .approver.denied .info {
-  border-color: #ee3839;
-}
-#accountMid #accountMain .requestItem .approver.denied .info:after,
-#accountMid #accountMain .requestItem .approver.denied .info .icon {
-  background-color: #ee3839;
 }
 #accountMid #accountMain .requestItem .riBelow {
-  width: 82%;
+  width: 88%;
   clear: both;
-  text-align: left;
-  margin-left: 18%;
+  margin-left: 12%;
 }
-#accountMid #accountMain .requestItem .riBelow .approver {
-  float: left;
+#accountMid #accountMain .requestItem .riBelow .subrequestName {
+  line-height: 50px;
+}
+#accountMid #accountMain .requestItem .riBelow .subrequestStatus {
+  width: 190px;
+  height: auto;
+  margin-left: -5px;
+  display: block;
+  clear: both;
 }
 #accountMid #accountMain .requestItem .detailsBody {
   display: none;

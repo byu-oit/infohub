@@ -71,17 +71,20 @@
 				}
 			}
 			echo '</p>';
-			if($page=='current'){
-				echo '<img src="/img/iconReview.png" alt="Request in review">';
+			if($req->statusReference->signifier == 'Completed'){
+				echo '<img src="/img/iconApproved.png" alt="Request approved">';
+			}elseif($req->statusReference->signifier == 'Rejected'){
+				echo '<img src="/img/iconRejected.png" alt="Request rejected">';
 			}else{
-				echo '<img src="/img/iconApproved.png" alt="Approved requests">';
+				echo '<img src="/img/iconReview.png" alt="Request in review">';
 			}
+
 			echo '</div>';
 
 			// display approvers and their info
 			////////////////////////////////////////
 			echo '<div class="riRight">'.
-				'<h4 class="riTitle">Reviewers of This Request</h4>';
+				'<h4 class="riTitle">Coordinator for this Request</h4>';
 			foreach($req->roles['Community Manager'] as $cm){
 				$approverName = $cm->firstName . " " . $cm->lastName;
 				if($approverName != ''){
@@ -101,12 +104,12 @@
 				echo '<div class="riBelow">';
 				$dsaName = $du->signifier;
 				$dsaStatus = strtolower($du->status);
-				echo '<h6 class="riTitle">'.$dsaName.'<br />'.ucfirst($dsaStatus).'</h4>';
+				echo '<h6 class="riTitle subrequestName">'.$dsaName.'</h6>';
 				$approverName = $du->roles['Custodian'][0]->firstName . " " . $du->roles['Custodian'][0]->lastName;
 				if($approverName != ''){
 					$approverImage = '../photos/collibraview/'.$du->roles['Custodian'][0]->resourceId;
 					$approverEmail = $du->roles['Custodian'][0]->emailAddress;
-					echo '<div class="approver '.$dsaStatus.' custodian">'.
+					echo '<div class="approver custodian">'.
 						'	<div class="user-icon" style="background-image: url('.$approverImage.');"></div>'.
 						'	<div class="info">'.
 						'		<div class="contactName">'.$approverName.'</div>'.
@@ -119,7 +122,7 @@
 				if($approverName != ''){
 					$approverImage = '../photos/collibraview/'.$du->roles['Steward'][0]->resourceId;
 					$approverEmail = $du->roles['Steward'][0]->emailAddress;
-					echo '<div class="approver '.$dsaStatus.' steward">'.
+					echo '<div class="approver steward">'.
 						'	<div class="user-icon" style="background-image: url('.$approverImage.');"></div>'.
 						'	<div class="info">'.
 						'		<div class="contactName">'.$approverName.'</div>'.
@@ -127,6 +130,14 @@
 						'		<div class="contactEmail"><div class="icon"></div><a href="mailto:'.$approverEmail.'">'.$approverEmail.'</a></div>'.
 						'	</div>'.
 						'</div>';
+				}
+				echo '<br />';
+				if($dsaStatus == 'candidate' || $dsaStatus == 'in progress'){
+					echo '<img src="/img/iconReview.png" class="subrequestStatus" alt="Request in review">';
+				}elseif($dsaStatus == 'approved'){
+					echo '<img src="/img/iconApproved.png" class="subrequestStatus" alt="Approved requests">';
+				}else{
+					echo '<img src="/img/iconRejected.png" class="subrequestStatus" alt="Request rejected">';
 				}
 				echo '</div>';
 			}
