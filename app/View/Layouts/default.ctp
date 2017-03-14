@@ -115,7 +115,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			<ul id="mainNav" class="inner">
 				<li><a href="/search" id="searchLink">Search</a></li>
 				<li><a href="/people" id="findLink">Find People</a></li>
-				<li><a href="/resources" id="resourceLink">Resources</a></li>
+				<li><a href="/resources" id="resourceLink">Procedures</a></li>
 				<li><a href="/apis" id="apisLink">APIs</a></li>
 				<li>
 					<a href="https://developer.byu.edu/api/api-list" target="_blank">
