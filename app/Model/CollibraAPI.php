@@ -315,6 +315,7 @@ class CollibraAPI extends Model {
 						'name' => 'businessTerm',
 						'Columns' => [
 							['Column' => ['fieldName' => 'termCommunityId']],
+							['Column' => ['fieldName' => 'termClassification']],
 							['Column' => ['fieldName' => 'termId']],
 							['Column' => ['fieldName' => 'term']]]]]],
 				'Resources' => [
@@ -329,6 +330,9 @@ class CollibraAPI extends Model {
 							'type' => 'TARGET',
 							'Source' => [
 								'Id' => ['name' => 'termId'],
+								'SingleValueListAttribute' => [[
+									'Value' => ['name' => 'termClassification'],
+									'labelId' => Configure::read('Collibra.attribute.classification')]],
 								'Vocabulary' => [
 									'Community' => [
 										'Id' => ['name' => 'termCommunityId']]],
