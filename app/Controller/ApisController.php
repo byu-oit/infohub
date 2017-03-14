@@ -50,7 +50,6 @@ class ApisController extends AppController {
 				return $this->redirect(['action' => 'host', 'hostname' => $hostname]);
 			}
 		}
-
 		$this->set(compact('hostname', 'basePath', 'terms'));
 
 		if (array_key_exists('checkout', $this->request->query)) {
