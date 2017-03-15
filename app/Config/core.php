@@ -37,7 +37,7 @@ if (!function_exists('denv')) {
 			'isaRequest' => '00000000-0000-0000-0000-000000031231'
 		],
 		'isaWorkflow' => [
-			'id' => '1d0bf5bc-9379-48d8-9abe-71ca85084879',
+			'id' => '8bfbed57-c387-4717-8f5d-c3cfebb485de',
 			'requiredElementsString' => 'requiredElements',
 			'additionalElementsString' => 'additionalElements'
 		],
