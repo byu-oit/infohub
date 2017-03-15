@@ -86,7 +86,7 @@
 			echo '<div class="riRight">'.
 				'<h4 class="riTitle">Coordinators for this Request</h4>'.
 				'<div class="approverPics">';
-			foreach($req->roles['Request Cordinator'] as $rc){					//Yes, 'cordinator' is misspelled here, but that's how the data comes out
+			foreach($req->roles['Request Cordinator'] as $rc){			//Yes, 'cordinator' is misspelled here, but that's how the data comes out
 				$approverName = $rc->firstName . " " . $rc->lastName;
 				if($approverName != ''){
 					$approverImage = '../photos/collibraview/'.$rc->resourceId;
@@ -107,6 +107,10 @@
 				$dsaStatus = strtolower($du->status);
 				echo '<h6 class="riTitle subrequestName">'.$dsaName.'</h6>';
 				echo '<div class="approverPics">';
+				$oneApprover = (
+					$du->roles['Steward'][0]->firstName . " " . $du->roles['Steward'][0]->lastName
+					== $du->roles['Custodian'][0]->firstName . " " . $du->roles['Custodian'][0]->lastName
+				);
 				$approverName = $du->roles['Steward'][0]->firstName . " " . $du->roles['Steward'][0]->lastName;
 				if($approverName != ''){
 					$approverImage = '../photos/collibraview/'.$du->roles['Steward'][0]->resourceId;
@@ -115,23 +119,29 @@
 						'	<div class="user-icon" style="background-image: url('.$approverImage.');"></div>'.
 						'	<div class="info">'.
 						'		<div class="contactName">'.$approverName.'</div>'.
-						'		<div class="approverRole"><div class="icon"></div>Steward</div>'.
+						'		<div class="approverRole"><div class="icon"></div>Steward';
+						if ($oneApprover) {
+							echo ' and Custodian';
+						}
+						echo '</div>'.
 						'		<div class="contactEmail"><div class="icon"></div><a href="mailto:'.$approverEmail.'">'.$approverEmail.'</a></div>'.
 						'	</div>'.
 						'</div>';
 				}
-				$approverName = $du->roles['Custodian'][0]->firstName . " " . $du->roles['Custodian'][0]->lastName;
-				if($approverName != ''){
-					$approverImage = '../photos/collibraview/'.$du->roles['Custodian'][0]->resourceId;
-					$approverEmail = $du->roles['Custodian'][0]->emailAddress;
-					echo '<div class="approver custodian">'.
-						'	<div class="user-icon" style="background-image: url('.$approverImage.');"></div>'.
-						'	<div class="info">'.
-						'		<div class="contactName">'.$approverName.'</div>'.
-						'		<div class="approverRole"><div class="icon"></div>Custodian</div>'.
-						'		<div class="contactEmail"><div class="icon"></div><a href="mailto:'.$approverEmail.'">'.$approverEmail.'</a></div>'.
-						'	</div>'.
-						'</div>';
+				if(!$oneApprover){
+					$approverName = $du->roles['Custodian'][0]->firstName . " " . $du->roles['Custodian'][0]->lastName;
+					if($approverName != ''){
+						$approverImage = '../photos/collibraview/'.$du->roles['Custodian'][0]->resourceId;
+						$approverEmail = $du->roles['Custodian'][0]->emailAddress;
+						echo '<div class="approver custodian">'.
+							'	<div class="user-icon" style="background-image: url('.$approverImage.');"></div>'.
+							'	<div class="info">'.
+							'		<div class="contactName">'.$approverName.'</div>'.
+							'		<div class="approverRole"><div class="icon"></div>Custodian</div>'.
+							'		<div class="contactEmail"><div class="icon"></div><a href="mailto:'.$approverEmail.'">'.$approverEmail.'</a></div>'.
+							'	</div>'.
+							'</div>';
+					}
 				}
 				echo '</div>';
 				echo '<br />';
