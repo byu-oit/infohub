@@ -38,7 +38,7 @@
 <!-- Request list -->
 <div id="accountMid" class="innerLower">
 	<div id="accountTop">
-		<h1 class="headerTab">My Account</h1>
+		<h1 class="headerTab">My Requests</h1>
 		<div id="atLower" class="whiteBox">
 			<h2><?php echo $psName ?></h2>
 			<div id="aiDept" class="accountInfo"><span class="aiLabel">Department:&nbsp;</span><?php echo $psDepartment ?></div>
