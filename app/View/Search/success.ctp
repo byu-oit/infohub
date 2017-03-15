@@ -13,7 +13,7 @@
 
 			<div id="successLower" class="whiteBox">
 				<p>Your request has been submited and you will be notified once it has been reviewed and approved.</p>
-				<p>Review your current requests on <?php echo $this->Html->link('My Account', '/myaccount'); ?>.</p>
+				<p>Review your current requests on <?php echo $this->Html->link('My Requests', '/myaccount'); ?>.</p>
 			</div>
 			<div class="clear"></div>
 		</div>
