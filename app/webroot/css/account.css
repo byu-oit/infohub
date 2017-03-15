@@ -152,7 +152,12 @@
   float: right;
 }
 #accountMid #accountMain .requestItem .riRight .riTitle {
-  text-align: right;
+  float: right;
+  clear: both;
+}
+.approverPics {
+  float: right;
+  width: 160px;
 }
 #accountMid #accountMain .requestItem .approver {
   position: relative;
@@ -285,6 +290,7 @@
 }
 #accountMid #accountMain .requestItem .riBelow .subrequestName {
   line-height: 50px;
+  width: 634px;
 }
 #accountMid #accountMain .requestItem .riBelow .subrequestStatus {
   width: 190px;

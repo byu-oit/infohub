@@ -84,12 +84,13 @@
 			// display approvers and their info
 			////////////////////////////////////////
 			echo '<div class="riRight">'.
-				'<h4 class="riTitle">Coordinator for this Request</h4>';
-			foreach($req->roles['Community Manager'] as $cm){
-				$approverName = $cm->firstName . " " . $cm->lastName;
+				'<h4 class="riTitle">Coordinators for this Request</h4>'.
+				'<div class="approverPics">';
+			foreach($req->roles['Request Cordinator'] as $rc){					//Yes, 'cordinator' is misspelled here, but that's how the data comes out
+				$approverName = $rc->firstName . " " . $rc->lastName;
 				if($approverName != ''){
-					$approverImage = '../photos/collibraview/'.$cm->resourceId;
-					$approverEmail = $cm->emailAddress;
+					$approverImage = '../photos/collibraview/'.$rc->resourceId;
+					$approverEmail = $rc->emailAddress;
 					echo '<div class="approver">'.
 						'	<div class="user-icon" style="background-image: url('.$approverImage.');"></div>'.
 						'	<div class="info">'.
@@ -99,25 +100,13 @@
 						'</div>';
 				}
 			}
-			echo '</div>';
+			echo '</div><h4 class="riTitle">Reviewers</h4></div>';
 			foreach($req->dataUsages as $du) {
 				echo '<div class="riBelow">';
 				$dsaName = $du->signifier;
 				$dsaStatus = strtolower($du->status);
 				echo '<h6 class="riTitle subrequestName">'.$dsaName.'</h6>';
-				$approverName = $du->roles['Custodian'][0]->firstName . " " . $du->roles['Custodian'][0]->lastName;
-				if($approverName != ''){
-					$approverImage = '../photos/collibraview/'.$du->roles['Custodian'][0]->resourceId;
-					$approverEmail = $du->roles['Custodian'][0]->emailAddress;
-					echo '<div class="approver custodian">'.
-						'	<div class="user-icon" style="background-image: url('.$approverImage.');"></div>'.
-						'	<div class="info">'.
-						'		<div class="contactName">'.$approverName.'</div>'.
-						'		<div class="approverRole"><div class="icon"></div>Custodian</div>'.
-						'		<div class="contactEmail"><div class="icon"></div><a href="mailto:'.$approverEmail.'">'.$approverEmail.'</a></div>'.
-						'	</div>'.
-						'</div>';
-				}
+				echo '<div class="approverPics">';
 				$approverName = $du->roles['Steward'][0]->firstName . " " . $du->roles['Steward'][0]->lastName;
 				if($approverName != ''){
 					$approverImage = '../photos/collibraview/'.$du->roles['Steward'][0]->resourceId;
@@ -131,6 +120,20 @@
 						'	</div>'.
 						'</div>';
 				}
+				$approverName = $du->roles['Custodian'][0]->firstName . " " . $du->roles['Custodian'][0]->lastName;
+				if($approverName != ''){
+					$approverImage = '../photos/collibraview/'.$du->roles['Custodian'][0]->resourceId;
+					$approverEmail = $du->roles['Custodian'][0]->emailAddress;
+					echo '<div class="approver custodian">'.
+						'	<div class="user-icon" style="background-image: url('.$approverImage.');"></div>'.
+						'	<div class="info">'.
+						'		<div class="contactName">'.$approverName.'</div>'.
+						'		<div class="approverRole"><div class="icon"></div>Custodian</div>'.
+						'		<div class="contactEmail"><div class="icon"></div><a href="mailto:'.$approverEmail.'">'.$approverEmail.'</a></div>'.
+						'	</div>'.
+						'</div>';
+				}
+				echo '</div>';
 				echo '<br />';
 				if($dsaStatus == 'candidate' || $dsaStatus == 'in progress'){
 					echo '<img src="/img/iconReview.png" class="subrequestStatus" alt="Request in review">';

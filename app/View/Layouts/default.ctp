@@ -61,7 +61,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			<li><a href="/admin/logout">Logout</a></li>
 		</ul>
 	</div>
-<?php } ?>    
+<?php } ?>
 	<div id="info-win"><div class="info-win-content"></div><div class="info-win-arrow"></div></div>
 	<div id="container">
 		<header>
@@ -101,7 +101,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 							<div id="nhLeft">
 								<h3>Have questions? We're here to help.</h3>
 								<p>If you need any help with your search, please <a href="mailto:infogov@byu.edu">Contact Us</a> and an information steward will get back to you within 24 hours.</p>
-								
+
 							</div>
 							<img src="/img/questionQuote.gif" alt="Have Questions?">
 						</div>
@@ -118,7 +118,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 				<li><a href="/resources" id="resourceLink">Procedures</a></li>
 				<li><a href="/apis" id="apisLink">APIs</a></li>
 				<li>
-					<a href="https://developer.byu.edu/api/api-list" target="_blank">
+					<a href="https://developer.byu.edu/" target="_blank">
 						<i class="fa fa-external-link" aria-hidden="true"></i>
 						API Documentation
 					</a>
@@ -163,11 +163,11 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			<div id="footerBottom">
 				<div class="inner">
 					<p>
-						<a href="http://www.byui.edu/">BYU–Idaho</a> 
-						<a href="http://www.byuh.edu/">BYU–Hawaii</a> 
-						<a href="http://www.ldsbc.edu/">LDS Business College</a> 
-						<a href="http://ce.byu.edu/sl/">Salt Lake Center</a> 
-						<a href="http://ce.byu.edu/jc/">Jerusalem Center</a> 
+						<a href="http://www.byui.edu/">BYU–Idaho</a>
+						<a href="http://www.byuh.edu/">BYU–Hawaii</a>
+						<a href="http://www.ldsbc.edu/">LDS Business College</a>
+						<a href="http://ce.byu.edu/sl/">Salt Lake Center</a>
+						<a href="http://ce.byu.edu/jc/">Jerusalem Center</a>
 						<a href="http://www.mtc.byu.edu/">Missionary Training Center</a>
 					</p>
 					<p>
