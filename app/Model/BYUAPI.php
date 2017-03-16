@@ -5,12 +5,13 @@ App::uses('Model', 'Model');
 class BYUAPI extends Model {
 	public $useTable = false;
 	public $useDbConfig = 'byuApi';
-	private $personSummaryCache = [];
 
 	public function personalSummary($netidRaw){
 		$netid = urlencode(trim($netidRaw));
-		if (array_key_exists($netid, $this->personSummaryCache)) {
-			return $this->personSummaryCache[$netid];
+		$cacheKey = "personsummary_{$netid}";
+        $summary = Cache::read($cacheKey);
+		if (!empty($summary)) {
+			return $summary;
 		}
 
 		$response = $this->_get("domains/legacy/identity/person/PRO/personsummary/v1/{$netid}");
@@ -23,8 +24,8 @@ class BYUAPI extends Model {
 			return array();
 		}
 
-		$this->personSummaryCache[$netid] = $data->PersonSummaryService->response;
-		return $this->personSummaryCache[$netid];
+		Cache::write($cacheKey, $data->PersonSummaryService->response);
+		return $data->PersonSummaryService->response;
 	}
 
 	public function supervisorLookup($netidRaw){

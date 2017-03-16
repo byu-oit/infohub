@@ -89,7 +89,6 @@
 							<label for="requestingOrganization">Requester Organization</label>
 							<input type="text" id="requestingOrganization" name="requestingOrganization" class="inputShade noPlaceHolder" value="<?= h($psDepartment) ?>">
 						</div>
-						<input type="hidden" name="requesterPersonId" value="<?= h($psPersonID) ?>" />
 					<!-- </div> -->
 				</div>
 
