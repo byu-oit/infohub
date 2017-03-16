@@ -1092,11 +1092,11 @@ img.resultBodyLoading {
 #apiBody #requestForm #srLower .resultItem .irLower .checkCol label,
 #searchBody #searchSuccess #srLower .resultItem .irLower .checkCol label,
 #apiBody #searchSuccess #srLower .resultItem .irLower .checkCol label {
-  white-space: nowrap;
   font-size: 10px;
   vertical-align: top;
   padding-top: 2px;
   display: inline-block;
+  width: 80%;
 }
 #searchBody #requestForm #srLower .resultItem .irLower .checkCol input,
 #apiBody #requestForm #srLower .resultItem .irLower .checkCol input,
