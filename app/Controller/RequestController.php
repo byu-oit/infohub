@@ -161,7 +161,10 @@ class RequestController extends AppController {
 		$guestID = $guestUserResp->resourceId;
 		*/
 
-		$postData = [];//'user' => $guestID;
+		$netID = $this->Auth->user('username');
+		$byuUser = $this->BYUAPI->personalSummary($netID);
+
+		$postData = ['requesterPersonId' => $byuUser->identifiers->person_id];
 		foreach($this->request->data as $key => $val){
 			if (!in_array($key, ['name', 'phone', 'email', 'role', 'terms', 'apiTerms', 'requestSubmit', 'collibraUser'])) {
 				$postData[$key] = $val;
@@ -314,7 +317,6 @@ class RequestController extends AppController {
 		$psRole = '';
 		$psDepartment = '';
 		$psReportsToName = '';
-		$psPersonID = $byuUser->identifiers->person_id;
 		if(isset($byuUser->names->preferred_name)){
 			$psName = $byuUser->names->preferred_name;
 		}
@@ -334,7 +336,7 @@ class RequestController extends AppController {
 			$psDepartment = $byuUser->employee_information->department;
 		}
 
-		$this->set(compact('apiAllTerms', 'preFilled', 'psName', 'psPhone', 'psEmail', 'psRole', 'psDepartment', 'psPersonID', 'psReportsToName', 'supervisorInfo'));
+		$this->set(compact('apiAllTerms', 'preFilled', 'psName', 'psPhone', 'psEmail', 'psRole', 'psDepartment', 'psReportsToName', 'supervisorInfo'));
 		$this->set('submitErr', isset($this->request->query['err']));
 	}
 }
