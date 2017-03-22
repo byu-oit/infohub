@@ -173,10 +173,11 @@
 						echo '<label class="headerTab" for="'.$field->id.'">'.$field->name.'</label>'.
 							'<div class="clear"></div>'.
 							'<div class="taBox">';
+						$placeholderText = $field->value;
 
 						$val = empty($preFilled[$field->id]) ? '' : h($preFilled[$field->id]);
 						if($field->type == 'textarea'){
-							echo '<textarea name="'.$field->id.'" id="'.$field->id.'"  class="inputShade noPlaceHolder">'.$val.'</textarea>';
+							echo '<textarea name="'.$field->id.'" id="'.$field->id.'" class="inputShade noPlaceHolder" placeholder="'.$placeholderText.'">'.$val.'</textarea>';
 						}elseif($field->type == 'user'){
 							echo '<select name="'.$field->id.'" id="'.$field->id.'">';
 							foreach($sponsors->user as $sponsor){
@@ -186,7 +187,7 @@
 							}
 							echo '</select>';
 						}else{
-							echo '<input type="text" name="'.$field->id.'" id="'.$field->id.'" value="'.$val.'" class="inputShade full noPlaceHolder" />';
+							echo '<input type="text" name="'.$field->id.'" id="'.$field->id.'" value="'.$val.'" class="inputShade full noPlaceHolder" placeholder="'.$placeholderText.'" />';
 						}
 
 						echo '</div>';
