@@ -288,9 +288,16 @@
   clear: both;
   margin-left: 12%;
 }
-#accountMid #accountMain .requestItem .riBelow .subrequestName {
-  line-height: 50px;
+.subrequestNameWrapper {
+  display: table;
   width: 634px;
+  height: 65px;
+  float: left;
+}
+#accountMid #accountMain .requestItem .riBelow .subrequestName {
+  width: 634px;
+  display: table-cell;
+  vertical-align: middle;
 }
 #accountMid #accountMain .requestItem .riBelow .subrequestStatus {
   width: 190px;

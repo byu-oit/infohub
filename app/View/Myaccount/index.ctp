@@ -100,12 +100,16 @@
 						'</div>';
 				}
 			}
-			echo '</div><h4 class="riTitle">Reviewers</h4></div>';
+			echo '</div>';
+			if(!empty($req->dataUsages)){
+				echo '<h4 class="riTitle">Reviewers</h4>';
+			}
+			echo '</div>';
 			foreach($req->dataUsages as $du) {
 				echo '<div class="riBelow">';
 				$dsaName = $du->signifier;
 				$dsaStatus = strtolower($du->status);
-				echo '<h6 class="riTitle subrequestName">'.$dsaName.'</h6>';
+				echo '<div class="subrequestNameWrapper"><h6 class="riTitle subrequestName">'.$dsaName.'</h6></div>';
 				echo '<div class="approverPics">';
 				$oneApprover = (
 					$du->roles['Steward'][0]->firstName . " " . $du->roles['Steward'][0]->lastName
