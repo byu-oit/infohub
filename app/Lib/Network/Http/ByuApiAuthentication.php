@@ -65,9 +65,14 @@ class ByuApiAuthentication {
 
 	protected static function _regenerateBearerToken($authInfo) {
 		$tokenInfo = CakeSession::consume('ByuApiBearerToken');
-		if (empty($authInfo['key']) || empty($authInfo['secret']) || empty($tokenInfo->access_token)) {
+		if (empty($authInfo['key']) || empty($authInfo['secret'])) {
 			return null;
 		}
+
+		if (empty($tokenInfo->access_token)) { //No token stored, so no need to revoke
+			return self::_generateBearerToken($authInfo);
+		}
+
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, 'https://api.byu.edu/revoke');
 		curl_setopt($ch, CURLOPT_USERPWD, "{$authInfo['key']}:{$authInfo['secret']}");
