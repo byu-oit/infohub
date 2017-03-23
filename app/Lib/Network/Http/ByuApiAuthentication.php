@@ -64,16 +64,16 @@ class ByuApiAuthentication {
 	}
 
 	protected static function _regenerateBearerToken($authInfo) {
-		CakeSession::delete('ByuApiBearerToken');
-		if (empty($authInfo['key']) || empty($authInfo['secret'])) {
+		$tokenInfo = CakeSession::consume('ByuApiBearerToken');
+		if (empty($authInfo['key']) || empty($authInfo['secret']) || empty($tokenInfo->access_token)) {
 			return null;
 		}
 		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, 'https://api.byu.edu/token/revoke');
+		curl_setopt($ch, CURLOPT_URL, 'https://api.byu.edu/revoke');
 		curl_setopt($ch, CURLOPT_USERPWD, "{$authInfo['key']}:{$authInfo['secret']}");
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_POST, true);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, 'grant_type=client_credentials');
+		curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(['grant_type' => 'client_credentials', 'token' => $tokenInfo->access_token]));
 
 		$revokeRaw = curl_exec($ch);
 		curl_close($ch);
