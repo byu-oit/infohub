@@ -76,7 +76,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 								$reqHiddenClass = 'request-hidden';
 							}
 						?>
-						<a href="javascript: showRequestQueue()" title="Request Queue">
+						<a href="javascript: toggleRequestQueue()" title="Request Queue">
 							<div class="request-num <?php echo $reqHiddenClass ?>"><?php echo $requestedTermCount ?></div>
 							<img class="icon" src="/img/icon-cart.png" alt="Request Queue" title="Your Request">
 						</a>
