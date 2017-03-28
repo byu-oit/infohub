@@ -124,7 +124,7 @@ $(document).ready(function(){
 			}
 			else if(e.which === 40){
 				e.preventDefault();
-				if(index >= $('.autoComplete li').length -1){
+				if(index >= $('.autoComplete li').length - 1){
 					index = 0;
 				}
 				else{
@@ -173,6 +173,23 @@ function showTermDef(elem){
 
 // Request functions
 ///////////////////////////////
+function toggleRequestQueue(){
+	if ($('#request-popup').css('display') == 'none'){
+		$.get("/request/listQueue")
+			.done(function(data){
+				if($(window).scrollTop()>50){
+					var requestIconPos = $('#request-queue .request-num').offset();
+					var left = requestIconPos.left - $('#request-popup').width() - 16;
+					$('#request-popup').addClass('fixed').css('left', left);
+				}else{
+					$('#request-popup').removeClass('fixed').css('left', 'auto');
+				}
+				$('#request-popup').html(data).slideDown('fast');
+			});
+	}else{
+		$('#request-popup').hide();
+	}
+}
 function showRequestQueue(){
 	$.get("/request/listQueue")
 		.done(function(data){
@@ -211,14 +228,15 @@ function removeFromRequestQueue(id){
 function getCurrentRequestTerms(){
 	$.get("/request/getQueueJSArray")
 		.done(function(data){
+			var originalData = data;
 			data = data.split(',');
+			$('#request-queue .request-num').text(data.length).removeClass('request-hidden');
 			$('input[type=checkbox]').prop('checked', false);
 
 			for(i=0; i<data.length; i++){
 				$('.chk'+data[i]).prop('checked', true);
 			}
-			$('#request-queue .request-num').text(data.length-1);
-			if(data.length-1 <= 0){
+			if(originalData.length <= 0){
 				$('#request-queue .request-num').addClass('request-hidden');
 				hideRequestQueue();
 			}
@@ -241,10 +259,8 @@ function addToQueue(elem, clearRelated){
 	$.post("/request/addToQueue", {t:arrTitles, id:arrIDs, vocab:arrVocabIDs, clearRelated:clearRelated, apiHost: apiHost, apiPath: apiPath})
 		.done(function(data){
 			$(elem).attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
-			var oldCount = parseInt($('#request-queue .request-num').text());
 			data = parseInt(data);
-			if(oldCount+data>0){
-				$('#request-queue .request-num').text(oldCount+data).removeClass('request-hidden');
+			if(data>0){
 				showRequestQueue();
 				getCurrentRequestTerms();
 			}
