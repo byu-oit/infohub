@@ -122,10 +122,11 @@
 					echo '<div class="approver steward">'.
 						'	<div class="user-icon" style="background-image: url('.$approverImage.');"></div>'.
 						'	<div class="info">'.
-						'		<div class="contactName">'.$approverName.'</div>'.
-						'		<div class="approverRole"><div class="icon"></div>Steward';
-						if ($oneApprover) {
-							echo ' and Custodian';
+						'		<div class="contactName">'.$approverName.'</div>';
+						if (!$oneApprover) {
+							echo '<div class="approverRole"><div class="icon"></div>Steward';
+						} else {
+							echo '<div class="approverRole"><div class="icon"></div>Custodian and Steward';
 						}
 						echo '</div>'.
 						'		<div class="contactEmail"><div class="icon"></div><a href="mailto:'.$approverEmail.'">'.$approverEmail.'</a></div>'.
