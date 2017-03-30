@@ -393,7 +393,7 @@ class SearchController extends AppController {
 		return $resp;
 	}
 
-	private function searchTerms($query, $page=0, $displayLength=20, $sortField='termsignifier', $sortOrder='ASC', $communityFilter='', $termOnly=false){
+	private function searchTerms($query, $page=0, $displayLength=100, $sortField='termsignifier', $sortOrder='ASC', $communityFilter='', $termOnly=false){
 		$displayStart = $page*$displayLength;
 
 		// use API search call to query based on user input

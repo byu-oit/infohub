@@ -302,7 +302,7 @@ class RequestController extends AppController {
 			'   {"Field":{"name":"termsignifier","order":"ASC"}}'.
 			']'.
 			'}'.
-			'},"displayStart":0,"displayLength":10}}';
+			'},"displayStart":0,"displayLength":100}}';
 
 		$termResp = $this->CollibraAPI->postJSON('output/data_table', $requestFilter);
 		$termResp = json_decode($termResp);
