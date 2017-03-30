@@ -200,6 +200,7 @@ class RequestController extends AppController {
 		if (!empty($additionalElementsString)) {
 			$postString = preg_replace("/{$additionalElementsString}%5B[0-9]*%5D/", $additionalElementsString, $postString);
 		}
+		$postString = preg_replace('/%0D%0A/','<br />',$postString);
 
 		$formResp = $this->CollibraAPI->post(
 			'workflow/'.Configure::read('Collibra.isaWorkflow.id').'/start',
