@@ -272,8 +272,8 @@ class SearchController extends AppController {
 	}
 
 	public function getTermDefinition() {
-		$vocabRID= $this->request->query['vocabRid'];
-		$searchInput= html_entity_decode($this->request->query['searchInput']);
+		$vocabRID = $this->request->query['vocabRid'];
+		$searchInput = html_entity_decode($this->request->query['searchInput']);
 		$searchInput = addslashes($searchInput);
 
 		$resp = $this->CollibraAPI->get('term/'.$vocabRID, ['json' => true]);

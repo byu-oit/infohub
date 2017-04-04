@@ -423,6 +423,7 @@ img.resultBodyLoading {
 #apiBody #requestForm #srLower .resultItem .resultContent .resultBody p,
 #searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody p,
 #apiBody #searchSuccess #srLower .resultItem .resultContent .resultBody p,
+#searchBody #searchResults #srLower .resultItem .resultContent .term-desc p,
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody div,
 #apiBody #searchResults #srLower .resultItem .resultContent .resultBody div,
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody div,
@@ -1172,6 +1173,20 @@ img.resultBodyLoading {
   font-size: 18px;
   border: inherit;
   padding: 0 30px;
+}
+#apiBody .apiHelpButton {
+  color: rgba(14, 50, 100, 0.85);
+  font-size: 18px;
+  line-height: 16px;
+  width: auto;
+  cursor: pointer;
+  padding-bottom: 8px;
+}
+#apiBody .apiHelp {
+  font-size: 14px;
+  width: 100%;
+  display: none;
+  padding-bottom: 8px;
 }
 #apiBody .api-terms {
   padding: 4px;

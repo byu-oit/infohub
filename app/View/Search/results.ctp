@@ -6,27 +6,38 @@
 	$(document).ready(function() {
 		$("#searchLink").addClass('active');
 
+		$('.resultContent').each(function() {
+			var vocabRid = $(this).attr('data-vocabRid');
+			var thisElem = $(this);
+
+			$.get("/search/getTermDefinition",{vocabRid:vocabRid,searchInput:'<?php echo $searchInput ?>'})
+				.done(function(data) {
+					thisElem.find('.term-desc').html('<p>'+data+'</p>');
+				});
+
+		});
+
+
 		$('.detailsTab').click(function() {
 			$(this).siblings('.resultContent').children('.resultBody').slideToggle();
 			$(this).toggleClass('active');
 			$(this).parent().find('.mainRequestBtn, .unrequestable').toggle();
 			$(this).parent().find('.detailsRequestBtn').toggle();
-			
+
 			if($(this).hasClass('active')){
 				if($(this).parent().find('.checkBoxes').html() == ''){
 					var thisElem = $(this);
 					var rid = $(this).attr('data-rid');
 					var vocabRid = $(this).attr('data-vocabRid');
-					
+
 					// load term definition
 					$.get("/search/getTermDefinition",{vocabRid:vocabRid, searchInput:'<?php echo $searchInput ?>'})
 						.done(function(data) {
-							var termDesc = '<p>'+data+'</p><h5>Also included in this selection (check all that apply to your request).</h5>';
-							
+
 							// load term sibling checkboxes
 							$.get( "/search/getFullVocab",{rid:rid})
 								.done(function( data ) {
-									thisElem.parent().find('.term-desc').html(termDesc);
+									thisElem.parent().find('.checkBoxesHeader').html('<h5>Check other terms to include in request.</h5>');
 									thisElem.parent().find('.resultBodyLoading').hide()
 									thisElem.parent().find('.checkBoxes').html(data);
 									getCurrentRequestTerms();
@@ -127,7 +138,7 @@
 					<option value="3" <?php if($sort==3) echo 'selected'; ?>>Classification</option>
 				</select>
 			</div>
-			
+
 <?php
 	}
 
@@ -181,7 +192,7 @@
 				<form action="/request/index/<?php echo $term->termrid; ?>" method="post">
 					<h4><?php echo $term->termsignifier; ?></h4>
 					<h5 class="<?php echo $txtColor ?>"><?php echo $term->communityname.' <span class="arrow-separator">&gt;</span> <a href="/search/listTerms/'.$term->domainrid.'">'.$term->domainname.'</a>' ?></h5>
-					<div class="resultContent">
+					<div class="resultContent" data-vocabRid="<?php echo $termRequestID ?>">
 						<ul>
 						   <?php
 								if(sizeof($term->Role00000000000000000000000000005016)>0){
@@ -199,8 +210,9 @@
 								}
 							?>
 						</ul>
+						<div class="term-desc"></div>
 						<div class="resultBody">
-							<div class="term-desc"></div>
+							<div class="checkBoxesHeader"></div>
 							<img class="resultBodyLoading" src="/img/dataLoading.gif" alt="Loading...">
 							<div class="checkBoxes"></div>
 							<div class="clear"></div>
@@ -214,7 +226,7 @@
 							echo '<img src="/img/iconStarBlue.gif" alt="Quick Link">';
 						}
 					?>
-							
+
 					</a>
 					<?php
 						if(!$notRequestable || Configure::read('allowUnrequestableTerms')){
