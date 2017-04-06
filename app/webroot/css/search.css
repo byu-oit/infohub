@@ -344,7 +344,6 @@ img.resultBodyLoading {
   display: inline;
   font-size: 12px;
   font-weight: bold;
-  white-space: nowrap;
   margin-right: 10px;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent ul li .listLabel,
@@ -433,6 +432,15 @@ img.resultBodyLoading {
   font-size: 14px;
   width: 100%;
 }
+#searchBody #searchResults #srLower .resultItem .resultContent .resultBody ul li {
+  font-size: 12px;
+  font-weight: bold;
+  margin-right: 10px;
+  clear: left;
+}
+#searchBody #searchResults #srLower .resultItem .resultContent .resultBody ul li .listLabel {
+  color: #224d7d;
+}
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody h5,
 #apiBody #searchResults #srLower .resultItem .resultContent .resultBody h5,
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody h5,
@@ -443,6 +451,7 @@ img.resultBodyLoading {
   font-weight: bold;
   color: #114477;
   margin-bottom: 4px;
+  margin-top: 15px;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody form,
 #apiBody #searchResults #srLower .resultItem .resultContent .resultBody form,

@@ -60,12 +60,15 @@ if (!function_exists('denv')) {
 		],
 		'attribute' => [
 			'definition' => '00000000-0000-0000-0000-000000000202',
+			'descriptiveExample' => '00000000-0000-0000-0000-000000003115',
+			'standardDataElementLabel' => 'ea92faa8-685d-4cb0-8665-14808de08dd2',
 			'classification' => '80cae8d4-856f-4b9a-971a-164514e79744',
 			'requestable' => '4f6ac2f0-6711-44f4-81d8-7e6e4dcb1701',
 			'isaRequestPersonId' => 'a368134f-ab44-4ce6-ac1d-1b69bfa37d6e',
 			'stewardPhone' => '9a18e247-c090-40c3-896e-ab97335ae759',
 			'stewardEmail' => '0cbbfd32-fc97-47ce-bef1-a89ae4e77ee8',
-			'stewardName' => '4331ec09-88a2-48e6-b096-9ece6648aff3'
+			'stewardName' => '4331ec09-88a2-48e6-b096-9ece6648aff3',
+			'notes' => '00000000-0000-0000-0000-000000003116'
 		],
 		'term' => [
 			'custodian' => '6f666b9e-be07-4521-95fa-36fecfe2ff71',

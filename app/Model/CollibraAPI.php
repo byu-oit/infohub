@@ -410,7 +410,9 @@ class CollibraAPI extends Model {
 			"Columns" => [
 				["Column" => ["fieldName" => "termrid"]],
 				["Column" => ["fieldName" => "termsignifier"]],
+				["Column" => ["fieldName" => "standardDataElementLabel"]],
 				["Column" => ["fieldName" => "description"]],
+				["Column" => ["fieldName" => "descriptiveExample"]],
 				["Column" => ["fieldName" => "lastModified"]],
 				["Column" => ["fieldName" => "domainrid"]],
 				["Column" => ["fieldName" => "domainname"]],
@@ -428,18 +430,28 @@ class CollibraAPI extends Model {
 					"Columns" => [
 						["Column" => ["fieldName" => "synonymname"]],
 						["Column" => ["fieldName" => "synonymrelid"]],
-						["Column" => ["fieldName" => "synonymid"]]]]]],
+						["Column" => ["fieldName" => "synonymid"]]]]],
+				["Column" => ["fieldName" => "notes"]]],
 			"Resources" => [
 				"Term" => [
 					"Id" => ["name" => "termrid"],
 					"Signifier" => ["name" => "termsignifier"],
+					"StringAttribute" => [[
+						"Value" => ["name" => "standardDataElementLabel"],
+						"labelId" => Configure::read('Collibra.attribute.standardDataElementLabel')],
+					[
+						"Value" => ["name" => "description"],
+						"labelId" => Configure::read('Collibra.attribute.definition')],
+					[
+						"Value" => ["name" => "descriptiveExample"],
+						"labelId" => Configure::read('Collibra.attribute.descriptiveExample')],
+					[
+						"Value" => ["name" => "notes"],
+						"labelId" => Configure::read('Collibra.attribute.notes')]],
 					"LastModified" => ["name" => "lastModified"],
 					"BooleanAttribute" => [[
 						"Value" => ["name" => "requestable"],
 						"labelId" => Configure::read('Collibra.attribute.requestable')]],
-					"StringAttribute" => [[
-						"LongExpression" => ["name" => "description"],
-						"labelId" => Configure::read('Collibra.attribute.definition')]],
 					"SingleValueListAttribute" => [[
 						"Value" => ["name" => "classification"],
 						"labelId" => Configure::read('Collibra.attribute.classification')]],

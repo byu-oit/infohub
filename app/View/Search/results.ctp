@@ -212,6 +212,19 @@
 						</ul>
 						<div class="term-desc"></div>
 						<div class="resultBody">
+							<ul>
+								<?php if(!empty($term->standardDataElementLabel)): ?>
+									<li><span class="listLabel">Standard Data Element Label:&nbsp;</span><?=$term->standardDataElementLabel?></li>
+								<?php endif;
+
+								if(!empty($term->descriptiveExample)): ?>
+									<li><span class="listLabel">Descriptive Example:&nbsp;</span><?=$term->descriptiveExample?></li>
+								<?php endif;
+
+								if(!empty($term->notes)): ?>
+									<li><span class="listLabel">Note:&nbsp;</span><?=$term->notes?></li>
+								<?php endif; ?>
+							</ul>
 							<div class="checkBoxesHeader"></div>
 							<img class="resultBodyLoading" src="/img/dataLoading.gif" alt="Loading...">
 							<div class="checkBoxes"></div>
