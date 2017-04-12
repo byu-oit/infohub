@@ -71,13 +71,15 @@
 				}
 			}
 			echo '</p>';
+			echo '<div class="approval-wrapper">';
 			if($req->statusReference->signifier == 'Completed'){
-				echo '<img src="/img/iconApproved.png" alt="Request approved">';
+				echo '<div class="approval-cell light-green-border left">In Progress</div><div class="approval-cell green-border right active">Approved</div>';
 			}elseif($req->statusReference->signifier == 'Rejected'){
-				echo '<img src="/img/iconRejected.png" alt="Request rejected">';
+				echo '<div class="approval-cell light-red-border left">In Progress</div><div class="approval-cell red-border right active">Rejected</div>';
 			}else{
-				echo '<img src="/img/iconReview.png" alt="Request in review">';
+				echo '<div class="approval-cell green-border left active">In Progress</div><div class="approval-cell light-green-border right">Approved</div>';
 			}
+			echo '</div>';
 
 			echo '</div>';
 
@@ -150,14 +152,15 @@
 				}
 				echo '</div>';
 				echo '<br />';
+				echo '<div class="approval-wrapper">';
 				if($dsaStatus == 'candidate' || $dsaStatus == 'in progress'){
-					echo '<img src="/img/iconReview.png" class="subrequestStatus" alt="Request in review">';
+					echo '<div class="approval-cell green-border left active">In Progress</div><div class="approval-cell light-green-border right">Approved</div>';
 				}elseif($dsaStatus == 'approved'){
-					echo '<img src="/img/iconApproved.png" class="subrequestStatus" alt="Approved requests">';
+					echo '<div class="approval-cell light-green-border left">In Progress</div><div class="approval-cell green-border right active">Approved</div>';
 				}else{
-					echo '<img src="/img/iconRejected.png" class="subrequestStatus" alt="Request rejected">';
+					echo '<div class="approval-cell light-red-border left">In Progress</div><div class="approval-cell red-border right active">Rejected</div>';
 				}
-				echo '</div>';
+				echo '</div></div>';
 			}
 			////////////////////////////////////////
 

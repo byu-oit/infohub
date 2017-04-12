@@ -142,10 +142,46 @@
   color: black;
   margin: 8px 0 15px;
 }
-#accountMid #accountMain .requestItem .riLeft img {
-  width: 281px;
+/*#accountMid #accountMain .requestItem .riLeft img {       Saving this in case we decide to
+  width: 281px;                                             go back to the approval images
   margin-left: -12px;
   display: block;
+}*/
+#accountMid #accountMain .requestItem .approval-wrapper {
+  width: 282px;
+  margin-left: -12px;
+  display: block;
+}
+#accountMid #accountMain .requestItem .approval-wrapper .approval-cell {
+  display: inline-block;
+  width: 125px;
+  height: 16px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 12px;
+  padding: 4px;
+  border: 4px solid;
+}
+#accountMid #accountMain .requestItem .approval-wrapper .left {
+  border-radius: 16px 0px 0px 16px;
+}
+#accountMid #accountMain .requestItem .approval-wrapper .right {
+  border-radius: 0px 16px 16px 0px;
+}
+#accountMid #accountMain .requestItem .approval-wrapper .active {
+  font-weight: bold;
+}
+#accountMid #accountMain .requestItem .approval-wrapper .light-green-border {
+  border-color: #d8e8ab;
+}
+#accountMid #accountMain .requestItem .approval-wrapper .green-border {
+  border-color: #b8d65a;
+}
+#accountMid #accountMain .requestItem .approval-wrapper .light-red-border {
+  border-color: #fc9898;
+}
+#accountMid #accountMain .requestItem .approval-wrapper .red-border {
+  border-color: #d85858;
 }
 #accountMid #accountMain .requestItem .riRight {
   width: 35%;
@@ -299,12 +335,49 @@
   display: table-cell;
   vertical-align: middle;
 }
-#accountMid #accountMain .requestItem .riBelow .subrequestStatus {
-  width: 190px;
+/*#accountMid #accountMain .requestItem .riBelow .subrequestStatus {    As above, saving in case we decide to
+  width: 190px;                                                         go back to using approval status images
   height: auto;
   margin-left: -5px;
   display: block;
   clear: both;
+}*/
+#accountMid #accountMain .requestItem .riBelow .approval-wrapper {
+  width: 190px;
+  margin-left: -5px;
+  display: block;
+  clear: both;
+}
+#accountMid #accountMain .requestItem .riBelow .approval-wrapper .approval-cell {
+  display: inline-block;
+  width: 73px;
+  height: 14px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 10px;
+  padding: 3px;
+  border: 3px solid;
+}
+#accountMid #accountMain .requestItem .riBelow .approval-wrapper .left {
+  border-radius: 12px 0px 0px 12px;
+}
+#accountMid #accountMain .requestItem .riBelow .approval-wrapper .right {
+  border-radius: 0px 12px 12px 0px;
+}
+#accountMid #accountMain .requestItem .riBelow .approval-wrapper .active {
+  font-weight: bold;
+}
+#accountMid #accountMain .requestItem .riBelow .approval-wrapper .light-green-border {
+  border-color: #d8e8ab;
+}
+#accountMid #accountMain .requestItem .riBelow .approval-wrapper .green-border {
+  border-color: #b8d65a;
+}
+#accountMid #accountMain .requestItem .riBelow .approval-wrapper .light-red-border {
+  border-color: #fc9898;
+}
+#accountMid #accountMain .requestItem .riBelow .approval-wrapper .red-border {
+  border-color: #d85858;
 }
 #accountMid #accountMain .requestItem .detailsBody {
   display: none;
