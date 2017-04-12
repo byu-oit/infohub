@@ -270,13 +270,18 @@ function addToQueue(elem, clearRelated){
 
 // QuickLinks functions
 /////////////////////////////
-function removeQL(li, id){
+function removeQL(li, id, starClick){
 	$.ajax({
 		type: 'POST',
 		url: '/quickLinks/remove',
 		data: {'id':id}
 	});
-	$(li).parent().fadeOut();
+	if (!starClick) {
+		$(li).parent().remove();
+	} else {
+		$(li).remove();
+	}
+	$('#term'+id+' .addQuickLink img').attr('src', '/img/iconStarBlue.gif');
 }
 
 function addQL(t, id) {
@@ -288,11 +293,13 @@ function addQL(t, id) {
 	.done(function(data){
 		$('#term'+id+' .addQuickLink img').attr('src', '/img/iconStarOrange.gif');
 		if(data==1){
-			var html = '<li>'+
+			var html = '<li id="term-' + id + '-list-item">'+
 				'    <a class="ql-list ql-remove" href="#" onclick="removeQL(this,\''+id+'\'); return false;"><img src="/img/ql-delete.png"></a>'+
 				'    <a class="quickLink" href="/search/term/'+id+'">'+t+'</a>'+
 				'</li>';
 			$('#QLContainer ul').append(html);
+		}else{
+			removeQL('#term-'+id+'-list-item', id, 1);
 		}
 	});
 }

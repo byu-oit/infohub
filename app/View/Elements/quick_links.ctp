@@ -6,8 +6,8 @@
 			    <?php
                     foreach($quickLinks as $ql){
                 ?>
-				<li>
-					<a class="ql-list ql-remove" href="#" onclick="removeQL(this,'<?php echo $ql[1]; ?>'); return false;"><img src="/img/ql-delete.png"></a>
+				<li id="term-<?php echo $ql[1] ?>-list-item">
+					<a class="ql-list ql-remove" href="#" onclick="removeQL(this,'<?php echo $ql[1]; ?>', 0); return false;"><img src="/img/ql-delete.png"></a>
 					<a class="quickLink" href="/search/term/<?php echo $ql[1]; ?>"><?php echo $ql[0]; ?></a>
 				</li>
 				<?php
