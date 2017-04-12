@@ -118,11 +118,11 @@ class PeopleController extends AppController {
 	public function lookup(){
 		// get all parent communities for left nav
 		$this->loadModel('CollibraAPI');
-		$resp = $this->CollibraAPI->get('community/'.Configure::read('Collibra.community.byu').'/sub-communities');
+		$resp = $this->CollibraAPI->get('community/'.Configure::read('Collibra.community.byu'));
 		$parentCommunities = json_decode($resp);
 		usort($parentCommunities->communityReference, 'self::sortCommunities');
 
-		//$query = 'glossary';
+		$query = 'glossary';
 		if ($this->request->is('post')) {
 			// search in all communities, vocabularies and users
 			//=================================================================

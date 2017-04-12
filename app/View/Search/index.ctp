@@ -4,7 +4,7 @@
 ?>
 <script>
 	$(document).ready(function() {
-		$("#searchLink").addClass('active');    
+		$("#searchLink").addClass('active');
         loadCommunityData(null, 'catalogList0');
 	});
 
@@ -16,7 +16,7 @@
 		$('.grandChild').css('width', '100%').css('width', '-=11px');
 		$('.greatGrandChild').css('width', '100%').css('width', '-=11px');
 	}
-    
+
     function loadCommunityData(community, listID){
         $.post("/search/loadCommunityData", { c:community })
             .done(function(data) {
@@ -28,7 +28,7 @@
                     level = parseInt($('#'+listID).attr('data-level'))+1;
                 }
                 if(level > 1){
-                    grandChildClass = 'grandChild';            
+                    grandChildClass = 'grandChild';
                 }
                 // create community elements
                 for(i=0; i<objDomains.aaData[0].Subcommunities.length; i++){
@@ -44,7 +44,7 @@
                     }
                     html += '</li>';
                 }
-                
+
                 // create vocabulary elements
                 if(objDomains.aaData.length>1){
                     for(i=0; i<objDomains.aaData[1].Vocabularies.length; i++){
@@ -54,23 +54,23 @@
                             '</li>';
                     }
                 }
-                
+
                 // add click event to show/hide and load child data
                 $('#'+listID).html(html).find('li a').not('.vocab').click(function (e) {
                     $(this).toggleClass('active');
                     e.preventDefault();
-                    
+
                     // load child communities and vocabularies if they haven't been loaded
                     if($(this).parent().find('li').length==1){
                         var cid = $(this).parent().attr('id').substring(1);
                         loadCommunityData(cid, 'categoryList'+cid);
                     }
-                                      
+
                     var ullist = $(this).parent().children('ul:first');
                     ullist.slideToggle();
                     listWidth();
                 });
-                
+
         });
     }
 </script>

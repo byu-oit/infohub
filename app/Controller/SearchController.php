@@ -204,6 +204,32 @@ class SearchController extends AppController {
 		return $resp;
 	}
 
+	// called on results page's more details tab
+	public function getTermRoles() {
+		$this->autoRender = false;
+		$termrid = $this->request->query['resource'];
+
+		$resp = json_decode($this->CollibraAPI->get('/member/find/all?resource='.$termrid));
+		$steward = null;
+		$custodian = null;
+		$members = $resp->memberReference;
+		$i = 0;
+		while (!($steward && $custodian) && ($i < 20)) {
+			if ($members[$i]->role->signifier == 'Steward') {
+				$steward = $members[$i]->ownerUser->firstName . " " . $members[$i]->ownerUser->lastName;
+			}
+			if ($members[$i]->role->signifier == 'Custodian') {
+				$custodian = $members[$i]->ownerUser->firstName . " " . $members[$i]->ownerUser->lastName;
+			}
+			$i++;
+		}
+		$result = [
+			'steward' => $steward,
+			'custodian' => $custodian
+		];
+		return json_encode($result);
+	}
+
 	// get list of all other terms within a vocabulary/glossary
 	public function getFullVocab() {
 		$vocabRID= $this->request->query['rid'];

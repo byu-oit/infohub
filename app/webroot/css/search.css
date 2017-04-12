@@ -434,12 +434,17 @@ img.resultBodyLoading {
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody ul li {
   font-size: 12px;
-  font-weight: bold;
+  font-weight: 600;
   margin-right: 10px;
   clear: left;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody ul li .listLabel {
+  font-weight: bold;
   color: #224d7d;
+}
+#searchBody #searchResults #srLower .resultItem .resultContent .resultBody ul .steward,
+#searchBody #searchResults #srLower .resultItem .resultContent .resultBody ul .custodian {
+  cursor: pointer;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody h5,
 #apiBody #searchResults #srLower .resultItem .resultContent .resultBody h5,

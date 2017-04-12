@@ -10,7 +10,7 @@
 
 	$(document).ready(function() {
 		$("#findLink").addClass('active');
-		
+
 		$(".deptLink").click(function() {
 			$(".deptLink").removeClass('active');
 			//$(this).addClass("active");
@@ -137,7 +137,7 @@
 								echo '</ul>';
 							}
 							echo '	</div>'.
-								'</div>'; 
+								'</div>';
 						}
 					}
 				?>
@@ -182,7 +182,7 @@
                                 }
                                 echo '    <div class="contactEmail"><a href="mailto:'.$email.'">'.$email.'</a></div>'.
                                 	'    <span class="contactTitle orangeText">Steward<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$stewardDef.'" class="info"><img src="/img/iconInfo.png"></div></span>'.
-                                    '</div>'; 
+                                    '</div>';
                            	}
                            	// display custodians
                            	if(isset($c->custodian)){
@@ -202,7 +202,7 @@
                                 }
                                 echo '    <div class="contactEmail"><a href="mailto:'.$email.'">'.$email.'</a></div>'.
                                 	'    <span class="contactTitle greenText">Custodian<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$custodianDef.'" class="info"><img src="/img/iconInfo.png"></div></span>'.
-                                    '</div>'; 
+                                    '</div>';
                            	}
 
                             echo '</div>';

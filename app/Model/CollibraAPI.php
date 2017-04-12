@@ -420,6 +420,7 @@ class CollibraAPI extends Model {
 				["Column" => ["fieldName" => "classification"]],
 				["Column" => ["fieldName" => "commrid"]],
 				["Column" => ["fieldName" => "communityname"]],
+				["Column" => ["fieldName" => "statusname"]],
 				["Group" => [
 					"Columns" => [
 						["Column" => ["fieldName" => "userRole00000000000000000000000000005016fn"]],

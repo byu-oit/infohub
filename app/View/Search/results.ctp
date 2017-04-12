@@ -30,28 +30,46 @@
 					var rid = $(this).attr('data-rid');
 					var vocabRid = $(this).attr('data-vocabRid');
 
-					// load term definition
-					$.get("/search/getTermDefinition",{vocabRid:vocabRid, searchInput:'<?php echo $searchInput ?>'})
+					$.get("/search/getTermRoles", {resource:vocabRid})
 						.done(function(data) {
+							var roleNames = JSON.parse(data);
+							thisElem.parent().find('.steward').html('<span class="listLabel">Steward:&nbsp;</span>' + roleNames.steward);
+							thisElem.parent().find('.steward').attr('name', roleNames.steward);
+							thisElem.parent().find('.custodian').html('<span class="listLabel">Custodian:&nbsp;</span>' + roleNames.custodian);
+							thisElem.parent().find('.custodian').attr('name', roleNames.custodian);
+						});
 
-							// load term sibling checkboxes
-							$.get( "/search/getFullVocab",{rid:rid})
-								.done(function( data ) {
-									thisElem.parent().find('.checkBoxesHeader').html('<h5>Check other terms to include in request.</h5>');
-									thisElem.parent().find('.resultBodyLoading').hide()
-									thisElem.parent().find('.checkBoxes').html(data);
-									getCurrentRequestTerms();
-									thisElem.parent().find('.checkBoxes input').click(function(){
-										if(thisElem.parent().find('.requestAccess').hasClass('inactive')){
-											thisElem.parent().find('.requestAccess').attr('value','Update Request').removeClass('inactive');
-										}
-									});
+					// load term sibling checkboxes
+					$.get( "/search/getFullVocab",{rid:rid})
+						.done(function( data ) {
+							thisElem.parent().find('.checkBoxesHeader').html('<h5>Check other terms to include in request.</h5>');
+							thisElem.parent().find('.resultBodyLoading').hide()
+							thisElem.parent().find('.checkBoxes').html(data);
+							getCurrentRequestTerms();
+							thisElem.parent().find('.checkBoxes input').click(function(){
+								if(thisElem.parent().find('.requestAccess').hasClass('inactive')){
+									thisElem.parent().find('.requestAccess').attr('value','Update Request').removeClass('inactive');
+								}
 							});
 					});
 				}else{
 					getCurrentRequestTerms();
 				}
 			}
+		});
+
+		$('.steward').click(function() {
+			var thisElem = $(this);
+			var form = $('<form action="/people/lookup" method="POST"><input type="hidden" name="query" value="'+thisElem.attr('name')+'"></form>');
+			$(document.body).append(form);
+			form.submit();
+		});
+
+		$('.custodian').click(function() {
+			var thisElem = $(this);
+			var form = $('<form action="/people/lookup" method="POST"><input type="hidden" name="query" value="'+thisElem.attr('name')+'"></form>');
+			$(document.body).append(form);
+			form.submit();
 		});
 
 		pageResults(1);
@@ -202,15 +220,17 @@
 							<?php
 								}
 							?>
-							<li><span class="listLabel">Last Updated:&nbsp;</span><?php echo $lastModified; ?></li>
-							<li><span class="listLabel">Classification: </span><span class="classificationTitle"><?php echo $classificationTitle ?></span></li>
+							<li>
+								<span class="listLabel">Classification: </span><span class="classificationTitle"><?php echo $classificationTitle ?></span>
+								<?php if($term->statusname != 'Approved'): ?>(This classification is pending trustee approval.)<?php endif; ?>
+							</li>
 							<?php
 								if($synonymFor != ''){
 									echo '<li class="new-line synonym"><span class="listLabel">Synonym For: </span><span class="classificationTitle">'.$synonymFor.'</span></li>';
 								}
 							?>
 						</ul>
-						<div class="term-desc"></div>
+						<div class="term-desc"><p><?=$term->description?></p></div>
 						<div class="resultBody">
 							<ul>
 								<?php if(!empty($term->standardDataElementLabel)): ?>
@@ -224,6 +244,9 @@
 								if(!empty($term->notes)): ?>
 									<li><span class="listLabel">Note:&nbsp;</span><?=$term->notes?></li>
 								<?php endif; ?>
+								<li class="steward"></li>
+								<li class="custodian"></li>
+								<li><span class="listLabel">Last Updated:&nbsp;</span><?=$lastModified?></li>
 							</ul>
 							<div class="checkBoxesHeader"></div>
 							<img class="resultBodyLoading" src="/img/dataLoading.gif" alt="Loading...">
