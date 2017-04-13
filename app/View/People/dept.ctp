@@ -10,7 +10,7 @@
 
 	$(document).ready(function() {
 		$("#findLink").addClass('active');
-		
+
 		$(".deptLink").click(function() {
 			$(".deptLink").parent().removeClass('active');
 			//$(this).addClass("active");
@@ -20,7 +20,7 @@
 		$("#subMobMenu").click(function() {
 			$('#leftCol ul').slideToggle();
 		});
-		
+
 		$(".deptLink-sub").click(function() {
 			if($(window).width() < 750) {
 				$('#leftCol ul').hide();
@@ -118,7 +118,13 @@
                     foreach($domains as $d){
                     	echo '<div class="people-list">'.
                         	'<a name="'.$d['id'].'"></a>'.
-                            '<h4 class="deptHeader">'.$d['name'];
+                            '<h4 class="deptHeader">';
+						if(isset($d['vocabulary'])){
+							echo '<a href="/search/listTerms/'.$d['vocabularyid'].'">';
+						}else{
+							echo '<a href="/search/noGlossary">';
+						}
+						echo $d['name'].'</a>';
                         if($d['description'] != ''){
                         	echo '<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$d['description'].'" class="info"><img src="/img/iconInfo.png"></div>';
                         }

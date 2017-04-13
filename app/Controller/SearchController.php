@@ -58,6 +58,10 @@ class SearchController extends AppController {
 		$this->set('commonSearches', $this->getCommonSearches());
 	}
 
+	public function noGlossary() {
+
+	}
+
 	public function term($query = null) {
 		if (empty($query)) {
 			return $this->redirect(['action' => 'index']);
