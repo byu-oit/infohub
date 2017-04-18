@@ -1,0 +1,63 @@
+--- 
+$schemaver: 1.1
+name: InfoHub
+type: Web App
+aliases:
+short_description: 
+assignment_group: gro:AD-Front End Technologies and Applications
+notes: 
+maintained_by:
+  - snelg
+  - JeremyRees
+  - pauldeden
+developed_by_byu: true
+ddd:
+  business_domain: 
+  ubiquitous_language_url: 
+  context_map_url: 
+links:
+  system_documentation_url: 
+  source_repo_url: https://github.com/byu-oit-appdev/infohub
+  swagger_urls:
+microservice: false
+technologies_used:
+  - Travis-ci.com
+  - PHP
+  - CSS
+  - JavaScript
+  - HTML
+  - Shell
+  - Batchfile
+  - ApacheConf
+stages:
+  production:
+    urls:
+      product_page: http://infohub-dev.byu.edu
+      physical_url: 
+      virtual_url: 
+    hosting_location: BYU
+    aws_account: 
+    relationships: 
+      depends_on:
+        db_read_write:
+        db_read_only:
+        software:
+          - Collibra DGC 4.6
+          - Collibra DGC 5.0
+          - InfoHub
+      supports:
+        software:
+        service:
+      reverse_proxy: 
+      runs_on:
+        server_cluster:
+        virtual_server:
+        rack_server:
+        blade_server:
+tags:
+  data-sensitivity: confidential
+  env: prd
+  team: AD-Front End Technologies and Applications
+  app: InfoHub
+federation_json_url: https://raw.githubusercontent.com/byu-oit-appdev/infohub/master/.repo-meta.yml
+
