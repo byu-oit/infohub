@@ -43,7 +43,8 @@
 					$.get( "/search/getFullVocab",{rid:rid})
 						.done(function( data ) {
 							thisElem.parent().find('.checkBoxesHeader').html('<h5>Check other terms to include in request.</h5>');
-							thisElem.parent().find('.resultBodyLoading').hide()
+							thisElem.parent().find('.resultBodyLoading').hide();
+							thisElem.parent().find('ul').show();
 							thisElem.parent().find('.checkBoxes').html(data);
 							getCurrentRequestTerms();
 							thisElem.parent().find('.checkBoxes input').click(function(){

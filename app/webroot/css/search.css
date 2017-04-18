@@ -423,7 +423,6 @@ img.resultBodyLoading {
 #searchBody #searchSuccess #srLower .resultItem .resultContent .resultBody p,
 #apiBody #searchSuccess #srLower .resultItem .resultContent .resultBody p,
 #searchBody #searchResults #srLower .resultItem .resultContent .term-desc p,
-#searchBody #searchResults #srLower .resultItem .resultContent .resultBody div,
 #apiBody #searchResults #srLower .resultItem .resultContent .resultBody div,
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody div,
 #apiBody #requestForm #srLower .resultItem .resultContent .resultBody div,
@@ -431,6 +430,9 @@ img.resultBodyLoading {
 #apiBody #searchSuccess #srLower .resultItem .resultContent .resultBody div {
   font-size: 14px;
   width: 100%;
+}
+#searchBody #searchResults #srLower .resultItem .resultContent .resultBody ul {
+  display: none;
 }
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody ul li {
   font-size: 12px;
