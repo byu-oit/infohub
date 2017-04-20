@@ -95,7 +95,7 @@ if (!function_exists('denv')) {
 			'prefix' => ''],
 		'collibra' => [
 			'datasource' => 'DataSource',
-			'url'       =>  denv('CAKE_COLLIBRA_HOST', 'https://byu-5.collibra.com/rest/latest/'),
+			'url'       =>  denv('CAKE_COLLIBRA_HOST', 'https://byu.collibra.com/rest/latest/'),
 			'username'  => denv('CAKE_COLLIBRA_USERNAME', '***REQUIRED***'),
 			'password'  => denv('CAKE_COLLIBRA_PASSWORD', '***REQUIRED***')],
 		'byuApi' => [
