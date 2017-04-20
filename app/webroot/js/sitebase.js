@@ -134,8 +134,17 @@ $(document).ready(function(){
 			}
 			else{
 				var val = $('#searchInput').val();
-				$.getJSON( "/search/autoCompleteTerm", { q: val } )
-				.done(function( data ) {
+				setTimeout(function() {
+					if (val != $('#searchInput').val()) {
+						//User continued typing, so throw this out
+						return;
+					}
+					$.getJSON( "/search/autoCompleteTerm", { q: val } )
+					.done(function( data ) {
+						if (val != $('#searchInput').val()) {
+							//User continued typing, so throw this out
+							return;
+						}
 						$('.autoComplete .results').html('');
 						for (var i in data) {
 							$('.autoComplete .results').append($('<li>', {text: data[i].name.val}));
@@ -145,7 +154,8 @@ $(document).ready(function(){
 							$('#searchInput').parent().submit();
 							$('.autoComplete').hide();
 						});
-				});
+					});
+				}, 300);
 
 				$('.autoComplete').show();
 			}
