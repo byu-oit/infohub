@@ -150,8 +150,8 @@ class SearchController extends AppController {
 		$terms = $this->searchTerms(html_entity_decode($query), $page-1, 10, $sortField, $sortOrder, $filter);
 		//print_r($terms);exit;
 
-		// save search and delete anything over 300 entries
 		if(!empty($terms->aaData)){
+			// save search and delete anything over 300 entries
 			$this->loadModel('CommonSearch');
 			// delete last record
 			$results = $this->CommonSearch->find('all', ['order' => 'id']);
@@ -160,6 +160,23 @@ class SearchController extends AppController {
 			}
 			// add new record
 			$this->CommonSearch->save(['query' => $query]);
+
+			//Highlight search terms in description
+			$searchInput = trim(html_entity_decode($query), ' \"');
+			$arrQuery = explode(" ", $searchInput);
+			$wrapBefore = '<span class="highlight">';
+			$wrapAfter  = '</span>';
+			foreach ($terms->aaData as &$term) {
+				if (empty($term->description)) {
+					continue;
+				}
+				$def = strip_tags($term->description, '<p><span><div><ul><li>');
+				foreach ($arrQuery as $text){
+					$def = preg_replace("/\b({$text})\b/i", "{$wrapBefore}\$1{$wrapAfter}", $def);
+				}
+
+				$term->description = $def;
+			}
 		}
 		///////////////////////////////////////////////////////
 
@@ -210,6 +227,7 @@ class SearchController extends AppController {
 
 	// called on results page's more details tab
 	public function getTermRoles() {
+		session_write_close(); //No local database writes, so allow this ajax request to run in parallel with others
 		$this->autoRender = false;
 		$termrid = $this->request->query['resource'];
 
@@ -236,6 +254,7 @@ class SearchController extends AppController {
 
 	// get list of all other terms within a vocabulary/glossary
 	public function getFullVocab() {
+		session_write_close(); //No local database writes, so allow this ajax request to run in parallel with others
 		$vocabRID= $this->request->query['rid'];
 
 		$jsonResp = $this->CollibraAPI->getTerms($vocabRID, ['length' => 1000]);
@@ -301,36 +320,8 @@ class SearchController extends AppController {
 		exit;
 	}
 
-	public function getTermDefinition() {
-		$vocabRID = $this->request->query['vocabRid'];
-		$searchInput = html_entity_decode($this->request->query['searchInput']);
-		$searchInput = addslashes($searchInput);
-
-		$resp = $this->CollibraAPI->get('term/'.$vocabRID, ['json' => true]);
-		$def = '';
-		foreach($resp->attributeReferences->attributeReference as $attr){
-			if($attr->labelReference->signifier == 'Definition'){
-				$def = $attr->value;
-				break;
-			}
-		}
-
-		// highlight each search term
-		$def = strip_tags($def, '<p><span><div><ul><li>');
-		$wrapBefore = '<span class="highlight">';
-		$wrapAfter  = '</span>';
-
-		$searchInput = trim($searchInput, '\"');
-		$arrQuery = explode(" ", $searchInput);
-		for($i=0; $i<sizeof($arrQuery); $i++){
-			$def = preg_replace("/\b(".$arrQuery[$i].")\b/i", "$wrapBefore$1$wrapAfter", $def);
-		}
-
-		echo $def;
-		exit;
-	}
-
 	public function autoCompleteTerm() {
+		session_write_close(); //No local database writes, so allow this ajax request to run in parallel with others
 		$query= $this->request->query('q');
 		if(empty($query)){
 			return new CakeResponse(['type' => 'application/javascript', 'body' => []]);
