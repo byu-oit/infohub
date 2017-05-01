@@ -91,6 +91,11 @@ class Swagger extends AppModel {
 			if (empty($property['type'])) {
 				if (!empty($property['properties'])) {
 					$property['type'] = 'object';
+				} elseif (!empty($property['allOf'])) {
+					foreach ($property['allOf'] as $subProp) {
+						$this->_addElements($mainParents, [$propertyName => $subProp]);
+					}
+					continue;
 				} else {
 					continue;
 				}
@@ -104,6 +109,12 @@ class Swagger extends AppModel {
 
 			switch ($property['type']) {
 				case 'object':
+					if (!empty($property['oneOf'])) {
+						foreach ($property['oneOf'] as $subProp) {
+							$this->_addElements($mainParents, [$propertyName => $subProp]);
+						}
+						break;
+					}
 					if (empty($property['properties'])) {
 						break;
 					}

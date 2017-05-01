@@ -6,18 +6,6 @@
 	$(document).ready(function() {
 		$("#searchLink").addClass('active');
 
-		$('.resultContent').each(function() {
-			var vocabRid = $(this).attr('data-vocabRid');
-			var thisElem = $(this);
-
-			$.get("/search/getTermDefinition",{vocabRid:vocabRid,searchInput:'<?php echo $searchInput ?>'})
-				.done(function(data) {
-					thisElem.find('.term-desc').html('<p>'+data+'</p>');
-				});
-
-		});
-
-
 		$('.detailsTab').click(function() {
 			$(this).siblings('.resultContent').children('.resultBody').slideToggle();
 			$(this).toggleClass('active');
