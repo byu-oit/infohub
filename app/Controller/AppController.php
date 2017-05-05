@@ -32,7 +32,7 @@ App::uses('Controller', 'Controller');
  */
 class AppController extends Controller {
 	private $quickLinks;
-	public $components = array('Session', 'Cookie', 'Auth' => array('authorize' => 'Controller'));
+	public $components = array('Session', 'Cookie', 'Auth' => array('authorize' => 'Controller'), 'Flash');
 
 	public function initBeforeFilter(){
 		$byuUsername = '';

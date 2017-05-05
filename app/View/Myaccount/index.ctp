@@ -21,6 +21,14 @@
 			$('#'+rid).slideToggle();
 			$(this).toggleClass('active');
 		});
+		$('.edit').click(function() {
+			window.location.href = '/request/edit/' + $(this).attr('data-rid');
+		});
+		$('.delete').click(function() {
+			if (confirm("Are you sure you would like to delete this request?")) {
+				window.location.href = '/request/delete/' + $(this).attr('data-rid');
+			}
+		});
 
 		$('.approver .user-icon').on('mouseover click', function(){
 			$(this).parent().find('.info').css('z-index', 20).toggle();
@@ -233,6 +241,10 @@
 					echo '<h3 class="headerTab">'.$attrRef->labelReference->signifier.'</h3><div class="clear"></div>'.
 						'<p>'.$attrRef->value.'</p>';
 				}
+			}
+			if ($req->statusReference->signifier != 'Completed' && $req->statusReference->signifier != 'Obsolete') {
+				echo '<div class="edit grow" data-rid="'.$req->resourceId.'">Edit this request</div>';
+				echo '<div class="delete grow" data-rid="'.$req->resourceId.'">Delete this request</div>';
 			}
 			echo '</div>';
 			////////////////////////////////////////

@@ -135,6 +135,143 @@ class RequestController extends AppController {
 	public function success() {
 	}
 
+	public function editSubmit($dsrId) {
+		$this->autoRender = false;
+
+		if (!$this->request->is('post')){
+			header('location: /search');
+			exit;
+		}
+
+		$resp = $this->CollibraAPI->get('term/'.$dsrId);
+		$dsr = json_decode($resp);
+
+		$err = false;
+		//It is possible to go through this process w/o actually changing any info on the DSR.
+		//$changed ensures that we only comment on child DSAs if changes did take place.
+		$changed = false;
+		$changeComment = 'The following changes were made to this Agreement on '.date("Y-m-d H:i:s T").':';
+
+		foreach ($this->request->data as $key => $val) {
+			$key = preg_replace('/_/', ' ', $key);
+			foreach ($dsr->attributeReferences->attributeReference as $original) {
+				if ($key == $original->labelReference->signifier && $val != $original->value) {
+					$changed = true;
+
+					//Update values in Collibra database
+					$postData['value'] = $val;
+					$postData['rid'] = $original->resourceId;
+					$postString = http_build_query($postData);
+					$postString = preg_replace('/%0D50A/', '<br />', $postString);
+					$formResp = $this->CollibraAPI->post('attribute/'.$original->resourceId, $postString);
+					$formResp = json_decode($formResp);
+
+					if (!isset($formResp)) {
+						$err = true;
+						break;
+					}
+
+					//Build string for comments on child DSAs
+					$changeComment .= '<br />'.$key.': '.$val;
+					break;
+				}
+			}
+		}
+
+		//Update child DSAs
+		if ($changed) {
+			$dsr->dataUsages = $this->CollibraAPI->getDataUsages($dsrId);
+			for ($i = 0; $i < sizeof($dsr->dataUsages); $i++) {
+				$resp = $this->CollibraAPI->get('term/'.$dsr->dataUsages[$i]->id);
+				$dsr->dataUsages[$i] = json_decode($resp);
+			}
+			foreach ($dsr->dataUsages as $du) {
+				foreach ($this->request->data as $key => $val) {
+					$key = preg_replace('/_/', ' ', $key);
+					foreach ($du->attributeReferences->attributeReference as $original) {
+						if ($key == $original->labelReference->signifier && $val != $original->value) {
+							//Update values in Collibra database
+							$postData['value'] = $val;
+							$postData['rid'] = $original->resourceId;
+							$postString = http_build_query($postData);
+							$postString = preg_replace('/%0D50A/', '<br />', $postString);
+							$formResp = $this->CollibraAPI->post('attribute/'.$original->resourceId, $postString);
+							$formResp = json_decode($formResp);
+
+							if (!isset($formResp)) {
+								$err = true;
+								break;
+							}
+						}
+					}
+				}
+				$formResp = $this->CollibraAPI->post('term/'.$du->resourceId.'/comment', 'content='.$changeComment);
+			}
+		}
+
+
+
+		if (!$err) {
+			// attempt to reindex source to make sure latest requests are displayed
+			$resp = $this->CollibraAPI->post('search/re-index');
+
+			$this->redirect(['action' => 'success']);
+		} else {
+			$this->redirect(['action' => 'edit/'.$dsrId, '?' => ['err' => 1]]);
+		}
+	}
+
+	public function edit($dsrId) {
+		if (empty($dsrId)) {
+			$this->redirect(['action' => 'index']);
+		}
+
+		// Load DSR's current state
+		$resp = $this->CollibraAPI->get('term/'.$dsrId);
+		$request = json_decode($resp);
+
+		$completedStatuses = ['Completed', 'Obsolete'];
+		if (in_array($request->statusReference->signifier, $completedStatuses)) {
+			$this->Flash->error('You cannot edit a completed Request.');
+			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
+		}
+
+		// load form fields for ISA workflow
+		$formResp = $this->CollibraAPI->get('workflow/'.Configure::read('Collibra.isaWorkflow.id').'/form/start');
+		$formResp = json_decode($formResp);
+
+		$this->set('formFields', $formResp);
+		$this->set('request', $request);
+		$this->set('submitErr', isset($this->request->query['err']));
+	}
+
+	public function delete($dsrId) {
+		$this->autoRender = false;
+
+		if (empty($dsrId)) {
+			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
+		}
+
+		//Load DSR to check that the request isn't completed
+		$resp = $this->CollibraAPI->get('term/'.$dsrId);
+		$request = json_decode($resp);
+
+		$completedStatuses = ['Completed', 'Obsolete'];
+		if (in_array($request->statusReference->signifier, $completedStatuses)) {
+			$this->Flash->error('You cannot delete a completed Request.');
+			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
+		}
+
+		$request->dataUsages = $this->CollibraAPI->getDataUsages($dsrId);
+		foreach ($request->dataUsages as $du) {
+			$this->CollibraApi->delete('term/'.$du->id);
+		}
+
+		$this->CollibraAPI->delete('term/'.$dsrId);
+		$this->Flash->success('Request deleted.');
+		$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
+	}
+
 	public function submit() {
 		$this->autoRender = false;
 

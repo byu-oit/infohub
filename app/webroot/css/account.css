@@ -431,6 +431,26 @@
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
+#accountMid #accountMain .requestItem .detailsBody .edit,
+#accountMid #accountMain .requestItem .detailsBody .delete {
+    padding: 4px 14px;
+    font-size: 13px;
+    display: inline;
+    position: relative;
+    float: right;
+    top: 10px;
+    font-weight: 600;
+    color: white;
+    background-color: #114477;
+    cursor: pointer;
+    -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+    -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+    box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+}
+#accountMid #accountMain .requestItem .detailsBody .delete {
+    background-color: #b3041a;
+    margin-right: 15px;
+}
 #accountMid #accountMain .requestItem .detailsTab {
   background-color: #cccaca;
   padding: 4px 30px 5px 12px;
