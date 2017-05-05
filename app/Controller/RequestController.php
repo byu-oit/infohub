@@ -264,7 +264,7 @@ class RequestController extends AppController {
 
 		$request->dataUsages = $this->CollibraAPI->getDataUsages($dsrId);
 		foreach ($request->dataUsages as $du) {
-			$this->CollibraApi->delete('term/'.$du->id);
+			$this->CollibraAPI->delete('term/'.$du->id);
 		}
 
 		$this->CollibraAPI->delete('term/'.$dsrId);
