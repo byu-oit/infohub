@@ -577,15 +577,20 @@ class CollibraAPI extends Model {
 			$this->deleteVocabulary($vocabularyId);
 			return false;
 		}
-		$fieldSetsResult = $this->addTermsToVocabulary($vocabularyId, Configure::read('Collibra.type.fieldSet'), $fieldSets);
-		if (empty($fieldSetsResult) || !$fieldSetsResult->isOk()) {
-			$this->errors[] = "Error adding fieldSets to \"{$swagger['basePath']}/{$swagger['version']}\"";
-			$this->deleteVocabulary($vocabularyId);
-			return false;
+		if (!empty($fieldSets)) {
+			$fieldSetsResult = $this->addTermsToVocabulary($vocabularyId, Configure::read('Collibra.type.fieldSet'), $fieldSets);
+			if (empty($fieldSetsResult) || !$fieldSetsResult->isOk()) {
+				$this->errors[] = "Error adding fieldSets to \"{$swagger['basePath']}/{$swagger['version']}\"";
+				$this->deleteVocabulary($vocabularyId);
+				return false;
+			}
 		}
 
 		//Link created terms to selected Business Terms
 		foreach (['fieldsResult', 'fieldSetsResult'] as $result) {
+			if (empty(${$result})) {
+				continue;
+			}
 			$terms = json_decode(${$result}->body());
 			if (empty($terms->termReference)) {
 				continue;
