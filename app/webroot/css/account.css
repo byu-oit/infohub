@@ -147,12 +147,12 @@
   margin-left: -12px;
   display: block;
 }*/
-#accountMid #accountMain .requestItem .approval-wrapper {
+#accountMid #accountMain .requestItem .status-wrapper {
   width: 282px;
   margin-left: -12px;
   display: block;
 }
-#accountMid #accountMain .requestItem .approval-wrapper .approval-cell {
+#accountMid #accountMain .requestItem .status-wrapper .status-cell {
   display: inline-block;
   width: 125px;
   height: 16px;
@@ -162,26 +162,32 @@
   padding: 4px;
   border: 4px solid;
 }
-#accountMid #accountMain .requestItem .approval-wrapper .left {
+#accountMid #accountMain .requestItem .status-wrapper .left {
   border-radius: 16px 0px 0px 16px;
 }
-#accountMid #accountMain .requestItem .approval-wrapper .right {
+#accountMid #accountMain .requestItem .status-wrapper .right {
   border-radius: 0px 16px 16px 0px;
 }
-#accountMid #accountMain .requestItem .approval-wrapper .active {
+#accountMid #accountMain .requestItem .status-wrapper .active {
   font-weight: bold;
 }
-#accountMid #accountMain .requestItem .approval-wrapper .light-green-border {
+#accountMid #accountMain .requestItem .status-wrapper .light-green-border {
   border-color: #d8e8ab;
 }
-#accountMid #accountMain .requestItem .approval-wrapper .green-border {
+#accountMid #accountMain .requestItem .status-wrapper .green-border {
   border-color: #b8d65a;
 }
-#accountMid #accountMain .requestItem .approval-wrapper .light-red-border {
+#accountMid #accountMain .requestItem .status-wrapper .light-red-border {
   border-color: #fc9898;
 }
-#accountMid #accountMain .requestItem .approval-wrapper .red-border {
+#accountMid #accountMain .requestItem .status-wrapper .red-border {
   border-color: #d85858;
+}
+#accountMid #accountMain .requestItem .status-wrapper .obsolete {
+  width: 250px;
+  border-color: #d8e8ab;
+  border-radius: 16px;
+  font-style: italic;
 }
 #accountMid #accountMain .requestItem .riRight {
   width: 35%;
@@ -342,13 +348,13 @@
   display: block;
   clear: both;
 }*/
-#accountMid #accountMain .requestItem .riBelow .approval-wrapper {
+#accountMid #accountMain .requestItem .riBelow .status-wrapper {
   width: 190px;
   margin-left: -5px;
   display: block;
   clear: both;
 }
-#accountMid #accountMain .requestItem .riBelow .approval-wrapper .approval-cell {
+#accountMid #accountMain .requestItem .riBelow .status-wrapper .status-cell {
   display: inline-block;
   width: 73px;
   height: 14px;
@@ -358,26 +364,32 @@
   padding: 3px;
   border: 3px solid;
 }
-#accountMid #accountMain .requestItem .riBelow .approval-wrapper .left {
+#accountMid #accountMain .requestItem .riBelow .status-wrapper .left {
   border-radius: 12px 0px 0px 12px;
 }
-#accountMid #accountMain .requestItem .riBelow .approval-wrapper .right {
+#accountMid #accountMain .requestItem .riBelow .status-wrapper .right {
   border-radius: 0px 12px 12px 0px;
 }
-#accountMid #accountMain .requestItem .riBelow .approval-wrapper .active {
+#accountMid #accountMain .requestItem .riBelow .status-wrapper .active {
   font-weight: bold;
 }
-#accountMid #accountMain .requestItem .riBelow .approval-wrapper .light-green-border {
+#accountMid #accountMain .requestItem .riBelow .status-wrapper .light-green-border {
   border-color: #d8e8ab;
 }
-#accountMid #accountMain .requestItem .riBelow .approval-wrapper .green-border {
+#accountMid #accountMain .requestItem .riBelow .status-wrapper .green-border {
   border-color: #b8d65a;
 }
-#accountMid #accountMain .requestItem .riBelow .approval-wrapper .light-red-border {
+#accountMid #accountMain .requestItem .riBelow .status-wrapper .light-red-border {
   border-color: #fc9898;
 }
-#accountMid #accountMain .requestItem .riBelow .approval-wrapper .red-border {
+#accountMid #accountMain .requestItem .riBelow .status-wrapper .red-border {
   border-color: #d85858;
+}
+#accountMid #accountMain .requestItem .riBelow .status-wrapper .obsolete {
+    width: 146px;
+    border-color: #d8e8ab;
+    border-radius: 12px;
+    font-style: italic;
 }
 #accountMid #accountMain .requestItem .detailsBody {
   display: none;

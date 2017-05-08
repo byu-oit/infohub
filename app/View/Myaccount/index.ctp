@@ -79,13 +79,15 @@
 				}
 			}
 			echo '</p>';
-			echo '<div class="approval-wrapper">';
+			echo '<div class="status-wrapper">';
 			if($req->statusReference->signifier == 'Completed'){
-				echo '<div class="approval-cell light-green-border left">In Progress</div><div class="approval-cell green-border right active">Approved</div>';
+				echo '<div class="status-cell light-green-border left">In Progress</div><div class="status-cell green-border right active">Approved</div>';
 			}elseif($req->statusReference->signifier == 'Rejected'){
-				echo '<div class="approval-cell light-red-border left">In Progress</div><div class="approval-cell red-border right active">Rejected</div>';
+				echo '<div class="status-cell light-red-border left">In Progress</div><div class="status-cell red-border right active">Rejected</div>';
+			}elseif($req->statusReference->signifier == 'In Progress'){
+				echo '<div class="status-cell green-border left active">In Progress</div><div class="status-cell light-green-border right">Approved</div>';
 			}else{
-				echo '<div class="approval-cell green-border left active">In Progress</div><div class="approval-cell light-green-border right">Approved</div>';
+				echo '<div class="status-cell obsolete">Obsolete</div>';
 			}
 			echo '</div>';
 
@@ -160,13 +162,15 @@
 				}
 				echo '</div>';
 				echo '<br />';
-				echo '<div class="approval-wrapper">';
+				echo '<div class="status-wrapper">';
 				if($dsaStatus == 'candidate' || $dsaStatus == 'in progress'){
-					echo '<div class="approval-cell green-border left active">In Progress</div><div class="approval-cell light-green-border right">Approved</div>';
+					echo '<div class="status-cell green-border left active">In Progress</div><div class="status-cell light-green-border right">Approved</div>';
 				}elseif($dsaStatus == 'approved'){
-					echo '<div class="approval-cell light-green-border left">In Progress</div><div class="approval-cell green-border right active">Approved</div>';
+					echo '<div class="status-cell light-green-border left">In Progress</div><div class="status-cell green-border right active">Approved</div>';
+				}elseif($dsaStatus == 'rejected'){
+					echo '<div class="status-cell light-red-border left">In Progress</div><div class="status-cell red-border right active">Rejected</div>';
 				}else{
-					echo '<div class="approval-cell light-red-border left">In Progress</div><div class="approval-cell red-border right active">Rejected</div>';
+					echo '<div class="status-cell obsolete">Obsolete</div>';
 				}
 				echo '</div></div>';
 			}
