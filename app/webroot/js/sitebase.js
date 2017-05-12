@@ -222,10 +222,16 @@ function removeFromRequestQueue(id){
 			var title = $('#requestItem'+id).attr('data-title');
 			var rID = $('#requestItem'+id).attr('data-rid');
 			var vocabID = $('#requestItem'+id).attr('data-vocabID');
+			var apiHost = $('#requestItem'+id).attr('api-host');
+			var apiPath = $('#requestItem'+id).attr('api-path');
 
 			$('#request-undo').remove();
 			$('#requestItem'+id).fadeOut('fast',function(){
-				var html = '<div id="request-undo" data-title="' + title + '" data-rid="' + rID + '" data-vocabID="' + vocabID + '">Item removed. Click to undo.</div>';
+				if ($('#requestItem'+id).attr('api') == 'false') {
+					var html = '<div id="request-undo" data-title="' + title + '" data-rid="' + rID + '" data-vocabID="' + vocabID + '" data-apiHost="' + apiHost + '" data-apiPath="' + apiPath + '" api="false">Item removed. Click to undo.</div>';
+				} else {
+					var html = '<div id="request-undo" data-apiHost="' + apiHost + '" data-apiPath="' + title + '" api="true">Item removed. Click to undo.</div>';
+				}
 				$(html).insertBefore('#request-popup ul');
 				$('#request-undo').click(function(){
 					addToQueue(this, false);
@@ -253,28 +259,44 @@ function getCurrentRequestTerms(){
 	});
 }
 function addToQueue(elem, clearRelated){
-	var arrTitles = [$(elem).attr('data-title')];
-	var arrIDs = [$(elem).attr('data-rid')];
-	var arrVocabIDs = [$(elem).attr('data-vocabID')];
-	var apiHost = $(elem).attr('data-apiHost');
-	var apiPath = $(elem).attr('data-apiPath');
+	if ($(elem).attr('api') == 'false') {
+		var arrTitles = [$(elem).attr('data-title')];
+		var arrIDs = [$(elem).attr('data-rid')];
+		var arrVocabIDs = [$(elem).attr('data-vocabID')];
+		var apiHost = $(elem).attr('data-apiHost');
+		var apiPath = $(elem).attr('data-apiPath');
 
-	$(elem).parent().find('.checkBoxes').find('input').each(function(){
-		if($(this).prop("checked")){
-			arrTitles.push($(this).attr('data-title'));
-			arrIDs.push($(this).val());
-			arrVocabIDs.push($(this).attr('data-vocabID'));
-		}
-	});
-	$.post("/request/addToQueue", {t:arrTitles, id:arrIDs, vocab:arrVocabIDs, clearRelated:clearRelated, apiHost: apiHost, apiPath: apiPath})
-		.done(function(data){
-			$(elem).attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
-			data = parseInt(data);
-			if(data>0){
-				showRequestQueue();
-				getCurrentRequestTerms();
+		$(elem).parent().find('.checkBoxes').find('input').each(function(){
+			if($(this).prop("checked")){
+				arrTitles.push($(this).attr('data-title'));
+				arrIDs.push($(this).val());
+				arrVocabIDs.push($(this).attr('data-vocabID'));
 			}
-	});
+		});
+		$.post("/request/addToQueue", {t:arrTitles, id:arrIDs, vocab:arrVocabIDs, clearRelated:clearRelated, apiHost: apiHost, apiPath: apiPath})
+			.done(function(data){
+				$(elem).attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
+				data = parseInt(data);
+				if(data>0){
+					showRequestQueue();
+					getCurrentRequestTerms();
+				}
+		});
+	} else {
+		//Add an API with unspecified fields to cart.
+		var arrTitle = [$(elem).attr('data-apiPath')];
+		var arrVocab = ['emptyApi'];
+		var apiHost = $(elem).attr('data-apiHost');
+		$.post("/request/addToQueue", {t:arrTitle, vocab:arrVocab, apiHost: apiHost})
+			.done(function(data){
+				$(elem).attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
+				data = parseInt(data);
+				if(data>0){
+					showRequestQueue();
+					getCurrentRequestTerms();
+				}
+		});
+	}
 }
 /////////////////////////////
 

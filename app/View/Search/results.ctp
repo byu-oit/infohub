@@ -256,7 +256,7 @@
 					<?php
 						if(!$notRequestable || Configure::read('allowUnrequestableTerms')){
 					?>
-					<input type="button" onclick="addToQueue(this, false)" data-title="<?php echo $termRequestTitle; ?>" data-rid="<?php echo $termRequestID ?>" data-vocabID="<?php echo $term->commrid ?>" class="requestAccess grow mainRequestBtn" value="Add To Request" />
+					<input type="button" onclick="addToQueue(this, false)" data-title="<?php echo $termRequestTitle; ?>" data-rid="<?php echo $termRequestID ?>" data-vocabID="<?php echo $term->commrid ?>" api="false" class="requestAccess grow mainRequestBtn" value="Add To Request" />
 					<?php
 						}else{
 					?>
@@ -264,7 +264,7 @@
 					<?php
 						}
 					?>
-					<input type="button" onclick="addToQueue(this, true)" class="requestAccess grow detailsRequestBtn" value="Add To Request" />
+					<input type="button" onclick="addToQueue(this, true)" api="false" class="requestAccess grow detailsRequestBtn" value="Add To Request" />
 					<a class="detailsTab" data-rid="<?php echo $term->domainrid; ?>" data-vocabRid="<?php echo $termRequestID ?>"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a>
 				</form>
 			</div>

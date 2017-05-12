@@ -33,7 +33,7 @@
 					</div>
 				<?php endif ?>
 				<?php if (empty($terms)): ?>
-					<h3>No available output fields</h3>
+					<h3>Well, this is embarrassing. We haven't yet specified the output fields for this API, but it is functional, and you can still request access to it.</h3>
 				<?php else: ?>
 					<table class="api-terms checkBoxes">
 						<tr class="header">
@@ -104,9 +104,7 @@
 						<?php endforeach ?>
 					</table>
 				<?php endif ?>
-				<?php if ($hasSelectable): ?>
-					<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" onclick="addToQueue(this, false)" class="requestAccess grow mainRequestBtn" value="Add To Request">
-				<?php endif ?>
+				<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" api="<?= $hasSelectable ? 'false' : 'true' ?>" onclick="addToQueue(this, false)" class="requestAccess grow mainRequestBtn" value="Add To Request">
 			</div>
 		</div>
 	</div>

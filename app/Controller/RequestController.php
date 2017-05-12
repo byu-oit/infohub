@@ -23,7 +23,7 @@ class RequestController extends AppController {
 
 	public function addToQueue() {
 		$this->autoRender = false;
-		if($this->request->is('post')){
+		if($this->request->is('post') && $this->request->data['vocab'][0] != 'emptyApi'){
 			$newTermsAdded = 0;
 			$arrTerms = $this->request->data['t'];
 			$arrTermIDs = $this->request->data['id'];
@@ -81,6 +81,33 @@ class RequestController extends AppController {
 
 			$this->Cookie->write('queue', $arrQueue, true, '90 days');
 			echo $newTermsAdded;
+		} else {
+			//Add an API with unspecified fields to cart.
+			$newTermsAdded = 1;
+			$apiPath = $this->request->data['t'][0];
+			$apiHost = $this->request->data['apiHost'];
+			$newApiId = 0;
+
+			$arrQueue = (array)$this->Cookie->read('queue');
+
+			foreach ($arrQueue as $id => $term) {
+				if ($term['communityId'] == 'emptyApi') {
+					if ($newApiId <= $id) {
+						//Ensure the new api's id is one greater than the current max to prevent duplicates
+						$newApiId = $id + 1;
+					}
+				 	if ($term['term'] == $apiPath) {
+						$newTermsAdded = 0;
+					}
+				}
+			}
+
+			if ($newTermsAdded) {
+				$arrQueue[$newApiId] = ['term' => $apiPath, 'communityId' => 'emptyApi', 'apiHost' => $apiHost];
+			}
+
+			$this->Cookie->write('queue', $arrQueue, true, '90 days');
+			echo $newTermsAdded;
 		}
 	}
 
@@ -115,7 +142,16 @@ class RequestController extends AppController {
 		$arrQueue = $this->Cookie->read('queue');
 		if(!empty($arrQueue)) {
 			foreach ($arrQueue as $termId => $term){
-				$listHTML .= '<li id="requestItem'.$termId.'" data-title="'.$term['term'].'" data-rid="'.$termId.'" data-vocabID="'.$term['communityId'].'">'.$term['term'].'<a class="delete" href="javascript:removeFromRequestQueue(\''.$termId.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a></li>';
+				if (strlen($term['term']) > 28) {
+					$displayName = substr($term['term'], 0, 28) . "...";
+				} else {
+					$displayName = $term['term'];
+				}
+				if ($term['communityId'] != 'emptyApi') {
+					$listHTML .= '<li id="requestItem'.$termId.'" data-title="'.$term['term'].'" data-rid="'.$termId.'" data-vocabID="'.$term['communityId'].'" api-host="'.$term['apiHost'].'" api-path="'.$term['apiPath'].'" api="false">'.$displayName.'<a class="delete" href="javascript:removeFromRequestQueue(\''.$termId.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a></li>';
+				} else {
+					$listHTML .= '<li id="requestItem'.$termId.'" data-title="'.$term['term'].'" api-host="'.$term['apiHost'].'" api="true">'.$displayName.'<a class="delete" href="javascript:removeFromRequestQueue(\''.$termId.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a></li>';
+				}
 			}
 		}else{
 			$listHTML = 'No request items found.';
@@ -390,7 +426,12 @@ class RequestController extends AppController {
 			'           "OR":[';
 
 		$apis = [];
+		$emptyApis = [];
 		foreach ($arrQueue as $termId => $term){
+			if ($term['communityId'] == 'emptyApi') {
+				array_push($emptyApis, ['apiHost' => $term['apiHost'], 'apiPath' => $term['term']]);
+				continue;
+			}
 			$requestFilter .= '{"Field":{'.
 				'   "name":"termrid",'.
 				'   "operator":"EQUALS",'.
@@ -422,7 +463,7 @@ class RequestController extends AppController {
 				}
 			}
 		}
-		if (!empty($apis)) {
+		if (!empty($apis) || !empty($emptyApis)) {
 			$apiList = "Requested APIs:\n";
 			foreach ($apis as $apiHost => $apiPaths) {
 				foreach ($apiPaths as $apiPath => $term) {
@@ -433,7 +474,11 @@ class RequestController extends AppController {
 					if (!empty($term['unmapped'])) {
 						$apiList .= "        Fields with no Business Terms:\n            " . implode("\n            ", $term['unmapped']) . "\n";
 					}
+					$apiList .= "\n";
 				}
+			}
+			foreach ($emptyApis as $api) {
+				$apiList .= "    {$api['apiHost']}/{$api['apiPath']}\n        [No specified output fields]\n\n";
 			}
 			$preFilled['descriptionOfInformation'] = $apiList;
 		}

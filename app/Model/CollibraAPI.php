@@ -571,11 +571,13 @@ class CollibraAPI extends Model {
 			$elements[$name] = $element;
 		}
 		//Add fields
-		$fieldsResult = $this->addTermsToVocabulary($vocabularyId, Configure::read('Collibra.type.field'), $fields);
-		if (empty($fieldsResult) || !$fieldsResult->isOk()) {
-			$this->errors[] = "Error adding fields to \"{$swagger['basePath']}/{$swagger['version']}\"";
-			$this->deleteVocabulary($vocabularyId);
-			return false;
+		if (!empty($fields)) {
+			$fieldsResult = $this->addTermsToVocabulary($vocabularyId, Configure::read('Collibra.type.field'), $fields);
+			if (empty($fieldsResult) || !$fieldsResult->isOk()) {
+				$this->errors[] = "Error adding fields to \"{$swagger['basePath']}/{$swagger['version']}\"";
+				$this->deleteVocabulary($vocabularyId);
+				return false;
+			}
 		}
 		if (!empty($fieldSets)) {
 			$fieldSetsResult = $this->addTermsToVocabulary($vocabularyId, Configure::read('Collibra.type.fieldSet'), $fieldSets);
