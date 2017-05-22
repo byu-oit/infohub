@@ -420,7 +420,7 @@ class CollibraAPI extends Model {
 				["Column" => ["fieldName" => "lastModified"]],
 				["Column" => ["fieldName" => "domainrid"]],
 				["Column" => ["fieldName" => "domainname"]],
-				["Column" => ["fieldName" => "requestable"]],
+				["Column" => ["fieldName" => "concept"]],
 				["Column" => ["fieldName" => "classification"]],
 				["Column" => ["fieldName" => "commrid"]],
 				["Column" => ["fieldName" => "communityname"]],
@@ -455,8 +455,8 @@ class CollibraAPI extends Model {
 						"labelId" => Configure::read('Collibra.attribute.notes')]],
 					"LastModified" => ["name" => "lastModified"],
 					"BooleanAttribute" => [[
-						"Value" => ["name" => "requestable"],
-						"labelId" => Configure::read('Collibra.attribute.requestable')]],
+						"Value" => ["name" => "concept"],
+						"labelId" => Configure::read('Collibra.attribute.concept')]],
 					"SingleValueListAttribute" => [[
 						"Value" => ["name" => "classification"],
 						"labelId" => Configure::read('Collibra.attribute.classification')]],

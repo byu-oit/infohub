@@ -154,122 +154,121 @@
 	}else{
 		for($i=0; $i<sizeof($terms->aaData); $i++){
 			$term = $terms->aaData[$i];
-			$notRequestable = $term->requestable == 'false';
-			// don't display non-requestable terms
-			if(!$notRequestable){
-				$lastModified = $term->lastModified/1000;
-				$lastModified = date('m/d/Y', $lastModified);
-				$classification = $term->classification;
-				$classificationTitle = '';
-				$txtColor = 'blueText';
-				switch($classification){
-					case '1 - Public':
-						$classificationTitle = 'Public';
-						$classification = 'public';
-						$txtColor = 'greenText';
-						break;
-					case '2 - Internal':
-						$classificationTitle = 'Internal';
-						$classification = 'internal';
-						$txtColor = 'blueText';
-						break;
-					case '3 - Confidential':
-						$classificationTitle = 'Confidential';
-						$classification = 'classified';
-						$txtColor = 'orangeText';
-						break;
-					case '4 - Highly Confidential':
-						$classificationTitle = 'Highly Confidential';
-						$classification = 'highlyClassified';
-						$txtColor = 'redText';
-						break;
-				}
+			$notRequestable = $term->concept == 'true';
 
-				$termRequestID = $term->termrid;
-				$termRequestTitle = $term->termsignifier;
-				$synonymFor = '';
-				if(sizeof($term->synonym_for)!=0){
-					$synonymFor = $term->synonym_for[0]->synonymname;
-					$termRequestTitle = $synonymFor;
-					$termRequestID = $term->synonym_for[0]->synonymid;
-				}
-?>
-			<div id="term<?php echo $term->termrid; ?>" class="resultItem">
-				<div class="<?php echo $classification ?>" title="<?php echo $classificationTitle ?>"></div>
-				<form action="/request/index/<?php echo $term->termrid; ?>" method="post">
-					<h4><?php echo $term->termsignifier; ?></h4>
-					<h5 class="<?php echo $txtColor ?>"><?php echo $term->communityname.' <span class="arrow-separator">&gt;</span> <a href="/search/listTerms/'.$term->domainrid.'">'.$term->domainname.'</a>' ?></h5>
-					<div class="resultContent" data-vocabRid="<?php echo $termRequestID ?>">
-						<ul>
-						   <?php
-								if(sizeof($term->Role00000000000000000000000000005016)>0){
-									$stewardName = $term->Role00000000000000000000000000005016[0]->userRole00000000000000000000000000005016fn.' '.$term->Role00000000000000000000000000005016[0]->userRole00000000000000000000000000005016ln;
-							?>
-							<li><span class="listLabel">Data Steward:&nbsp;</span><?php echo $stewardName; ?></li>
-							<?php
-								}
-							?>
-							<li>
-								<span class="listLabel">Classification: </span><span class="classificationTitle"><?php echo $classificationTitle ?></span>
-								<?php if($term->statusname != 'Approved'): ?>(This classification is pending trustee approval.)<?php endif; ?>
-							</li>
-							<?php
-								if($synonymFor != ''){
-									echo '<li class="new-line synonym"><span class="listLabel">Synonym For: </span><span class="classificationTitle">'.$synonymFor.'</span></li>';
-								}
-							?>
-						</ul>
-						<div class="term-desc"><p><?=$term->description?></p></div>
-						<div class="resultBody">
-							<ul>
-								<?php if(!empty($term->standardFieldName)): ?>
-									<li><span class="listLabel">Standard Field Name:&nbsp;</span><?=$term->standardFieldName?></li>
-								<?php endif;
 
-								if(!empty($term->descriptiveExample)): ?>
-									<li><span class="listLabel">Descriptive Example:&nbsp;</span><?=$term->descriptiveExample?></li>
-								<?php endif;
-
-								if(!empty($term->notes)): ?>
-									<li><span class="listLabel">Note:&nbsp;</span><?=$term->notes?></li>
-								<?php endif; ?>
-								<li class="steward"></li>
-								<li class="custodian"></li>
-								<li><span class="listLabel">Last Updated:&nbsp;</span><?=$lastModified?></li>
-							</ul>
-							<div class="checkBoxesHeader"></div>
-							<img class="resultBodyLoading" src="/img/dataLoading.gif" alt="Loading...">
-							<div class="checkBoxes"></div>
-							<div class="clear"></div>
-						</div>
-					</div>
-					<a href="javascript:addQL('<?php echo $term->termsignifier; ?>', '<?php echo $term->termrid; ?>')" class="addQuickLink grow">
-					<?php
-						if(isset($term->saved) && $term->saved == '1'){
-							echo '<img src="/img/iconStarOrange.gif" alt="Quick Link">';
-						}else{
-							echo '<img src="/img/iconStarBlue.gif" alt="Quick Link">';
-						}
-					?>
-
-					</a>
-					<?php
-						if(!$notRequestable || Configure::read('allowUnrequestableTerms')){
-					?>
-					<input type="button" onclick="addToQueue(this, false)" data-title="<?php echo $termRequestTitle; ?>" data-rid="<?php echo $termRequestID ?>" data-vocabID="<?php echo $term->commrid ?>" api="false" class="requestAccess grow mainRequestBtn" value="Add To Request" />
-					<?php
-						}else{
-					?>
-					<div class="unrequestable">Not Requestable</div>
-					<?php
-						}
-					?>
-					<input type="button" onclick="addToQueue(this, true)" api="false" class="requestAccess grow detailsRequestBtn" value="Add To Request" />
-					<a class="detailsTab" data-rid="<?php echo $term->domainrid; ?>" data-vocabRid="<?php echo $termRequestID ?>"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a>
-				</form>
-			</div>
-<?php
+			$lastModified = $term->lastModified/1000;
+			$lastModified = date('m/d/Y', $lastModified);
+			$classification = $term->classification;
+			$classificationTitle = '';
+			$txtColor = 'blueText';
+			switch($classification){
+				case '1 - Public':
+					$classificationTitle = 'Public';
+					$classification = 'public';
+					$txtColor = 'greenText';
+					break;
+				case '2 - Internal':
+					$classificationTitle = 'Internal';
+					$classification = 'internal';
+					$txtColor = 'blueText';
+					break;
+				case '3 - Confidential':
+					$classificationTitle = 'Confidential';
+					$classification = 'classified';
+					$txtColor = 'orangeText';
+					break;
+				case '4 - Highly Confidential':
+					$classificationTitle = 'Highly Confidential';
+					$classification = 'highlyClassified';
+					$txtColor = 'redText';
+					break;
 			}
+
+			$termRequestID = $term->termrid;
+			$termRequestTitle = $term->termsignifier;
+			$synonymFor = '';
+			if(sizeof($term->synonym_for)!=0){
+				$synonymFor = $term->synonym_for[0]->synonymname;
+				$termRequestTitle = $synonymFor;
+				$termRequestID = $term->synonym_for[0]->synonymid;
+			}
+?>
+		<div id="term<?php echo $term->termrid; ?>" class="resultItem">
+			<div class="<?php echo $classification ?>" title="<?php echo $classificationTitle ?>"></div>
+			<form action="/request/index/<?php echo $term->termrid; ?>" method="post">
+				<h4><?php echo $term->termsignifier; ?></h4>
+				<h5 class="<?php echo $txtColor ?>"><?php echo $term->communityname.' <span class="arrow-separator">&gt;</span> <a href="/search/listTerms/'.$term->domainrid.'">'.$term->domainname.'</a>' ?></h5>
+				<div class="resultContent" data-vocabRid="<?php echo $termRequestID ?>">
+					<ul>
+					   <?php
+							if(sizeof($term->Role00000000000000000000000000005016)>0){
+								$stewardName = $term->Role00000000000000000000000000005016[0]->userRole00000000000000000000000000005016fn.' '.$term->Role00000000000000000000000000005016[0]->userRole00000000000000000000000000005016ln;
+						?>
+						<li><span class="listLabel">Data Steward:&nbsp;</span><?php echo $stewardName; ?></li>
+						<?php
+							}
+						?>
+						<li>
+							<span class="listLabel">Classification: </span><span class="classificationTitle"><?php echo $classificationTitle ?></span>
+							<?php if($term->statusname != 'Approved'): ?>(This classification is pending trustee approval.)<?php endif; ?>
+						</li>
+						<?php
+							if($synonymFor != ''){
+								echo '<li class="new-line synonym"><span class="listLabel">Synonym For: </span><span class="classificationTitle">'.$synonymFor.'</span></li>';
+							}
+						?>
+					</ul>
+					<div class="term-desc"><p><?=$term->description?></p></div>
+					<div class="resultBody">
+						<ul>
+							<?php if(!empty($term->standardFieldName)): ?>
+								<li><span class="listLabel">Standard Field Name:&nbsp;</span><?=$term->standardFieldName?></li>
+							<?php endif;
+
+							if(!empty($term->descriptiveExample)): ?>
+								<li><span class="listLabel">Descriptive Example:&nbsp;</span><?=$term->descriptiveExample?></li>
+							<?php endif;
+
+							if(!empty($term->notes)): ?>
+								<li><span class="listLabel">Note:&nbsp;</span><?=$term->notes?></li>
+							<?php endif; ?>
+							<li class="steward"></li>
+							<li class="custodian"></li>
+							<li><span class="listLabel">Last Updated:&nbsp;</span><?=$lastModified?></li>
+						</ul>
+						<div class="checkBoxesHeader"></div>
+						<img class="resultBodyLoading" src="/img/dataLoading.gif" alt="Loading...">
+						<div class="checkBoxes"></div>
+						<div class="clear"></div>
+					</div>
+				</div>
+				<a href="javascript:addQL('<?php echo $term->termsignifier; ?>', '<?php echo $term->termrid; ?>')" class="addQuickLink grow">
+				<?php
+					if(isset($term->saved) && $term->saved == '1'){
+						echo '<img src="/img/iconStarOrange.gif" alt="Quick Link">';
+					}else{
+						echo '<img src="/img/iconStarBlue.gif" alt="Quick Link">';
+					}
+				?>
+
+				</a>
+				<?php
+					if(!$notRequestable || Configure::read('allowUnrequestableTerms')){
+				?>
+				<input type="button" onclick="addToQueue(this, false)" data-title="<?php echo $termRequestTitle; ?>" data-rid="<?php echo $termRequestID ?>" data-vocabID="<?php echo $term->commrid ?>" api="false" class="requestAccess grow mainRequestBtn" value="Add To Request" />
+				<?php
+					}else{
+				?>
+				<div class="unrequestable">Not Requestable</div>
+				<?php
+					}
+				?>
+				<input type="button" onclick="addToQueue(this, true)" api="false" class="requestAccess grow detailsRequestBtn" value="Add To Request" />
+				<a class="detailsTab" data-rid="<?php echo $term->domainrid; ?>" data-vocabRid="<?php echo $termRequestID ?>"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a>
+			</form>
+		</div>
+<?php
 		}
 	}
 ?>

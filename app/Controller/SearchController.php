@@ -270,7 +270,7 @@ class SearchController extends AppController {
 			if(Configure::read('allowUnrequestableTerms')){
 				$disabled = '';
 			}else{
-				$disabled = $term->requestable == 'false'?'disabled':'';
+				$disabled = $term->concept == 'true'?'disabled':'';
 			}
 			if(!$disabled){
 				if(sizeof($term->synonym_for)!=0){
@@ -336,7 +336,7 @@ class SearchController extends AppController {
 			$requestable = true;
 			// don't show non-requestable items
 			foreach($jsonResp->results[$i]->attributes as $attr){
-				if($attr->type == 'Requestable' && $attr->val == 'false'){
+				if($attr->type == 'Concept' && $attr->val == 'true'){
 					$requestable = false;
 					break;
 				}
@@ -433,12 +433,12 @@ class SearchController extends AppController {
 			$filters[] = [
 				'OR' => [
 					['Field' => [
-						'name' => 'requestable',
+						'name' => 'concept',
 						'operator' => 'NULL']],
 					['Field' => [
-						'name' => 'requestable',
+						'name' => 'concept',
 						'operator' => 'EQUALS',
-						'value' => true]]]];
+						'value' => false]]]];
 		}
 		// set sort if not sorting by score
 		$options = [
