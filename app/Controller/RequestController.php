@@ -123,6 +123,11 @@ class RequestController extends AppController {
 		}
 	}
 
+	public function clearQueue() {
+		$this->autoRender = false;
+		$this->Cookie->delete('queue');
+	}
+
 	public function getQueueJSArray() {
 		$this->autoRender = false;
 		$JS = '';
@@ -153,15 +158,15 @@ class RequestController extends AppController {
 					$listHTML .= '<li id="requestItem'.$termId.'" data-title="'.$term['term'].'" api-host="'.$term['apiHost'].'" api="true">'.$displayName.'<a class="delete" href="javascript:removeFromRequestQueue(\''.$termId.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a></li>';
 				}
 			}
+			$listHTML .= '</ul><a class="clearQueue" href="javascript: clearRequestQueue()">Empty cart</a>';
 		}else{
-			$listHTML = 'No request items found.';
+			$listHTML = 'No request items found.</ul>';
 		}
 		$responseHTML=  '<h3>Requested Items</h3>'.
 			'<a class="close" href="javascript: hideRequestQueue()">X</a>'.
 			'<div class="arrow"></div>'.
 			'<ul>'.
-			$listHTML.//'    <li>Information Domain </li>'.//<a class="delete" href=""><img src="/img/icon-delete.gif" width="11" /></a>
-			'</ul>';
+			$listHTML;
 		if(!empty($arrQueue)){
 			$responseHTML .= '<a class="btn-orange" href="/request">Submit Request</a>';
 		}

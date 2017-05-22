@@ -241,6 +241,15 @@ function removeFromRequestQueue(id){
 			});
 	});
 }
+function clearRequestQueue(){
+	$.post("/request/clearQueue")
+		.done(function(data){
+			$('#request-queue .request-num').text('0').addClass('request-hidden');
+			$('#request-popup').find('li').fadeOut('fast');
+			$('#request-popup').find('#request-undo').fadeOut('fast');
+			$('<div class="cart-cleared">Request items removed.</div>').insertBefore('#request-popup ul');
+		});
+}
 function getCurrentRequestTerms(){
 	$.get("/request/getQueueJSArray")
 		.done(function(data){

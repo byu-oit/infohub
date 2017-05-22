@@ -52,14 +52,15 @@ body {
   background-color: #ffe778;
 }
 .btn-orange {
+  padding: 6px 15px;
+  margin: 15px auto 0 auto;
+  clear: right;
+  display: block;
+  width: 50%;
   color: white;
   font-size: 12.5px;
   text-decoration: none;
-  padding: 6px 15px;
   background-color: #ffa900;
-  display: block;
-  width: 50%;
-  margin: 15px auto 0 auto;
   text-align: center;
   font-weight: bold;
   border: none;
@@ -193,6 +194,12 @@ header #headerInner #headerRight #request-popup #request-undo {
   text-align: center;
   cursor: pointer;
 }
+header #headerInner #headerRight #request-popup .cart-cleared {
+  padding: 2px 10px;
+  color: #b3041a;
+  background-color: #f2bfbf;
+  text-align: center;
+}
 header #headerInner #headerRight #request-popup ul {
   margin: 0;
   padding: 0 0 0 15px;
@@ -225,6 +232,20 @@ header #headerInner #headerRight #request-popup .close {
   line-height: 14px;
   text-align: center;
   border-radius: 7px;
+}
+header #headerInner #headerRight #request-popup .clearQueue {
+  margin: 8px 0px;
+  padding: 2px 10px;
+  float: right;
+  font-size: 10px;
+  font-weight: 700;
+  color: white;
+  background-color: #b3041a;
+  cursor: pointer;
+  text-decoration: none;
+  -webkit-box-shadow: -1px 1px 5px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -1px 1px 5px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -1px 1px 5px 1px rgba(50, 50, 50, 0.22);
 }
 header #headerInner #headerRight #needHelp {
   position: fixed;

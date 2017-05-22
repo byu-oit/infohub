@@ -414,7 +414,7 @@ class CollibraAPI extends Model {
 			"Columns" => [
 				["Column" => ["fieldName" => "termrid"]],
 				["Column" => ["fieldName" => "termsignifier"]],
-				["Column" => ["fieldName" => "standardDataElementLabel"]],
+				["Column" => ["fieldName" => "standardFieldName"]],
 				["Column" => ["fieldName" => "description"]],
 				["Column" => ["fieldName" => "descriptiveExample"]],
 				["Column" => ["fieldName" => "lastModified"]],
@@ -442,8 +442,8 @@ class CollibraAPI extends Model {
 					"Id" => ["name" => "termrid"],
 					"Signifier" => ["name" => "termsignifier"],
 					"StringAttribute" => [[
-						"Value" => ["name" => "standardDataElementLabel"],
-						"labelId" => Configure::read('Collibra.attribute.standardDataElementLabel')],
+						"Value" => ["name" => "standardFieldName"],
+						"labelId" => Configure::read('Collibra.attribute.standardFieldName')],
 					[
 						"Value" => ["name" => "description"],
 						"labelId" => Configure::read('Collibra.attribute.definition')],
@@ -722,7 +722,7 @@ class CollibraAPI extends Model {
 				'type' => [
 					'asset' => [Configure::read('Collibra.businessTermTypeId')]],
 				'community' => [Configure::read('Collibra.community.byu')]],
-			'fields' => [Configure::read('Collibra.standardDataElementLabelTypeId')],
+			'fields' => [Configure::read('Collibra.standardFieldName')],
 			'order' => [
 				'by' => 'score',
 				'sort' => 'desc'],

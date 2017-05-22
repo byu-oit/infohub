@@ -123,6 +123,14 @@ class MyaccountController extends AppController {
 				}
 			}
 			$r->attributeReferences->attributeReference = $arrNewAttr;
+
+			// Making edits in Collibra can insert weird html into
+			// the attributes; stripping it here
+			$toReplace = ['/<br\/>/', '/<div>/', '/<\/div>/'];
+			$replacements = ['', '<br/>', ''];
+			foreach($r->attributeReferences->attributeReference as $attr) {
+				$attr->value = preg_replace($toReplace, $replacements, $attr->value);
+			}
 		}
 
 		$psName = '';

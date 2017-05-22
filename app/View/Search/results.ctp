@@ -222,8 +222,8 @@
 						<div class="term-desc"><p><?=$term->description?></p></div>
 						<div class="resultBody">
 							<ul>
-								<?php if(!empty($term->standardDataElementLabel)): ?>
-									<li><span class="listLabel">Standard Data Element Label:&nbsp;</span><?=$term->standardDataElementLabel?></li>
+								<?php if(!empty($term->standardFieldName)): ?>
+									<li><span class="listLabel">Standard Field Name:&nbsp;</span><?=$term->standardFieldName?></li>
 								<?php endif;
 
 								if(!empty($term->descriptiveExample)): ?>
