@@ -28,21 +28,19 @@
 						});
 
 					// load term sibling checkboxes
-					$.get( "/search/getFullVocab",{rid:rid})
+					$.get( "/search/getFullVocab",{rid:rid, termid:vocabRid})
 						.done(function( data ) {
 							thisElem.parent().find('.checkBoxesHeader').html('<h5>Check other terms to include in request.</h5>');
 							thisElem.parent().find('.resultBodyLoading').hide();
 							thisElem.parent().find('ul').show();
 							thisElem.parent().find('.checkBoxes').html(data);
-							getCurrentRequestTerms();
+
 							thisElem.parent().find('.checkBoxes input').click(function(){
 								if(thisElem.parent().find('.requestAccess').hasClass('inactive')){
 									thisElem.parent().find('.requestAccess').attr('value','Update Request').removeClass('inactive');
 								}
 							});
 					});
-				}else{
-					getCurrentRequestTerms();
 				}
 			}
 		});
@@ -182,6 +180,14 @@
 					$classificationTitle = 'Highly Confidential';
 					$classification = 'highlyClassified';
 					$txtColor = 'redText';
+					break;
+				case '0 - N/A':
+					$classificationTitle = 'Not Applicable';
+					$classification = 'notApplicable';
+					break;
+				default:
+					$classificationTitle = 'Unspecified';
+					$classification = 'unspecified';
 					break;
 			}
 

@@ -256,6 +256,7 @@ class SearchController extends AppController {
 	public function getFullVocab() {
 		session_write_close(); //No local database writes, so allow this ajax request to run in parallel with others
 		$vocabRID= $this->request->query['rid'];
+		$originTermID = isset($this->request->query['termid']) ? $this->request->query['termid'] : null;
 
 		$jsonResp = $this->CollibraAPI->getTerms($vocabRID, ['length' => 1000]);
 
@@ -302,7 +303,7 @@ class SearchController extends AppController {
 					echo '<div class="checkCol">';
 				}
 				if(!$disabled){
-					echo '<input type="checkbox" name="terms[]" data-title="'.$termName.'" data-vocabID="'.$term->commrid.'" value="'.$termID.'" id="chk'.$termID.$random.'" class="chk'.$termID.'" '.$disabled.'>';
+					echo '<input type="checkbox" name="terms[]" data-title="'.$termName.'" data-vocabID="'.$term->commrid.'" value="'.$termID.'" id="chk'.$termID.$random.'" class="chk'.$termID.'" '.$disabled.' '.($originTermID == $termID ? 'checked' : '').'>';
 				}else{
 					//echo '<img class="denied" src="/img/denied.png" alt="Not available for request." title="Not available for request.">';
 				}

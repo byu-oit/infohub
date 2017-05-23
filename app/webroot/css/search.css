@@ -416,6 +416,24 @@ img.resultBodyLoading {
   display: list-item;
   float: none;
 }
+#searchBody #searchResults #srLower .resultItem form .resultContent .term-desc ul,
+#apiBody #searchResults #srLower .resultItem form .resultContent .term-desc ul,
+#searchBody #requestForm #srLower .resultItem form .resultContent .term-desc ul,
+#apiBody #requestForm #srLower .resultItem form .resultContent .term-desc ul,
+#searchBody #searchSuccess #srLower .resultItem form .resultContent .term-desc ul,
+#apiBody #searchSuccess #srLower .resultItem form .resultContent .term-desc ul {
+  list-style: inside square;
+}
+#searchBody #searchResults #srLower .resultItem form .resultContent .term-desc ul li,
+#apiBody #searchResults #srLower .resultItem form .resultContent .term-desc ul li,
+#searchBody #requestForm #srLower .resultItem form .resultContent .term-desc ul li,
+#apiBody #requestForm #srLower .resultItem form .resultContent .term-desc ul li,
+#searchBody #searchSuccess #srLower .resultItem form .resultContent .term-desc ul li,
+#apiBody #searchSuccess #srLower .resultItem form .resultContent .term-desc ul li {
+  display: list-item;
+  float: none;
+  font-weight: normal;
+}
 #searchBody #searchResults #srLower .resultItem .resultContent .resultBody p,
 #apiBody #searchResults #srLower .resultItem .resultContent .resultBody p,
 #searchBody #requestForm #srLower .resultItem .resultContent .resultBody p,
@@ -771,7 +789,19 @@ img.resultBodyLoading {
 #searchBody #requestForm #srLower .internal:before,
 #apiBody #requestForm #srLower .internal:before,
 #searchBody #searchSuccess #srLower .internal:before,
-#apiBody #searchSuccess #srLower .internal:before {
+#apiBody #searchSuccess #srLower .internal:before,
+#searchBody #searchResults #srLower .notApplicable:before,
+#apiBody #searchResults #srLower .notApplicable:before,
+#searchBody #requestForm #srLower .notApplicable:before,
+#apiBody #requestForm #srLower .notApplicable:before,
+#searchBody #searchSuccess #srLower .notApplicable:before,
+#apiBody #searchSuccess #srLower .notApplicable:before,
+#searchBody #searchResults #srLower .unspecified:before,
+#apiBody #searchResults #srLower .unspecified:before,
+#searchBody #requestForm #srLower .unspecified:before,
+#apiBody #requestForm #srLower .unspecified:before,
+#searchBody #searchSuccess #srLower .unspecified:before,
+#apiBody #searchSuccess #srLower .unspecified:before {
   content: "";
   position: absolute;
   left: 20px;
@@ -844,6 +874,40 @@ img.resultBodyLoading {
 #searchBody #searchSuccess #srLower .internal:before,
 #apiBody #searchSuccess #srLower .internal:before {
   background: url('/img/iconInternal.png') no-repeat;
+  background-size: 26px;
+}
+#searchBody #searchResults #srLower .notApplicable .classificationTitle,
+#apiBody #searchResults #srLower .notApplicable .classificationTitle,
+#searchBody #requestForm #srLower .notApplicable .classificationTitle,
+#apiBody #requestForm #srLower .notApplicable .classificationTitle,
+#searchBody #searchSuccess #srLower .notApplicable .classificationTitle,
+#apiBody #searchSuccess #srLower .notApplicable .classificationTitle {
+  color: #1b7bdb;
+}
+#searchBody #searchResults #srLower .notApplicable:before,
+#apiBody #searchResults #srLower .notApplicable:before,
+#searchBody #requestForm #srLower .notApplicable:before,
+#apiBody #requestForm #srLower .notApplicable:before,
+#searchBody #searchSuccess #srLower .notApplicable:before,
+#apiBody #searchSuccess #srLower .notApplicable:before {
+  background: url('/img/iconNotApplicable.png') no-repeat;
+  background-size: 26px;
+}
+#searchBody #searchResults #srLower .unspecified .classificationTitle,
+#apiBody #searchResults #srLower .unspecified .classificationTitle,
+#searchBody #requestForm #srLower .unspecified .classificationTitle,
+#apiBody #requestForm #srLower .unspecified .classificationTitle,
+#searchBody #searchSuccess #srLower .unspecified .classificationTitle,
+#apiBody #searchSuccess #srLower .unspecified .classificationTitle {
+  color: #1b7bdb;
+}
+#searchBody #searchResults #srLower .unspecified:before,
+#apiBody #searchResults #srLower .unspecified:before,
+#searchBody #requestForm #srLower .unspecified:before,
+#apiBody #requestForm #srLower .unspecified:before,
+#searchBody #searchSuccess #srLower .unspecified:before,
+#apiBody #searchSuccess #srLower .unspecified:before {
+  background: url('/img/iconNoClassification.png') no-repeat;
   background-size: 26px;
 }
 #searchBody #searchResults .page-nav,
@@ -1389,7 +1453,11 @@ form#request #mobileReqd {
   #searchBody #searchResults #srLower .public:before,
   #apiBody #searchResults #srLower .public:before,
   #searchBody #searchResults #srLower .internal:before,
-  #apiBody #searchResults #srLower .internal:before {
+  #apiBody #searchResults #srLower .internal:before,
+  #searchBody #searchResults #srLower .notApplicable:before,
+  #apiBody #searchResults #srLower .notApplicable:before,
+  #searchBody #searchResults #srLower .unspecified:before,
+  #apiBody #searchResults #srLower .unspecified:before {
     left: 6%;
   }
   #searchBody #searchResults #srLower .resultItem,
