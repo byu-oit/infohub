@@ -16,7 +16,12 @@
 
 	$(document).ready(function() {
 		colSize();
-		$('.detailsTab').click(function() {
+		// $('.detailsTab').click(function() {
+		// 	var rid = $(this).attr('data-rid');
+		// 	$('#'+rid).slideToggle();
+		// 	$(this).toggleClass('active');
+		// });
+		$('.details-btn').click(function() {
 			var rid = $(this).attr('data-rid');
 			$('#'+rid).slideToggle();
 			$(this).toggleClass('active');
@@ -64,6 +69,7 @@
 	if(sizeof($requests)==0){
 		echo '<div class="requestItem"><div class="riLeft"><h4 class="riTitle">No Requests Found</h4></div></div>';
 	}else{
+		// pr($requests);exit();
 		foreach($requests as $req){
 			echo '<div class="requestItem">'.
 				'    <div class="riLeft">'.
@@ -79,7 +85,7 @@
 				}
 			}
 			echo '</p>';
-			echo '<div class="status-wrapper">';
+			echo '<div class="status-details-flex"><div class="status-wrapper">';
 			if($req->statusReference->signifier == 'Completed'){
 				echo '<div class="status-cell light-green-border left">In Progress</div><div class="status-cell green-border right active">Approved</div>';
 			}elseif($req->statusReference->signifier == 'Rejected'){
@@ -91,7 +97,9 @@
 			}
 			echo '</div>';
 
-			echo '</div>';
+			echo '	<a class="details-btn grow" data-rid="'.$req->resourceId.'"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a>';
+
+			echo '</div></div>';
 
 			// display approvers and their info
 			////////////////////////////////////////
@@ -112,11 +120,90 @@
 						'</div>';
 				}
 			}
-			echo '</div>';
-			if(!empty($req->dataUsages)){
-				echo '<h4 class="riTitle">Reviewers</h4>';
+			echo '</div></div>';
+			echo '	<div class="detailsBody" id="'.$req->resourceId.'">';
+?>
+
+			<h3 class="headerTab">Requester</h3>
+			<div class="clear"></div>
+			<div class="data-col">
+				<h5>Name:</h5>
+				<p><?php echo $req->attributeReferences->attributeReference['Requester Name']->value ?></p>
+			</div>
+			<div class="data-col">
+				<h5>Phone Number:</h5>
+				<p><?php echo $req->attributeReferences->attributeReference['Requester Phone']->value ?></p>
+			</div>
+			<div class="data-col">
+				<h5>Email:</h5>
+				<p><?php echo $req->attributeReferences->attributeReference['Requester Email']->value ?></p>
+			</div>
+			<div class="data-col">
+				<h5>Role:</h5>
+				<p><?php echo $req->attributeReferences->attributeReference['Requester Role']->value ?></p>
+			</div>
+			<div class="data-col">
+				<h5>Requesting Organization:</h5>
+				<p><?php echo $req->attributeReferences->attributeReference['Requesting Organization']->value ?></p>
+			</div>
+			<div class="clear"></div>
+
+			<h3 class="headerTab">Sponsor</h3>
+			<div class="clear"></div>
+			<div class="data-col">
+				<h5>Sponsor Name:</h5>
+				<p><?php echo $req->attributeReferences->attributeReference['Sponsor Name']->value ?></p>
+			</div>
+			<div class="data-col">
+				<h5>Sponsor Role:</h5>
+				<p><?php echo $req->attributeReferences->attributeReference['Sponsor Role']->value ?></p>
+			</div>
+			<div class="data-col">
+				<h5>Sponsor Email:</h5>
+				<p><?php echo $req->attributeReferences->attributeReference['Sponsor Email']->value ?></p>
+			</div>
+			<div class="data-col">
+				<h5>Sponsor Phone:</h5>
+				<p><?php echo $req->attributeReferences->attributeReference['Sponsor Phone']->value ?></p>
+			</div>
+			<div class="clear"></div>
+
+			<h3 class="headerTab">Application Name</h3>
+			<div class="clear"></div>
+			<p><?= $req->attributeReferences->attributeReference['Application Name']->value ?></p>
+
+<?php
+			$arrNonDisplay = [
+				"Requester Name",
+				"Requester Email",
+				"Requester Phone",
+				"Information Elements",
+				"Requester Role",
+				"Requester PersonId",
+				"Requesting Organization",
+				"Sponsor Name",
+				"Sponsor Role",
+				"Sponsor Email",
+				"Sponsor Phone",
+				"Requester Person Id",
+				"Request Date",
+				"Application Name"
+			];
+			$completedStatuses = ['Completed', 'Approved', 'Obsolete'];
+			if (empty($req->dataUsages)) {
+				foreach($req->attributeReferences->attributeReference as $attrRef){
+					if(!in_array($attrRef->labelReference->signifier, $arrNonDisplay)){
+						echo '<h3 class="headerTab">'.$attrRef->labelReference->signifier.'</h3><div class="clear"></div>'.
+							'<p>'.$attrRef->value.'</p>';
+					}
+				}
+				if ($req->statusReference->signifier != 'Completed' && $req->statusReference->signifier != 'Obsolete') {
+					echo '<div class="edit grow" data-rid="'.$req->resourceId.'">Edit this request</div>';
+					echo '<div class="delete grow" data-rid="'.$req->resourceId.'">Delete this request</div>';
+				}
 			}
 			echo '</div>';
+
 			foreach($req->dataUsages as $du) {
 				echo '<div class="riBelow">';
 				$dsaName = $du->signifier;
@@ -162,7 +249,7 @@
 				}
 				echo '</div>';
 				echo '<br />';
-				echo '<div class="status-wrapper">';
+				echo '<div class="status-details-flex"><div class="status-wrapper">';
 				if($dsaStatus == 'candidate' || $dsaStatus == 'in progress'){
 					echo '<div class="status-cell green-border left active">In Progress</div><div class="status-cell light-green-border right">Approved</div>';
 				}elseif($dsaStatus == 'approved'){
@@ -172,90 +259,25 @@
 				}else{
 					echo '<div class="status-cell obsolete">Obsolete</div>';
 				}
-				echo '</div></div>';
-			}
-			////////////////////////////////////////
+				echo '</div>';
+				echo '	<a class="details-btn grow" data-rid="'.$du->id.'"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a></div></div>';
 
-			// show request details
-			////////////////////////////////////////
-			echo '	<div class="detailsBody" id="'.$req->resourceId.'">';
-?>
-
-			<h3 class="headerTab">Requester</h3>
-			<div class="clear"></div>
-			<div class="data-col">
-				<h5>Name:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference['Requester Name']->value ?>
-			</div>
-			<div class="data-col">
-				<h5>Phone Number:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference['Requester Phone']->value ?>
-			</div>
-			<div class="data-col">
-				<h5>Email:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference['Requester Email']->value ?>
-			</div>
-			<div class="data-col">
-				<h5>Role:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference['Requester Role']->value ?>
-			</div>
-			<div class="data-col">
-				<h5>Requesting Organization:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference['Requesting Organization']->value ?>
-			</div>
-			<div class="clear"></div>
-
-			<h3 class="headerTab">Sponsor</h3>
-			<div class="clear"></div>
-			<div class="data-col">
-				<h5>Sponsor Name:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference['Sponsor Name']->value ?>
-			</div>
-			<div class="data-col">
-				<h5>Sponsor Role:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference['Sponsor Role']->value ?>
-			</div>
-			<div class="data-col">
-				<h5>Sponsor Email:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference['Sponsor Email']->value ?>
-			</div>
-			<div class="data-col">
-				<h5>Sponsor Phone:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference['Sponsor Phone']->value ?>
-			</div>
-			<div class="clear"></div>
-<?php
-			$arrNonDisplay = array(
-				"Requester Name",
-				"Requester Email",
-				"Requester Phone",
-				"Information Elements",
-				"Requester Role",
-				"Requester PersonId",
-				"Requesting Organization",
-				"Sponsor Name",
-				"Sponsor Role",
-				"Sponsor Email",
-				"Sponsor Phone",
-				"Requester Person ID",
-				"Request Date"
-			);
-			foreach($req->attributeReferences->attributeReference as $attrRef){
-				if(!in_array($attrRef->labelReference->signifier, $arrNonDisplay)){
-					echo '<h3 class="headerTab">'.$attrRef->labelReference->signifier.'</h3><div class="clear"></div>'.
-						'<p>'.$attrRef->value.'</p>';
+				echo '<div class="detailsBody" id="'.$du->id.'">';
+				foreach($du->attributeReferences->attributeReference as $attr){
+					if(!in_array($attr->labelReference->signifier, $arrNonDisplay)){
+						echo '<h3 class="headerTab">'.$attr->labelReference->signifier.'</h3><div class="clear"></div>'.
+							'<p>'.$attr->value.'</p>';
+					}
 				}
+
+				if (!in_array($du->status, $completedStatuses)) {
+					echo '<div class="edit grow" data-rid="'.$du->id.'">Edit this request</div>';
+					echo '<div class="delete grow" data-rid="'.$du->id.'">Delete this request</div>';
+				}
+				echo '</div>';
 			}
-			if ($req->statusReference->signifier != 'Completed' && $req->statusReference->signifier != 'Obsolete') {
-				echo '<div class="edit grow" data-rid="'.$req->resourceId.'">Edit this request</div>';
-				echo '<div class="delete grow" data-rid="'.$req->resourceId.'">Delete this request</div>';
-			}
+
 			echo '</div>';
-			////////////////////////////////////////
-
-			echo '	<a class="detailsTab" data-rid="'.$req->resourceId.'"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a>'.
-				'</div>';
-
 		}
 	}
 ?>

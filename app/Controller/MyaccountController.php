@@ -131,6 +131,15 @@ class MyaccountController extends AppController {
 			foreach($r->attributeReferences->attributeReference as $attr) {
 				$attr->value = preg_replace($toReplace, $replacements, $attr->value);
 			}
+
+			for ($i = 0; $i < sizeof($r->dataUsages); $i++) {
+				$resp = $this->CollibraAPI->get('term/'.$r->dataUsages[$i]->id);
+				$resp = json_decode($resp);
+				$r->dataUsages[$i]->attributeReferences = $resp->attributeReferences;
+				foreach($r->dataUsages[$i]->attributeReferences->attributeReference as $attr) {
+					$attr->value = preg_replace($toReplace, $replacements, $attr->value);
+				}
+			}
 		}
 
 		$psName = '';

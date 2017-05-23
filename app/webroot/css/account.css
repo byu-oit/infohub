@@ -147,12 +147,17 @@
   margin-left: -12px;
   display: block;
 }*/
-#accountMid #accountMain .requestItem .status-wrapper {
+#accountMid #accountMain .requestItem .status-details-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#accountMid #accountMain .requestItem .status-details-flex .status-wrapper {
   width: 282px;
   margin-left: -12px;
   display: block;
 }
-#accountMid #accountMain .requestItem .status-wrapper .status-cell {
+#accountMid #accountMain .requestItem .status-details-flex .status-wrapper .status-cell {
   display: inline-block;
   width: 125px;
   height: 16px;
@@ -162,28 +167,28 @@
   padding: 4px;
   border: 4px solid;
 }
-#accountMid #accountMain .requestItem .status-wrapper .left {
+#accountMid #accountMain .requestItem .status-details-flex .status-wrapper .left {
   border-radius: 16px 0px 0px 16px;
 }
-#accountMid #accountMain .requestItem .status-wrapper .right {
+#accountMid #accountMain .requestItem .status-details-flex .status-wrapper .right {
   border-radius: 0px 16px 16px 0px;
 }
-#accountMid #accountMain .requestItem .status-wrapper .active {
+#accountMid #accountMain .requestItem .status-details-flex .status-wrapper .active {
   font-weight: bold;
 }
-#accountMid #accountMain .requestItem .status-wrapper .light-green-border {
+#accountMid #accountMain .requestItem .status-details-flex .status-wrapper .light-green-border {
   border-color: #d8e8ab;
 }
-#accountMid #accountMain .requestItem .status-wrapper .green-border {
+#accountMid #accountMain .requestItem .status-details-flex .status-wrapper .green-border {
   border-color: #b8d65a;
 }
-#accountMid #accountMain .requestItem .status-wrapper .light-red-border {
+#accountMid #accountMain .requestItem .status-details-flex .status-wrapper .light-red-border {
   border-color: #fc9898;
 }
-#accountMid #accountMain .requestItem .status-wrapper .red-border {
+#accountMid #accountMain .requestItem .status-details-flex .status-wrapper .red-border {
   border-color: #d85858;
 }
-#accountMid #accountMain .requestItem .status-wrapper .obsolete {
+#accountMid #accountMain .requestItem .status-details-flex .status-wrapper .obsolete {
   width: 250px;
   border-color: #d8e8ab;
   border-radius: 16px;
@@ -348,13 +353,19 @@
   display: block;
   clear: both;
 }*/
-#accountMid #accountMain .requestItem .riBelow .status-wrapper {
+#accountMid #accountMain .requestItem .riBelow .status-details-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 634px;
+}
+#accountMid #accountMain .requestItem .riBelow .status-details-flex .status-wrapper {
   width: 190px;
   margin-left: -5px;
   display: block;
   clear: both;
 }
-#accountMid #accountMain .requestItem .riBelow .status-wrapper .status-cell {
+#accountMid #accountMain .requestItem .riBelow .status-details-flex .status-wrapper .status-cell {
   display: inline-block;
   width: 73px;
   height: 14px;
@@ -364,34 +375,35 @@
   padding: 3px;
   border: 3px solid;
 }
-#accountMid #accountMain .requestItem .riBelow .status-wrapper .left {
+#accountMid #accountMain .requestItem .riBelow .status-details-flex .status-wrapper .left {
   border-radius: 12px 0px 0px 12px;
 }
-#accountMid #accountMain .requestItem .riBelow .status-wrapper .right {
+#accountMid #accountMain .requestItem .riBelow .status-details-flex .status-wrapper .right {
   border-radius: 0px 12px 12px 0px;
 }
-#accountMid #accountMain .requestItem .riBelow .status-wrapper .active {
+#accountMid #accountMain .requestItem .riBelow .status-details-flex .status-wrapper .active {
   font-weight: bold;
 }
-#accountMid #accountMain .requestItem .riBelow .status-wrapper .light-green-border {
+#accountMid #accountMain .requestItem .riBelow .status-details-flex .status-wrapper .light-green-border {
   border-color: #d8e8ab;
 }
-#accountMid #accountMain .requestItem .riBelow .status-wrapper .green-border {
+#accountMid #accountMain .requestItem .riBelow .status-details-flex .status-wrapper .green-border {
   border-color: #b8d65a;
 }
-#accountMid #accountMain .requestItem .riBelow .status-wrapper .light-red-border {
+#accountMid #accountMain .requestItem .riBelow .status-details-flex .status-wrapper .light-red-border {
   border-color: #fc9898;
 }
-#accountMid #accountMain .requestItem .riBelow .status-wrapper .red-border {
+#accountMid #accountMain .requestItem .riBelow .status-details-flex .status-wrapper .red-border {
   border-color: #d85858;
 }
-#accountMid #accountMain .requestItem .riBelow .status-wrapper .obsolete {
+#accountMid #accountMain .requestItem .riBelow .status-details-flex .status-wrapper .obsolete {
     width: 146px;
     border-color: #d8e8ab;
     border-radius: 12px;
     font-style: italic;
 }
-#accountMid #accountMain .requestItem .detailsBody {
+#accountMid #accountMain .requestItem .detailsBody,
+#accountMid #accountMain .requestItem .riBelow .detailsBody {
   display: none;
   *zoom: 1;
   clear: both;
@@ -400,19 +412,24 @@
   padding: 20px 30px;
 }
 #accountMid #accountMain .requestItem .detailsBody:before,
-#accountMid #accountMain .requestItem .detailsBody:after {
+#accountMid #accountMain .requestItem .detailsBody:after,
+#accountMid #accountMain .requestItem .riBelow .detailsBody:before,
+#accountMid #accountMain .requestItem .riBelow .detailsBody:after {
   content: "";
   display: table;
 }
-#accountMid #accountMain .requestItem .detailsBody:after {
+#accountMid #accountMain .requestItem .detailsBody:after,
+#accountMid #accountMain .requestItem .riBelow .detailsBody:after {
   clear: both;
 }
-#accountMid #accountMain .requestItem .detailsBody .data-col {
+#accountMid #accountMain .requestItem .detailsBody .data-col,
+#accountMid #accountMain .requestItem .riBelow .detailsBody .data-col {
   float: left;
   width: 30%;
   margin-right: 10%;
 }
-#accountMid #accountMain .requestItem .detailsBody p {
+#accountMid #accountMain .requestItem .detailsBody p,
+#accountMid #accountMain .requestItem .riBelow .detailsBody p {
   font-size: 12px;
   width: 100%;
   margin-top: 0;
@@ -422,18 +439,21 @@
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
-#accountMid #accountMain .requestItem .detailsBody h4 {
+#accountMid #accountMain .requestItem .detailsBody h4,
+#accountMid #accountMain .requestItem .riBelow .detailsBody h4 {
   color: #114477;
   font-size: 16px;
   margin: 0;
 }
-#accountMid #accountMain .requestItem .detailsBody h5 {
+#accountMid #accountMain .requestItem .detailsBody h5,
+#accountMid #accountMain .requestItem .riBelow .detailsBody h5 {
   font-size: 13px;
   font-weight: bold;
   color: #114477;
   margin: 0 0 3px 0;
 }
-#accountMid #accountMain .requestItem .detailsBody h3.headerTab {
+#accountMid #accountMain .requestItem .detailsBody h3.headerTab,
+#accountMid #accountMain .requestItem .riBelow .detailsBody h3.headerTab {
   float: left;
   font-size: 18px;
   margin: 15px 0 10px 0;
@@ -444,7 +464,9 @@
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
 #accountMid #accountMain .requestItem .detailsBody .edit,
-#accountMid #accountMain .requestItem .detailsBody .delete {
+#accountMid #accountMain .requestItem .detailsBody .delete,
+#accountMid #accountMain .requestItem .riBelow .detailsBody .edit,
+#accountMid #accountMain .requestItem .riBelow .detailsBody .delete {
     padding: 4px 14px;
     font-size: 13px;
     display: inline;
@@ -459,70 +481,35 @@
     -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
     box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
-#accountMid #accountMain .requestItem .detailsBody .delete {
+#accountMid #accountMain .requestItem .detailsBody .delete,
+#accountMid #accountMain .requestItem .riBelow .detailsBody .delete {
     background-color: #b3041a;
     margin-right: 15px;
 }
-#accountMid #accountMain .requestItem .detailsTab {
-  background-color: #cccaca;
-  padding: 4px 30px 5px 12px;
-  position: absolute;
-  bottom: -24px;
-  left: 15px;
+#accountMid #accountMain .requestItem .riLeft .status-details-flex .details-btn,
+#accountMid #accountMain .requestItem .riBelow .status-details-flex .details-btn {
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 600;
   color: white;
-  font-weight: bold;
-  text-decoration: none;
-  font-size: 11px;
+  background-color: #114477;
   cursor: pointer;
-  -webkit-box-shadow: 3px 3px 6px 0px rgba(50, 50, 50, 0.15);
-  -moz-box-shadow: 3px 3px 6px 0px rgba(50, 50, 50, 0.15);
-  box-shadow: 3px 3px 6px 0px rgba(50, 50, 50, 0.15);
-  transition: all 0.2s ease-in-out;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
-#accountMid #accountMain .requestItem .detailsTab:before {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 4px;
-  background: linear-gradient(to bottom, rgba(50, 50, 50, 0.22), #cccaca);
-  top: 0;
-  left: 0;
-}
-#accountMid #accountMain .requestItem .detailsTab:after {
-  content: "";
-  position: absolute;
-  right: 14px;
-  top: 11px;
-  transition: top 0.2s ease-in-out;
-  height: 5px;
-  width: 8px;
-  background: url('/img/iconDownArrow.png') no-repeat;
-  background-size: 8px;
-}
-#accountMid #accountMain .requestItem .detailsTab .detailsLess {
+#accountMid #accountMain .requestItem .riLeft .status-details-flex .details-btn .detailsLess,
+#accountMid #accountMain .requestItem .riBelow .status-details-flex .details-btn .detailsLess {
   display: none;
   float: left;
 }
-#accountMid #accountMain .requestItem .detailsTab:hover {
-  padding-top: 9px;
-  bottom: -29px;
-}
-#accountMid #accountMain .requestItem .detailsTab:hover:after {
-  top: 16px;
-}
-#accountMid #accountMain .requestItem .detailsTab.active .detailsLess {
+#accountMid #accountMain .requestItem .riLeft .status-details-flex .details-btn.active .detailsLess,
+#accountMid #accountMain .requestItem .riBelow .status-details-flex .details-btn.active .detailsLess {
   display: block;
 }
-#accountMid #accountMain .requestItem .detailsTab.active .detailsMore {
+#accountMid #accountMain .requestItem .riLeft .status-details-flex .details-btn.active .detailsMore,
+#accountMid #accountMain .requestItem .riBelow .status-details-flex .details-btn.active .detailsMore {
   display: none;
-}
-#accountMid #accountMain .requestItem .detailsTab.active:after {
-  background: url('/img/iconUpArrow.png') no-repeat;
-  background-size: 8px;
-  top: 9px;
-}
-#accountMid #accountMain .requestItem .detailsTab.active:hover:after {
-  top: 15px;
 }
 @media screen and (max-width: 720px) {
   #accountMid #accountTop {
@@ -608,7 +595,8 @@
   #accountMid #accountMain .requestItem .contactBox:before {
     background: none;
   }
-  #accountMid #accountMain .requestItem .detailsBody .data-col {
+  #accountMid #accountMain .requestItem .detailsBody .data-col,
+  #accountMid #accountMain .requestItem .riBelow .detailsBody .data-col {
     float: none;
     width: 100%;
     margin-right: 0;

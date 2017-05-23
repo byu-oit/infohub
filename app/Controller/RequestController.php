@@ -188,22 +188,17 @@ class RequestController extends AppController {
 		$dsr = json_decode($resp);
 
 		$err = false;
-		//It is possible to go through this process w/o actually changing any info on the DSR.
-		//$changed ensures that we only comment on child DSAs if changes did take place.
-		$changed = false;
-		$changeComment = 'The following changes were made to this Agreement on '.date("Y-m-d H:i:s T").':';
 
 		foreach ($this->request->data as $key => $val) {
 			$key = preg_replace('/_/', ' ', $key);
 			foreach ($dsr->attributeReferences->attributeReference as $original) {
 				if ($key == $original->labelReference->signifier && $val != $original->value) {
-					$changed = true;
-
 					//Update values in Collibra database
 					$postData['value'] = $val;
 					$postData['rid'] = $original->resourceId;
 					$postString = http_build_query($postData);
-					$postString = preg_replace('/%0D50A/', '<br />', $postString);
+					//An odd replacement, yes, but we're imitating the way Collibra formats edits
+					$postString = preg_replace(['/%0D/', '/%0A/'], ['<div>', ''], $postString);
 					$formResp = $this->CollibraAPI->post('attribute/'.$original->resourceId, $postString);
 					$formResp = json_decode($formResp);
 
@@ -211,48 +206,10 @@ class RequestController extends AppController {
 						$err = true;
 						break;
 					}
-
-					//Build string for comments on child DSAs
-					$changeComment .= '<br />'.$key.': '.$val;
 					break;
 				}
 			}
 		}
-
-		//Update child DSAs
-		if ($changed) {
-			$dsr->dataUsages = $this->CollibraAPI->getDataUsages($dsrId);
-			for ($i = 0; $i < sizeof($dsr->dataUsages); $i++) {
-				$resp = $this->CollibraAPI->get('term/'.$dsr->dataUsages[$i]->id);
-				$dsr->dataUsages[$i] = json_decode($resp);
-			}
-			foreach ($dsr->dataUsages as $du) {
-				if (!in_array($du->statusReference->signifier, ['Approved', 'Obsolete'])) {
-					foreach ($this->request->data as $key => $val) {
-						$key = preg_replace('/_/', ' ', $key);
-						foreach ($du->attributeReferences->attributeReference as $original) {
-							if ($key == $original->labelReference->signifier && $val != $original->value) {
-								//Update values in Collibra database
-								$postData['value'] = $val;
-								$postData['rid'] = $original->resourceId;
-								$postString = http_build_query($postData);
-								$postString = preg_replace('/%0D50A/', '<br />', $postString);
-								$formResp = $this->CollibraAPI->post('attribute/'.$original->resourceId, $postString);
-								$formResp = json_decode($formResp);
-
-								if (!isset($formResp)) {
-									$err = true;
-									break;
-								}
-							}
-						}
-					}
-					$formResp = $this->CollibraAPI->post('term/'.$du->resourceId.'/comment', 'content='.$changeComment);
-				}
-			}
-		}
-
-
 
 		if (!$err) {
 			// attempt to reindex source to make sure latest requests are displayed
@@ -273,9 +230,15 @@ class RequestController extends AppController {
 		$resp = $this->CollibraAPI->get('term/'.$dsrId);
 		$request = json_decode($resp);
 
-		$completedStatuses = ['Completed', 'Obsolete'];
+		$completedStatuses = ['Completed', 'Approved', 'Obsolete'];
 		if (in_array($request->statusReference->signifier, $completedStatuses)) {
 			$this->Flash->error('You cannot edit a completed Request.');
+			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
+		}
+
+		$request->dataUsages = $this->CollibraAPI->getDataUsages($dsrId);
+		if (!empty($request->dataUsages)) {
+			$this->Flash->error('You cannot edit a DSR with any child DSAs.');
 			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
 		}
 

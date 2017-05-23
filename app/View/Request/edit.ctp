@@ -78,6 +78,8 @@
 						Configure::read('Collibra.isaWorkflow.requiredElementsString'),
 						Configure::read('Collibra.isaWorkflow.additionalElementsString')
                     );
+					$toReplace = ['/<br\/>/', '/<div>/', '/<\/div>/'];
+					$replacements = ['', "\n", ''];
 					foreach($formFields->formProperties as $field){
 						if(in_array($field->id, $arrNonDisplay)){
 							continue;
@@ -89,7 +91,7 @@
                         $val = '';
                         foreach($request->attributeReferences->attributeReference as $ref) {
                             if ($field->name == $ref->labelReference->signifier) {
-                                $val = $ref->value;
+                                $val = preg_replace($toReplace, $replacements, $ref->value);
                                 break;
                             }
                         }
