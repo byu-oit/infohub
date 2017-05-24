@@ -241,12 +241,27 @@ class RequestController extends AppController {
 			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
 		}
 
+		// Check whether $request is a DSR or DSA
+		$isaRequest = $request->conceptType->resourceId == Configure::read('Collibra.vocabulary.isaRequest');
+
 		// load form fields for ISA workflow
 		$formResp = $this->CollibraAPI->get('workflow/'.Configure::read('Collibra.isaWorkflow.id').'/form/start');
 		$formResp = json_decode($formResp);
 
+		$arrNewAttr = array();
+		foreach($formResp->formProperties as $wf){
+			foreach($request->attributeReferences->attributeReference as $attr){
+				if($attr->labelReference->signifier == $wf->name){
+					$arrNewAttr[$attr->labelReference->signifier] = $attr;
+					break;
+				}
+			}
+		}
+		$request->attributeReferences->attributeReference = $arrNewAttr;
+
 		$this->set('formFields', $formResp);
 		$this->set('request', $request);
+		$this->set('isaRequest', $isaRequest);
 		$this->set('submitErr', isset($this->request->query['err']));
 	}
 
