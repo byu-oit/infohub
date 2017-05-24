@@ -45,6 +45,10 @@ class MyaccountController extends AppController {
 		if(isset($this->request->query['s'])){
 			$page = 'past';
 		}
+		$expand = '';
+		if(isset($this->request->query['expand'])){
+			$expand = $this->request->query['expand'];
+		}
 
 		$netID = $this->Auth->user('username');
 		$this->loadModel('BYUAPI');
@@ -169,6 +173,7 @@ class MyaccountController extends AppController {
 		if(isset($byuUser->employee_information->department)){
 			$psDepartment = $byuUser->employee_information->department;
 		}
+		$this->set('expand', $expand);
 		$this->set('psName', $psName);
 		$this->set('psRole', $psRole);
 		$this->set('psDepartment', $psDepartment);

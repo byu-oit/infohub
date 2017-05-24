@@ -36,6 +36,11 @@
 		$('.approver .user-icon').mouseout(function(){
 			$(this).parent().find('.info').hide();
 		});
+
+		<?php if (!empty($expand)): ?>
+			$('#<?=$expand?>').slideToggle();
+			$('#<?=$expand?>').parent().find('.details-btn[data-rid="<?=$expand?>"]').toggleClass('active');
+		<?php endif ?>
 	});
 </script>
 <!-- Background image div -->

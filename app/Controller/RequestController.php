@@ -211,10 +211,7 @@ class RequestController extends AppController {
 		}
 
 		if (!$err) {
-			// attempt to reindex source to make sure latest requests are displayed
-			$resp = $this->CollibraAPI->post('search/re-index');
-
-			$this->redirect(['action' => 'success']);
+			$this->redirect(['controller' => 'myaccount', 'action' => 'index', '?' => ['expand' => $dsrId]]);
 		} else {
 			$this->redirect(['action' => 'edit/'.$dsrId, '?' => ['err' => 1]]);
 		}
