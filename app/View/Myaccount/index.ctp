@@ -16,11 +16,6 @@
 
 	$(document).ready(function() {
 		colSize();
-		// $('.detailsTab').click(function() {
-		// 	var rid = $(this).attr('data-rid');
-		// 	$('#'+rid).slideToggle();
-		// 	$(this).toggleClass('active');
-		// });
 		$('.details-btn').click(function() {
 			var rid = $(this).attr('data-rid');
 			$('#'+rid).slideToggle();
@@ -69,7 +64,6 @@
 	if(sizeof($requests)==0){
 		echo '<div class="requestItem"><div class="riLeft"><h4 class="riTitle">No Requests Found</h4></div></div>';
 	}else{
-		// pr($requests);exit();
 		foreach($requests as $req){
 			echo '<div class="requestItem">'.
 				'    <div class="riLeft">'.
@@ -271,8 +265,8 @@
 				}
 
 				if (!in_array($du->status, $completedStatuses)) {
-					echo '<div class="edit grow" data-rid="'.$du->id.'">Edit this request</div>';
-					echo '<div class="delete grow" data-rid="'.$du->id.'">Delete this request</div>';
+					echo '<div class="edit grow" data-rid="'.$du->id.'">Edit this agreement</div>';
+					echo '<div class="delete grow" data-rid="'.$du->id.'">Delete this agreement</div>';
 				}
 				echo '</div>';
 			}

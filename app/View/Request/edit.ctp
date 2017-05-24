@@ -78,8 +78,8 @@
 						Configure::read('Collibra.isaWorkflow.requiredElementsString'),
 						Configure::read('Collibra.isaWorkflow.additionalElementsString')
                     );
-					$toReplace = ['/<br\/>/', '/<div>/', '/<\/div>/'];
-					$replacements = ['', "\n", ''];
+
+
 					foreach($formFields->formProperties as $field){
 						if(in_array($field->id, $arrNonDisplay)){
 							continue;
@@ -91,7 +91,7 @@
                         $val = '';
                         foreach($request->attributeReferences->attributeReference as $ref) {
                             if ($field->name == $ref->labelReference->signifier) {
-                                $val = preg_replace($toReplace, $replacements, $ref->value);
+                                $val = preg_replace('/<br\/>/', "\n", $ref->value);
                                 break;
                             }
                         }
@@ -112,7 +112,7 @@
 		<div class="clear"></div>
 	</div>
 	<div id="formSubmit" class="innerLower">
-		<input type="submit" value="Submit Edit" id="requestSubmit" name="requestSubmit" class="grow">
+		<input type="submit" value="Save Changes" id="requestSubmit" name="requestSubmit" class="grow">
 		<label for="requestSubmit" class="mobileHide">*All Fields Required</label>
 		<div class="clear"></div>
 	</div>

@@ -197,8 +197,7 @@ class RequestController extends AppController {
 					$postData['value'] = $val;
 					$postData['rid'] = $original->resourceId;
 					$postString = http_build_query($postData);
-					//An odd replacement, yes, but we're imitating the way Collibra formats edits
-					$postString = preg_replace(['/%0D/', '/%0A/'], ['<div>', ''], $postString);
+					$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
 					$formResp = $this->CollibraAPI->post('attribute/'.$original->resourceId, $postString);
 					$formResp = json_decode($formResp);
 
@@ -350,7 +349,7 @@ class RequestController extends AppController {
 		if (!empty($additionalElementsString)) {
 			$postString = preg_replace("/{$additionalElementsString}%5B[0-9]*%5D/", $additionalElementsString, $postString);
 		}
-		$postString = preg_replace('/%0D%0A/','<br />',$postString);
+		$postString = preg_replace('/%0D%0A/','<br/>',$postString);
 
 		$formResp = $this->CollibraAPI->post(
 			'workflow/'.Configure::read('Collibra.isaWorkflow.id').'/start',

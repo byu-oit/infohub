@@ -124,12 +124,18 @@ class MyaccountController extends AppController {
 			}
 			$r->attributeReferences->attributeReference = $arrNewAttr;
 
-			// Making edits in Collibra can insert weird html into
-			// the attributes; stripping it here
-			$toReplace = ['/<br\/>/', '/<div>/', '/<\/div>/'];
-			$replacements = ['', '<br/>', ''];
+			// Making edits in Collibra inserts weird html into the attributes; if an
+			// edit was made in Collibra, we replace their html with some more cooperative tags
 			foreach($r->attributeReferences->attributeReference as $attr) {
-				$attr->value = preg_replace($toReplace, $replacements, $attr->value);
+				if (preg_match('/<div>/', $attr->value)) {
+					$postData['value'] = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->value);
+					$postData['rid'] = $attr->resourceId;
+					$postString = http_build_query($postData);
+					$this->CollibraAPI->post('attribute/'.$attr->resourceId, $postString);
+
+					// After updating the value in Collibra, just replace the value for this page load
+					$attr->value = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->value);
+				}
 			}
 
 			for ($i = 0; $i < sizeof($r->dataUsages); $i++) {
@@ -137,7 +143,15 @@ class MyaccountController extends AppController {
 				$resp = json_decode($resp);
 				$r->dataUsages[$i]->attributeReferences = $resp->attributeReferences;
 				foreach($r->dataUsages[$i]->attributeReferences->attributeReference as $attr) {
-					$attr->value = preg_replace($toReplace, $replacements, $attr->value);
+					if (preg_match('/<div>/', $attr->value)) {
+						$postData['value'] = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->value);
+						$postData['rid'] = $attr->resourceId;
+						$postString = http_build_query($postData);
+						$this->CollibraAPI->post('attribute/'.$attr->resourceId, $postString);
+
+						// After updating the value in Collibra, just replace the value for this page load
+						$attr->value = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->value);
+					}
 				}
 			}
 		}
