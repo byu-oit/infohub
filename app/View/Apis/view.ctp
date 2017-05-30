@@ -64,25 +64,29 @@
 									<?php if (!empty($term->businessTerm[0])):
 										$classification = $term->businessTerm[0]->termClassification;
 										switch($classification){
-											case '1 - Public':
+											case 'Public':
 												$classificationTitle = 'Public';
 												$classification = 'Public';
 												break;
-											case '2 - Internal':
+											case 'Internal':
 												$classificationTitle = 'Internal';
 												$classification = 'Internal';
 												break;
-											case '3 - Confidential':
+											case 'Confidential':
 												$classificationTitle = 'Confidential';
 												$classification = 'Classified';
 												break;
-											case '4 - Highly Confidential':
+											case 'Highly Confidential':
 												$classificationTitle = 'Highly Confidential';
 												$classification = 'HighClassified';
 												break;
+											case 'Not Applicable':
+												$classificationTitle = 'Not Applicable';
+												$classification = 'NotApplicable';
+												break;
 											default:
-												$classificationTitle = 'Public';
-												$classification = 'Public';
+												$classificationTitle = 'Unspecified';
+												$classification = 'NoClassification2';
 												break;
 										}
 										echo '<img class="classIcon" src="/img/icon'.$classification.'.png">&nbsp;'.$classificationTitle;

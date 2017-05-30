@@ -281,20 +281,23 @@ class SearchController extends AppController {
 				$random = uniqid(rand(111111,999999));
 				$classification = $term->classification;
 				switch($classification){
-					case '1 - Public':
+					case 'Public':
 						$classificationIcon = '<img src="/img/iconPublic.png" title="Public" alt="Public" width="9" />';
 						break;
-					case '2 - Internal':
+					case 'Internal':
 						$classificationIcon = '<img src="/img/iconInternal.png" title="Internal" alt="Internal" width="9" />';
 						break;
-					case '3 - Confidential':
+					case 'Confidential':
 						$classificationIcon = '<img src="/img/iconClassified.png" title="Confidential" alt="Confidential" width="9" />';
 						break;
-					case '4 - Highly Confidential':
+					case 'Highly Confidential':
 						$classificationIcon = '<img src="/img/iconHighClassified.png" title="Highly Confidential" alt="Highly Confidential" width="9" />';
 						break;
+					case 'Not Applicable':
+						$classificationIcon = '<img src="/img/iconNotApplicable.png" title="Not Applicable" alt="Not Applicable" width="9" />';
+						break;
 					default:
-						$classificationIcon = '';
+						$classificationIcon = '<img src="/img/iconNoClassification2.png" title="Unspecified" alt="Unspecified" width="9" />';
 						break;
 				}
 
