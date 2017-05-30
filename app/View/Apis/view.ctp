@@ -121,8 +121,10 @@
 					$('#store_link').attr('href', response.link);
 				}
 				if (response.name) {
-					var href = $('#doc_link').attr('href');
-					$('#doc_link').attr('href', href.replace('api-list', response.name.replace('.', '')));
+					// Developer Portal URLs have mysteriously stripped underscores from API names.
+					// The line below is only a temporary fix until the URLs are corrected.
+					var name = response.name.replace(/_/g, '');
+					$('#doc_link').attr('href', 'https://developer.byu.edu/api/'+name);
 				}
 			});
 	});
