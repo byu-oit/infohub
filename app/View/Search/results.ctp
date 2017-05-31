@@ -162,26 +162,31 @@
 			$txtColor = 'blueText';
 			switch($classification){
 				case 'Public':
+				case '1 - Public':
 					$classificationTitle = 'Public';
 					$classification = 'public';
 					$txtColor = 'greenText';
 					break;
 				case 'Internal':
+				case '2 - Internal':
 					$classificationTitle = 'Internal';
 					$classification = 'internal';
 					$txtColor = 'blueText';
 					break;
 				case 'Confidential':
+				case '3 - Confidential':
 					$classificationTitle = 'Confidential';
 					$classification = 'classified';
 					$txtColor = 'orangeText';
 					break;
 				case 'Highly Confidential':
+				case '4 - Highly Confidential':
 					$classificationTitle = 'Highly Confidential';
 					$classification = 'highlyClassified';
 					$txtColor = 'redText';
 					break;
 				case 'Not Applicable':
+				case '0 - N/A':
 					$classificationTitle = 'Not Applicable';
 					$classification = 'notApplicable';
 					break;

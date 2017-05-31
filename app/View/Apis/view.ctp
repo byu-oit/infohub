@@ -65,22 +65,27 @@
 										$classification = $term->businessTerm[0]->termClassification;
 										switch($classification){
 											case 'Public':
+											case '1 - Public':
 												$classificationTitle = 'Public';
 												$classification = 'Public';
 												break;
 											case 'Internal':
+											case '2 - Internal':
 												$classificationTitle = 'Internal';
 												$classification = 'Internal';
 												break;
 											case 'Confidential':
+											case '3 - Confidential':
 												$classificationTitle = 'Confidential';
 												$classification = 'Classified';
 												break;
 											case 'Highly Confidential':
+											case '4 - Highly Confidential':
 												$classificationTitle = 'Highly Confidential';
 												$classification = 'HighClassified';
 												break;
 											case 'Not Applicable':
+											case '0 - N/A':
 												$classificationTitle = 'Not Applicable';
 												$classification = 'NotApplicable';
 												break;

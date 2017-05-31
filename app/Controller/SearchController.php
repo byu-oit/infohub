@@ -282,18 +282,23 @@ class SearchController extends AppController {
 				$classification = $term->classification;
 				switch($classification){
 					case 'Public':
+					case '1 - Public':
 						$classificationIcon = '<img src="/img/iconPublic.png" title="Public" alt="Public" width="9" />';
 						break;
 					case 'Internal':
+					case '2 - Internal':
 						$classificationIcon = '<img src="/img/iconInternal.png" title="Internal" alt="Internal" width="9" />';
 						break;
 					case 'Confidential':
+					case '3 - Confidential':
 						$classificationIcon = '<img src="/img/iconClassified.png" title="Confidential" alt="Confidential" width="9" />';
 						break;
 					case 'Highly Confidential':
+					case '4 - Highly Confidential':
 						$classificationIcon = '<img src="/img/iconHighClassified.png" title="Highly Confidential" alt="Highly Confidential" width="9" />';
 						break;
 					case 'Not Applicable':
+					case '0 - N/A':
 						$classificationIcon = '<img src="/img/iconNotApplicable.png" title="Not Applicable" alt="Not Applicable" width="9" />';
 						break;
 					default:
