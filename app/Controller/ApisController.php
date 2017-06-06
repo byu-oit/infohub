@@ -58,7 +58,7 @@ class ApisController extends AppController {
 	}
 
 	protected function _autoCheckout($hostname, $basePath, $terms) {
-		$queue = (array)$this->Cookie->read('queue');
+		$queue = (array)$this->Session->read('queue');
 		foreach ($terms as $term) {
 			if (empty($term->businessTerm[0])) {
 				continue;
@@ -70,7 +70,7 @@ class ApisController extends AppController {
 				'apiPath' => $basePath];
 		}
 
-		$this->Cookie->write('queue', $queue, true, '90 days');
+		$this->Session->write('queue', $queue);
 		return $this->redirect(['controller' => 'request', 'action' => 'index']);
 	}
 

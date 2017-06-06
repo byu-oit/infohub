@@ -61,7 +61,7 @@ class AppController extends Controller {
 
 		$quickLinks = (array)$this->Cookie->read('QL');
 
-		$arrQueue = $this->Cookie->read('queue');
+		$arrQueue = $this->Session->read('queue');
 		$requestedTermCount = sizeof($arrQueue);
 
 		$this->set('byuUsername', $byuUsername);

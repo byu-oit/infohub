@@ -32,7 +32,7 @@ class RequestController extends AppController {
 			$apiHost = empty($this->request->data['apiHost']) ? null : $this->request->data['apiHost'];
 			$apiPath = empty($this->request->data['apiPath']) ? null : $this->request->data['apiPath'];
 
-			$arrQueue = (array)$this->Cookie->read('queue');
+			$arrQueue = (array)$this->Session->read('queue');
 			if(!empty($arrQueue)) {
 
 				// Remove all terms in vocabularies passed and then re-add the ones selected by the user.
@@ -79,7 +79,7 @@ class RequestController extends AppController {
 				}
 			}
 
-			$this->Cookie->write('queue', $arrQueue, true, '90 days');
+			$this->Session->write('queue', $arrQueue);
 			echo $newTermsAdded;
 		} else {
 			//Add an API with unspecified fields to cart.
@@ -88,7 +88,7 @@ class RequestController extends AppController {
 			$apiHost = $this->request->data['apiHost'];
 			$newApiId = 0;
 
-			$arrQueue = (array)$this->Cookie->read('queue');
+			$arrQueue = (array)$this->Session->read('queue');
 
 			foreach ($arrQueue as $id => $term) {
 				if ($term['communityId'] == 'emptyApi') {
@@ -106,7 +106,7 @@ class RequestController extends AppController {
 				$arrQueue[$newApiId] = ['term' => $apiPath, 'communityId' => 'emptyApi', 'apiHost' => $apiHost];
 			}
 
-			$this->Cookie->write('queue', $arrQueue, true, '90 days');
+			$this->Session->write('queue', $arrQueue);
 			echo $newTermsAdded;
 		}
 	}
@@ -115,24 +115,24 @@ class RequestController extends AppController {
 		$this->autoRender = false;
 		if($this->request->is('post')){
 			$termID = $this->request->data['id'];
-			$arrQueue = $this->Cookie->read('queue');
+			$arrQueue = $this->Session->read('queue');
 			if(array_key_exists($termID, $arrQueue)) {
 				unset($arrQueue[$termID]);
-				$this->Cookie->write('queue', $arrQueue, true, '90 days');
+				$this->Session->write('queue', $arrQueue);
 			}
 		}
 	}
 
 	public function clearQueue() {
 		$this->autoRender = false;
-		$this->Cookie->delete('queue');
+		$this->Session->delete('queue');
 	}
 
 	public function getQueueJSArray() {
 		$this->autoRender = false;
 		$JS = '';
 
-		$arrQueue = $this->Cookie->read('queue');
+		$arrQueue = $this->Session->read('queue');
 		if(!empty($arrQueue)) {
 			$JS = implode(',', array_keys($arrQueue));
 		}
@@ -144,7 +144,7 @@ class RequestController extends AppController {
 		$listHTML = '';
 		$responseHTML = '';
 
-		$arrQueue = $this->Cookie->read('queue');
+		$arrQueue = $this->Session->read('queue');
 		if(!empty($arrQueue)) {
 			foreach ($arrQueue as $termId => $term){
 				if (strlen($term['term']) > 28) {
@@ -376,7 +376,7 @@ class RequestController extends AppController {
 			$resp = $this->CollibraAPI->post('search/re-index');
 
 			// clear items in queue
-			$this->Cookie->delete('queue');
+			$this->Session->delete('queue');
 
 			$this->redirect(['action' => 'success']);
 		}else{
@@ -390,7 +390,7 @@ class RequestController extends AppController {
 		$supervisorInfo = $this->BYUAPI->supervisorLookup($netID);
 
 		// make sure terms have been added to the users's queue
-		$arrQueue = $this->Cookie->read('queue');
+		$arrQueue = $this->Session->read('queue');
 		if(empty($arrQueue)) {
 			header('location: /search');
 			exit;
