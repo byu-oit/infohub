@@ -277,7 +277,7 @@ function addToQueue(elem, clearRelated){
 		var apiPath = $(elem).attr('data-apiPath');
 
 		$(elem).parent().find('.checkBoxes').find('input').each(function(){
-			if($(this).prop("checked")){
+			if($(this).prop("checked") && $(this).prop("name") != "toggleCheckboxes"){
 				arrTitles.push($(this).attr('data-title'));
 				arrIDs.push($(this).val());
 				arrVocabIDs.push($(this).attr('data-vocabID'));

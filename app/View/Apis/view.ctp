@@ -47,7 +47,7 @@
 							<th class="fieldColumn">Field</th>
 							<th class="termColumn">Business Term</th>
 							<th>Classification</th>
-							<th><input type="checkbox" onclick="toggleAllCheckboxes(this)" checked="checked" /></th>
+							<th><input type="checkbox" onclick="toggleAllCheckboxes(this)" checked="checked" name="toggleCheckboxes"/></th>
 						</tr>
 						<?php foreach ($terms as $term): ?>
 
