@@ -614,6 +614,15 @@ img.resultBodyLoading {
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
+#searchBody #searchResults #srLower .resultItem .requestAccess.topBtn,
+#apiBody #searchResults #srLower .resultItem .requestAccess.topBtn,
+#searchBody #requestForm #srLower .resultItem .requestAccess.topBtn,
+#apiBody #requestForm #srLower .resultItem .requestAccess.topBtn,
+#searchBody #searchSuccess #srLower .resultItem .requestAccess.topBtn,
+#apiBody #searchSuccess #srLower .resultItem .requestAccess.topBtn {
+    bottom: auto;
+    top: 20px;
+}
 #searchBody #searchResults #srLower .resultItem .unrequestable,
 #apiBody #searchResults #srLower .resultItem .unrequestable,
 #searchBody #requestForm #srLower .resultItem .unrequestable,
@@ -1242,9 +1251,6 @@ img.resultBodyLoading {
 #apiBody .btnLinks {
   padding: 10px 0px;
 }
-#apiBody .btnLinks a {
-  text-decoration: none;
-}
 #apiBody #searchResults #srLower .resultItem .requestAccess {
   bottom: -45px;
 }
@@ -1253,6 +1259,11 @@ img.resultBodyLoading {
   font-size: 18px;
   border: inherit;
   padding: 0 30px;
+  text-decoration: none;
+}
+#apiBody .inputButton#admin {
+  position: relative;
+  top: 45px;
 }
 #apiBody .apiHelpButton {
   color: rgba(14, 50, 100, 0.85);

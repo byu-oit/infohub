@@ -285,7 +285,7 @@ function addToQueue(elem, clearRelated){
 		});
 		$.post("/request/addToQueue", {t:arrTitles, id:arrIDs, vocab:arrVocabIDs, clearRelated:clearRelated, apiHost: apiHost, apiPath: apiPath})
 			.done(function(data){
-				$(elem).attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
+				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
 				data = parseInt(data);
 				if(data>0){
 					showRequestQueue();
@@ -299,7 +299,7 @@ function addToQueue(elem, clearRelated){
 		var apiHost = $(elem).attr('data-apiHost');
 		$.post("/request/addToQueue", {t:arrTitle, vocab:arrVocab, apiHost: apiHost})
 			.done(function(data){
-				$(elem).attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
+				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
 				data = parseInt(data);
 				if(data>0){
 					showRequestQueue();
@@ -307,6 +307,11 @@ function addToQueue(elem, clearRelated){
 				}
 		});
 	}
+}
+function toggleAllCheckboxes(elem) {
+	$(elem).parents().eq(3).find('input').each(function(){
+		$(this).prop('checked', $(elem).prop('checked'));
+	});
 }
 /////////////////////////////
 
