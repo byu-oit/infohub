@@ -32,16 +32,16 @@
 							['class' => 'inputButton', 'id' => 'admin']) ?>
 					</div>
 				<?php endif ?>
-				<?php foreach ($terms as $term) {
-					if (!empty($term->businessTerm[0])) {
-						$hasSelectable = true;
-						break;
-					}
-				} ?>
-				<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" api="<?= $hasSelectable ? 'false' : 'true' ?>" onclick="addToQueue(this, false)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
 				<?php if (empty($terms)): ?>
 					<h3>Well, this is embarrassing. We haven't yet specified the output fields for this API, but it is functional, and you can still request access to it.</h3>
 				<?php else: ?>
+					<?php foreach ($terms as $term) {
+						if (!empty($term->businessTerm[0])) {
+							$hasSelectable = true;
+							break;
+						}
+					} ?>
+					<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" api="<?= $hasSelectable ? 'false' : 'true' ?>" onclick="addToQueue(this, false)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
 					<table class="api-terms checkBoxes">
 						<tr class="header">
 							<th class="fieldColumn">Field</th>
