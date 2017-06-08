@@ -67,25 +67,25 @@
 				<div class="clear"></div>
 				<div class="fieldGroup">
 					<!-- <div class="infoCol"> -->
-						<div class="field-continer">
+						<div class="field-container">
 							<label for="name">Requester Name</label>
 							<input type="text" id="name" name="name" class="inputShade noPlaceHolder" value="<?= h($psName) ?>">
 						</div>
-						<div class="field-continer">
+						<div class="field-container">
 							<label for="phone">Requester Phone</label>
 							<input type="text" id="phone" name="phone" class="inputShade noPlaceHolder" value="<?= h($psPhone) ?>">
 						</div>
 					<!-- </div>
 					<div class="infoCol"> -->
-						<div class="field-continer">
+						<div class="field-container">
 							<label for="role">Requester Role</label>
 							<input type="text" id="role" name="role" class="inputShade noPlaceHolder" value="<?= h($psRole) ?>">
 						</div>
-						<div class="field-continer">
+						<div class="field-container">
 							<label for="email">Requester Email</label>
 							<input type="text" id="email" name="email" class="inputShade noPlaceHolder" value="<?= h($psEmail) ?>">
 						</div>
-						<div class="field-continer">
+						<div class="field-container">
 							<label for="requestingOrganization">Requester Organization</label>
 							<input type="text" id="requestingOrganization" name="requestingOrganization" class="inputShade noPlaceHolder" value="<?= h($psDepartment) ?>">
 						</div>
@@ -95,19 +95,19 @@
 				<h3 class="headerTab">Sponsor Information</h3>
 				<div class="clear"></div>
 				<div class="fieldGroup">
-					<div class="field-continer">
+					<div class="field-container">
 						<label for="sponsorName">Sponsor Name</label>
 						<input type="text" id="sponsorName" name="sponsorName" class="inputShade noPlaceHolder" value="<?= empty($supervisorInfo->name) ? '' : h($supervisorInfo->name) ?>">
 					</div>
-					<div class="field-continer">
+					<div class="field-container">
 						<label for="sponsorPhone">Sponsor Phone</label>
 						<input type="text" id="sponsorPhone" name="sponsorPhone" class="inputShade noPlaceHolder" value="<?= empty($supervisorInfo->phone) ? '' : h($supervisorInfo->phone) ?>">
 					</div>
-					<div class="field-continer">
+					<div class="field-container">
 						<label for="sponsorRole">Sponsor Role</label>
 						<input type="text" id="sponsorRole" name="sponsorRole" class="inputShade noPlaceHolder" value="<?= empty($supervisorInfo->job_title) ? '' : h($supervisorInfo->job_title) ?>">
 					</div>
-					<div class="field-continer">
+					<div class="field-container">
 						<label for="sponsorEmail">Sponsor Email</label>
 						<input type="text" id="sponsorEmail" name="sponsorEmail" class="inputShade noPlaceHolder" value="<?= empty($supervisorInfo->email) ? '' : h($supervisorInfo->email) ?>">
 					</div>
