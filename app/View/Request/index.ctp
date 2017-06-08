@@ -28,13 +28,13 @@
 	function validate(){
 		var isValid = true;
 		$('#request input, #request textarea').each(function() {
-			if($(this).val()==''){
+			if($(this).val()=='' && $(this).prop('name') != 'descriptionOfInformation'){
 				isValid = false;
 				$(this).focus();
 				return false;
 			}
 		});
-		if(!isValid) alert('All fields are requried.');
+		if(!isValid) alert('All fields except Additional Information Requested are requried.');
 		return isValid;
 	}
 
@@ -170,7 +170,9 @@
 						if(in_array($field->id, $arrNonDisplay)){
 							continue;
 						}
-						echo '<label class="headerTab" for="'.$field->id.'">'.$field->name.'</label>'.
+						echo '<label class="headerTab" for="'.$field->id.'">'.$field->name;
+						if ($field->id == 'descriptionOfInformation') echo ' (Optional)*';
+						echo '</label>'.
 							'<div class="clear"></div>'.
 							'<div class="taBox">';
 						$placeholderText = $field->value;
@@ -193,7 +195,7 @@
 						echo '</div>';
 					}
 				?>
-				<label for="requestSubmit" id="mobileReqd">*All Fields Required</label>
+				<label for="requestSubmit" id="mobileReqd">*All Other Fields Required</label>
 				<div class="clear"></div>
 			</div>
 		</div>
@@ -201,7 +203,7 @@
 	</div>
 	<div id="formSubmit" class="innerLower">
 		<input type="submit" value="Submit Request" id="requestSubmit" name="requestSubmit" class="grow">
-		<label for="requestSubmit" class="mobileHide">*All Fields Required</label>
+		<label for="requestSubmit" class="mobileHide">*All Other Fields Required</label>
 		<div class="clear"></div>
 	</div>
 	<div class="clear"></div>
