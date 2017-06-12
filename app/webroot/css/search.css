@@ -254,11 +254,14 @@ img.resultBodyLoading {
 #apiBody #searchSuccess #srLower .resultItem {
   background-color: white;
   position: relative;
-  padding: 20px 3% 20px 60px;
+  padding: 20px 3% 10px 60px;
   margin-bottom: 38px;
   -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+}
+#searchBody #requestForm #srLower .resultItem {
+  overflow: hidden;
 }
 #searchBody #searchResults #srLower .resultItem h4,
 #apiBody #searchResults #srLower .resultItem h4,

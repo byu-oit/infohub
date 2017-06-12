@@ -54,11 +54,13 @@
 							<tr>
 								<td><?php
 									$termPath = explode('.', $term->name);
+									$termName = '';
 									foreach ($termPath as $pathStep) {
 										if ($pathStep != end($termPath)) {
 											echo str_repeat('&nbsp;', 12);
 										} else {
 											echo $pathStep;
+											$termName = $pathStep;
 										}
 									}
 								?></td>
@@ -113,6 +115,15 @@
 											data-vocabID="<?= h($term->businessTerm[0]->termCommunityId) ?>"
 											value="<?= h($term->businessTerm[0]->termId) ?>"
 											class="chk<?= h($term->businessTerm[0]->termId) ?>"
+											checked="checked">
+									<?php else: ?>
+										<input
+											type="checkbox"
+											name="terms[]"
+											data-title="<?= $termName ?>"
+											data-vocabID=""
+											value=""
+											class="chk"
 											checked="checked">
 									<?php endif ?>
 								</td>

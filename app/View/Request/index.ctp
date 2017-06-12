@@ -63,6 +63,34 @@
 			<h2 class="headerTab">Request Form</h2>
 
 			<div id="srLower" class="whiteBox">
+				<h3 class="headerTab">Information Requested</h3>
+				<div class="clear"></div>
+				<div class="resultItem">
+					<div class="irLower"><ul>
+						<?php
+						if(!empty($termDetails) || !empty($emptyApis)) {
+							// pr($emptyApis);exit();
+							foreach ($termDetails->aaData as $term){
+								echo '<li id="requestItem'.$term->termrid.'" data-title="'.$term->termsignifier.'" data-rid="'.$term->termrid.'" data-vocabID="'.$term->commrid.'" api-host="'.$term->apihost.'" api-path="'.$term->apipath.'" api="false">'.$term->termsignifier.'<a class="delete" href="javascript:removeFromRequestQueue(\''.$term->termrid.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a></li>';
+							}
+							foreach ($emptyApis as $index => $api){
+								if (strlen($api['apiPath']) > 28) {
+									$displayName = substr($api['apiPath'], 0, 28) . "...";
+								} else {
+									$displayName = $api['apiPath'];
+								}
+								echo '<li id="requestItem'.$index.'" data-title="'.$api['apiPath'].'" api-host="'.$api['apiHost'].'" api="true">'.$displayName.'<a class="delete" href="javascript:removeFromRequestQueue(\''.$index.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a></li>';
+							}
+							foreach ($unspecifiedTerms as $termName => $term) {
+								echo '<li id="requestItem'.$termName.'" data-title="'.$termName.'" api-host="'.$term['apiHost'].'" api-path="'.$term['apiPath'].'" api="false">'.$termName.'<a class="delete" href="javascript:removeFromRequestQueue(\''.$termName.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a></li>';
+							}
+							echo '</ul><a class="clearQueue" href="javascript: clearRequestQueue()">Clear All Items</a>';
+						}else{
+							echo 'No request items found.</ul>';
+						} ?>
+					</div>
+				</div>
+
 				<h3 class="headerTab">Requester Information</h3>
 				<div class="clear"></div>
 				<div class="fieldGroup">
@@ -114,42 +142,6 @@
 
 				</div>
 
-				<h3 class="headerTab">Information Requested</h3>
-				<div class="clear"></div>
-				<div class="resultItem">
-					<div class="irLower">
-						<div class="checkBoxes">
-							<div class="checkCol">
-						<?php
-							//for($i=0; $i<sizeof($siblingTerms->termReference)-1; $i++){
-							$i = 0;
-							foreach($termDetails->aaData as $term){
-								$termName = $term->termsignifier;
-								$termID = $term->termrid;
-								$community = $term->communityname;
-								$domain = $term->domainname;
-								$termID = $term->termrid;
-								$termDef = addslashes(strip_tags($term->Attr00000000000000000000000000000202longExpr));
-								if($i>0 && $i%2==0){
-									echo '</div>';
-									echo '<div class="checkCol">';
-								}
-								echo '    <input type="checkbox" onclick="toggleDataNeeded(this)" value="'.$termID.'" name="terms[]" id="'.$termID.'" checked="checked">'.
-									'    <label for="'.$termID.'">'.$community.' > '.$domain.' > '.$termName.'</label><div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$termDef.'" class="info"><img src="/img/iconInfo.png"></div>';
-								if($i%2==0){
-									echo '<br/>';
-								}
-								$i++;
-							}
-							foreach ($apiAllTerms as $termId) {
-								echo "<input type='hidden' value='{$termId}' name='apiTerms[]'/>";
-							}
-						?>
-							</div>
-							<div class="clear"></div>
-						</div>
-					</div>
-				</div>
 
 				<?php
 					$arrNonDisplay = array(

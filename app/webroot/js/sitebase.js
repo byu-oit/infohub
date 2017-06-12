@@ -232,11 +232,11 @@ function removeFromRequestQueue(id){
 				} else {
 					var html = '<div id="request-undo" data-apiHost="' + apiHost + '" data-apiPath="' + title + '" api="true">Item removed. Click to undo.</div>';
 				}
-				$(html).insertBefore('#request-popup ul');
+				$(html).insertBefore('.irLower ul');
 				$('#request-undo').click(function(){
 					addToQueue(this, false);
 					$(this).remove();
-				})
+				});
 				getCurrentRequestTerms();
 			});
 	});
@@ -245,10 +245,11 @@ function clearRequestQueue(){
 	$.post("/request/clearQueue")
 		.done(function(data){
 			$('#request-queue .request-num').text('0').addClass('request-hidden');
-			$('#request-popup').find('li').fadeOut('fast');
 			$('#request-popup').find('.clearQueue').fadeOut('fast');
-			$('#request-popup').find('#request-undo').fadeOut('fast');
-			$('<div class="cart-cleared">Request items removed.</div>').insertBefore('#request-popup ul');
+			$('#request-popup').find('h3').html('Requested Items: 0');
+			$('.irLower').find('li').fadeOut('fast');
+			$('.irLower').find('#request-undo').fadeOut('fast');
+			$('<div class="cart-cleared">Request items removed.</div>').insertBefore('.irLower ul');
 		});
 }
 function getCurrentRequestTerms(){

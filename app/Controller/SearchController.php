@@ -329,6 +329,19 @@ class SearchController extends AppController {
 		exit;
 	}
 
+	public function getTermApis($term) {
+		$arrApis = [];
+		foreach ($term->representing_apifields as $field) {
+			$resp = json_decode($this->CollibraAPI->get("term/{$field->fieldrid}"));
+			$api = $resp->vocabularyReference->name;
+			if (!in_array($api, $arrApis)) {
+				array_push($arrApis, $api);
+			}
+		}
+
+		return $arrApis;
+	}
+
 	public function autoCompleteTerm() {
 		session_write_close(); //No local database writes, so allow this ajax request to run in parallel with others
 		$query= $this->request->query('q');

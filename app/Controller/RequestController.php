@@ -53,7 +53,7 @@ class RequestController extends AppController {
 				$termID = $arrTermIDs[$i];
 				$vocabID = $arrVocabIDs[$i];
 
-				if(!empty($termID) && empty($arrQueue[$termID])){
+				if(!empty($termID) && empty($arrQueue[$termID])){ // Specified business term
 					$requestable = true;
 					$termResp = $this->CollibraAPI->get('term/'.$termID);
 					$termResp = json_decode($termResp);
@@ -76,6 +76,9 @@ class RequestController extends AppController {
 						$newTermsAdded++;
 						$arrQueue[$termID] = array('term' => $term, 'communityId' => $vocabID, 'apiHost' => $apiHost, 'apiPath' => $apiPath);
 					}
+				} else if (empty($termID) && !empty($term) && empty($arrQueue[$term])) { // Unspecified API field
+					$newTermsAdded++;
+					$arrQueue[$term] = ['term' => $term, 'communityId' => '', 'apiHost' => $apiHost, 'apiPath' => $apiPath];
 				}
 			}
 
@@ -141,34 +144,15 @@ class RequestController extends AppController {
 
 	public function listQueue() {
 		$this->autoRender = false;
-		$listHTML = '';
 		$responseHTML = '';
 
 		$arrQueue = $this->Session->read('queue');
-		if(!empty($arrQueue)) {
-			foreach ($arrQueue as $termId => $term){
-				if (strlen($term['term']) > 28) {
-					$displayName = substr($term['term'], 0, 28) . "...";
-				} else {
-					$displayName = $term['term'];
-				}
-				if ($term['communityId'] != 'emptyApi') {
-					$listHTML .= '<li id="requestItem'.$termId.'" data-title="'.$term['term'].'" data-rid="'.$termId.'" data-vocabID="'.$term['communityId'].'" api-host="'.$term['apiHost'].'" api-path="'.$term['apiPath'].'" api="false">'.$displayName.'<a class="delete" href="javascript:removeFromRequestQueue(\''.$termId.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a></li>';
-				} else {
-					$listHTML .= '<li id="requestItem'.$termId.'" data-title="'.$term['term'].'" api-host="'.$term['apiHost'].'" api="true">'.$displayName.'<a class="delete" href="javascript:removeFromRequestQueue(\''.$termId.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a></li>';
-				}
-			}
-			$listHTML .= '</ul><a class="clearQueue" href="javascript: clearRequestQueue()">Empty cart</a>';
-		}else{
-			$listHTML = 'No request items found.</ul>';
-		}
-		$responseHTML=  '<h3>Requested Items</h3>'.
+		$responseHTML=  '<h3>Requested Items: '.count($arrQueue).'</h3>'.
 			'<a class="close" href="javascript: hideRequestQueue()">X</a>'.
 			'<div class="arrow"></div>'.
-			'<ul>'.
-			$listHTML;
+			'<a class="clearQueue" href="javascript: clearRequestQueue()">Empty cart</a>';
 		if(!empty($arrQueue)){
-			$responseHTML .= '<a class="btn-orange" href="/request">Submit Request</a>';
+			$responseHTML .= '<a class="btn-orange" href="/request">View Request</a>';
 		}
 		echo $responseHTML;
 	}
@@ -304,6 +288,23 @@ class RequestController extends AppController {
 			exit;
 		}
 
+		$arrQueue = $this->Session->read('queue');
+		if (empty($arrQueue)) {
+			$this->redirect(['action' => 'index', '?' => ['err' => 1]]);
+			exit;
+		}
+
+		$businessTerms = [];
+		$additionalInformationAPIs = "";
+		foreach ($arrQueue as $id => $val) {
+			if (!empty($val['communityId'] && $val['communityId'] != 'emptyApi')) {
+				array_push($businessTerms, $id);
+			} else if ($val['communityId'] == 'emptyApi') {
+				$additionalInformationAPIs .= "\n    {$val['apiHost']}/{$val['term']}\n        [No specified output fields]";
+			}
+		}
+		$this->request->data['descriptionOfInformation'] .= $additionalInformationAPIs;
+
 		$name = explode(' ',$this->request->data['name']);
 		$firstName = $name[0];
 		$lastName = '';
@@ -339,7 +340,7 @@ class RequestController extends AppController {
 
 		$requiredElementsString = Configure::read('Collibra.isaWorkflow.requiredElementsString');
 		$additionalElementsString = Configure::read('Collibra.isaWorkflow.additionalElementsString');
-		$postData[$requiredElementsString] = $this->request->data('terms');
+		$postData[$requiredElementsString] = !empty($businessTerms) ? $businessTerms : '';
 		if (!empty($additionalElementsString)) {
 			$postData[$additionalElementsString] = $this->request->data('apiTerms');
 			if (!empty($postData[$additionalElementsString])) {
@@ -406,9 +407,14 @@ class RequestController extends AppController {
 
 		$apis = [];
 		$emptyApis = [];
+		$unspecifiedTerms = [];
 		foreach ($arrQueue as $termId => $term){
 			if ($term['communityId'] == 'emptyApi') {
-				array_push($emptyApis, ['apiHost' => $term['apiHost'], 'apiPath' => $term['term']]);
+				$emptyApis[$termId] = ['apiHost' => $term['apiHost'], 'apiPath' => $term['term']];
+				continue;
+			}
+			if ($termId == $term['term'] && !empty($termId)) {
+				$unspecifiedTerms[$term['term']] = ['apiHost' => $term['apiHost'], 'apiPath' => $term['apiPath']];
 				continue;
 			}
 			$requestFilter .= '{"Field":{'.
@@ -456,9 +462,6 @@ class RequestController extends AppController {
 					$apiList .= "\n";
 				}
 			}
-			foreach ($emptyApis as $api) {
-				$apiList .= "    {$api['apiHost']}/{$api['apiPath']}\n        [No specified output fields]\n\n";
-			}
 			$preFilled['descriptionOfInformation'] = $apiList;
 		}
 
@@ -480,6 +483,8 @@ class RequestController extends AppController {
 		foreach ($termResp->aaData as $term) {
 			$domains[]  = $term->domainname;
 			$termNames[] = $term->termsignifier;
+			$term->apihost = $arrQueue[$term->termrid]['apiHost'];
+			$term->apipath = $arrQueue[$term->termrid]['apiPath'];
 		}
 		array_multisort($domains, SORT_ASC, $termNames, SORT_ASC, $termResp->aaData);
 
@@ -515,7 +520,7 @@ class RequestController extends AppController {
 			$psDepartment = $byuUser->employee_information->department;
 		}
 
-		$this->set(compact('apiAllTerms', 'preFilled', 'psName', 'psPhone', 'psEmail', 'psRole', 'psDepartment', 'psReportsToName', 'supervisorInfo'));
+		$this->set(compact('apiAllTerms', 'preFilled', 'emptyApis', 'unspecifiedTerms', 'psName', 'psPhone', 'psEmail', 'psRole', 'psDepartment', 'psReportsToName', 'supervisorInfo'));
 		$this->set('submitErr', isset($this->request->query['err']));
 	}
 }

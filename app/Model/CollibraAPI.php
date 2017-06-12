@@ -436,6 +436,11 @@ class CollibraAPI extends Model {
 						["Column" => ["fieldName" => "synonymname"]],
 						["Column" => ["fieldName" => "synonymrelid"]],
 						["Column" => ["fieldName" => "synonymid"]]]]],
+				["Group" => [
+					"name" => "representing_apifields",
+					"Columns" => [
+						["Column" => ["fieldName" => "apifield"]],
+						["Column" => ["fieldName" => "fieldrid"]]]]],
 				["Column" => ["fieldName" => "notes"]]],
 			"Resources" => [
 				"Term" => [
@@ -467,8 +472,7 @@ class CollibraAPI extends Model {
 							"Name" => ["name" => "communityname"],
 							"Id" => ["name" => "commrid"]],
 						"Id" => ["name" => "domainrid"],
-						"Name" => ["name" => "domainname"]
-					],
+						"Name" => ["name" => "domainname"]],
 					"ConceptType" => [[
 						"Signifier" => ["name" => "concepttypename"]]],
 					"Member" => [[
@@ -483,7 +487,13 @@ class CollibraAPI extends Model {
 						"Id" => ["name" => "synonymrelid"],
 						"Source" => [
 							"Id" => ["name" => "synonymid"],
-							"Signifier" => ["name" => "synonymname"]]]],
+							"Signifier" => ["name" => "synonymname"]]],
+					[
+						"typeId" => Configure::read('Collibra.relationship.termToField'),
+						"type" => "SOURCE",
+						"Target" => [
+							"Signifier" => ["name" => "apifield"],
+							"Id" => ["name" => "fieldrid"]]]],
 					"Filter" => [
 						"AND" => [
 							["OR" => [
