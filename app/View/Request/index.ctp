@@ -34,7 +34,7 @@
 				return false;
 			}
 		});
-		if(!isValid) alert('All fields except Additional Information Requested are requried.');
+		if(!isValid) alert('All fields except Additional Information Requested are required.');
 		return isValid;
 	}
 
