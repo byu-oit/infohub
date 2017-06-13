@@ -302,7 +302,7 @@ class RequestController extends AppController {
 		$businessTerms = [];
 		$additionalInformationAPIs = "";
 		foreach ($arrQueue as $id => $val) {
-			if (!empty($val['communityId'] && $val['communityId'] != 'emptyApi')) {
+			if (!empty($val['communityId']) && $val['communityId'] != 'emptyApi') {
 				array_push($businessTerms, $id);
 			} else if ($val['communityId'] == 'emptyApi') {
 				$additionalInformationAPIs .= "\n    {$val['apiHost']}/{$val['term']}\n        [No specified output fields]";
