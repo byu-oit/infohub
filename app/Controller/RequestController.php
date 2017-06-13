@@ -131,6 +131,11 @@ class RequestController extends AppController {
 		$this->Session->delete('queue');
 	}
 
+	public function saveFormFields() {
+		$this->autoRender = false;
+		$this->Session->write('inProgressFormFields', $this->request->data);
+	}
+
 	public function getQueueJSArray() {
 		$this->autoRender = false;
 		$JS = '';
@@ -378,6 +383,7 @@ class RequestController extends AppController {
 
 			// clear items in queue
 			$this->Session->delete('queue');
+			$this->Session->delete('inProgressFormFields');
 
 			$this->redirect(['action' => 'success']);
 		}else{
@@ -415,7 +421,6 @@ class RequestController extends AppController {
 			}
 			if ($termId == $term['term'] && !empty($termId)) {
 				$unspecifiedTerms[$term['term']] = ['apiHost' => $term['apiHost'], 'apiPath' => $term['apiPath']];
-				continue;
 			}
 			$requestFilter .= '{"Field":{'.
 				'   "name":"termrid",'.
@@ -463,6 +468,16 @@ class RequestController extends AppController {
 				}
 			}
 			$preFilled['descriptionOfInformation'] = $apiList;
+		}
+
+		// If the customer's already filled in some of the request form, retrieve their work
+		if ($this->Session->check('inProgressFormFields')) {
+			$savedFields = $this->Session->read('inProgressFormFields');
+			foreach ($savedFields as $id => $val) {
+				if (!empty($val)) {
+					$preFilled[$id] = $val;
+				}
+			}
 		}
 
 		$requestFilter = substr($requestFilter, 0, strlen($requestFilter)-1);

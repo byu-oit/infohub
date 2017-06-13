@@ -14,6 +14,32 @@
 		?>
 	});
 
+	$(window).unload(function() {
+		var saveNeeded = false;
+		var savables = ['applicationName', 'descriptionOfIntendedUse', 'accessRights', 'accessMethod', 'impactOnSystem'];
+		var arrSaveData = {applicationName: '', descriptionOfIntendedUse: '', accessRights: '', accessMethod: '', impactOnSystem: ''};
+		$('#srLower').find('input').each(function() {
+			if ($.inArray($(this).prop('name'), savables) > -1 && $(this).val() != "") {
+				saveNeeded = true;
+				arrSaveData[$(this).prop('name')] = $(this).prop('value');
+			}
+		});
+		$('#srLower').find('textarea').each(function() {
+			if ($.inArray($(this).prop('name'), savables) > -1 && $(this).val() != "") {
+				saveNeeded = true;
+				arrSaveData[$(this).prop('name')] = $(this).prop('value');
+			}
+		})
+		if (saveNeeded) {
+			$.ajax({
+				method: "POST",
+				url: "request/saveFormFields",
+				data: arrSaveData,
+				async: false
+			});
+		}
+	});
+
 	$(window).resize(resultsWidth);
 
 	function resultsWidth() {
@@ -63,6 +89,8 @@
 			<h2 class="headerTab">Request Form</h2>
 
 			<div id="srLower" class="whiteBox">
+				<div id="saveNotification">Feel free to leave this page and come back; your changes will be saved.</div>
+
 				<h3 class="headerTab">Information Requested</h3>
 				<div class="clear"></div>
 				<div class="resultItem">
