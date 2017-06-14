@@ -61,8 +61,16 @@ class AppController extends Controller {
 
 		$quickLinks = (array)$this->Cookie->read('QL');
 
+		if (!$this->Session->check('queue')) {
+			$arrQueue = new stdClass();
+			$arrQueue->businessTerms = [];
+			$arrQueue->apiFields = [];
+			$arrQueue->emptyApis = [];
+			$this->Session->write('queue', $arrQueue);
+		}
+
 		$arrQueue = $this->Session->read('queue');
-		$requestedTermCount = sizeof($arrQueue);
+		$requestedTermCount = sizeof($arrQueue->businessTerms) + sizeof($arrQueue->apiFields) + sizeof($arrQueue->emptyApis);
 
 		$this->set('byuUsername', $byuUsername);
 		$this->set('quickLinks', $quickLinks);

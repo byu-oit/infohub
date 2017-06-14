@@ -185,7 +185,7 @@ function showTermDef(elem){
 ///////////////////////////////
 function toggleRequestQueue(){
 	if ($('#request-popup').css('display') == 'none'){
-		$.get("/request/listQueue")
+		$.get("/request/cartDropdown")
 			.done(function(data){
 				if($(window).scrollTop()>50){
 					var requestIconPos = $('#request-queue .request-num').offset();
@@ -201,7 +201,7 @@ function toggleRequestQueue(){
 	}
 }
 function showRequestQueue(){
-	$.get("/request/listQueue")
+	$.get("/request/cartDropdown")
 		.done(function(data){
 			if($(window).scrollTop()>50){
 				var requestIconPos = $('#request-queue .request-num').offset();
@@ -234,8 +234,9 @@ function removeFromRequestQueue(id){
 				}
 				$(html).insertBefore('.irLower ul');
 				$('#request-undo').click(function(){
-					addToQueue(this, false);
+					addToQueue(this, false, false);
 					$(this).remove();
+					$('#requestItem'+id).fadeIn('fast');
 				});
 				getCurrentRequestTerms();
 			});
@@ -269,7 +270,7 @@ function getCurrentRequestTerms(){
 			}
 	});
 }
-function addToQueue(elem, clearRelated){
+function addToQueue(elem, clearRelated, displayCart){
 	if ($(elem).attr('api') == 'false') {
 		var arrTitles = [$(elem).attr('data-title')];
 		var arrIDs = [$(elem).attr('data-rid')];
@@ -284,26 +285,29 @@ function addToQueue(elem, clearRelated){
 				arrVocabIDs.push($(this).attr('data-vocabID'));
 			}
 		});
-		$.post("/request/addToQueue", {t:arrTitles, id:arrIDs, vocab:arrVocabIDs, clearRelated:clearRelated, apiHost: apiHost, apiPath: apiPath})
+		$.post("/request/addToQueue", {emptyApi:'false', t:arrTitles, id:arrIDs, vocab:arrVocabIDs, clearRelated:clearRelated, apiHost: apiHost, apiPath: apiPath})
 			.done(function(data){
 				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
 				data = parseInt(data);
 				if(data>0){
-					showRequestQueue();
+					if (displayCart) {
+						showRequestQueue();
+					}
 					getCurrentRequestTerms();
 				}
 		});
 	} else {
-		//Add an API with unspecified fields to cart.
+		//Add an API without specified fields to cart.
 		var arrTitle = [$(elem).attr('data-apiPath')];
-		var arrVocab = ['emptyApi'];
 		var apiHost = $(elem).attr('data-apiHost');
-		$.post("/request/addToQueue", {t:arrTitle, vocab:arrVocab, apiHost: apiHost})
+		$.post("/request/addToQueue", {emptyApi:'true', t:arrTitle, apiHost:apiHost})
 			.done(function(data){
 				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
 				data = parseInt(data);
 				if(data>0){
-					showRequestQueue();
+					if (displayCart) {
+						showRequestQueue();
+					}
 					getCurrentRequestTerms();
 				}
 		});

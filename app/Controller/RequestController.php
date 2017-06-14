@@ -23,94 +23,83 @@ class RequestController extends AppController {
 
 	public function addToQueue() {
 		$this->autoRender = false;
-		if($this->request->is('post') && $this->request->data['vocab'][0] != 'emptyApi'){
-			$newTermsAdded = 0;
-			$arrTerms = $this->request->data['t'];
-			$arrTermIDs = $this->request->data['id'];
-			$arrVocabIDs = $this->request->data['vocab'];
-			$clearRelated = $this->request->data['clearRelated']=='true';
-			$apiHost = empty($this->request->data['apiHost']) ? null : $this->request->data['apiHost'];
-			$apiPath = empty($this->request->data['apiPath']) ? null : $this->request->data['apiPath'];
+		if($this->request->is('post')){
+			if($this->request->data['emptyApi'] == 'true') {
+				$newTermsAdded = 1;
+				$apiPath = $this->request->data['t'][0];
+				$apiHost = $this->request->data['apiHost'];
 
-			$arrQueue = (array)$this->Session->read('queue');
-			if(!empty($arrQueue)) {
-
-				// Remove all terms in vocabularies passed and then re-add the ones selected by the user.
-				if($clearRelated){
-					$arrIdx = array();
-					foreach ($arrVocabIDs as $communityId){
-						foreach ($arrQueue as $termId => $term) {
-							if ($term['communityId'] == $communityId) {
-								unset($arrQueue[$termId]);
-							}
-						}
-					}
-				}
-			}
-
-			for($i=0; $i<sizeof($arrTerms); $i++){
-				$term = $arrTerms[$i];
-				$termID = $arrTermIDs[$i];
-				$vocabID = $arrVocabIDs[$i];
-
-				if(!empty($termID) && empty($arrQueue[$termID])){ // Specified business term
-					$requestable = true;
-					$termResp = $this->CollibraAPI->get('term/'.$termID);
-					$termResp = json_decode($termResp);
-
-					// verify that the term is requestable
-					if(!Configure::read('allowUnrequestableTerms')){
-						foreach($termResp->attributeReferences->attributeReference as $attr){
-							if($attr->labelReference->resourceId == Configure::read('Collibra.attribute.concept')){
-								$requestable = $attr->value != 'true';
-							}
-						}
-					}
-
-					// verify that the term is approved
-					if(!Configure::read('allowUnapprovedTerms')){
-						$requestable = $termResp->statusReference->signifier == 'Accepted';
-					}
-
-					if($requestable){
-						$newTermsAdded++;
-						$arrQueue[$termID] = array('term' => $term, 'communityId' => $vocabID, 'apiHost' => $apiHost, 'apiPath' => $apiPath);
-					}
-				} else if (empty($termID) && !empty($term) && empty($arrQueue[$term])) { // Unspecified API field
-					$newTermsAdded++;
-					$arrQueue[$term] = ['term' => $term, 'communityId' => '', 'apiHost' => $apiHost, 'apiPath' => $apiPath];
-				}
-			}
-
-			$this->Session->write('queue', $arrQueue);
-			echo $newTermsAdded;
-		} else {
-			//Add an API with unspecified fields to cart.
-			$newTermsAdded = 1;
-			$apiPath = $this->request->data['t'][0];
-			$apiHost = $this->request->data['apiHost'];
-			$newApiId = 0;
-
-			$arrQueue = (array)$this->Session->read('queue');
-
-			foreach ($arrQueue as $id => $term) {
-				if ($term['communityId'] == 'emptyApi') {
-					if ($newApiId <= $id) {
-						//Ensure the new api's id is one greater than the current max to prevent duplicates
-						$newApiId = $id + 1;
-					}
-				 	if ($term['term'] == $apiPath) {
+				$arrQueue = $this->Session->read('queue');
+				foreach ($arrQueue->emptyApis as $path => $host) {
+					if ($path == $apiPath) {
 						$newTermsAdded = 0;
 					}
 				}
-			}
 
-			if ($newTermsAdded) {
-				$arrQueue[$newApiId] = ['term' => $apiPath, 'communityId' => 'emptyApi', 'apiHost' => $apiHost];
-			}
+				if ($newTermsAdded) {
+					$arrQueue->emptyApis[$apiPath] = ['apiHost' => $apiHost];
+				}
 
-			$this->Session->write('queue', $arrQueue);
-			echo $newTermsAdded;
+				$this->Session->write('queue', $arrQueue);
+				echo $newTermsAdded;
+			} else {
+				$newTermsAdded = 0;
+				$arrTerms = $this->request->data['t'];
+				$arrTermIDs = $this->request->data['id'];
+				$arrVocabIDs = $this->request->data['vocab'];
+				$clearRelated = $this->request->data['clearRelated']=='true';
+				$apiHost = empty($this->request->data['apiHost']) ? null : $this->request->data['apiHost'];
+				$apiPath = empty($this->request->data['apiPath']) ? null : $this->request->data['apiPath'];
+
+				$arrQueue = $this->Session->read('queue');
+				if(!empty($arrQueue->businessTerms) && $clearRelated) {
+					// Remove all terms in vocabularies passed and then re-add the ones selected by the user.
+					foreach ($arrVocabIDs as $communityId){
+						foreach ($arrQueue->businessTerms as $termId => $term) {
+							if ($term['communityId'] == $communityId) {
+								unset($arrQueue->businessTerms[$termId]);
+							}
+						}
+					}
+				}
+
+				for($i=0; $i<sizeof($arrTerms); $i++){
+					$term = $arrTerms[$i];
+					$termID = $arrTermIDs[$i];
+					$vocabID = $arrVocabIDs[$i];
+
+					if(!empty($termID) && empty($arrQueue->businessTerms[$termID])){ // Specified business term
+						$requestable = true;
+						$termResp = $this->CollibraAPI->get('term/'.$termID);
+						$termResp = json_decode($termResp);
+
+						// verify that the term is requestable
+						if(!Configure::read('allowUnrequestableTerms')){
+							foreach($termResp->attributeReferences->attributeReference as $attr){
+								if($attr->labelReference->resourceId == Configure::read('Collibra.attribute.concept')){
+									$requestable = $attr->value != 'true';
+								}
+							}
+						}
+
+						// verify that the term is approved
+						if(!Configure::read('allowUnapprovedTerms')){
+							$requestable = $termResp->statusReference->signifier == 'Accepted';
+						}
+
+						if($requestable){
+							$newTermsAdded++;
+							$arrQueue->businessTerms[$termID] = ['term' => $term, 'communityId' => $vocabID, 'apiHost' => $apiHost, 'apiPath' => $apiPath];
+						}
+					} else if (empty($termID) && !empty($term) && empty($arrQueue->apiFields[$term])) { // Unspecified API field
+						$newTermsAdded++;
+						$arrQueue->apiFields[$term] = ['apiHost' => $apiHost, 'apiPath' => $apiPath];
+					}
+				}
+
+				$this->Session->write('queue', $arrQueue);
+				echo $newTermsAdded;
+			}
 		}
 	}
 
@@ -119,10 +108,14 @@ class RequestController extends AppController {
 		if($this->request->is('post')){
 			$termID = $this->request->data['id'];
 			$arrQueue = $this->Session->read('queue');
-			if(array_key_exists($termID, $arrQueue)) {
-				unset($arrQueue[$termID]);
-				$this->Session->write('queue', $arrQueue);
+			if(array_key_exists($termID, $arrQueue->businessTerms)) {
+				unset($arrQueue->businessTerms[$termID]);
+			} else if (array_key_exists($termID, $arrQueue->apiFields)) {
+				unset($arrQueue->apiFields[$termID]);
+			} else if (array_key_exists($termID, $arrQueue->emptyApis)) {
+				unset($arrQueue->emptyApis[$termID]);
 			}
+			$this->Session->write('queue', $arrQueue);
 		}
 	}
 
@@ -141,22 +134,22 @@ class RequestController extends AppController {
 		$JS = '';
 
 		$arrQueue = $this->Session->read('queue');
-		if(!empty($arrQueue)) {
-			$JS = implode(',', array_keys($arrQueue));
-		}
+		$JS .= implode(',', array_keys($arrQueue->businessTerms));
+		$JS .= implode(',', array_keys($arrQueue->apiFields));
+		$JS .= implode(',', array_keys($arrQueue->emptyApis));
 		echo $JS;
 	}
 
-	public function listQueue() {
+	public function cartDropdown() {
 		$this->autoRender = false;
 		$responseHTML = '';
 
 		$arrQueue = $this->Session->read('queue');
-		$responseHTML=  '<h3>Requested Items: '.count($arrQueue).'</h3>'.
+		$responseHTML=  '<h3>Requested Items: '.(count($arrQueue->businessTerms) + count($arrQueue->apiFields) + count($arrQueue->emptyApis)).'</h3>'.
 			'<a class="close" href="javascript: hideRequestQueue()">X</a>'.
 			'<div class="arrow"></div>'.
 			'<a class="clearQueue" href="javascript: clearRequestQueue()">Empty cart</a>';
-		if(!empty($arrQueue)){
+		if(!empty($arrQueue->businessTerms) || !empty($arrQueue->apiFields) || !empty($arrQueue->emptyApis)){
 			$responseHTML .= '<a class="btn-orange" href="/request">View Request</a>';
 		}
 		echo $responseHTML;
@@ -294,19 +287,19 @@ class RequestController extends AppController {
 		}
 
 		$arrQueue = $this->Session->read('queue');
-		if (empty($arrQueue)) {
+		if (empty($arrQueue->businessTerms) && empty($arrQueue->apiFields) && empty($arrQueue->emptyApis)) {
 			$this->redirect(['action' => 'index', '?' => ['err' => 1]]);
 			exit;
 		}
 
-		$businessTerms = [];
+		$businessTermIds = [];
+		foreach ($arrQueue->businessTerms as $id => $term) {
+			array_push($businessTermIds, $id);
+		}
+
 		$additionalInformationAPIs = "";
-		foreach ($arrQueue as $id => $val) {
-			if (!empty($val['communityId']) && $val['communityId'] != 'emptyApi') {
-				array_push($businessTerms, $id);
-			} else if ($val['communityId'] == 'emptyApi') {
-				$additionalInformationAPIs .= "\n    {$val['apiHost']}/{$val['term']}\n        [No specified output fields]";
-			}
+		foreach ($arrQueue->emptyApis as $path => $api) {
+			$additionalInformationAPIs .= "\n    {$api['apiHost']}/{$path}\n        [No specified output fields]";
 		}
 		$this->request->data['descriptionOfInformation'] .= $additionalInformationAPIs;
 
@@ -345,7 +338,7 @@ class RequestController extends AppController {
 
 		$requiredElementsString = Configure::read('Collibra.isaWorkflow.requiredElementsString');
 		$additionalElementsString = Configure::read('Collibra.isaWorkflow.additionalElementsString');
-		$postData[$requiredElementsString] = !empty($businessTerms) ? $businessTerms : '';
+		$postData[$requiredElementsString] = !empty($businessTermIds) ? $businessTermIds : '';
 		if (!empty($additionalElementsString)) {
 			$postData[$additionalElementsString] = $this->request->data('apiTerms');
 			if (!empty($postData[$additionalElementsString])) {
@@ -398,7 +391,7 @@ class RequestController extends AppController {
 
 		// make sure terms have been added to the users's queue
 		$arrQueue = $this->Session->read('queue');
-		if(empty($arrQueue)) {
+		if(empty($arrQueue->businessTerms) && empty($arrQueue->apiFields) && empty($arrQueue->emptyApis)) {
 			header('location: /search');
 			exit;
 		}
@@ -412,16 +405,7 @@ class RequestController extends AppController {
 			'           "OR":[';
 
 		$apis = [];
-		$emptyApis = [];
-		$unspecifiedTerms = [];
-		foreach ($arrQueue as $termId => $term){
-			if ($term['communityId'] == 'emptyApi') {
-				$emptyApis[$termId] = ['apiHost' => $term['apiHost'], 'apiPath' => $term['term']];
-				continue;
-			}
-			if ($termId == $term['term'] && !empty($termId)) {
-				$unspecifiedTerms[$term['term']] = ['apiHost' => $term['apiHost'], 'apiPath' => $term['apiPath']];
-			}
+		foreach ($arrQueue->businessTerms as $termId => $term){
 			$requestFilter .= '{"Field":{'.
 				'   "name":"termrid",'.
 				'   "operator":"EQUALS",'.
@@ -429,6 +413,11 @@ class RequestController extends AppController {
 				'}},';
 			if (!empty($term['apiPath']) && !empty($term['apiHost'])) {
 				$apis[$term['apiHost']][$term['apiPath']] = [];
+			}
+		}
+		foreach ($arrQueue->apiFields as $fieldName => $field) {
+			if (!empty($field['apiPath']) && !empty($field['apiHost'])) {
+				$apis[$field['apiHost']][$field['apiPath']] = [];
 			}
 		}
 
@@ -446,17 +435,18 @@ class RequestController extends AppController {
 						$apis[$apiHost][$apiPath]['unmapped'][] = $term->name;
 					} else {
 						$apiAllTerms[$term->businessTerm[0]->termId] = $term->businessTerm[0]->termId;
-						if (!array_key_exists($term->businessTerm[0]->termId, $arrQueue)) {
+						if (!array_key_exists($term->businessTerm[0]->termId, $arrQueue->businessTerms)) {
 							$apis[$apiHost][$apiPath]['unrequested'][] = $term->businessTerm[0]->term;
 						}
 					}
 				}
 			}
 		}
-		if (!empty($apis) || !empty($emptyApis)) {
+		if (!empty($apis)) {
 			$apiList = "Requested APIs:\n";
 			foreach ($apis as $apiHost => $apiPaths) {
 				foreach ($apiPaths as $apiPath => $term) {
+					$term['unrequested'] = array_unique($term['unrequested']);
 					$apiList .= "    {$apiHost}/{$apiPath}\n";
 					if (!empty($term['unrequested'])) {
 						$apiList .= "        Unrequested fields:\n            " . implode("\n            ", $term['unrequested']) . "\n";
@@ -498,8 +488,8 @@ class RequestController extends AppController {
 		foreach ($termResp->aaData as $term) {
 			$domains[]  = $term->domainname;
 			$termNames[] = $term->termsignifier;
-			$term->apihost = $arrQueue[$term->termrid]['apiHost'];
-			$term->apipath = $arrQueue[$term->termrid]['apiPath'];
+			$term->apihost = $arrQueue->businessTerms[$term->termrid]['apiHost'];
+			$term->apipath = $arrQueue->businessTerms[$term->termrid]['apiPath'];
 		}
 		array_multisort($domains, SORT_ASC, $termNames, SORT_ASC, $termResp->aaData);
 
@@ -535,7 +525,7 @@ class RequestController extends AppController {
 			$psDepartment = $byuUser->employee_information->department;
 		}
 
-		$this->set(compact('apiAllTerms', 'preFilled', 'emptyApis', 'unspecifiedTerms', 'psName', 'psPhone', 'psEmail', 'psRole', 'psDepartment', 'psReportsToName', 'supervisorInfo'));
+		$this->set(compact('apiAllTerms', 'preFilled', 'arrQueue', 'psName', 'psPhone', 'psEmail', 'psRole', 'psDepartment', 'psReportsToName', 'supervisorInfo'));
 		$this->set('submitErr', isset($this->request->query['err']));
 	}
 }

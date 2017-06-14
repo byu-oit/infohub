@@ -41,7 +41,7 @@
 							break;
 						}
 					} ?>
-					<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" api="<?= $hasSelectable ? 'false' : 'true' ?>" onclick="addToQueue(this, false)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
+					<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" api="<?= $hasSelectable ? 'false' : 'true' ?>" onclick="addToQueue(this, false, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
 					<table class="api-terms checkBoxes">
 						<tr class="header">
 							<th class="fieldColumn">Field</th>
@@ -131,7 +131,7 @@
 						<?php endforeach ?>
 					</table>
 				<?php endif ?>
-				<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" api="<?= $hasSelectable ? 'false' : 'true' ?>" onclick="addToQueue(this, false)" class="requestAccess grow mainRequestBtn" value="Add To Request">
+				<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" api="<?= $hasSelectable ? 'false' : 'true' ?>" onclick="addToQueue(this, false, true)" class="requestAccess grow mainRequestBtn" value="Add To Request">
 			</div>
 		</div>
 	</div>

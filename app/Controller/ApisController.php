@@ -58,12 +58,12 @@ class ApisController extends AppController {
 	}
 
 	protected function _autoCheckout($hostname, $basePath, $terms) {
-		$queue = (array)$this->Session->read('queue');
+		$queue = $this->Session->read('queue');
 		foreach ($terms as $term) {
 			if (empty($term->businessTerm[0])) {
 				continue;
 			}
-			$queue[$term->businessTerm[0]->termId] = [
+			$queue->businessTerms[$term->businessTerm[0]->termId] = [
 				'term' => $term->businessTerm[0]->term,
 				'communityId' => $term->businessTerm[0]->termCommunityId,
 				'apiHost' => $hostname,

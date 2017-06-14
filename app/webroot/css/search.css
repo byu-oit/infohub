@@ -251,7 +251,6 @@ img.resultBodyLoading {
   font-size: 18px;
   line-height: 16px;
   width: auto;
-  cursor: pointer;
   padding-bottom: 12px;
 }
 #searchBody #searchResults #srLower .resultItem,

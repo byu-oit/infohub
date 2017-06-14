@@ -96,20 +96,15 @@
 				<div class="resultItem">
 					<div class="irLower"><ul>
 						<?php
-						if(!empty($termDetails) || !empty($emptyApis)) {
-							// pr($emptyApis);exit();
+						if(!empty($termDetails) || !empty($arrQueue->emptyApis)) {
 							foreach ($termDetails->aaData as $term){
 								echo '<li id="requestItem'.$term->termrid.'" data-title="'.$term->termsignifier.'" data-rid="'.$term->termrid.'" data-vocabID="'.$term->commrid.'" api-host="'.$term->apihost.'" api-path="'.$term->apipath.'" api="false">'.$term->termsignifier.'<a class="delete" href="javascript:removeFromRequestQueue(\''.$term->termrid.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a></li>';
 							}
-							foreach ($emptyApis as $index => $api){
-								if (strlen($api['apiPath']) > 28) {
-									$displayName = substr($api['apiPath'], 0, 28) . "...";
-								} else {
-									$displayName = $api['apiPath'];
-								}
-								echo '<li id="requestItem'.$index.'" data-title="'.$api['apiPath'].'" api-host="'.$api['apiHost'].'" api="true">'.$displayName.'<a class="delete" href="javascript:removeFromRequestQueue(\''.$index.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a></li>';
+							foreach ($arrQueue->emptyApis as $path => $host){
+								$displayName = strlen($path) > 28 ? substr($path, 0, 28) . "..." : $path;
+								echo '<li id="requestItem'.$path.'" data-title="'.$path.'" api-host="'.$host.'" api="true">'.$displayName.'<a class="delete" href="javascript:removeFromRequestQueue(\''.$path.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a></li>';
 							}
-							foreach ($unspecifiedTerms as $termName => $term) {
+							foreach ($arrQueue->apiFields as $termName => $term) {
 								echo '<li id="requestItem'.$termName.'" data-title="'.$termName.'" api-host="'.$term['apiHost'].'" api-path="'.$term['apiPath'].'" api="false">'.$termName.'<a class="delete" href="javascript:removeFromRequestQueue(\''.$termName.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a></li>';
 							}
 							echo '</ul><a class="clearQueue" href="javascript: clearRequestQueue()">Clear All Items</a>';
