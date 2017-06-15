@@ -193,7 +193,11 @@ class RequestController extends AppController {
 		}
 
 		if (!$err) {
-			$this->redirect(['controller' => 'myaccount', 'action' => 'index', '?' => ['expand' => $dsrId]]);
+			if ($this->request->query['g'] == '0') {
+				$this->redirect(['controller' => 'myaccount', 'action' => 'index', '?' => ['expand' => $dsrId]]);
+			} else {
+				$this->redirect(['controller' => 'request', 'action' => 'view/'.$dsrId, '?' => ['expand' => 'true']]);
+			}
 		} else {
 			$this->redirect(['action' => 'edit/'.$dsrId, '?' => ['err' => 1]]);
 		}
@@ -207,6 +211,18 @@ class RequestController extends AppController {
 		// Load DSR's current state
 		$resp = $this->CollibraAPI->get('term/'.$dsrId);
 		$request = json_decode($resp);
+
+		$netID = $this->Auth->user('username');
+		$this->loadModel('BYUAPI');
+		$byuUser = $this->BYUAPI->personalSummary($netID);
+		$personID = $byuUser->identifiers->person_id;
+
+		foreach($request->attributeReferences->attributeReference as $attr) {
+			if ($attr->labelReference->signifier == 'Requester Person Id') {
+				$guest = $attr->value != $personID;
+				break;
+			}
+		}
 
 		$completedStatuses = ['Completed', 'Approved', 'Obsolete'];
 		if (in_array($request->statusReference->signifier, $completedStatuses)) {
@@ -238,6 +254,7 @@ class RequestController extends AppController {
 		}
 		$request->attributeReferences->attributeReference = $arrNewAttr;
 
+		$this->set('guest', $guest);
 		$this->set('formFields', $formResp);
 		$this->set('request', $request);
 		$this->set('isaRequest', $isaRequest);
@@ -387,6 +404,10 @@ class RequestController extends AppController {
 	public function view($dsrId) {
 		if (empty($dsrId)) {
 			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
+		}
+		$expand = '';
+		if (isset($this->request->query['expand'])) {
+			$expand = $dsrId;
 		}
 		$completedStatuses = ['Completed', 'Obsolete'];
 

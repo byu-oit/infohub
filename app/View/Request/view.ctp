@@ -25,6 +25,10 @@
 		$('.approver .user-icon').mouseout(function(){
 			$(this).parent().find('.info').hide();
 		});
+		<?php if (!empty($expand)): ?>
+			$('#<?=$expand?>').slideToggle();
+			$('#<?=$expand?>').parent().find('.details-btn[data-rid="<?=$expand?>"]').toggleClass('active');
+		<?php endif ?>
 	});
 </script>
 <!-- Background image div -->
@@ -35,7 +39,7 @@
 <div id="accountMid" class="innerLower">
 	<div id="accountTop">
 		<div id="atLower" class="whiteBox">
-			<div class="accountInfo"><span class="aiLabel">Anyone with whom you share the link to this page can view this <?php echo $parent ? 'request.' : 'agreement.'; ?></span></div>
+			<div class="accountInfo"><span class="aiLabel">Anyone with whom you share the link to this page can view <strong>and edit</strong> this <?php echo $parent ? 'request.' : 'agreement.'; ?></span></div>
 			<div class="clear"></div>
 			<div id="close" class="grow">Got it!</div>
 		</div>

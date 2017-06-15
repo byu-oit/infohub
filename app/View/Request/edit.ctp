@@ -56,7 +56,7 @@
 </div>
 
 <!-- Request Form -->
-<form action="/request/editSubmit/<?= $request->resourceId ?>" method="post" id="request" onsubmit="return validate();">
+<form action="/request/editSubmit/<?= $request->resourceId ?>?g=<?= $guest ? '1' : '0' ?>" method="post" id="request" onsubmit="return validate();">
 	<div id="searchBody" class="innerLower">
 
 		<div id="requestForm">
