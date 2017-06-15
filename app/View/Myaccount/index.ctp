@@ -21,6 +21,12 @@
 			$('#'+rid).slideToggle();
 			$(this).toggleClass('active');
 		});
+		$('.share').click(function() {
+			window.location.href = '/request/view/' + $(this).attr('data-rid');
+		});
+		$('.print').click(function() {
+			window.location.href = '/request/print/' + $(this).attr('data-rid');
+		});
 		$('.edit').click(function() {
 			window.location.href = '/request/edit/' + $(this).attr('data-rid');
 		});
@@ -196,11 +202,13 @@
 							'<p>'.$attrRef->value.'</p>';
 					}
 				}
-				if ($req->statusReference->signifier != 'Completed' && $req->statusReference->signifier != 'Obsolete') {
-					echo '<div class="edit grow" data-rid="'.$req->resourceId.'">Edit this request</div>';
-					echo '<div class="delete grow" data-rid="'.$req->resourceId.'">Delete this request</div>';
-				}
 			}
+			if (empty($req->dataUsages)) {
+				echo '<div class="delete grow" data-rid="'.$req->resourceId.'">Delete</div>';
+				echo '<div class="edit grow" data-rid="'.$req->resourceId.'">Edit</div>';
+			}
+			echo '<div class="print grow" data-rid="'.$req->resourceId.'">Print</div>';
+			echo '<div class="share grow" data-rid="'.$req->resourceId.'">Share</div>';
 			echo '</div>';
 
 			foreach($req->dataUsages as $du) {
@@ -270,9 +278,11 @@
 				}
 
 				if (!in_array($du->status, $completedStatuses)) {
-					echo '<div class="edit grow" data-rid="'.$du->id.'">Edit this agreement</div>';
-					echo '<div class="delete grow" data-rid="'.$du->id.'">Delete this agreement</div>';
+					echo '<div class="delete grow" data-rid="'.$du->id.'">Delete</div>';
+					echo '<div class="edit grow" data-rid="'.$du->id.'">Edit</div>';
 				}
+				echo '<div class="print grow" data-rid="'.$du->id.'">Print</div>';
+				echo '<div class="share grow" data-rid="'.$du->id.'">Share</div>';
 				echo '</div>';
 			}
 

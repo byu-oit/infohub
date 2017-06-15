@@ -384,6 +384,101 @@ class RequestController extends AppController {
 		}
 	}
 
+	public function view($dsrId) {
+		if (empty($dsrId)) {
+			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
+		}
+		$completedStatuses = ['Completed', 'Obsolete'];
+
+		$this->loadModel('CollibraAPI');
+
+		$resp = $this->CollibraAPI->get('term/'.$dsrId);
+		$dsr = json_decode($resp);
+
+		$parent = $dsr->conceptType->resourceId == Configure::read('Collibra.vocabulary.isaRequest');
+
+		$dsr->roles = $this->CollibraAPI->getResponsibilities($dsr->vocabularyReference->resourceId);
+		if($parent) {
+			$dsr->dataUsages = $this->CollibraAPI->getDataUsages($dsr->resourceId);
+		}
+
+		// load terms submitted in request
+		////////////////////////////////////////////
+		$resp = $this->CollibraAPI->postJSON(
+				'output/data_table',
+				'{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldName":"relationrid"}},{"Column":{"fieldName":"startDate"}},{"Column":{"fieldName":"endDate"}},{"Column":{"fieldName":"relstatusrid"}},{"Column":{"fieldName":"relstatusname"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldName":"concepttyperid"}}],"Resources":{"Term":{"Id":{"name":"termrid"},"Signifier":{"name":"termsignifier"},"Relation":{"typeId":"' . Configure::read('Collibra.relationship.isaRequestToTerm') . '","Id":{"name":"relationrid"},"StartingDate":{"name":"startDate"},"EndingDate":{"name":"endDate"},"Status":{"Id":{"name":"relstatusrid"},"Signifier":{"name":"relstatusname"}},"Filter":{"AND":[{"Field":{"name":"reltermrid", "operator":"EQUALS", "value":"'.$dsr->resourceId.'"}}]},"type":"TARGET","Source":{"Id":{"name":"reltermrid"}}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"}, "Id":{"name":"concepttyperid"}}],"Filter":{"AND":[{"AND":[{"Field":{"name":"reltermrid", "operator":"EQUALS", "value":"'.$dsr->resourceId.'"}}]}]},"Order":[{"Field":{"name":"termsignifier", "order":"ASC"}}]}},"displayStart":0,"displayLength":100}}'
+		);
+		$requestedTerms = json_decode($resp);
+		// add property to request object to hold terms
+		if(isset($requestedTerms->aaData)){
+			$dsr->terms = $requestedTerms->aaData;
+		}
+		////////////////////////////////////////////
+
+		// load approval objects for request
+		////////////////////////////////////////////
+		$termRid = $dsr->resourceId;
+		$resp = $this->CollibraAPI->postJSON(
+				'output/data_table',
+				'{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldName":"relationrid"}},{"Column":{"fieldName":"startDate"}},{"Column":{"fieldName":"endDate"}},{"Column":{"fieldName":"relstatusrid"}},{"Column":{"fieldName":"relstatusname"}},{"Column":{"fieldName":"Attr4331ec0988a248e6b0969ece6648aff3rid"}},{"Column":{"fieldName":"Attr4331ec0988a248e6b0969ece6648aff3longExpr"}},{"Column":{"fieldName":"Attr4331ec0988a248e6b0969ece6648aff3"}},{"Column":{"fieldName":"Attr0cbbfd32fc9747cebef1a89ae4e77ee8rid"}},{"Column":{"fieldName":"Attr0cbbfd32fc9747cebef1a89ae4e77ee8longExpr"}},{"Column":{"fieldName":"Attr0cbbfd32fc9747cebef1a89ae4e77ee8"}},{"Column":{"fieldName":"Attr9a18e247c09040c3896eab97335ae759rid"}},{"Column":{"fieldName":"Attr9a18e247c09040c3896eab97335ae759longExpr"}},{"Column":{"fieldName":"Attr9a18e247c09040c3896eab97335ae759"}},{"Column":{"fieldName":"statusrid"}},{"Column":{"fieldName":"statusname"}}],"Resources":{"Term":{"Id":{"name":"termrid"},"Signifier":{"name":"termsignifier"},"Relation":{"typeId":"' . Configure::read('Collibra.relationship.isaRequestToApproval') . '","Id":{"name":"relationrid"},"StartingDate":{"name":"startDate"},"EndingDate":{"name":"endDate"},"Status":{"Id":{"name":"relstatusrid"},"Signifier":{"name":"relstatusname"}},"Filter":{"AND":[{"Field":{"name":"reltermrid","operator":"EQUALS","value":"'.$termRid.'"}}]},"type":"TARGET","Source":{"Id":{"name":"reltermrid"}}},"StringAttribute":[{"Id":{"name":"Attr4331ec0988a248e6b0969ece6648aff3rid"},"labelId":"' . Configure::read('Collibra.attribute.stewardName') . '","LongExpression":{"name":"Attr4331ec0988a248e6b0969ece6648aff3longExpr"},"Value":{"name":"Attr4331ec0988a248e6b0969ece6648aff3"}},{"Id":{"name":"Attr0cbbfd32fc9747cebef1a89ae4e77ee8rid"},"labelId":"' . Configure::read('Collibra.attribute.stewardEmail') . '","LongExpression":{"name":"Attr0cbbfd32fc9747cebef1a89ae4e77ee8longExpr"},"Value":{"name":"Attr0cbbfd32fc9747cebef1a89ae4e77ee8"}},{"Id":{"name":"Attr9a18e247c09040c3896eab97335ae759rid"},"labelId":"' . Configure::read('Collibra.attribute.stewardPhone') . '","LongExpression":{"name":"Attr9a18e247c09040c3896eab97335ae759longExpr"},"Value":{"name":"Attr9a18e247c09040c3896eab97335ae759"}}],"Status":{"Id":{"name":"statusrid"},"Signifier":{"name":"statusname"}},"Filter":{"AND":[{"AND":[{"Field":{"name":"reltermrid","operator":"EQUALS","value":"'.$termRid.'"}}]}]},"Order":[{"Field":{"name":"termsignifier","order":"ASC"}}]}},"displayStart":0,"displayLength":100}}'
+		);
+		$approvalObjects = json_decode($resp);// add property to request object to hold approvals
+		if(isset($approvalObjects->aaData)){
+			$request->approvals = $approvalObjects;
+		}
+
+		// sort request attribute data based on workflow form field order
+		$workflowResp = $this->CollibraAPI->get('workflow/'.Configure::read('Collibra.isaWorkflow.id').'/form/start');
+		$workflowResp = json_decode($workflowResp);
+
+		$arrNewAttr = array();
+		foreach($workflowResp->formProperties as $wf){
+			foreach($dsr->attributeReferences->attributeReference as $attr){
+				if($attr->labelReference->signifier == $wf->name){
+					$arrNewAttr[$attr->labelReference->signifier] = $attr;
+					break;
+				}
+			}
+		}
+		$dsr->attributeReferences->attributeReference = $arrNewAttr;
+
+		// Making edits in Collibra inserts weird html into the attributes; if an
+		// edit was made in Collibra, we replace their html with some more cooperative tags
+		foreach($dsr->attributeReferences->attributeReference as $attr) {
+			if (preg_match('/<div>/', $attr->value)) {
+				$postData['value'] = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->value);
+				$postData['rid'] = $attr->resourceId;
+				$postString = http_build_query($postData);
+				$this->CollibraAPI->post('attribute/'.$attr->resourceId, $postString);
+
+				// After updating the value in Collibra, just replace the value for this page load
+				$attr->value = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->value);
+			}
+		}
+
+		if ($parent) {
+			for ($i = 0; $i < sizeof($dsr->dataUsages); $i++) {
+				$resp = $this->CollibraAPI->get('term/'.$dsr->dataUsages[$i]->id);
+				$resp = json_decode($resp);
+				$dsr->dataUsages[$i]->attributeReferences = $resp->attributeReferences;
+				foreach($dsr->dataUsages[$i]->attributeReferences->attributeReference as $attr) {
+					if (preg_match('/<div>/', $attr->value)) {
+						$postData['value'] = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->value);
+						$postData['rid'] = $attr->resourceId;
+						$postString = http_build_query($postData);
+						$this->CollibraAPI->post('attribute/'.$attr->resourceId, $postString);
+
+						// After updating the value in Collibra, just replace the value for this page load
+						$attr->value = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->value);
+					}
+				}
+			}
+		}
+
+		$this->set('request', $dsr);
+		$this->set('parent', $parent);
+	}
+
 	public function index() {
 		$netID = $this->Auth->user('username');
 		$byuUser = $this->BYUAPI->personalSummary($netID);
