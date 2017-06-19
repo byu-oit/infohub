@@ -149,12 +149,6 @@ header #headerInner #headerRight #request-queue img.icon {
   max-width: 26px;
   margin-top: -10px;
 }
-header #headerInner #headerRight #request-queue li a.delete,
-#request #searchBody #requestForm #srLower .resultItem .irLower li a.delete {
-  display: block;
-  width: 11px;
-  float: right;
-}
 header #headerInner #headerRight #request-queue .request-hidden {
   display: none;
 }
@@ -219,6 +213,11 @@ header #headerInner #headerRight #request-popup h3,
 }
 #request #searchBody #requestForm #srLower .resultItem .irLower ul li:hover {
   background-color: #f4f4f4;
+}
+#request #searchBody #requestForm #srLower .resultItem .irLower li a.delete {
+  margin: 2px 5px 0px -7px;
+  width: 11px;
+  float: left;
 }
 header #headerInner #headerRight #request-popup .arrow,
 #request #searchBody #requestForm #srLower .resultItem .irLower .arrow {
