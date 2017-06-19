@@ -13,7 +13,7 @@
 			$(this).toggleClass('active');
 		});
 		$('.print').click(function() {
-			window.location.href = '/request/print/' + $(this).attr('data-rid');
+			window.open('/request/printView/' + $(this).attr('data-rid'), '_blank').focus();
 		});
 		$('.edit').click(function() {
 			window.location.href = '/request/edit/' + $(this).attr('data-rid');
@@ -35,7 +35,6 @@
 <div id="accountBody" class="libOnebg">
 </div>
 
-<!-- Request list -->
 <div id="accountMid" class="innerLower">
 	<div id="accountTop">
 		<div id="atLower" class="whiteBox">

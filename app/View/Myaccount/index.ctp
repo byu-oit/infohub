@@ -25,7 +25,7 @@
 			window.location.href = '/request/view/' + $(this).attr('data-rid');
 		});
 		$('.print').click(function() {
-			window.location.href = '/request/print/' + $(this).attr('data-rid');
+			window.open('/request/printView/' + $(this).attr('data-rid'), '_blank').focus();
 		});
 		$('.edit').click(function() {
 			window.location.href = '/request/edit/' + $(this).attr('data-rid');
