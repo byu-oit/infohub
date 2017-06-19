@@ -827,6 +827,51 @@ class CollibraAPI extends Model {
 		return $usages;
 	}
 
+	public function getDataUsageParent($dsaId) {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'id']],
+				['Column' => ['fieldName' => 'vocabularyId']],
+				['Column' => ['fieldName' => 'signifier']],
+				['Column' => ['fieldName' => 'status']]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'id'],
+					'Signifier' => ['name' => 'signifier'],
+					'Status' => [
+						'Signifier' => ['name' => 'status']],
+					'Vocabulary' => [
+						'Id' => ['name' => 'vocabularyId']],
+					'Relation' => [[
+						'typeId' => Configure::read('Collibra.relationship.dataUsageToDSA'),
+						'type' => 'TARGET',
+						'Source' => [
+							'Id' => ['name' => 'dsaId']],
+						'Filter' => [
+							'AND' => [[
+								'Field' => [
+										'name' => 'dsaId',
+										'operator' => 'EQUALS',
+										'value' => $dsaId]]]]]],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+									'name' => 'dsaId',
+									'operator' => 'EQUALS',
+									'value' => $dsaId]]]],
+					'Order' => [
+						['Field' => [
+							'name' => 'signifier',
+							'order' => 'ASC']]]]],
+			'displayStart' => 0,
+			'displayLength' => -1]];
+		$usages = $this->fullDataTable($tableConfig);
+		foreach ($usages as &$usage) {
+			$usage->roles = $this->getResponsibilities($usage->vocabularyId);
+		}
+		return $usages;
+	}
+
 	protected function _updateSessionCookies() {
 		$config = $this->client()->config;
 		if (empty($config['request']['cookies'])) {
