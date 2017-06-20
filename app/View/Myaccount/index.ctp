@@ -133,23 +133,23 @@
 			<div class="clear"></div>
 			<div class="data-col">
 				<h5>Name:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference['Requester Name']->value ?></p>
+				<div class="attrValue"><?php echo $req->attributeReferences->attributeReference['Requester Name']->value ?></div>
 			</div>
 			<div class="data-col">
 				<h5>Phone Number:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference['Requester Phone']->value ?></p>
+				<div class="attrValue"><?php echo $req->attributeReferences->attributeReference['Requester Phone']->value ?></div>
 			</div>
 			<div class="data-col">
 				<h5>Email:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference['Requester Email']->value ?></p>
+				<div class="attrValue"><?php echo $req->attributeReferences->attributeReference['Requester Email']->value ?></div>
 			</div>
 			<div class="data-col">
 				<h5>Role:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference['Requester Role']->value ?></p>
+				<div class="attrValue"><?php echo $req->attributeReferences->attributeReference['Requester Role']->value ?></div>
 			</div>
 			<div class="data-col">
 				<h5>Requesting Organization:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference['Requesting Organization']->value ?></p>
+				<div class="attrValue"><?php echo $req->attributeReferences->attributeReference['Requesting Organization']->value ?></div>
 			</div>
 			<div class="clear"></div>
 
@@ -157,25 +157,25 @@
 			<div class="clear"></div>
 			<div class="data-col">
 				<h5>Sponsor Name:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference['Sponsor Name']->value ?></p>
+				<div class="attrValue"><?php echo $req->attributeReferences->attributeReference['Sponsor Name']->value ?></div>
 			</div>
 			<div class="data-col">
 				<h5>Sponsor Role:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference['Sponsor Role']->value ?></p>
+				<div class="attrValue"><?php echo $req->attributeReferences->attributeReference['Sponsor Role']->value ?></div>
 			</div>
 			<div class="data-col">
 				<h5>Sponsor Email:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference['Sponsor Email']->value ?></p>
+				<div class="attrValue"><?php echo $req->attributeReferences->attributeReference['Sponsor Email']->value ?></div>
 			</div>
 			<div class="data-col">
 				<h5>Sponsor Phone:</h5>
-				<p><?php echo $req->attributeReferences->attributeReference['Sponsor Phone']->value ?></p>
+				<div class="attrValue"><?php echo $req->attributeReferences->attributeReference['Sponsor Phone']->value ?></div>
 			</div>
 			<div class="clear"></div>
 
 			<h3 class="headerTab">Application Name</h3>
 			<div class="clear"></div>
-			<p><?= $req->attributeReferences->attributeReference['Application Name']->value ?></p>
+			<div class="attrValue"><?= $req->attributeReferences->attributeReference['Application Name']->value ?></div>
 
 <?php
 			$arrNonDisplay = [
@@ -199,7 +199,7 @@
 				foreach($req->attributeReferences->attributeReference as $attrRef){
 					if(!in_array($attrRef->labelReference->signifier, $arrNonDisplay)){
 						echo '<h3 class="headerTab">'.$attrRef->labelReference->signifier.'</h3><div class="clear"></div>'.
-							'<p>'.$attrRef->value.'</p>';
+							'<div class="attrValue">'.$attrRef->value.'</div>';
 					}
 				}
 			}
@@ -273,7 +273,7 @@
 				foreach($du->attributeReferences->attributeReference as $attr){
 					if(!in_array($attr->labelReference->signifier, $arrNonDisplay)){
 						echo '<h3 class="headerTab">'.$attr->labelReference->signifier.'</h3><div class="clear"></div>'.
-							'<p>'.$attr->value.'</p>';
+							'<div class="attrValue">'.$attr->value.'</div>';
 					}
 				}
 

@@ -95,23 +95,23 @@
 	<div class="clear"></div>
     <div class="three-col-row">
     	<div class="data-col">
-    		<p class="form-field"><?php echo $request->attributeReferences->attributeReference['Requester Name']->value ?></p>
+    		<div class="form-field"><?php echo $request->attributeReferences->attributeReference['Requester Name']->value ?></div>
     	</div>
     	<div class="data-col">
-    		<p class="form-field"><?php echo $request->attributeReferences->attributeReference['Requester Email']->value ?></p>
+    		<div class="form-field"><?php echo $request->attributeReferences->attributeReference['Requester Email']->value ?></div>
     	</div>
     	<div class="data-col">
-    		<p class="form-field"><?php echo $request->attributeReferences->attributeReference['Requester Phone']->value ?></p>
+    		<div class="form-field"><?php echo $request->attributeReferences->attributeReference['Requester Phone']->value ?></div>
     	</div>
     </div>
     <div class="two-col-row">
     	<div class="data-col">
     		<h5>Role:</h5>
-    		<p class="form-field"><?php echo $request->attributeReferences->attributeReference['Requester Role']->value ?></p>
+    		<div class="form-field"><?php echo $request->attributeReferences->attributeReference['Requester Role']->value ?></div>
     	</div>
     	<div class="data-col">
     		<h5>Requesting Organization:</h5>
-    		<p class="form-field"><?php echo $request->attributeReferences->attributeReference['Requesting Organization']->value ?></p>
+    		<div class="form-field"><?php echo $request->attributeReferences->attributeReference['Requesting Organization']->value ?></div>
     	</div>
     </div>
 	<div class="clear"></div>
@@ -120,26 +120,26 @@
 	<div class="clear"></div>
     <div class="three-col-row">
     	<div class="data-col">
-    		<p class="form-field"><?php echo $request->attributeReferences->attributeReference['Sponsor Name']->value ?></p>
+    		<div class="form-field"><?php echo $request->attributeReferences->attributeReference['Sponsor Name']->value ?></div>
     	</div>
         <div class="data-col">
-            <p class="form-field"><?php echo $request->attributeReferences->attributeReference['Sponsor Email']->value ?></p>
+            <div class="form-field"><?php echo $request->attributeReferences->attributeReference['Sponsor Email']->value ?></div>
         </div>
         <div class="data-col">
-            <p class="form-field"><?php echo $request->attributeReferences->attributeReference['Sponsor Phone']->value ?></p>
+            <div class="form-field"><?php echo $request->attributeReferences->attributeReference['Sponsor Phone']->value ?></div>
         </div>
     </div>
     <div class="two-col-row">
     	<div class="data-col">
     		<h5>Sponsor Role:</h5>
-    		<p class="form-field"><?php echo $request->attributeReferences->attributeReference['Sponsor Role']->value ?></p>
+    		<div class="form-field"><?php echo $request->attributeReferences->attributeReference['Sponsor Role']->value ?></div>
     	</div>
     </div>
 	<div class="clear"></div>
 
 	<h3>Application Name</h3>
 	<div class="clear"></div>
-	<p class="form-field"><?= $request->attributeReferences->attributeReference['Application Name']->value ?></p>
+	<div class="form-field"><?= $request->attributeReferences->attributeReference['Application Name']->value ?></div>
 
 <?php
 	$arrNonDisplay = [
@@ -163,7 +163,7 @@
 		foreach($request->attributeReferences->attributeReference as $attrRef){
 			if(!in_array($attrRef->labelReference->signifier, $arrNonDisplay)){
 				echo '<h3>'.$attrRef->labelReference->signifier.'</h3><div class="clear"></div>'.
-					'<p class="form-field">'.$attrRef->value.'</p>';
+					'<div class="form-field">'.$attrRef->value.'</div>';
 			}
 		}
 	} else {
@@ -209,7 +209,7 @@
 		foreach($du->attributeReferences->attributeReference as $attr){
 			if(!in_array($attr->labelReference->signifier, $arrNonDisplay)){
 				echo '<h3>'.$attr->labelReference->signifier.'</h3><div class="clear"></div>'.
-					'<p class="form-field">'.$attr->value.'</p>';
+					'<div class="form-field">'.$attr->value.'</div>';
 			}
 		}
 		echo '</div>';

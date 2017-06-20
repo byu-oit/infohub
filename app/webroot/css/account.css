@@ -442,11 +442,12 @@
   width: 30%;
   margin-right: 10%;
 }
-#accountMid #accountMain .requestItem .detailsBody p,
-#accountMid #accountMain .requestItem .riBelow .detailsBody p {
+#accountMid #accountMain .requestItem .detailsBody .attrValue,
+#accountMid #accountMain .requestItem .riBelow .detailsBody .attrValue {
   font-size: 12px;
   width: 100%;
   margin-top: 0;
+  margin-bottom: 7px;
   background-color: white;
   padding: 5px;
   -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
