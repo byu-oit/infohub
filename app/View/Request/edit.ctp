@@ -27,14 +27,14 @@
 
 	function validate(){
 		var isValid = true;
-		$('#request input, #request textarea').each(function() {
-			if($(this).val()=='' && $(this).prop('name') != 'Additional Information Requested'){
+		$('#request input').each(function() {
+			if($(this).val()=='' && $(this).prop('name') != '<?= Configure::read('Collibra.formFields.applicationName') ?>'){
 				isValid = false;
 				$(this).focus();
 				return false;
 			}
 		});
-		if(!isValid) alert('All fields except Additional Information Requested are required.');
+		if(!isValid) alert('Requester and Sponsor Information are required.');
 		return isValid;
 	}
 
@@ -69,26 +69,26 @@
 				<div class="fieldGroup">
 					<!-- <div class="infoCol"> -->
 						<div class="field-container">
-							<label for="name">Requester Name</label>
-							<input type="text" id="name" name="name" class="inputShade noPlaceHolder" value="<?= h($request->attributeReferences->attributeReference['Requester Name']->value) ?>">
+							<label for="name">Requester Name*</label>
+							<input type="text" id="name" name="<?= Configure::read('Collibra.formFields.requesterName') ?>" class="inputShade noPlaceHolder" value="<?= h($request->attributeReferences->attributeReference['Requester Name']->value) ?>">
 						</div>
 						<div class="field-container">
-							<label for="phone">Requester Phone</label>
-							<input type="text" id="phone" name="phone" class="inputShade noPlaceHolder" value="<?= h($request->attributeReferences->attributeReference['Requester Phone']->value) ?>">
+							<label for="phone">Requester Phone*</label>
+							<input type="text" id="phone" name="<?= Configure::read('Collibra.formFields.requesterPhone') ?>" class="inputShade noPlaceHolder" value="<?= h($request->attributeReferences->attributeReference['Requester Phone']->value) ?>">
 						</div>
 					<!-- </div>
 					<div class="infoCol"> -->
 						<div class="field-container">
-							<label for="role">Requester Role</label>
-							<input type="text" id="role" name="role" class="inputShade noPlaceHolder" value="<?= h($request->attributeReferences->attributeReference['Requester Role']->value) ?>">
+							<label for="role">Requester Role*</label>
+							<input type="text" id="role" name="<?= Configure::read('Collibra.formFields.requesterRole') ?>" class="inputShade noPlaceHolder" value="<?= h($request->attributeReferences->attributeReference['Requester Role']->value) ?>">
 						</div>
 						<div class="field-container">
-							<label for="email">Requester Email</label>
-							<input type="text" id="email" name="email" class="inputShade noPlaceHolder" value="<?= h($request->attributeReferences->attributeReference['Requester Email']->value) ?>">
+							<label for="email">Requester Email*</label>
+							<input type="text" id="email" name="<?= Configure::read('Collibra.formFields.requesterEmail') ?>" class="inputShade noPlaceHolder" value="<?= h($request->attributeReferences->attributeReference['Requester Email']->value) ?>">
 						</div>
 						<div class="field-container">
-							<label for="requestingOrganization">Requester Organization</label>
-							<input type="text" id="requestingOrganization" name="requestingOrganization" class="inputShade noPlaceHolder" value="<?= h($request->attributeReferences->attributeReference['Requesting Organization']->value) ?>">
+							<label for="requestingOrganization">Requester Organization*</label>
+							<input type="text" id="requestingOrganization" name="<?= Configure::read('Collibra.formFields.requestingOrganization') ?>" class="inputShade noPlaceHolder" value="<?= h($request->attributeReferences->attributeReference['Requesting Organization']->value) ?>">
 						</div>
 					<!-- </div> -->
 				</div>
@@ -97,20 +97,20 @@
 				<div class="clear"></div>
 				<div class="fieldGroup">
 					<div class="field-container">
-						<label for="sponsorName">Sponsor Name</label>
-						<input type="text" id="sponsorName" name="sponsorName" class="inputShade noPlaceHolder" value="<?= h($request->attributeReferences->attributeReference['Sponsor Name']->value) ?>">
+						<label for="sponsorName">Sponsor Name*</label>
+						<input type="text" id="sponsorName" name="<?= Configure::read('Collibra.formFields.sponsorName') ?>" class="inputShade noPlaceHolder" value="<?= h($request->attributeReferences->attributeReference['Sponsor Name']->value) ?>">
 					</div>
 					<div class="field-container">
-						<label for="sponsorPhone">Sponsor Phone</label>
-						<input type="text" id="sponsorPhone" name="sponsorPhone" class="inputShade noPlaceHolder" value="<?= h($request->attributeReferences->attributeReference['Sponsor Phone']->value) ?>">
+						<label for="sponsorPhone">Sponsor Phone*</label>
+						<input type="text" id="sponsorPhone" name="<?= Configure::read('Collibra.formFields.sponsorPhone') ?>" class="inputShade noPlaceHolder" value="<?= h($request->attributeReferences->attributeReference['Sponsor Phone']->value) ?>">
 					</div>
 					<div class="field-container">
-						<label for="sponsorRole">Sponsor Role</label>
-						<input type="text" id="sponsorRole" name="sponsorRole" class="inputShade noPlaceHolder" value="<?= h($request->attributeReferences->attributeReference['Sponsor Role']->value) ?>">
+						<label for="sponsorRole">Sponsor Role*</label>
+						<input type="text" id="sponsorRole" name="<?= Configure::read('Collibra.formFields.sponsorRole') ?>" class="inputShade noPlaceHolder" value="<?= h($request->attributeReferences->attributeReference['Sponsor Role']->value) ?>">
 					</div>
 					<div class="field-container">
-						<label for="sponsorEmail">Sponsor Email</label>
-						<input type="text" id="sponsorEmail" name="sponsorEmail" class="inputShade noPlaceHolder" value="<?= h($request->attributeReferences->attributeReference['Sponsor Email']->value) ?>">
+						<label for="sponsorEmail">Sponsor Email*</label>
+						<input type="text" id="sponsorEmail" name="<?= Configure::read('Collibra.formFields.sponsorEmail') ?>" class="inputShade noPlaceHolder" value="<?= h($request->attributeReferences->attributeReference['Sponsor Email']->value) ?>">
 					</div>
 
 				</div>
@@ -135,12 +135,11 @@
 						if(in_array($field->id, $arrNonDisplay)){
 							continue;
 						}
-						echo '<label class="headerTab" for="'.$field->id.'">'.$field->name;
-						if ($field->id == 'descriptionOfInformation') echo ' (Optional)*';
-						echo '</label>'.
+						echo '<label class="headerTab" for="'.$field->id.'">'.$field->name.'</label>'.
 							'<div class="clear"></div>'.
 							'<div class="taBox">';
 
+						$placeholderText = $field->value;
                         $val = '';
                         foreach($request->attributeReferences->attributeReference as $ref) {
                             if ($field->name == $ref->labelReference->signifier) {
@@ -150,15 +149,15 @@
                         }
 
 						if($field->type == 'textarea'){
-							echo '<textarea name="'.$field->name.'" id="'.$field->id.'" class="inputShade noPlaceHolder">'.$val.'</textarea>';
+							echo '<textarea name="'.Configure::read('Collibra.formFields.'.$field->id).'" id="'.$field->id.'" class="inputShade noPlaceHolder" placeholder="'.$placeholderText.'">'.$val.'</textarea>';
 						}else{
-							echo '<input type="text" name="'.$field->name.'" id="'.$field->id.'" value="'.$val.'" class="inputShade full noPlaceHolder" placeholder="'.$val.'" />';
+							echo '<input type="text" name="'.Configure::read('Collibra.formFields.'.$field->id).'" id="'.$field->id.'" value="'.$val.'" class="inputShade full noPlaceHolder" placeholder="'.$placeholderText.'" />';
 						}
 
 						echo '</div>';
 					}
 				?>
-				<label for="requestSubmit" id="mobileReqd">*All Other Fields Required</label>
+				<label for="requestSubmit" id="mobileReqd">*Required field</label>
 				<div class="clear"></div>
 			</div>
 		</div>
@@ -166,7 +165,7 @@
 	</div>
 	<div id="formSubmit" class="innerLower">
 		<input type="submit" value="Save Changes" id="requestSubmit" name="requestSubmit" class="grow">
-		<label for="requestSubmit" class="mobileHide">*All Other Fields Required</label>
+		<label for="requestSubmit" class="mobileHide">*Required field</label>
 		<div class="clear"></div>
 	</div>
 	<div class="clear"></div>

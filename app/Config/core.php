@@ -78,6 +78,23 @@ if (!function_exists('denv')) {
 			'trustee' => 'f55b47bc-973a-462d-9a37-35395f20e52d',
 			'steward' => '00000000-0000-0000-0000-000000005016',
 			'custodian' => '00000000-0000-0000-0000-000000005041'
+		],
+		'formFields' => [
+			'requesterName' => 'f7ebce1f-c0b5-48c8-bc62-bddd976994fc',
+			'requesterPhone' => 'c3252e20-c566-405d-8bfe-dd69377042c2',
+			'requesterRole' => '688e8cf3-0db8-4ad1-b577-215f09b8e613',
+			'requesterEmail' => '52404e00-7448-456a-8eac-bad31aea7e61',
+			'requestingOrganization' => '97a41292-5627-49cc-bc36-efad1b996d37',
+			'sponsorName' => '81e2e950-e9f7-4340-9d39-7faa7e88733a',
+			'sponsorPhone' => 'd16d9253-e1fc-4d3b-a5a7-39d2ffb92560',
+			'sponsorRole' => '2791b03b-464a-4bc9-b97d-2b70d4274a1e',
+			'sponsorEmail' => '51e3cd5e-9aa9-4953-8a29-31cfd0492d0c',
+			'applicationName' => 'c70f71fb-a92b-4034-b8b6-9f042c0a39ea',
+			'descriptionOfInformation' => '6b41a821-2a26-4fe8-8202-23442c1e54bb',
+			'descriptionOfIntendedUse' => 'cfdc107a-c949-465e-810e-13296a5759dc',
+			'accessRights' => '8d12adef-0584-4bb6-97b5-5f9e1e3ec4ad',
+			'accessMethod' => '42fc793b-70e1-4860-9846-8c67c1c49d50',
+			'impactOnSystem' => '3931e9bf-b904-4232-930e-af70b0895611'
 		]
 	]);
 

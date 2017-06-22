@@ -173,9 +173,11 @@
 			</div>
 			<div class="clear"></div>
 
-			<h3 class="headerTab">Application Name</h3>
-			<div class="clear"></div>
-			<div class="attrValue"><?= $req->attributeReferences->attributeReference['Application Name']->value ?></div>
+			<?php if (!empty($req->attributeReferences->attributeReference['Application Name']->value)): ?>
+				<h3 class="headerTab">Application Name</h3>
+				<div class="clear"></div>
+				<div class="attrValue"><?= $req->attributeReferences->attributeReference['Application Name']->value ?></div>
+			<?php endif ?>
 
 <?php
 			$arrNonDisplay = [
@@ -197,7 +199,7 @@
 			$completedStatuses = ['Completed', 'Approved', 'Obsolete'];
 			if (empty($req->dataUsages)) {
 				foreach($req->attributeReferences->attributeReference as $attrRef){
-					if(!in_array($attrRef->labelReference->signifier, $arrNonDisplay)){
+					if(!in_array($attrRef->labelReference->signifier, $arrNonDisplay) && !empty($attrRef->value)){
 						echo '<h3 class="headerTab">'.$attrRef->labelReference->signifier.'</h3><div class="clear"></div>'.
 							'<div class="attrValue">'.$attrRef->value.'</div>';
 					}
@@ -271,7 +273,7 @@
 
 				echo '<div class="detailsBody" id="'.$du->id.'">';
 				foreach($du->attributeReferences->attributeReference as $attr){
-					if(!in_array($attr->labelReference->signifier, $arrNonDisplay)){
+					if(!in_array($attr->labelReference->signifier, $arrNonDisplay) && !empty($attr->value)){
 						echo '<h3 class="headerTab">'.$attr->labelReference->signifier.'</h3><div class="clear"></div>'.
 							'<div class="attrValue">'.$attr->value.'</div>';
 					}

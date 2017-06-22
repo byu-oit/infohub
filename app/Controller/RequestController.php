@@ -171,23 +171,41 @@ class RequestController extends AppController {
 
 		$err = false;
 
-		foreach ($this->request->data as $key => $val) {
-			$key = preg_replace('/_/', ' ', $key);
+		foreach ($this->request->data as $id => $val) {
+			if ($id == 'requestSubmit') {
+				continue;
+			}
+			$matchFound = false;
 			foreach ($dsr->attributeReferences->attributeReference as $original) {
-				if ($key == $original->labelReference->signifier && $val != $original->value) {
-					//Update values in Collibra database
-					$postData['value'] = $val;
-					$postData['rid'] = $original->resourceId;
-					$postString = http_build_query($postData);
-					$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
-					$formResp = $this->CollibraAPI->post('attribute/'.$original->resourceId, $postString);
-					$formResp = json_decode($formResp);
+				if ($id == $original->labelReference->resourceId) {
+					$matchFound = true;
+					if ($val != $original->value) {
+						//Update values in Collibra database
+						$postData['value'] = $val;
+						$postData['rid'] = $original->resourceId;
+						$postString = http_build_query($postData);
+						$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
+						$formResp = $this->CollibraAPI->post('attribute/'.$original->resourceId, $postString);
+						$formResp = json_decode($formResp);
 
-					if (!isset($formResp)) {
-						$err = true;
-						break;
+						if (!isset($formResp)) {
+							$err = true;
+						}
 					}
 					break;
+				}
+			}
+			if (!$matchFound && !empty($val)) {		//i.e., if the value has been left blank/empty until now
+				$postData['value'] = $val;
+				$postData['representation'] = $dsr->resourceId;
+				$postData['label'] = $id;
+				$postString = http_build_query($postData);
+				$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
+				$formResp = $this->CollibraAPI->post('term/'.$dsr->resourceId.'/attributes', $postString);
+				$formResp = json_decode($formResp);
+
+				if (!isset($formResp)) {
+					$err = true;
 				}
 			}
 		}

@@ -53,14 +53,14 @@
 
 	function validate(){
 		var isValid = true;
-		$('#request input, #request textarea').each(function() {
-			if($(this).val()=='' && $(this).prop('name') != 'descriptionOfInformation'){
+		$('#request input').each(function() {
+			if($(this).val()=='' && $(this).prop('name') != 'applicationName'){
 				isValid = false;
 				$(this).focus();
 				return false;
 			}
 		});
-		if(!isValid) alert('All fields except Additional Information Requested are required.');
+		if(!isValid) alert('Requester and Sponsor Information are required.');
 		return isValid;
 	}
 
@@ -119,47 +119,47 @@
 				<div class="fieldGroup">
 					<!-- <div class="infoCol"> -->
 						<div class="field-container">
-							<label for="name">Requester Name</label>
+							<label for="name">Requester Name*</label>
 							<input type="text" id="name" name="name" class="inputShade noPlaceHolder" value="<?= h($psName) ?>">
 						</div>
 						<div class="field-container">
-							<label for="phone">Requester Phone</label>
+							<label for="phone">Requester Phone*</label>
 							<input type="text" id="phone" name="phone" class="inputShade noPlaceHolder" value="<?= h($psPhone) ?>">
 						</div>
 					<!-- </div>
 					<div class="infoCol"> -->
 						<div class="field-container">
-							<label for="role">Requester Role</label>
+							<label for="role">Requester Role*</label>
 							<input type="text" id="role" name="role" class="inputShade noPlaceHolder" value="<?= h($psRole) ?>">
 						</div>
 						<div class="field-container">
-							<label for="email">Requester Email</label>
+							<label for="email">Requester Email*</label>
 							<input type="text" id="email" name="email" class="inputShade noPlaceHolder" value="<?= h($psEmail) ?>">
 						</div>
 						<div class="field-container">
-							<label for="requestingOrganization">Requester Organization</label>
+							<label for="requestingOrganization">Requester Organization*</label>
 							<input type="text" id="requestingOrganization" name="requestingOrganization" class="inputShade noPlaceHolder" value="<?= h($psDepartment) ?>">
 						</div>
 					<!-- </div> -->
 				</div>
 
-				<h3 class="headerTab">Sponsor Information</h3>
+				<h3 class="headerTab">Sponsor Information*</h3>
 				<div class="clear"></div>
 				<div class="fieldGroup">
 					<div class="field-container">
-						<label for="sponsorName">Sponsor Name</label>
+						<label for="sponsorName">Sponsor Name*</label>
 						<input type="text" id="sponsorName" name="sponsorName" class="inputShade noPlaceHolder" value="<?= empty($supervisorInfo->name) ? '' : h($supervisorInfo->name) ?>">
 					</div>
 					<div class="field-container">
-						<label for="sponsorPhone">Sponsor Phone</label>
+						<label for="sponsorPhone">Sponsor Phone*</label>
 						<input type="text" id="sponsorPhone" name="sponsorPhone" class="inputShade noPlaceHolder" value="<?= empty($supervisorInfo->phone) ? '' : h($supervisorInfo->phone) ?>">
 					</div>
 					<div class="field-container">
-						<label for="sponsorRole">Sponsor Role</label>
+						<label for="sponsorRole">Sponsor Role*</label>
 						<input type="text" id="sponsorRole" name="sponsorRole" class="inputShade noPlaceHolder" value="<?= empty($supervisorInfo->job_title) ? '' : h($supervisorInfo->job_title) ?>">
 					</div>
 					<div class="field-container">
-						<label for="sponsorEmail">Sponsor Email</label>
+						<label for="sponsorEmail">Sponsor Email*</label>
 						<input type="text" id="sponsorEmail" name="sponsorEmail" class="inputShade noPlaceHolder" value="<?= empty($supervisorInfo->email) ? '' : h($supervisorInfo->email) ?>">
 					</div>
 
@@ -185,9 +185,7 @@
 						if(in_array($field->id, $arrNonDisplay)){
 							continue;
 						}
-						echo '<label class="headerTab" for="'.$field->id.'">'.$field->name;
-						if ($field->id == 'descriptionOfInformation') echo ' (Optional)*';
-						echo '</label>'.
+						echo '<label class="headerTab" for="'.$field->id.'">'.$field->name.'</label>'.
 							'<div class="clear"></div>'.
 							'<div class="taBox">';
 						$placeholderText = $field->value;
@@ -210,7 +208,7 @@
 						echo '</div>';
 					}
 				?>
-				<label for="requestSubmit" id="mobileReqd">*All Other Fields Required</label>
+				<label for="requestSubmit" id="mobileReqd">*Required field</label>
 				<div class="clear"></div>
 			</div>
 		</div>
@@ -218,7 +216,7 @@
 	</div>
 	<div id="formSubmit" class="innerLower">
 		<input type="submit" value="Submit Request" id="requestSubmit" name="requestSubmit" class="grow">
-		<label for="requestSubmit" class="mobileHide">*All Other Fields Required</label>
+		<label for="requestSubmit" class="mobileHide">*Required field</label>
 		<div class="clear"></div>
 	</div>
 	<div class="clear"></div>
