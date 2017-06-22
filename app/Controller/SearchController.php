@@ -109,32 +109,30 @@ class SearchController extends AppController {
 		// set community filter based on querystring value
 		///////////////////////////////////////////////////////
 		$filter = '';
-		if(isset($this->request->query['f'])){
-			if($this->request->query['f'] != ''){
-				$filter = $this->request->query['f'];
-			}
+		if(isset($this->request->query['f']) && $this->request->query['f'] != ''){
+			$filter = $this->request->query['f'];
 		}
 		///////////////////////////////////////////////////////
 
 		// set sort filter based on querystring value
 		///////////////////////////////////////////////////////
 		$sort = isset($this->request->query['s'])?$this->request->query['s']:0;
-		$sortOrder = null;
+		$sortOrder = 'DESC';
 		$sortField = null;
 		switch($sort){
 			case 0:
 				$sortField = 'score';
-				$sortOrder = 'DESC';
 				break;
 			case 1:
 				$sortField = 'termsignifier';
+				$sortOrder = 'ASC';
 				break;
 			case 2:
 				$sortField = 'lastModified';
-				$sortOrder = 'DESC';
 				break;
 			case 3:
 				$sortField = 'classification';
+				$sortOrder = 'ASC';
 				break;
 		}
 		///////////////////////////////////////////////////////
