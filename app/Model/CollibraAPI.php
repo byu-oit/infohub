@@ -407,7 +407,7 @@ class CollibraAPI extends Model {
 			'sortField' => 'termsignifier',
 			'sortOrder' => 'ASC',
 			'start' => 0,
-			'length' => 25];
+			'length' => 1000];
 		$options = array_merge($defaults, $passedOptions);
 
 		$tableConfig = ["TableViewConfig" => [

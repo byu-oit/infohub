@@ -90,7 +90,7 @@ class SearchController extends AppController {
 		if($page==0) $page=1;
 
 		$domainID = $this->request->params['pass'][0];
-		$terms = $this->getDomainTerms($domainID, $page-1, 25);
+		$terms = $this->getDomainTerms($domainID, $page-1);
 
 		$this->set('commonSearches', $this->getCommonSearches());
 		//$this->set('totalPages', ceil($terms->iTotalDisplayRecords/25));
@@ -258,7 +258,7 @@ class SearchController extends AppController {
 		$vocabRID= $this->request->query['rid'];
 		$originTermID = isset($this->request->query['termid']) ? $this->request->query['termid'] : null;
 
-		$jsonResp = $this->CollibraAPI->getTerms($vocabRID, ['length' => 1000]);
+		$jsonResp = $this->CollibraAPI->getTerms($vocabRID);
 
 
 		echo '<div class="checkCol">';
@@ -436,7 +436,7 @@ class SearchController extends AppController {
 		return $resp;
 	}
 
-	private function searchTerms($query, $page=0, $displayLength=100, $sortField='termsignifier', $sortOrder='ASC', $communityFilter='', $termOnly=false){
+	private function searchTerms($query, $page=0, $displayLength=1000, $sortField='termsignifier', $sortOrder='ASC', $communityFilter='', $termOnly=false){
 		$displayStart = $page*$displayLength;
 
 		// use API search call to query based on user input
@@ -462,10 +462,8 @@ class SearchController extends AppController {
 						'operator' => 'EQUALS',
 						'value' => false]]]];
 		}
+		$options = ['additionalFilters' => $filters];
 		// set sort if not sorting by score
-		$options = [
-			'length' => 100,
-			'additionalFilters' => $filters];
 		if($sortField != 'score'){
 			$options['sortField'] = $sortField;
 			$options['sortOrder'] = $sortOrder;
@@ -522,7 +520,7 @@ class SearchController extends AppController {
 		return $resp;
 	}
 
-	private function getDomainTerms($domainFilter='', $page=0, $length=20, $sortField='termsignifier', $sortOrder='ASC'){
+	private function getDomainTerms($domainFilter='', $page=0, $length=1000, $sortField='termsignifier', $sortOrder='ASC'){
 		$start = $page*$length;
 		$options = compact('sortField', 'sortOrder', 'start', 'length');
 
