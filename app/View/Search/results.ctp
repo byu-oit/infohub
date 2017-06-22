@@ -89,6 +89,13 @@
 			$('html, body').delay(200).animate({scrollTop: $("#searchResults").offset().top}, 500);
 		}
 	}
+	function toggleHighlight(selection) {
+		if (selection == 1) {
+			$('#srLower').find('.highlight').css('background-color', '#ffe778');
+		} else {
+			$('#srLower').find('.highlight').css('background-color', '#fff');
+		}
+	}
 </script>
 
 <!-- Background image div -->
@@ -121,8 +128,8 @@
 	if(!empty($communities->communityReference)){
 ?>
 			<div id="searchFilters">
-				<label for="filerBy">Filter By:</label>
-				<select name="filterBy" id="filerBy" class="inputShade" onchange="document.location='/search/results/<?php echo $searchInput ?>?s=<?php echo $sort ?>&f='+this.value">
+				<label for="filterBy">Filter By:</label>
+				<select name="filterBy" id="filterBy" class="inputShade" onchange="document.location='/search/results/<?php echo $searchInput ?>?s=<?php echo $sort ?>&f='+this.value">
 					<option value="">All</option>
 <?php
 		for($i=0; $i<sizeof($communities->communityReference); $i++){
@@ -135,12 +142,17 @@
 		}
 ?>
 				</select>
-				<label for="filerBy">Sort By:</label>
-				<select name="filterBy" id="filerBy" class="inputShade" onchange="document.location='/search/results/<?php echo $searchInput ?>?s='+this.value+'&f=<?php echo $filter ?>'">
+				<label for="sortBy">Sort By:</label>
+				<select name="sortBy" id="sortBy" class="inputShade" onchange="document.location='/search/results/<?php echo $searchInput ?>?s='+this.value+'&f=<?php echo $filter ?>'">
 					<option value="0" <?php if($sort==0) echo 'selected'; ?>>Relevance</option>
 					<option value="1" <?php if($sort==1) echo 'selected'; ?>>Alphabetical</option>
 					<option value="2" <?php if($sort==2) echo 'selected'; ?>>Last Modified</option>
 					<option value="3" <?php if($sort==3) echo 'selected'; ?>>Classification</option>
+				</select>
+				<label for="toggleHighlight">Highlight search query:</label>
+				<select name="toggleHighlight" id="toggleHighlight" class="inputShade" onchange="toggleHighlight(this.value)">
+					<option value="1" selected>Yes</option>
+					<option value="0">No</option>
 				</select>
 			</div>
 
