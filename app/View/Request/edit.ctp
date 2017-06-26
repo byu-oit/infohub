@@ -28,13 +28,19 @@
 	function validate(){
 		var isValid = true;
 		$('#request input').each(function() {
-			if($(this).val()=='' && $(this).prop('name') != '<?= Configure::read('Collibra.formFields.applicationName') ?>'){
+			if($(this).val()==''){
 				isValid = false;
 				$(this).focus();
 				return false;
 			}
 		});
-		if(!isValid) alert('Requester and Sponsor Information are required.');
+		if(!isValid) {
+			if ('<?=$isaRequest?>' == '1') {
+				alert('Requester and Sponsor Information and Application Name are required.');
+			} else {
+				alert('Application Name is required.');
+			}
+		}
 		return isValid;
 	}
 
@@ -135,7 +141,9 @@
 						if(in_array($field->id, $arrNonDisplay)){
 							continue;
 						}
-						echo '<label class="headerTab" for="'.$field->id.'">'.$field->name.'</label>'.
+						echo '<label class="headerTab" for="'.$field->id.'">'.$field->name;
+						if ($field->id == 'applicationName') echo '*';
+						echo '</label>'.
 							'<div class="clear"></div>'.
 							'<div class="taBox">';
 

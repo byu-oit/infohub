@@ -137,11 +137,9 @@
     </div>
 	<div class="clear"></div>
 
-	<?php if(!empty($request->attributeReferences->attributeReference['Application Name']->value)): ?>
-		<h3>Application Name</h3>
-		<div class="clear"></div>
-		<div class="form-field"><?= $request->attributeReferences->attributeReference['Application Name']->value ?></div>
-	<?php endif ?>
+	<h3>Application Name</h3>
+	<div class="clear"></div>
+	<div class="form-field"><?= $request->attributeReferences->attributeReference['Application Name']->value ?></div>
 
 <?php
 	$arrNonDisplay = [

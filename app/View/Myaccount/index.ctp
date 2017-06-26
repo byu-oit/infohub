@@ -173,11 +173,9 @@
 			</div>
 			<div class="clear"></div>
 
-			<?php if (!empty($req->attributeReferences->attributeReference['Application Name']->value)): ?>
-				<h3 class="headerTab">Application Name</h3>
-				<div class="clear"></div>
-				<div class="attrValue"><?= $req->attributeReferences->attributeReference['Application Name']->value ?></div>
-			<?php endif ?>
+			<h3 class="headerTab">Application Name</h3>
+			<div class="clear"></div>
+			<div class="attrValue"><?= $req->attributeReferences->attributeReference['Application Name']->value ?></div>
 
 <?php
 			$arrNonDisplay = [
