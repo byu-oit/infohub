@@ -15,6 +15,8 @@
 	});
 
 	$(window).unload(function() {
+		if (isValid) return;	// If we're leaving the page because we've successfully submitted
+								// the request, we don't want to save the form fields.
 		var saveNeeded = false;
 		var savables = ['applicationName', 'descriptionOfIntendedUse', 'accessRights', 'accessMethod', 'impactOnSystem'];
 		var arrSaveData = {applicationName: '', descriptionOfIntendedUse: '', accessRights: '', accessMethod: '', impactOnSystem: ''};
@@ -51,8 +53,9 @@
 		}
 	}
 
+	var isValid = false;
 	function validate(){
-		var isValid = true;
+		isValid = true;
 		$('#request input').each(function() {
 			if($(this).val()==''){
 				isValid = false;
