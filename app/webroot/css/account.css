@@ -149,7 +149,8 @@
   width: 65%;
   float: left;
 }
-#accountMid #accountMain .requestItem .riLeft .riDate {
+#accountMid #accountMain .requestItem .riLeft .riDate,
+#accountMid #accountMain .requestItem .detailsBody .riDate {
   font-size: 12px;
   margin: 4px 0;
 }

@@ -278,6 +278,16 @@
 			echo '	<a class="details-btn grow" data-rid="'.$du->id.'"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a></div></div>';
 
 			echo '<div class="detailsBody" id="'.$du->id.'">';
+			echo '<p class="riDate"><strong>Requested Data:</strong><br>';
+			$termCount = 0;
+			foreach($request->terms as $term){
+				echo $term->termsignifier;
+				$termCount++;
+				if($termCount < sizeof($request->terms)){
+					echo ',&nbsp;&nbsp;';
+				}
+			}
+			echo '</p>';
 			foreach($du->attributeReferences->attributeReference as $attr){
 				if(!in_array($attr->labelReference->signifier, $arrNonDisplay) && !empty($attr->value)){
 					echo '<h3 class="headerTab">'.$attr->labelReference->signifier.'</h3><div class="clear"></div>'.
