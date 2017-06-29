@@ -103,9 +103,10 @@
 							foreach ($termDetails->aaData as $term){
 								echo '<li id="requestItem'.$term->termrid.'" data-title="'.$term->termsignifier.'" data-rid="'.$term->termrid.'" data-vocabID="'.$term->commrid.'" api-host="'.$term->apihost.'" api-path="'.$term->apipath.'" api="false"><a class="delete" href="javascript:removeFromRequestQueue(\''.$term->termrid.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$term->termsignifier.'</li>';
 							}
-							foreach ($arrQueue->emptyApis as $path => $host){
+							foreach ($arrQueue->emptyApis as $path => $api){
 								$displayName = strlen($path) > 28 ? substr($path, 0, 28) . "..." : $path;
-								echo '<li id="requestItem'.$path.'" data-title="'.$path.'" api-host="'.$host.'" api="true"><a class="delete" href="javascript:removeFromRequestQueue(\''.$path.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$displayName.'</li>';
+								$id = preg_replace('/\//', '', $path);
+								echo '<li id="requestItem'.$id.'" data-title="'.$path.'" api-host="'.$api['apiHost'].'" api="true"><a class="delete" href="javascript:removeFromRequestQueue(\''.$path.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$displayName.'</li>';
 							}
 							foreach ($arrQueue->apiFields as $termName => $term) {
 								echo '<li id="requestItem'.$termName.'" data-title="'.$termName.'" api-host="'.$term['apiHost'].'" api-path="'.$term['apiPath'].'" api="false"><a class="delete" href="javascript:removeFromRequestQueue(\''.$termName.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$termName.'</li>';

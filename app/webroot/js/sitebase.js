@@ -219,11 +219,21 @@ function hideRequestQueue(){
 function removeFromRequestQueue(id){
 	$.post("/request/removeFromQueue", {id:id})
 		.done(function(data){
-			var title = $('#requestItem'+id).attr('data-title');
-			var rID = $('#requestItem'+id).attr('data-rid');
-			var vocabID = $('#requestItem'+id).attr('data-vocabID');
-			var apiHost = $('#requestItem'+id).attr('api-host');
-			var apiPath = $('#requestItem'+id).attr('api-path');
+			// We're using the path to identify empty APIs. However, slashes
+			// in selectors cause problems w/ jQuery, so we need to remove them.
+			if (id.indexOf('/') > -1) {
+				id = id.replace(/\//g, '');
+			}
+			if ($('#requestItem'+id).attr('api') == 'false') {
+				var title = $('#requestItem'+id).attr('data-title');
+				var rID = $('#requestItem'+id).attr('data-rid');
+				var vocabID = $('#requestItem'+id).attr('data-vocabID');
+				var apiHost = $('#requestItem'+id).attr('api-host');
+				var apiPath = $('#requestItem'+id).attr('api-path');
+			} else {
+				var title = $('#requestItem'+id).attr('data-title');
+				var apiHost = $('#requestItem'+id).attr('api-host');
+			}
 
 			$('#request-undo').remove();
 			$('#requestItem'+id).fadeOut('fast',function(){
