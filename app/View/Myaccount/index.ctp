@@ -78,7 +78,7 @@
 		foreach($requests as $req){
 			echo '<div class="requestItem">'.
 				'    <div class="riLeft">'.
-				'        <h4 class="riTitle">'.$req->signifier.'</h4>'.
+				'        <a class="riTitle" href="/request/view/'.$req->resourceId.'">'.$req->signifier.'</a>'.
 				'        <p class="riDate"><span>Date Created:&nbsp;</span>'.date('n/j/Y', ($req->createdOn)/1000).'</p>'.
 				'        <p class="riDate"><strong>Requested Data:</strong><br>';
 			$termCount = 0;
@@ -215,7 +215,7 @@
 				echo '<div class="riBelow">';
 				$dsaName = $du->signifier;
 				$dsaStatus = strtolower($du->status);
-				echo '<div class="subrequestNameWrapper"><h6 class="riTitle subrequestName">'.$dsaName.'</h6></div>';
+				echo '<div class="subrequestNameWrapper"><a class="riTitle subrequestName" href="/request/view/'.$du->id.'">'.$dsaName.'</a></div>';
 				echo '<div class="approverPics">';
 				$oneApprover = (
 					$du->roles['Steward'][0]->firstName . " " . $du->roles['Steward'][0]->lastName

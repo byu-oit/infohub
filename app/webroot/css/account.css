@@ -137,8 +137,13 @@
 #accountMid #accountMain .requestItem .riTitle {
   color: #114477;
   font-size: 16px;
+  font-weight: bold;
   margin: 0;
   display: inline-block;
+  text-decoration: none;
+}
+#accountMid #accountMain .requestItem a.riTitle:hover {
+  text-decoration: underline;
 }
 #accountMid #accountMain .requestItem .riLeft {
   width: 65%;
