@@ -20,7 +20,7 @@ class BYUAPI extends Model {
 		}
 
 		$data = json_decode($response->body());
-		if (empty($data->PersonSummaryService->response)) {
+		if (empty($data->PersonSummaryService->response->identifiers->net_id)) {
 			return array();
 		}
 

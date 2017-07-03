@@ -460,6 +460,40 @@
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
+#accountMid #accountMain .requestItem .detailsBody .collaborators-input-wrapper {
+  display: flex;
+  justify-content: space-between;
+  width: 350px;
+  margin: 20px 0px;
+  display: none;
+}
+#accountMid #accountMain .requestItem .detailsBody .collaborators-input-wrapper input {
+  border: none;
+  padding: 0 0 0 10px;
+  height: 30px;
+  width: 250px;
+  box-sizing: border-box;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+}
+#accountMid #accountMain .requestItem .detailsBody .collaborators-input-wrapper .close {
+  padding: 5px 14px;
+  top: 2px;
+}
+#accountMid #accountMain .requestItem .detailsBody .collaborators-search-result {
+  width: 365px;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+#accountMid #accountMain .requestItem .detailsBody .collaborators-search-result:nth-child(2n) {
+  background-color: #d8d8d8;
+}
+#accountMid #accountMain .requestItem .detailsBody .collaborators-search-result:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
 #accountMid #accountMain .requestItem .detailsBody h4,
 #accountMid #accountMain .requestItem .riBelow .detailsBody h4 {
   color: #114477;
@@ -484,14 +518,8 @@
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
-#accountMid #accountMain .requestItem .detailsBody .share,
-#accountMid #accountMain .requestItem .detailsBody .print,
-#accountMid #accountMain .requestItem .detailsBody .edit,
-#accountMid #accountMain .requestItem .detailsBody .delete,
-#accountMid #accountMain .requestItem .riBelow .detailsBody .share,
-#accountMid #accountMain .requestItem .riBelow .detailsBody .print,
-#accountMid #accountMain .requestItem .riBelow .detailsBody .edit,
-#accountMid #accountMain .requestItem .riBelow .detailsBody .delete {
+#accountMid #accountMain .requestItem .detailsBody .lower-btn,
+#accountMid #accountMain .requestItem .riBelow .detailsBody .lower-btn {
   padding: 4px 14px;
   margin-right: 15px;
   font-size: 13px;
@@ -508,6 +536,7 @@
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
 #accountMid #accountMain .requestItem .detailsBody .delete,
+#accountMid #accountMain .requestItem .detailsBody .remove,
 #accountMid #accountMain .requestItem .riBelow .detailsBody .delete {
     background-color: #b3041a;
 }

@@ -194,13 +194,13 @@
 			"Requester Phone",
 			"Information Elements",
 			"Requester Role",
-			"Requester PersonId",
 			"Requesting Organization",
 			"Sponsor Name",
 			"Sponsor Role",
 			"Sponsor Email",
 			"Sponsor Phone",
 			"Requester Person Id",
+			"Requester Net Id",
 			"Request Date",
 			"Application Name"
 		];
@@ -214,9 +214,9 @@
 			}
 		}
 		if (empty($request->dataUsages)) {
-			echo '<div class="edit grow" data-rid="'.$request->resourceId.'">Edit</div>';
+			echo '<div class="lower-btn edit grow" data-rid="'.$request->resourceId.'">Edit</div>';
 		}
-		echo '<div class="print grow" data-rid="'.$request->resourceId.'">Print</div>';
+		echo '<div class="lower-btn print grow" data-rid="'.$request->resourceId.'">Print</div>';
 		echo '</div>';
 
 		foreach($request->dataUsages as $du) {
@@ -296,9 +296,9 @@
 			}
 
 			if (!in_array($du->status, $completedStatuses)) {
-				echo '<div class="edit grow" data-rid="'.$du->id.'">Edit</div>';
+				echo '<div class="lower-btn edit grow" data-rid="'.$du->id.'">Edit</div>';
 			}
-			echo '<div class="print grow" data-rid="'.$du->id.'">Print</div>';
+			echo '<div class="lower-btn print grow" data-rid="'.$du->id.'">Print</div>';
 			echo '</div>';
 		}
 	echo '</div>';

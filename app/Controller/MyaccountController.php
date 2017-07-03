@@ -62,7 +62,26 @@ class MyaccountController extends AppController {
 		// get all request for this user
 		$resp = $this->CollibraAPI->postJSON(
 				'search',
-				'{"query":"'.$personID.'", "filter": {"category": ["TE"], "type": {"asset": ["' . Configure::read('Collibra.vocabulary.isaRequest') . '"] }}, "fields": ["' . Configure::read('Collibra.attribute.isaRequestPersonId') . '"] }'
+				'{"query":"'.$personID.'", "filter": {"category": ["TE"], "type": {"asset": ["' . Configure::read('Collibra.vocabulary.isaRequest') . '"] }}, "fields": ["' . Configure::read('Collibra.attribute.isaRequestNetId') . '"] }'
+		);
+		$isaRequests = json_decode($resp);
+		// In the past, DSRs were tied to users via the user's person ID, but we want to move
+		// to netIDs, so first we find all DSRs with the user's person ID and then change each
+		// to a netID. Then we query with the netID.
+		foreach ($isaRequests->results as $req) {
+			foreach($req->attributes as $attr) {
+				if ($attr->type == 'Requester Person Id' || $attr->type == 'Requester Net Id') {
+					$person = $this->BYUAPI->personalSummary($attr->val);
+					$postData['value'] = $person->identifiers->net_id;
+					$postData['rid'] = $attr->id;
+					$postString = http_build_query($postData);
+					$formResp = $this->CollibraAPI->post('attribute/'.$attr->id, $postString);
+				}
+			}
+		}
+		$resp = $this->CollibraAPI->postJSON(
+				'search',
+				'{"query":"'.$netID.'", "filter": {"category": ["TE"], "type": {"asset": ["' . Configure::read('Collibra.vocabulary.isaRequest') . '"] }}, "fields": ["' . Configure::read('Collibra.attribute.isaRequestNetId') . '"] }'
 		);
 		$isaRequests = json_decode($resp);
 
@@ -118,19 +137,23 @@ class MyaccountController extends AppController {
 		$workflowResp = json_decode($workflowResp);
 		foreach($arrRequests as $r){
 			$arrNewAttr = array();
-			foreach($workflowResp->formProperties as $wf){
-				foreach($r->attributeReferences->attributeReference as $attr){
-					if($attr->labelReference->signifier == $wf->name){
-						$arrNewAttr[$attr->labelReference->signifier] = $attr;
-						break;
-					}
+			$arrCollaborators = array();
+			foreach($r->attributeReferences->attributeReference as $attr){
+				if ($attr->labelReference->signifier == 'Requester Person Id' || $attr->labelReference->signifier == 'Requester Net Id') {
+					$person = $this->BYUAPI->personalSummary($attr->value);
+					unset($person->person_summary_line, $person->identifiers, $person->personal_information, $person->student_information, $person->relationships);
+					array_push($arrCollaborators, $person);
+					continue;
 				}
+				$arrNewAttr[$attr->labelReference->signifier] = $attr;
 			}
+			$arrNewAttr['Collaborators'] = $arrCollaborators;
 			$r->attributeReferences->attributeReference = $arrNewAttr;
 
 			// Making edits in Collibra inserts weird html into the attributes; if an
 			// edit was made in Collibra, we replace their html with some more cooperative tags
-			foreach($r->attributeReferences->attributeReference as $attr) {
+			foreach($r->attributeReferences->attributeReference as $label => $attr) {
+				if ($label == 'Collaborators' || $label == 'Request Date') continue;
 				if (preg_match('/<div>/', $attr->value)) {
 					$postData['value'] = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->value);
 					$postData['rid'] = $attr->resourceId;
@@ -163,7 +186,8 @@ class MyaccountController extends AppController {
 		$psName = '';
 		$psRole = 'N/A';
 		$psDepartment = 'N/A';
-		$psPersonID = $byuUser->identifiers->person_id;
+		$psEmail = '';
+		$psNetID = $byuUser->identifiers->net_id;
 		if(isset($byuUser->names->preferred_name)){
 			$psName = $byuUser->names->preferred_name;
 		}
@@ -173,11 +197,10 @@ class MyaccountController extends AppController {
 		if(isset($byuUser->employee_information->department)){
 			$psDepartment = $byuUser->employee_information->department;
 		}
-		$this->set('expand', $expand);
-		$this->set('psName', $psName);
-		$this->set('psRole', $psRole);
-		$this->set('psDepartment', $psDepartment);
+		if(isset($byuUser->contact_information->email_address)){
+			$psEmail = $byuUser->contact_information->email_address;
+		}
+		$this->set(compact('expand', 'psName', 'psRole', 'psDepartment', 'psEmail', 'psNetID', 'page'));
 		$this->set('requests', $arrRequests);
-		$this->set('page', $page);
 	}
 }

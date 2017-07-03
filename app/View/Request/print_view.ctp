@@ -148,13 +148,13 @@
 		"Requester Phone",
 		"Information Elements",
 		"Requester Role",
-		"Requester PersonId",
 		"Requesting Organization",
 		"Sponsor Name",
 		"Sponsor Role",
 		"Sponsor Email",
 		"Sponsor Phone",
 		"Requester Person Id",
+		"Requester Net Id",
 		"Request Date",
 		"Application Name"
 	];

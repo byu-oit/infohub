@@ -158,6 +158,66 @@ class RequestController extends AppController {
 	public function success() {
 	}
 
+	public function addCollaborator($dsrId, $personId) {
+		$this->autoRender = false;
+
+		if (empty($dsrId) || empty($personId)) {
+			echo '{"success":0,"message":"Bad request"}';
+			return;
+		}
+
+		$person = $this->BYUAPI->personalSummary($personId);
+		if (!isset($person)) {
+			echo '{"success":0,"message":"Person\'s information could not be loaded"}';
+			return;
+		}
+
+		$resp = $this->CollibraAPI->get('term/'.$dsrId);
+		$request = json_decode($resp);
+		foreach($request->attributeReferences->attributeReference as $attr) {
+			if (($attr->labelReference->signifier == 'Requester Person Id' || $attr->labelReference->signifier == 'Requester Net Id') && $attr->value == $person->identifiers->net_id) {
+				echo '{"success":0,"message":"This person is already a collaborator on this request."}';
+				return;
+			}
+		}
+
+		$postData['value'] = $person->identifiers->net_id;
+		$postData['representation'] = $dsrId;
+		$postData['label'] = Configure::read('Collibra.attribute.isaRequestNetId');
+		$postString = http_build_query($postData);
+		$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
+		$formResp = $this->CollibraAPI->post('term/'.$dsrId.'/attributes', $postString);
+		$formResp = json_decode($formResp);
+		if (!isset($formResp)) {
+			echo '{"success":0,"message":"We had a problem getting to Collibra"}';
+			return;
+		}
+
+		echo '{"success":1,"person":'.json_encode($person).'}';
+	}
+
+	public function removeCollaborator($dsrId, $netId) {
+		$this->autoRender = false;
+
+		if (empty($dsrId) || empty($netId)) {
+			$this->Flash->error('We ran into an error performing that action.');
+			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
+		}
+
+		$resp = $this->CollibraAPI->get('term/'.$dsrId);
+		$request = json_decode($resp);
+
+		foreach ($request->attributeReferences->attributeReference as $attr) {
+			if (($attr->labelReference->signifier == 'Requester Person Id' || $attr->labelReference->signifier == 'Requester Net Id') && $attr->value == $netId) {
+				$this->CollibraAPI->delete('attribute/'.$attr->resourceId);
+				$this->Flash->success("You are no longer a collaborator on \"{$request->signifier}\"");
+				break;
+			}
+		}
+
+		$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
+	}
+
 	public function editSubmit($dsrId) {
 		$this->autoRender = false;
 
@@ -231,14 +291,14 @@ class RequestController extends AppController {
 		$request = json_decode($resp);
 
 		$netID = $this->Auth->user('username');
-		$this->loadModel('BYUAPI');
-		$byuUser = $this->BYUAPI->personalSummary($netID);
-		$personID = $byuUser->identifiers->person_id;
 
+		$guest = true;
 		foreach($request->attributeReferences->attributeReference as $attr) {
-			if ($attr->labelReference->signifier == 'Requester Person Id') {
-				$guest = $attr->value != $personID;
-				break;
+			if ($attr->labelReference->signifier == 'Requester Person Id' || $attr->labelReference->signifier == 'Requester Net Id') {
+				if ($attr->value = $netID) {
+					$guest = false;
+					break;
+				}
 			}
 		}
 
@@ -359,7 +419,8 @@ class RequestController extends AppController {
 		$netID = $this->Auth->user('username');
 		$byuUser = $this->BYUAPI->personalSummary($netID);
 
-		$postData = ['requesterPersonId' => $byuUser->identifiers->person_id];
+		$postData = ['requesterPersonId' => $byuUser->identifiers->net_id];
+		$postData['requesterNetId'] = $byuUser->identifiers->net_id;
 		foreach($this->request->data as $key => $val){
 			if (!in_array($key, ['name', 'phone', 'email', 'role', 'terms', 'apiTerms', 'requestSubmit', 'collibraUser'])) {
 				$postData[$key] = $val;

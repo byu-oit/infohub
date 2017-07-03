@@ -36,6 +36,67 @@
 			}
 		});
 
+		$('.remove').click(function() {
+			if (confirm("Are you sure? If you're no longer a collaborator, you won't be able to view or edit this request. (You can still be re-added to the list at any time.)")) {
+				window.location.href = '/request/removeCollaborator/' + $(this).attr('data-rid') + '/<?= $psNetID ?>';
+			}
+		});
+		$('.collaborators').click(function() {
+			$(this).parent().find('.collaborators-input-wrapper').fadeIn('fast');
+		});
+		$('.close').click(function() {
+			$(this).parent().parent().find('.collaborators-search-result').remove();
+			$(this).parent().fadeOut('fast');
+			$(this).parent().find('.collaborators-input').val('');
+		});
+
+		$('.collaborators-input').on('input', function() {
+			var inputElement = $(this);
+			var inputWrapper = $(this).parent();
+
+			// Delay the autocomplete suggestions for .1 seconds to prevent
+			// excessive API calls while typing
+			window.clearTimeout($(this).data('timeout'));
+			$(this).data('timeout', setTimeout(function () {
+
+				if (inputElement.val().length < 3) {
+					inputWrapper.parent().find('.collaborators-search-result').remove();
+					return;
+				}
+
+				$.get("/directory/lookup?term="+inputElement.val())
+					.done(function(data) {
+						inputWrapper.parent().find('.collaborators-search-result').remove();
+						data = JSON.parse(data);
+						data.forEach(function(element) {
+							inputWrapper.after(element);
+						});
+					});
+
+			}, 300));
+		});
+		$('.detailsBody').on('click', '.collaborators-search-result', function() {
+			var thisElem = $(this);
+			$.post("/request/addCollaborator/"+$(this).parent().attr('id')+"/"+$(this).attr('person-id'))
+				.done(function(data) {
+					var data = JSON.parse(data);
+					if (data.success == 0) {
+						alert(data.message);
+						return;
+					}
+					var html = '<strong>'+data.person.names.preferred_name+':</strong> '
+								+data.person.employee_information.job_title+', '
+								+data.person.contact_information.email_address+'<br>';
+					if (thisElem.parent().find('.collaborators-view').length) {
+						thisElem.parent().find('.collaborators-view').append(html);
+					} else {
+						//create the collaborators list from scratch
+						var collaboratorsHtml = "<h3 class=\"headerTab\">Collaborators</h3><div class=\"clear\"></div><div class=\"attrValue collaborators-view\"><?php echo '<strong>'.$psName.':</strong> '.$psRole.', '.$psEmail.'<br>';?>"+html+"</div>";
+						thisElem.parent().find('.collaborators-input-wrapper').before(collaboratorsHtml);
+					}
+				});
+		});
+
 		$('.approver .user-icon').on('mouseover click', function(){
 			$(this).parent().find('.info').css('z-index', 20).toggle();
 		});
@@ -173,6 +234,27 @@
 			</div>
 			<div class="clear"></div>
 
+			<?php if (count($req->attributeReferences->attributeReference['Collaborators']) > 1):?>
+			<h3 class="headerTab">Collaborators</h3>
+			<div class="clear"></div>
+			<div class="attrValue collaborators-view">
+				<?php foreach ($req->attributeReferences->attributeReference['Collaborators'] as $col) {
+					echo '<strong>'.$col->names->preferred_name.':</strong> '.
+						$col->employee_information->job_title.', '.
+						$col->contact_information->email_address.'<br>';
+				}
+				?>
+			</div>
+			<?php endif ?>
+			<div class="collaborators-input-wrapper">
+				<input type="text" class="collaborators-input" placeholder="Type name (last, first) or netID">
+				<div class="lower-btn close grow">X</div>
+			</div>
+			<?php if (count($req->attributeReferences->attributeReference['Collaborators']) > 1):?>
+			<div class="lower-btn remove grow" data-rid="<?= $req->resourceId ?>">Remove me</div>
+			<?php endif ?>
+			<div class="clear"></div>
+
 			<h3 class="headerTab">Application Name</h3>
 			<div class="clear"></div>
 			<div class="attrValue"><?= $req->attributeReferences->attributeReference['Application Name']->value ?></div>
@@ -184,13 +266,13 @@
 				"Requester Phone",
 				"Information Elements",
 				"Requester Role",
-				"Requester PersonId",
 				"Requesting Organization",
 				"Sponsor Name",
 				"Sponsor Role",
 				"Sponsor Email",
 				"Sponsor Phone",
 				"Requester Person Id",
+				"Requester Net Id",
 				"Request Date",
 				"Application Name"
 			];
@@ -204,11 +286,12 @@
 				}
 			}
 			if (empty($req->dataUsages)) {
-				echo '<div class="delete grow" data-rid="'.$req->resourceId.'">Delete</div>';
-				echo '<div class="edit grow" data-rid="'.$req->resourceId.'">Edit</div>';
+				echo '<div class="lower-btn delete grow" data-rid="'.$req->resourceId.'">Delete</div>';
+				echo '<div class="lower-btn edit grow" data-rid="'.$req->resourceId.'">Edit</div>';
 			}
-			echo '<div class="print grow" data-rid="'.$req->resourceId.'">Print</div>';
-			echo '<div class="share grow" data-rid="'.$req->resourceId.'">Share</div>';
+			echo '<div class="lower-btn print grow" data-rid="'.$req->resourceId.'">Print</div>';
+			echo '<div class="lower-btn share grow" data-rid="'.$req->resourceId.'">Share</div>';
+			echo '<div class="lower-btn collaborators grow" data-rid="'.$req->resourceId.'">Add collaborators</div>';
 			echo '</div>';
 
 			foreach($req->dataUsages as $du) {
@@ -288,11 +371,11 @@
 				}
 
 				if (!in_array($du->status, $completedStatuses)) {
-					echo '<div class="delete grow" data-rid="'.$du->id.'">Delete</div>';
-					echo '<div class="edit grow" data-rid="'.$du->id.'">Edit</div>';
+					echo '<div class="lower-btn delete grow" data-rid="'.$du->id.'">Delete</div>';
+					echo '<div class="lower-btn edit grow" data-rid="'.$du->id.'">Edit</div>';
 				}
-				echo '<div class="print grow" data-rid="'.$du->id.'">Print</div>';
-				echo '<div class="share grow" data-rid="'.$du->id.'">Share</div>';
+				echo '<div class="lower-btn print grow" data-rid="'.$du->id.'">Print</div>';
+				echo '<div class="lower-btn share grow" data-rid="'.$du->id.'">Share</div>';
 				echo '</div>';
 			}
 

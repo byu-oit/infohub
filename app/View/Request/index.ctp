@@ -177,6 +177,7 @@
 						"requesterPhone",
 						"requesterRole",
 						"requesterPersonId",
+						"requesterNetId",
 						"requestingOrganization",
 						"sponsorName",
 						"sponsorRole",
