@@ -295,7 +295,7 @@ class RequestController extends AppController {
 		$guest = true;
 		foreach($request->attributeReferences->attributeReference as $attr) {
 			if ($attr->labelReference->signifier == 'Requester Person Id' || $attr->labelReference->signifier == 'Requester Net Id') {
-				if ($attr->value = $netID) {
+				if ($attr->value == $netID) {
 					$guest = false;
 					break;
 				}

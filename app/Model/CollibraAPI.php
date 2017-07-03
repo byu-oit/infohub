@@ -776,7 +776,7 @@ class CollibraAPI extends Model {
 		}
 		$output = [];
 		foreach ($members->memberReference as $member) {
-			$output[$member->role->signifier][] = $member->ownerUser;
+			$output[$member->role->signifier][] = ($member->group == 1) ? $member->ownerGroup : $member->ownerUser;
 		}
 		$this->_rolesCache[$resourceId] = $output;
 		return $output;
