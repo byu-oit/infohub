@@ -234,7 +234,6 @@
 			</div>
 			<div class="clear"></div>
 
-			<?php if (count($req->attributeReferences->attributeReference['Collaborators']) > 1):?>
 			<h3 class="headerTab">Collaborators</h3>
 			<div class="clear"></div>
 			<div class="attrValue collaborators-view">
@@ -245,7 +244,6 @@
 				}
 				?>
 			</div>
-			<?php endif ?>
 			<div class="collaborators-input-wrapper">
 				<input type="text" class="collaborators-input" placeholder="Type name (last, first) or netID">
 				<div class="lower-btn close grow">X</div>
