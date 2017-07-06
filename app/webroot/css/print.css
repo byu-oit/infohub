@@ -21,6 +21,9 @@
   margin: 0;
   display: inline-block;
 }
+#requestItem .riData {
+  font-size: 12px;
+}
 #requestItem #print {
   padding: 6px 16px;
   margin-right: 20px;
@@ -34,11 +37,6 @@
   -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
-}
-@media print {
-  #requestItem #print {
-    display: none;
-  }
 }
 #requestItem .two-col-row .riDate span,
 #requestItem .two-col-row .status span,
@@ -59,27 +57,32 @@
   -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  page-break-after: avoid;
 }
 #requestItem .coordinators {
   margin-bottom: 0;
+}
+#requestItem .two-col-row.requester-sponsor {
+  font-size: 14px;
+}
+#requestItem .two-col-row.requester-sponsor .data-col {
+  padding: 10px;
+}
+#requestItem .two-col-row {
+  display: flex;
+  align-items: flex-start;
 }
 #requestItem .two-col-row .data-col {
   display: inline-block;
   width: 49%;
 }
-#requestItem .three-col-row .data-col {
-  display: inline-block;
-  width: 30%;
-}
-#requestItem .two-col-row .data-col h5,
-#requestItem .three-col-row .data-col h5 {
+#requestItem .two-col-row .data-col h5 {
   font-size: 13px;
   font-weight: bold;
   color: #114477;
   margin: 0 0 3px 0;
 }
 #requestItem .two-col-row .data-col .form-field,
-#requestItem .three-col-row .data-col .form-field,
 #requestItem .subrequest .form-field,
 #requestItem .form-field {
   font-size: 12px;
@@ -92,18 +95,16 @@
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   overflow: hidden;
+  page-break-before: avoid;
 }
 #requestItem .approver {
   display: inline-block;
   margin-right: 15%;
   font-size: 12px;
 }
-#requestItem h2 {
-  page-break-before: always;
-}
 #requestItem .subrequest {
-  page-break-inside: avoid;
   padding: 10px;
+  margin-bottom: 15px;
 }
 #requestItem .subrequest:nth-child(odd) {
   background-color: rgba(62, 91, 131, 0.2);
@@ -117,4 +118,23 @@
   float: right;
   margin-right: 20%;
   margin-top: 15px;
+}
+@media print {
+  #container {
+    background-color: #fff;
+  }
+  #requestItem #print {
+    display: none;
+  }
+  #requestItem .two-col-row p,
+  #requestItem .subrequest .status {
+    font-size: 12px;
+  }
+  #requestItem .two-col-row .data-col .form-field,
+  #requestItem .three-col-row .data-col .form-field,
+  #requestItem .subrequest .form-field,
+  #requestItem .form-field {
+    border: none;
+    box-shadow: none;
+  }
 }

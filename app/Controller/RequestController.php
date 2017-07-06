@@ -573,7 +573,14 @@ class RequestController extends AppController {
 		$requestedTerms = json_decode($resp);
 		// add property to request object to hold terms
 		if(isset($requestedTerms->aaData)){
-			$dsr->terms = $requestedTerms->aaData;
+			$dsr->termGlossaries = array();
+			foreach ($requestedTerms->aaData as $term) {
+				if (array_key_exists($term->domainname, $dsr->termGlossaries)) {
+					array_push($dsr->termGlossaries[$term->domainname], $term);
+				} else {
+					$dsr->termGlossaries[$term->domainname] = array($term);
+				}
+			}
 		}
 
 		// sort request attribute data based on workflow form field order
