@@ -14,8 +14,22 @@
 		}
 	}
 
+	function loadCoordinatorPhones() {
+		$('.approver').each(function() {
+			var thisElem = $(this);
+			$.get('/myaccount/getCoordinatorPhoneNumber/' + $(this).attr('user-id'))
+				.done(function(data) {
+					if (data) {
+						var html = '<div class="contactNumber"><div class="icon"></div>'+data+'</div>';
+						thisElem.find('.info').append(html);
+					}
+				});
+		});
+	}
+
 	$(document).ready(function() {
 		colSize();
+		loadCoordinatorPhones();
 		$('.details-btn').click(function() {
 			var rid = $(this).attr('data-rid');
 			$('#'+rid).slideToggle();
@@ -177,7 +191,7 @@
 				if($approverName != ''){
 					$approverImage = '../photos/collibraview/'.$rc->resourceId;
 					$approverEmail = $rc->emailAddress;
-					echo '<div class="approver">'.
+					echo '<div class="approver" user-id="'.$rc->resourceId.'">'.
 						'	<div class="user-icon" style="background-image: url('.$approverImage.');"></div>'.
 						'	<div class="info">'.
 						'		<div class="contactName">'.$approverName.'</div>'.
@@ -306,7 +320,7 @@
 				if($approverName != ''){
 					$approverImage = '../photos/collibraview/'.$du->roles['Steward'][0]->resourceId;
 					$approverEmail = $du->roles['Steward'][0]->emailAddress;
-					echo '<div class="approver steward">'.
+					echo '<div class="approver steward" user-id="'.$du->roles['Steward'][0]->resourceId.'">'.
 						'	<div class="user-icon" style="background-image: url('.$approverImage.');"></div>'.
 						'	<div class="info">'.
 						'		<div class="contactName">'.$approverName.'</div>';
@@ -325,7 +339,7 @@
 					if($approverName != ''){
 						$approverImage = '../photos/collibraview/'.$du->roles['Custodian'][0]->resourceId;
 						$approverEmail = $du->roles['Custodian'][0]->emailAddress;
-						echo '<div class="approver custodian">'.
+						echo '<div class="approver custodian" user-id="'.$du->roles['Custodian'][0]->resourceId.'">'.
 							'	<div class="user-icon" style="background-image: url('.$approverImage.');"></div>'.
 							'	<div class="info">'.
 							'		<div class="contactName">'.$approverName.'</div>'.
