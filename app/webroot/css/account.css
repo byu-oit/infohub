@@ -151,7 +151,6 @@
 }
 #accountMid #accountMain .requestItem .riLeft .riDate,
 #accountMid #accountMain .requestItem .detailsBody .riDate {
-  display: inline-block;
   font-size: 12px;
   margin: 4px 0;
 }
@@ -163,7 +162,7 @@
   color: black;
   margin: 8px 0 15px;
 }
-#accountMid #accountMain .requestItem .riLeft a {
+#accountMid #accountMain .requestItem .riLeft .parent-btn {
   float: right;
   margin: 5px;
   font-size: 12px;

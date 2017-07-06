@@ -52,7 +52,7 @@
 		echo '<div class="requestItem">'.
 			'		 <div class="riLeft">'.
 			'        <h4 class="riTitle">'.$request->signifier.'</h4>'.
-			'        <div class="riDate"><span>Date Created:&nbsp;</span>'.date('n/j/Y', ($request->createdOn)/1000).'</div>';
+			'        <div class="riDate"';if(!$parent)echo'style="display:inline-block;"';echo'><span>Date Created:&nbsp;</span>'.date('n/j/Y', ($request->createdOn)/1000).'</div>';
 			if (!$parent) echo '<a class="parent-btn grow" href="/request/view/'.$request->parent[0]->id.'">View parent request</a>';
 			echo '        <p class="riDate"><strong>Requested Data:</strong><br>';
 		$termCount = 0;
@@ -303,8 +303,8 @@
 				if (!in_array($du->status, $completedStatuses)) {
 					echo '<div class="lower-btn edit grow" data-rid="'.$du->id.'">Edit</div>';
 				}
-				echo '<div class="lower-btn share grow" data-rid="'.$du->id.'">Share</div>';
 				echo '<div class="lower-btn print grow" data-rid="'.$du->id.'">Print</div>';
+				echo '<div class="lower-btn share grow" data-rid="'.$du->id.'">Share</div>';
 				echo '</div>';
 			}
 		}
