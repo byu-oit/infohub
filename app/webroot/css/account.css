@@ -151,6 +151,7 @@
 }
 #accountMid #accountMain .requestItem .riLeft .riDate,
 #accountMid #accountMain .requestItem .detailsBody .riDate {
+  display: inline-block;
   font-size: 12px;
   margin: 4px 0;
 }
@@ -161,6 +162,11 @@
   font-size: 14px;
   color: black;
   margin: 8px 0 15px;
+}
+#accountMid #accountMain .requestItem .riLeft a {
+  float: right;
+  margin: 5px;
+  font-size: 12px;
 }
 /*#accountMid #accountMain .requestItem .riLeft img {       Saving this in case we decide to
   width: 281px;                                             go back to the approval images
@@ -540,6 +546,7 @@
 #accountMid #accountMain .requestItem .riBelow .detailsBody .delete {
     background-color: #b3041a;
 }
+#accountMid #accountMain .requestItem .riLeft .parent-btn,
 #accountMid #accountMain .requestItem .riLeft .status-details-flex .details-btn,
 #accountMid #accountMain .requestItem .riBelow .status-details-flex .details-btn {
   padding: 2px 10px;
@@ -551,6 +558,7 @@
   -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  text-decoration: none;
 }
 #accountMid #accountMain .requestItem .riLeft .status-details-flex .details-btn .detailsLess,
 #accountMid #accountMain .requestItem .riBelow .status-details-flex .details-btn .detailsLess {

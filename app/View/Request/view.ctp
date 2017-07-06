@@ -12,6 +12,9 @@
 			$('#'+rid).slideToggle();
 			$(this).toggleClass('active');
 		});
+		$('.share').click(function() {
+			window.location.href = '/request/view/' + $(this).attr('data-rid');
+		});
 		$('.print').click(function() {
 			window.open('/request/printView/' + $(this).attr('data-rid'), '_blank').focus();
 		});
@@ -47,10 +50,11 @@
 	<div id="accountMain" class="whiteBox">
 <?php
 		echo '<div class="requestItem">'.
-			'    <div class="riLeft">'.
+			'		 <div class="riLeft">'.
 			'        <h4 class="riTitle">'.$request->signifier.'</h4>'.
-			'        <p class="riDate"><span>Date Created:&nbsp;</span>'.date('n/j/Y', ($request->createdOn)/1000).'</p>'.
-			'        <p class="riDate"><strong>Requested Data:</strong><br>';
+			'        <div class="riDate"><span>Date Created:&nbsp;</span>'.date('n/j/Y', ($request->createdOn)/1000).'</div>';
+			if (!$parent) echo '<a class="parent-btn grow" href="/request/view/'.$request->parent[0]->id.'">View parent request</a>';
+			echo '        <p class="riDate"><strong>Requested Data:</strong><br>';
 		$termCount = 0;
 		foreach($request->terms as $term){
 			echo $term->termsignifier;
@@ -62,11 +66,11 @@
 		echo '</p>';
 		echo '<div class="status-details-flex"><div class="status-wrapper">';
 		if($request->statusReference->signifier == 'Completed' || $request->statusReference->signifier == 'Approved'){
-			echo '<div class="status-cell light-green-border left">In Progress</div><div class="status-cell green-border right active">Approved</div>';
+			echo '<div class="status-cell light-green-border left">In Progress</div><div class="status-cell green-border right active">'.$request->statusReference->signifier.'</div>';
 		}elseif($request->statusReference->signifier == 'Rejected'){
 			echo '<div class="status-cell light-red-border left">In Progress</div><div class="status-cell red-border right active">Rejected</div>';
 		}elseif($request->statusReference->signifier == 'In Progress'){
-			echo '<div class="status-cell green-border left active">In Progress</div><div class="status-cell light-green-border right">Approved</div>';
+			echo '<div class="status-cell green-border left active">In Progress</div><div class="status-cell light-green-border right">';echo($parent)?'Completed':'Approved';echo'</div>';
 		}else{
 			echo '<div class="status-cell obsolete">Obsolete</div>';
 		}
@@ -219,87 +223,90 @@
 		echo '<div class="lower-btn print grow" data-rid="'.$request->resourceId.'">Print</div>';
 		echo '</div>';
 
-		foreach($request->dataUsages as $du) {
-			echo '<div class="riBelow">';
-			$dsaName = $du->signifier;
-			$dsaStatus = strtolower($du->status);
-			echo '<div class="subrequestNameWrapper"><h6 class="riTitle subrequestName">'.$dsaName.'</h6></div>';
-			echo '<div class="approverPics">';
-			$oneApprover = (
-				$du->roles['Steward'][0]->firstName . " " . $du->roles['Steward'][0]->lastName
-				== $du->roles['Custodian'][0]->firstName . " " . $du->roles['Custodian'][0]->lastName
-			);
-			$approverName = $du->roles['Steward'][0]->firstName . " " . $du->roles['Steward'][0]->lastName;
-			if($approverName != ''){
-				$approverImage = '../photos/collibraview/'.$du->roles['Steward'][0]->resourceId;
-				$approverEmail = $du->roles['Steward'][0]->emailAddress;
-				echo '<div class="approver steward">'.
-					'	<div class="user-icon" style="background-image: url(../'.$approverImage.');"></div>'.
-					'	<div class="info">'.
-					'		<div class="contactName">'.$approverName.'</div>';
-					if (!$oneApprover) {
-						echo '<div class="approverRole"><div class="icon"></div>Steward';
-					} else {
-						echo '<div class="approverRole"><div class="icon"></div>Custodian and Steward';
-					}
-					echo '</div>'.
-					'		<div class="contactEmail"><div class="icon"></div><a href="mailto:'.$approverEmail.'">'.$approverEmail.'</a></div>'.
-					'	</div>'.
-					'</div>';
-			}
-			if(!$oneApprover){
-				$approverName = $du->roles['Custodian'][0]->firstName . " " . $du->roles['Custodian'][0]->lastName;
+		if (!empty($request->dataUsages)) {
+			foreach($request->dataUsages as $du) {
+				echo '<div class="riBelow">';
+				$dsaName = $du->signifier;
+				$dsaStatus = strtolower($du->status);
+				echo '<div class="subrequestNameWrapper"><h6 class="riTitle subrequestName">'.$dsaName.'</h6></div>';
+				echo '<div class="approverPics">';
+				$oneApprover = (
+					$du->roles['Steward'][0]->firstName . " " . $du->roles['Steward'][0]->lastName
+					== $du->roles['Custodian'][0]->firstName . " " . $du->roles['Custodian'][0]->lastName
+				);
+				$approverName = $du->roles['Steward'][0]->firstName . " " . $du->roles['Steward'][0]->lastName;
 				if($approverName != ''){
-					$approverImage = '../photos/collibraview/'.$du->roles['Custodian'][0]->resourceId;
-					$approverEmail = $du->roles['Custodian'][0]->emailAddress;
-					echo '<div class="approver custodian">'.
+					$approverImage = '../photos/collibraview/'.$du->roles['Steward'][0]->resourceId;
+					$approverEmail = $du->roles['Steward'][0]->emailAddress;
+					echo '<div class="approver steward">'.
 						'	<div class="user-icon" style="background-image: url(../'.$approverImage.');"></div>'.
 						'	<div class="info">'.
-						'		<div class="contactName">'.$approverName.'</div>'.
-						'		<div class="approverRole"><div class="icon"></div>Custodian</div>'.
+						'		<div class="contactName">'.$approverName.'</div>';
+						if (!$oneApprover) {
+							echo '<div class="approverRole"><div class="icon"></div>Steward';
+						} else {
+							echo '<div class="approverRole"><div class="icon"></div>Custodian and Steward';
+						}
+						echo '</div>'.
 						'		<div class="contactEmail"><div class="icon"></div><a href="mailto:'.$approverEmail.'">'.$approverEmail.'</a></div>'.
 						'	</div>'.
 						'</div>';
 				}
-			}
-			echo '</div>';
-			echo '<br />';
-			echo '<div class="status-details-flex"><div class="status-wrapper">';
-			if($dsaStatus == 'candidate' || $dsaStatus == 'in progress'){
-				echo '<div class="status-cell green-border left active">In Progress</div><div class="status-cell light-green-border right">Approved</div>';
-			}elseif($dsaStatus == 'approved'){
-				echo '<div class="status-cell light-green-border left">In Progress</div><div class="status-cell green-border right active">Approved</div>';
-			}elseif($dsaStatus == 'rejected'){
-				echo '<div class="status-cell light-red-border left">In Progress</div><div class="status-cell red-border right active">Rejected</div>';
-			}else{
-				echo '<div class="status-cell obsolete">Obsolete</div>';
-			}
-			echo '</div>';
-			echo '	<a class="details-btn grow" data-rid="'.$du->id.'"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a></div></div>';
-
-			echo '<div class="detailsBody" id="'.$du->id.'">';
-			echo '<p class="riDate"><strong>Requested Data:</strong><br>';
-			$termCount = 0;
-			foreach($request->terms as $term){
-				echo $term->termsignifier;
-				$termCount++;
-				if($termCount < sizeof($request->terms)){
-					echo ',&nbsp;&nbsp;';
+				if(!$oneApprover){
+					$approverName = $du->roles['Custodian'][0]->firstName . " " . $du->roles['Custodian'][0]->lastName;
+					if($approverName != ''){
+						$approverImage = '../photos/collibraview/'.$du->roles['Custodian'][0]->resourceId;
+						$approverEmail = $du->roles['Custodian'][0]->emailAddress;
+						echo '<div class="approver custodian">'.
+							'	<div class="user-icon" style="background-image: url(../'.$approverImage.');"></div>'.
+							'	<div class="info">'.
+							'		<div class="contactName">'.$approverName.'</div>'.
+							'		<div class="approverRole"><div class="icon"></div>Custodian</div>'.
+							'		<div class="contactEmail"><div class="icon"></div><a href="mailto:'.$approverEmail.'">'.$approverEmail.'</a></div>'.
+							'	</div>'.
+							'</div>';
+					}
 				}
-			}
-			echo '</p>';
-			foreach($du->attributeReferences->attributeReference as $attr){
-				if(!in_array($attr->labelReference->signifier, $arrNonDisplay) && !empty($attr->value)){
-					echo '<h3 class="headerTab">'.$attr->labelReference->signifier.'</h3><div class="clear"></div>'.
-						'<div class="attrValue">'.$attr->value.'</div>';
+				echo '</div>';
+				echo '<br />';
+				echo '<div class="status-details-flex"><div class="status-wrapper">';
+				if($dsaStatus == 'candidate' || $dsaStatus == 'in progress'){
+					echo '<div class="status-cell green-border left active">In Progress</div><div class="status-cell light-green-border right">Approved</div>';
+				}elseif($dsaStatus == 'approved'){
+					echo '<div class="status-cell light-green-border left">In Progress</div><div class="status-cell green-border right active">Approved</div>';
+				}elseif($dsaStatus == 'rejected'){
+					echo '<div class="status-cell light-red-border left">In Progress</div><div class="status-cell red-border right active">Rejected</div>';
+				}else{
+					echo '<div class="status-cell obsolete">Obsolete</div>';
 				}
-			}
+				echo '</div>';
+				echo '	<a class="details-btn grow" data-rid="'.$du->id.'"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a></div></div>';
 
-			if (!in_array($du->status, $completedStatuses)) {
-				echo '<div class="lower-btn edit grow" data-rid="'.$du->id.'">Edit</div>';
+				echo '<div class="detailsBody" id="'.$du->id.'">';
+				echo '<p class="riDate"><strong>Requested Data:</strong><br>';
+				$termCount = 0;
+				foreach($request->terms as $term){
+					echo $term->termsignifier;
+					$termCount++;
+					if($termCount < sizeof($request->terms)){
+						echo ',&nbsp;&nbsp;';
+					}
+				}
+				echo '</p>';
+				foreach($du->attributeReferences->attributeReference as $attr){
+					if(!in_array($attr->labelReference->signifier, $arrNonDisplay) && !empty($attr->value)){
+						echo '<h3 class="headerTab">'.$attr->labelReference->signifier.'</h3><div class="clear"></div>'.
+							'<div class="attrValue">'.$attr->value.'</div>';
+					}
+				}
+
+				if (!in_array($du->status, $completedStatuses)) {
+					echo '<div class="lower-btn edit grow" data-rid="'.$du->id.'">Edit</div>';
+				}
+				echo '<div class="lower-btn share grow" data-rid="'.$du->id.'">Share</div>';
+				echo '<div class="lower-btn print grow" data-rid="'.$du->id.'">Print</div>';
+				echo '</div>';
 			}
-			echo '<div class="lower-btn print grow" data-rid="'.$du->id.'">Print</div>';
-			echo '</div>';
 		}
 	echo '</div>';
 ?>

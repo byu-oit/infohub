@@ -167,11 +167,11 @@
 			echo '</p>';
 			echo '<div class="status-details-flex"><div class="status-wrapper">';
 			if($req->statusReference->signifier == 'Completed'){
-				echo '<div class="status-cell light-green-border left">In Progress</div><div class="status-cell green-border right active">Approved</div>';
+				echo '<div class="status-cell light-green-border left">In Progress</div><div class="status-cell green-border right active">Completed</div>';
 			}elseif($req->statusReference->signifier == 'Rejected'){
 				echo '<div class="status-cell light-red-border left">In Progress</div><div class="status-cell red-border right active">Rejected</div>';
 			}elseif($req->statusReference->signifier == 'In Progress'){
-				echo '<div class="status-cell green-border left active">In Progress</div><div class="status-cell light-green-border right">Approved</div>';
+				echo '<div class="status-cell green-border left active">In Progress</div><div class="status-cell light-green-border right">Completed</div>';
 			}else{
 				echo '<div class="status-cell obsolete">Obsolete</div>';
 			}

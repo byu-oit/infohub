@@ -134,7 +134,6 @@
 		"Impact on System",
 		"Additional Information Requested"
 	];
-	$completedStatuses = ['Completed', 'Approved', 'Obsolete'];
 	if (empty($request->dataUsages)) {
 		foreach ($arrOrderedFormFields as $field) {
 			foreach ($request->attributeReferences->attributeReference as $attrRef) {
