@@ -3,7 +3,23 @@
 	$this->Html->css('account', null, array('inline' => false));
 ?>
 <script>
+
+	function loadCoordinatorPhones() {
+		$('.approver').each(function() {
+			var thisElem = $(this);
+			$.get('/myaccount/getCoordinatorPhoneNumber/' + $(this).attr('user-id'))
+				.done(function(data) {
+					if (data) {
+						var html = '<div class="contactNumber"><div class="icon"></div>'+data+'</div>';
+						thisElem.find('.info').append(html);
+					}
+				});
+		});
+	}
+
 	$(document).ready(function() {
+		loadCoordinatorPhones();
+
 		$('#close').click(function() {
 			$(this).parent().fadeOut('fast');
 		});
@@ -20,6 +36,65 @@
 		});
 		$('.edit').click(function() {
 			window.location.href = '/request/edit/' + $(this).attr('data-rid');
+		});
+
+		$('.remove').click(function() {
+			if (confirm("Are you sure? If you're no longer a collaborator, you won't be able to view or edit this request. (You can still be re-added to the list at any time.)")) {
+				window.location.href = '/request/removeCollaborator/' + $(this).attr('data-rid') + '/<?php if(!empty($netID)) echo $netID; ?>';
+			}
+		});
+		$('.collaborators').click(function() {
+			$(this).parent().find('.collaborators-input-wrapper').fadeIn('fast');
+			var inputElement = $(this).parent().find('.collaborators-input');
+			$('html, body').animate({scrollTop: inputElement.offset().top - 150}, 'medium', function() {
+				inputElement.focus();
+			});
+		});
+		$('.close').click(function() {
+			$(this).parent().parent().find('.collaborators-search-result').remove();
+			$(this).parent().fadeOut('fast');
+			$(this).parent().find('.collaborators-input').val('');
+		});
+
+		$('.collaborators-input').on('input', function() {
+			var inputElement = $(this);
+			var inputWrapper = $(this).parent();
+
+			// Delay the autocomplete suggestions for .1 seconds to prevent
+			// excessive API calls while typing
+			window.clearTimeout($(this).data('timeout'));
+			$(this).data('timeout', setTimeout(function () {
+
+				if (inputElement.val().length < 3) {
+					inputWrapper.parent().find('.collaborators-search-result').remove();
+					return;
+				}
+
+				$.get("/directory/lookup?term="+inputElement.val())
+					.done(function(data) {
+						inputWrapper.parent().find('.collaborators-search-result').remove();
+						data = JSON.parse(data);
+						data.forEach(function(element) {
+							inputWrapper.after(element);
+						});
+					});
+
+			}, 300));
+		});
+		$('.detailsBody').on('click', '.collaborators-search-result', function() {
+			var thisElem = $(this);
+			$.post("/request/addCollaborator/"+$(this).parent().attr('id')+"/"+$(this).attr('person-id'))
+				.done(function(data) {
+					var data = JSON.parse(data);
+					if (data.success == 0) {
+						alert(data.message);
+						return;
+					}
+					var html = '<strong>'+data.person.names.preferred_name+':</strong> '
+								+data.person.employee_information.job_title+', '
+								+data.person.contact_information.email_address+'<br>';
+					thisElem.parent().find('.collaborators-view').append(html);
+				});
 		});
 
 		$('.approver .user-icon').on('mouseover click', function(){
@@ -187,6 +262,25 @@
 		</div>
 		<div class="clear"></div>
 
+		<h3 class="headerTab">Collaborators</h3>
+		<div class="clear"></div>
+		<div class="attrValue collaborators-view">
+			<?php foreach ($request->attributeReferences->attributeReference['Collaborators'] as $col) {
+				echo '<strong>'.$col->names->preferred_name.':</strong> '.
+					$col->employee_information->job_title.', '.
+					$col->contact_information->email_address.'<br>';
+			}
+			?>
+		</div>
+		<div class="collaborators-input-wrapper">
+			<input type="text" class="collaborators-input" placeholder="Type name (last, first) or Net ID">
+			<div class="lower-btn close grow">X</div>
+		</div>
+		<?php if (!empty($netID) && count($request->attributeReferences->attributeReference['Collaborators']) > 1):?>
+		<div class="lower-btn remove grow" data-rid="<?= $request->resourceId ?>">Remove me</div>
+		<?php endif ?>
+		<div class="clear"></div>
+
 		<h3 class="headerTab">Application Name</h3>
 		<div class="clear"></div>
 		<div class="attrValue"><?= $request->attributeReferences->attributeReference['Application Name']->value ?></div>
@@ -221,6 +315,7 @@
 			echo '<div class="lower-btn edit grow" data-rid="'.$request->resourceId.'">Edit</div>';
 		}
 		echo '<div class="lower-btn print grow" data-rid="'.$request->resourceId.'">Print</div>';
+		echo '<div class="lower-btn collaborators grow" data-rid="'.$req->resourceId.'">Add collaborators</div>';
 		echo '</div>';
 
 		if (!empty($request->dataUsages)) {

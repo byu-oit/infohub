@@ -57,6 +57,10 @@
 		});
 		$('.collaborators').click(function() {
 			$(this).parent().find('.collaborators-input-wrapper').fadeIn('fast');
+			var inputElement = $(this).parent().find('.collaborators-input');
+			$('html, body').animate({scrollTop: inputElement.offset().top - 150}, 'medium', function() {
+				inputElement.focus();
+			});
 		});
 		$('.close').click(function() {
 			$(this).parent().parent().find('.collaborators-search-result').remove();
@@ -101,13 +105,7 @@
 					var html = '<strong>'+data.person.names.preferred_name+':</strong> '
 								+data.person.employee_information.job_title+', '
 								+data.person.contact_information.email_address+'<br>';
-					if (thisElem.parent().find('.collaborators-view').length) {
-						thisElem.parent().find('.collaborators-view').append(html);
-					} else {
-						//create the collaborators list from scratch
-						var collaboratorsHtml = "<h3 class=\"headerTab\">Collaborators</h3><div class=\"clear\"></div><div class=\"attrValue collaborators-view\"><?php echo '<strong>'.$psName.':</strong> '.$psRole.', '.$psEmail.'<br>';?>"+html+"</div>";
-						thisElem.parent().find('.collaborators-input-wrapper').before(collaboratorsHtml);
-					}
+					thisElem.parent().find('.collaborators-view').append(html);
 				});
 		});
 
@@ -259,7 +257,7 @@
 				?>
 			</div>
 			<div class="collaborators-input-wrapper">
-				<input type="text" class="collaborators-input" placeholder="Type name (last, first) or netID">
+				<input type="text" class="collaborators-input" placeholder="Type name (last, first) or Net ID">
 				<div class="lower-btn close grow">X</div>
 			</div>
 			<?php if (count($req->attributeReferences->attributeReference['Collaborators']) > 1):?>

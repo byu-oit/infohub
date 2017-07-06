@@ -162,38 +162,51 @@ class RequestController extends AppController {
 		$this->autoRender = false;
 
 		if (empty($dsrId) || empty($personId)) {
-			echo '{"success":0,"message":"Bad request"}';
-			return;
+			return '{"success":0,"message":"Bad request"}';
 		}
 
 		$person = $this->BYUAPI->personalSummary($personId);
 		if (!isset($person)) {
-			echo '{"success":0,"message":"Person\'s information could not be loaded"}';
-			return;
+			return '{"success":0,"message":"Person\'s information could not be loaded"}';
 		}
 
 		$resp = $this->CollibraAPI->get('term/'.$dsrId);
 		$request = json_decode($resp);
+
 		foreach($request->attributeReferences->attributeReference as $attr) {
 			if (($attr->labelReference->signifier == 'Requester Person Id' || $attr->labelReference->signifier == 'Requester Net Id') && $attr->value == $person->identifiers->net_id) {
-				echo '{"success":0,"message":"This person is already a collaborator on this request."}';
-				return;
+				return '{"success":0,"message":"This person is already a collaborator on this request."}';
 			}
+		}
+
+		if ($request->conceptType->resourceId != Configure::read('Collibra.vocabulary.isaRequest')) {
+			$parent = $this->CollibraAPI->getDataUsageParent($dsrId);
+			return $this->addCollaborator($parent[0]->id, $personId);
 		}
 
 		$postData['value'] = $person->identifiers->net_id;
 		$postData['representation'] = $dsrId;
 		$postData['label'] = Configure::read('Collibra.attribute.isaRequestNetId');
 		$postString = http_build_query($postData);
-		$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
 		$formResp = $this->CollibraAPI->post('term/'.$dsrId.'/attributes', $postString);
 		$formResp = json_decode($formResp);
 		if (!isset($formResp)) {
-			echo '{"success":0,"message":"We had a problem getting to Collibra"}';
-			return;
+			return '{"success":0,"message":"We had a problem getting to Collibra"}';
 		}
 
-		echo '{"success":1,"person":'.json_encode($person).'}';
+		// Add to DSAs as well
+		$request->dataUsages = $this->CollibraAPI->getDataUsages($dsrId);
+		foreach($request->dataUsages as $du) {
+			$postData['representation'] = $du->id;
+			$postString = http_build_query($postData);
+			$formResp = $this->CollibraAPI->post('term/'.$du->id.'/attributes', $postString);
+			$formResp = json_decode($formResp);
+			if (!isset($formResp)) {
+				return '{"success":0,"message":"We had a problem getting to Collibra"}';
+			}
+		}
+
+		return '{"success":1,"person":'.json_encode($person).'}';
 	}
 
 	public function removeCollaborator($dsrId, $netId) {
@@ -206,6 +219,26 @@ class RequestController extends AppController {
 
 		$resp = $this->CollibraAPI->get('term/'.$dsrId);
 		$request = json_decode($resp);
+
+		if ($request->conceptType->resourceId != Configure::read('Collibra.vocabulary.isaRequest')) {
+			$parent = $this->CollibraAPI->getDataUsageParent($dsrId);
+			$this->removeCollaborator($parent[0]->id, $netId);
+			return;
+		}
+
+		$request->dataUsages = $this->CollibraAPI->getDataUsages($dsrId);
+
+		foreach ($request->dataUsages as $du) {
+			$resp = $this->CollibraAPI->get('term/'.$du->id);
+			$dataUsage = json_decode($resp);
+			foreach ($dataUsage->attributeReferences->attributeReference as $attr) {
+				if (($attr->labelReference->signifier == 'Requester Person Id' || $attr->labelReference->signifier == 'Requester Net Id') && $attr->value == $netId) {
+					$this->CollibraAPI->delete('attribute/'.$attr->resourceId);
+					break;
+				}
+			}
+
+		}
 
 		foreach ($request->attributeReferences->attributeReference as $attr) {
 			if (($attr->labelReference->signifier == 'Requester Person Id' || $attr->labelReference->signifier == 'Requester Net Id') && $attr->value == $netId) {
@@ -489,8 +522,9 @@ class RequestController extends AppController {
 			$expand = $dsrId;
 		}
 
-		$this->loadModel('CollibraAPI');
+		$netID = $this->Auth->user('username');
 
+		$this->loadModel('CollibraAPI');
 		$resp = $this->CollibraAPI->get('term/'.$dsrId);
 		$dsr = json_decode($resp);
 
@@ -521,14 +555,17 @@ class RequestController extends AppController {
 		$workflowResp = json_decode($workflowResp);
 
 		$arrNewAttr = [];
-		foreach($workflowResp->formProperties as $wf){
+		$arrCollaborators = array();
 			foreach($dsr->attributeReferences->attributeReference as $attr){
-				if($attr->labelReference->signifier == $wf->name){
-					$arrNewAttr[$attr->labelReference->signifier] = $attr;
-					break;
+				if ($attr->labelReference->signifier == 'Requester Person Id' || $attr->labelReference->signifier == 'Requester Net Id') {
+					$person = $this->BYUAPI->personalSummary($attr->value);
+					unset($person->person_summary_line, $person->identifiers, $person->personal_information, $person->student_information, $person->relationships);
+					array_push($arrCollaborators, $person);
+					continue;
 				}
+				$arrNewAttr[$attr->labelReference->signifier] = $attr;
 			}
-		}
+			$arrNewAttr['Collaborators'] = $arrCollaborators;
 		$dsr->attributeReferences->attributeReference = $arrNewAttr;
 
 		if ($parent) {
@@ -539,6 +576,7 @@ class RequestController extends AppController {
 			}
 		}
 
+		$this->set('netID', $netID);
 		$this->set('request', $dsr);
 		$this->set('parent', $parent);
 		$this->set('expand', $expand);
