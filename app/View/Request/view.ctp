@@ -61,7 +61,7 @@
 		}
 		echo '</p>';
 		echo '<div class="status-details-flex"><div class="status-wrapper">';
-		if($request->statusReference->signifier == 'Completed'){
+		if($request->statusReference->signifier == 'Completed' || $request->statusReference->signifier == 'Approved'){
 			echo '<div class="status-cell light-green-border left">In Progress</div><div class="status-cell green-border right active">Approved</div>';
 		}elseif($request->statusReference->signifier == 'Rejected'){
 			echo '<div class="status-cell light-red-border left">In Progress</div><div class="status-cell red-border right active">Rejected</div>';
