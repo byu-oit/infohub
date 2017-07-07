@@ -152,6 +152,23 @@
 		echo '<div class="subrequest">';
 		$dsaName = $du->signifier;
 		echo '<div class="subrequestNameWrapper"><h6 class="subrequestName">'.$dsaName.'</h6></div>';
+		echo '<p class="riData"><strong>Requested Data:</strong>';
+		foreach ($request->termGlossaries as $glossaryName => $terms) {
+			if ($terms[0]->commrid != $du->communityId) {
+				continue;
+			}
+			echo '<br><em>'.$glossaryName.'&nbsp;-&nbsp;</em>';
+			$termCount = 0;
+			foreach ($terms as $term) {
+				echo $term->termsignifier;
+				$termCount++;
+				if ($termCount < sizeof($terms)) {
+					echo ',&nbsp;&nbsp;';
+				}
+			}
+			break;
+		}
+		echo '</p>';
 		$oneApprover = (
 			$du->roles['Steward'][0]->firstName . " " . $du->roles['Steward'][0]->lastName
 			== $du->roles['Custodian'][0]->firstName . " " . $du->roles['Custodian'][0]->lastName

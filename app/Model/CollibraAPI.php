@@ -822,6 +822,10 @@ class CollibraAPI extends Model {
 			'displayLength' => -1]];
 		$usages = $this->fullDataTable($tableConfig);
 		foreach ($usages as &$usage) {
+			$vocab = json_decode($this->get('vocabulary/'.$usage->vocabularyId));
+			$usage->vocabularyName = $vocab->name;
+			$usage->communityId = $vocab->communityReference->resourceId;
+			$usage->communityName = $vocab->communityReference->name;
 			$usage->roles = $this->getResponsibilities($usage->vocabularyId);
 		}
 		return $usages;

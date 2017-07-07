@@ -6,7 +6,7 @@
 #requestItemWrapper {
   text-align: left;
   width: 85%;
-  margin-top: 20px;
+  margin: 20px;
   background-color: #fff;
   -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);

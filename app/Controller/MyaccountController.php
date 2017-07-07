@@ -132,7 +132,14 @@ class MyaccountController extends AppController {
 			$requestedTerms = json_decode($resp);
 			// add property to request object to hold terms
 			if(isset($requestedTerms->aaData)){
-				$request->terms = $requestedTerms;
+				$request->termGlossaries = array();
+				foreach ($requestedTerms->aaData as $term) {
+					if (array_key_exists($term->domainname, $request->termGlossaries)) {
+						array_push($request->termGlossaries[$term->domainname], $term);
+					} else {
+						$request->termGlossaries[$term->domainname] = array($term);
+					}
+				}
 			}
 			////////////////////////////////////////////
 

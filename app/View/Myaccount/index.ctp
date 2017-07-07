@@ -153,13 +153,16 @@
 				'    <div class="riLeft">'.
 				'        <a class="riTitle" href="/request/view/'.$req->resourceId.'">'.$req->signifier.'</a>'.
 				'        <p class="riDate"><span>Date Created:&nbsp;</span>'.date('n/j/Y', ($req->createdOn)/1000).'</p>'.
-				'        <p class="riDate"><strong>Requested Data:</strong><br>';
-			$termCount = 0;
-			foreach($req->terms->aaData as $term){
-				echo $term->termsignifier;
-				$termCount++;
-				if($termCount < sizeof($req->terms->aaData)){
-					echo ',&nbsp;&nbsp;';
+				'        <p class="riDate"><strong>Requested Data:</strong>';
+			foreach ($req->termGlossaries as $glossaryName => $terms) {
+				echo '<br><em>'.$glossaryName.'&nbsp;-&nbsp;</em>';
+				$termCount = 0;
+				foreach ($terms as $term) {
+					echo $term->termsignifier;
+					$termCount++;
+					if ($termCount < sizeof($terms)) {
+						echo ',&nbsp;&nbsp;';
+					}
 				}
 			}
 			echo '</p>';
@@ -363,14 +366,21 @@
 				echo '	<a class="details-btn grow" data-rid="'.$du->id.'"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a></div></div>';
 
 				echo '<div class="detailsBody" id="'.$du->id.'">';
-				echo '<p class="riDate"><strong>Requested Data:</strong><br>';
-				$termCount = 0;
-				foreach($req->terms->aaData as $term){
-					echo $term->termsignifier;
-					$termCount++;
-					if($termCount < sizeof($req->terms->aaData)){
-						echo ',&nbsp;&nbsp;';
+				echo '<p class="riDate"><strong>Requested Data:</strong>';
+				foreach ($req->termGlossaries as $glossaryName => $terms) {
+					if ($terms[0]->commrid != $du->communityId) {
+						continue;
 					}
+					echo '<br><em>'.$glossaryName.'&nbsp;-&nbsp;</em>';
+					$termCount = 0;
+					foreach ($terms as $term) {
+						echo $term->termsignifier;
+						$termCount++;
+						if ($termCount < sizeof($terms)) {
+							echo ',&nbsp;&nbsp;';
+						}
+					}
+					break;
 				}
 				echo '</p>';
 				foreach($du->attributeReferences->attributeReference as $attr){

@@ -129,15 +129,18 @@
 			'        <h4 class="riTitle">'.$request->signifier.'</h4>'.
 			'        <div class="riDate"';if(!$parent)echo'style="display:inline-block;"';echo'><span>Date Created:&nbsp;</span>'.date('n/j/Y', ($request->createdOn)/1000).'</div>';
 			if (!$parent) echo '<a class="parent-btn grow" href="/request/view/'.$request->parent[0]->id.'">View parent request</a>';
-			echo '        <p class="riDate"><strong>Requested Data:</strong><br>';
-		$termCount = 0;
-		foreach($request->terms as $term){
-			echo $term->termsignifier;
-			$termCount++;
-			if($termCount < sizeof($request->terms)){
-				echo ',&nbsp;&nbsp;';
+			echo '        <p class="riDate"><strong>Requested Data:</strong>';
+			foreach ($request->termGlossaries as $glossaryName => $terms) {
+				echo '<br><em>'.$glossaryName.'&nbsp;-&nbsp;</em>';
+				$termCount = 0;
+				foreach ($terms as $term) {
+					echo $term->termsignifier;
+					$termCount++;
+					if ($termCount < sizeof($terms)) {
+						echo ',&nbsp;&nbsp;';
+					}
+				}
 			}
-		}
 		echo '</p>';
 		echo '<div class="status-details-flex"><div class="status-wrapper">';
 		if($request->statusReference->signifier == 'Completed' || $request->statusReference->signifier == 'Approved'){
@@ -378,14 +381,21 @@
 				echo '	<a class="details-btn grow" data-rid="'.$du->id.'"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a></div></div>';
 
 				echo '<div class="detailsBody" id="'.$du->id.'">';
-				echo '<p class="riDate"><strong>Requested Data:</strong><br>';
-				$termCount = 0;
-				foreach($request->terms as $term){
-					echo $term->termsignifier;
-					$termCount++;
-					if($termCount < sizeof($request->terms)){
-						echo ',&nbsp;&nbsp;';
+				echo '<p class="riDate"><strong>Requested Data:</strong>';
+				foreach ($request->termGlossaries as $glossaryName => $terms) {
+					if ($terms[0]->commrid != $du->communityId) {
+						continue;
 					}
+					echo '<br><em>'.$glossaryName.'&nbsp;-&nbsp;</em>';
+					$termCount = 0;
+					foreach ($terms as $term) {
+						echo $term->termsignifier;
+						$termCount++;
+						if ($termCount < sizeof($terms)) {
+							echo ',&nbsp;&nbsp;';
+						}
+					}
+					break;
 				}
 				echo '</p>';
 				foreach($du->attributeReferences->attributeReference as $attr){
