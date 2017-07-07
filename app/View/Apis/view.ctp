@@ -54,13 +54,11 @@
 							<tr>
 								<td><?php
 									$termPath = explode('.', $term->name);
-									$termName = '';
 									foreach ($termPath as $pathStep) {
 										if ($pathStep != end($termPath)) {
 											echo str_repeat('&nbsp;', 12);
 										} else {
 											echo $pathStep;
-											$termName = $pathStep;
 										}
 									}
 								?></td>
@@ -120,7 +118,7 @@
 										<input
 											type="checkbox"
 											name="terms[]"
-											data-title="<?= $termName ?>"
+											data-title="<?= $term->name ?>"
 											data-vocabID=""
 											value=""
 											class="chk"

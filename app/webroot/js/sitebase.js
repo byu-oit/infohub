@@ -290,9 +290,11 @@ function addToQueue(elem, clearRelated, displayCart){
 
 		$(elem).parent().find('.checkBoxes').find('input').each(function(){
 			if($(this).prop("checked") && $(this).prop("name") != "toggleCheckboxes"){
-				arrTitles.push($(this).attr('data-title'));
-				arrIDs.push($(this).val());
-				arrVocabIDs.push($(this).attr('data-vocabID'));
+				if ($.inArray($(this).attr('data-title'), arrTitles) == -1) {
+					arrTitles.push($(this).attr('data-title'));
+					arrIDs.push($(this).val());
+					arrVocabIDs.push($(this).attr('data-vocabID'));
+				}
 			}
 		});
 		$.post("/request/addToQueue", {emptyApi:'false', t:arrTitles, id:arrIDs, vocab:arrVocabIDs, clearRelated:clearRelated, apiHost: apiHost, apiPath: apiPath})
