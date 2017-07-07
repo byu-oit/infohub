@@ -1273,7 +1273,7 @@ img.resultBodyLoading {
 }
 #apiBody .inputButton#admin {
   position: relative;
-  top: 45px;
+  top: -101px;
 }
 #apiBody .apiHelpButton {
   color: rgba(14, 50, 100, 0.85);
