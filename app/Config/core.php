@@ -70,6 +70,9 @@ if (!function_exists('denv')) {
 			'stewardName' => '4331ec09-88a2-48e6-b096-9ece6648aff3',
 			'notes' => '00000000-0000-0000-0000-000000003116'
 		],
+		'status' => [
+			'archived' => '9c915534-6603-4ddd-aebd-93b9013bfa9d'
+		],
 		'term' => [
 			'custodian' => '6f666b9e-be07-4521-95fa-36fecfe2ff71',
 			'steward' => 'c43795f0-5450-41ec-90fb-55d1d84a0efe'

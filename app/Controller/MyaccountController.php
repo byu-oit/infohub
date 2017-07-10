@@ -115,6 +115,9 @@ class MyaccountController extends AppController {
 			} elseif ($page == 'current' && in_array($r->status, $completedStatuses)) {
 				continue;
 			}
+			if ($r->status == 'Archived') {
+				continue;
+			}
 			// load terms details
 			$resp = $this->CollibraAPI->get('term/'.$r->name->id);
 			$request = json_decode($resp);
