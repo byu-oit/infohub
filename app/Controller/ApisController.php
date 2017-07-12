@@ -31,7 +31,7 @@ class ApisController extends AppController {
 	public function view() {
 		$args = func_get_args();
 		$hostname = array_shift($args);
-		$basePath = '/' . implode('/', $args);
+		$basePath = strtolower('/' . implode('/', $args));
 		$terms = $this->CollibraAPI->getApiTerms($hostname, $basePath);
 		if (empty($terms)) {
 			//Check if non-existent API, or simply empty API
