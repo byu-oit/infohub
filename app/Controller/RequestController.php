@@ -270,6 +270,111 @@ class RequestController extends AppController {
 		$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
 	}
 
+	public function editTermsSubmit() {
+		$this->autoRender = false;
+		if (!$this->request->is('post')) {
+			return;
+		}
+		if (!isset($this->request->data['dsrId']) || !isset($this->request->data['arrIds'])) {
+			return '{"success":0}';
+		}
+
+		if ($this->request->data['action'] == 'add') {
+			$success = true;
+			$arrQueue = $this->Session->read('queue');
+
+			$postData['source'] = $this->request->data['dsrId'];
+			$postData['binaryFactType'] = Configure::read('Collibra.relationship.isaRequestToTerm');
+			foreach ($this->request->data['arrIds'] as $termid) {
+				$postData['target'] = $termid;
+				$postString = http_build_query($postData);
+				$resp = $this->CollibraAPI->post('relation', $postString);
+
+				if ($resp->code != '201') {
+					$success = false;
+					continue;
+				}
+
+				foreach ($arrQueue->businessTerms as $queueId => $queueTerm) {
+					if ($queueId == $termid) {
+						unset($arrQueue->businessTerms[$queueId]);
+						break;
+					}
+				}
+			}
+
+			$this->Session->write('queue', $arrQueue);
+			return $success ? '{"success":1}' : '{"success":0}';
+		}
+		else if ($this->request->data['action'] == 'remove') {
+			$success = true;
+			foreach ($this->request->data['arrIds'] as $relationrid) {
+				$resp = $this->CollibraAPI->delete('relation/'.$relationrid);
+				if ($resp->code != '200') {
+					$success = false;
+				}
+			}
+			return $success ? '{"success":1}' : '{"success":0}';
+		}
+		return '{"success":0}';
+	}
+
+	public function editTerms($dsrId) {
+		if (empty($dsrId)) {
+			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
+		}
+
+		$resp = $this->CollibraAPI->get('term/'.$dsrId);
+		$request = json_decode($resp);
+
+		$netID = $this->Auth->user('username');
+
+		$guest = true;
+		foreach($request->attributeReferences->attributeReference as $attr) {
+			if ($attr->labelReference->signifier == 'Requester Person Id' || $attr->labelReference->signifier == 'Requester Net Id') {
+				if ($attr->value == $netID) {
+					$guest = false;
+					break;
+				}
+			}
+		}
+
+		$completedStatuses = ['Completed', 'Approved', 'Obsolete'];
+		if (in_array($request->statusReference->signifier, $completedStatuses)) {
+			$this->Flash->error('You cannot edit a completed Request.');
+			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
+		}
+
+		// Check whether $request is a DSR or DSA
+		$isaRequest = $request->conceptType->resourceId == Configure::read('Collibra.vocabulary.isaRequest');
+		if (!$isaRequest) {
+			$this->Flash->error('You cannot edit the terms on a DSA.');
+			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
+		}
+
+		$request->dataUsages = $this->CollibraAPI->getDataUsages($dsrId);
+		if (!empty($request->dataUsages)) {
+			$this->Flash->error('You cannot edit a DSR with any associated DSAs.');
+			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
+		}
+
+		$requestId = $request->resourceId;
+		$resp = $this->CollibraAPI->postJSON(
+				'output/data_table',
+				'{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldName":"relationrid"}},{"Column":{"fieldName":"startDate"}},{"Column":{"fieldName":"endDate"}},{"Column":{"fieldName":"relstatusrid"}},{"Column":{"fieldName":"relstatusname"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldName":"concepttyperid"}}],"Resources":{"Term":{"Id":{"name":"termrid"},"Signifier":{"name":"termsignifier"},"Relation":{"typeId":"' . Configure::read('Collibra.relationship.isaRequestToTerm') . '","Id":{"name":"relationrid"},"StartingDate":{"name":"startDate"},"EndingDate":{"name":"endDate"},"Status":{"Id":{"name":"relstatusrid"},"Signifier":{"name":"relstatusname"}},"Filter":{"AND":[{"Field":{"name":"reltermrid", "operator":"EQUALS", "value":"'.$requestId.'"}}]},"type":"TARGET","Source":{"Id":{"name":"reltermrid"}}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"}, "Id":{"name":"concepttyperid"}}],"Filter":{"AND":[{"AND":[{"Field":{"name":"reltermrid", "operator":"EQUALS", "value":"'.$requestId.'"}}]}]},"Order":[{"Field":{"name":"termsignifier", "order":"ASC"}}]}},"displayStart":0,"displayLength":100}}'
+		);
+		$requestedTerms = json_decode($resp);
+		// pr($requestedTerms);exit();
+
+		if(isset($requestedTerms->aaData)){
+			$request->terms = $requestedTerms->aaData;
+		}
+
+		$arrQueue = $this->Session->read('queue');
+		$this->set(compact('request', 'guest', 'arrQueue'));
+		$this->set('submitErr', isset($this->request->query['err']));
+	}
+
 	public function editSubmit($dsrId) {
 		$this->autoRender = false;
 
@@ -362,7 +467,7 @@ class RequestController extends AppController {
 
 		$request->dataUsages = $this->CollibraAPI->getDataUsages($dsrId);
 		if (!empty($request->dataUsages)) {
-			$this->Flash->error('You cannot edit a DSR with any child DSAs.');
+			$this->Flash->error('You cannot edit a DSR with any associated DSAs.');
 			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
 		}
 
@@ -828,13 +933,15 @@ class RequestController extends AppController {
 		$termResp = $this->CollibraAPI->postJSON('output/data_table', $requestFilter);
 		$termResp = json_decode($termResp);
 		//usort($termResp->aaData, 'self::sortTermsByDomain');
-		foreach ($termResp->aaData as $term) {
-			$domains[]  = $term->domainname;
-			$termNames[] = $term->termsignifier;
-			$term->apihost = $arrQueue->businessTerms[$term->termrid]['apiHost'];
-			$term->apipath = $arrQueue->businessTerms[$term->termrid]['apiPath'];
+		if (isset($termResp->aaData)) {
+			foreach ($termResp->aaData as $term) {
+				$domains[]  = $term->domainname;
+				$termNames[] = $term->termsignifier;
+				$term->apihost = $arrQueue->businessTerms[$term->termrid]['apiHost'];
+				$term->apipath = $arrQueue->businessTerms[$term->termrid]['apiPath'];
+			}
+			array_multisort($domains, SORT_ASC, $termNames, SORT_ASC, $termResp->aaData);
 		}
-		array_multisort($domains, SORT_ASC, $termNames, SORT_ASC, $termResp->aaData);
 
 		// load form fields for ISA workflow
 		$formResp = $this->CollibraAPI->get('workflow/'.Configure::read('Collibra.isaWorkflow.id').'/form/start');

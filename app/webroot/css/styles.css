@@ -179,6 +179,15 @@ header #headerInner #headerRight #request-popup.fixed {
   position: fixed;
   top: 7px;
 }
+#request #searchBody #requestForm #srLower .resultItem .checkAll {
+  height: 30px;
+  font-size: 12px;
+  font-weight: bold;
+}
+#request #searchBody #requestForm #srLower .resultItem .checkAll input {
+  position: relative;
+  top: 2px;
+}
 header #headerInner #headerRight #request-popup h3,
 #request #searchBody #requestForm #srLower .resultItem .irLower h3 {
   margin: 0 0 5px 0;
@@ -203,8 +212,6 @@ header #headerInner #headerRight #request-popup h3,
 }
 #request #searchBody #requestForm #srLower .resultItem .irLower ul li {
   padding: 2px;
-}
-#request #searchBody #requestForm #srLower .resultItem .irLower ul li {
   width: 22%;
   float: left;
   position: relative;
@@ -218,6 +225,10 @@ header #headerInner #headerRight #request-popup h3,
   margin: 2px 5px 0px -7px;
   width: 11px;
   float: left;
+}
+#request #searchBody #requestForm #srLower .resultItem .irLower ul li input {
+  position: relative;
+  top: 3px;
 }
 header #headerInner #headerRight #request-popup .arrow,
 #request #searchBody #requestForm #srLower .resultItem .irLower .arrow {

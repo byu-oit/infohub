@@ -326,7 +326,7 @@ function addToQueue(elem, clearRelated, displayCart){
 	}
 }
 function toggleAllCheckboxes(elem) {
-	$(elem).parents().eq(3).find('input').each(function(){
+	$(elem).closest('.resultItem').find('input').each(function(){
 		$(this).prop('checked', $(elem).prop('checked'));
 	});
 }

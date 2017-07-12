@@ -41,6 +41,12 @@
 		$('.print').click(function() {
 			window.open('/request/printView/' + $(this).attr('data-rid'), '_blank').focus();
 		});
+		$('.terms').click(function() {
+			var thisElem = $(this);
+			if (confirm('If you plan on adding items to this request, you need to add them to your cart first.')) {
+				window.location.href = '/request/editTerms/' + thisElem.attr('data-rid');
+			}
+		});
 		$('.edit').click(function() {
 			window.location.href = '/request/edit/' + $(this).attr('data-rid');
 		});
@@ -301,6 +307,7 @@
 			if (empty($req->dataUsages)) {
 				echo '<div class="lower-btn delete grow" data-rid="'.$req->resourceId.'">Delete</div>';
 				echo '<div class="lower-btn edit grow" data-rid="'.$req->resourceId.'">Edit</div>';
+				echo '<div class="lower-btn terms grow" data-rid="'.$req->resourceId.'">Add/remove terms</div>';
 			}
 			echo '<div class="lower-btn print grow" data-rid="'.$req->resourceId.'">Print</div>';
 			echo '<div class="lower-btn share grow" data-rid="'.$req->resourceId.'">Share</div>';

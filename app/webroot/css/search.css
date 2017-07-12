@@ -1318,7 +1318,9 @@ form#request {
 form#request #formSubmit {
   margin: 30px auto 0;
 }
-form#request #formSubmit #requestSubmit {
+form#request #formSubmit #requestSubmit,
+form#request #searchBody #requestForm #srLower .addTerms,
+form#request #searchBody #requestForm #srLower .removeTerms {
   float: right;
   margin: 0 6% 0 8px;
   color: #fff;
@@ -1334,6 +1336,9 @@ form#request #formSubmit #requestSubmit {
   -webkit-box-shadow: 0px 2px 7px 1px rgba(50, 50, 50, 0.4);
   -moz-box-shadow: 0px 2px 7px 1px rgba(50, 50, 50, 0.4);
   box-shadow: 0px 2px 7px 1px rgba(50, 50, 50, 0.4);
+}
+form#request #searchBody #requestForm #srLower .removeTerms {
+  background-color: #b3041a;
 }
 form#request #formSubmit label {
   float: right;
