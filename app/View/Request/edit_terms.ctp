@@ -48,7 +48,9 @@
 				<h3 class="headerTab">Add Terms</h3>
 				<div class="clear"></div>
 				<div class="resultItem">
+					<?php if (!empty($arrQueue->businessTerms)): ?>
 					<div class="checkAll"><input type="checkbox" onclick="toggleAllCheckboxes(this)" checked="checked">Check/Uncheck all</div>
+					<?php endif; ?>
 					<div class="irLower"><ul>
 						<?php
 						if(!empty($arrQueue->businessTerms) /*|| !empty($arrQueue->concepts) || !empty($arrQueue->emptyApis) || !empty($arrQueue->apiFields)*/) {
@@ -77,7 +79,9 @@
                 <h3 class="headerTab">Remove Terms</h3>
                 <div class="clear"></div>
                 <div class="resultItem">
+					<?php if (!empty($request->terms)): ?>
 					<div class="checkAll"><input type="checkbox" onclick="toggleAllCheckboxes(this)">Check/Uncheck all</div>
+					<?php endif; ?>
 					<div class="irLower"><ul>
 						<?php
 							if (!empty($request->terms)) {
