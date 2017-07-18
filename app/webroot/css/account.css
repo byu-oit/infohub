@@ -540,6 +540,17 @@
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
+#accountMid #accountMain .requestItem .detailsBody .edit-btn {
+  display: inline-block;
+  height: 22px;
+  width: 22px;
+  margin: 19px 0px 10px 12px;
+  border-radius: 5px;
+  background-image: url(../img/edit.png);
+  background-size: 29px;
+  background-position: center;
+  cursor: pointer;
+}
 #accountMid #accountMain .requestItem .detailsBody .delete,
 #accountMid #accountMain .requestItem .detailsBody .remove,
 #accountMid #accountMain .requestItem .riBelow .detailsBody .delete {

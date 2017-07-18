@@ -41,12 +41,6 @@
 		$('.print').click(function() {
 			window.open('/request/printView/' + $(this).attr('data-rid'), '_blank').focus();
 		});
-		$('.terms').click(function() {
-			var thisElem = $(this);
-			if (confirm('If you plan on adding items to this request, you need to add them to your cart first.')) {
-				window.location.href = '/request/editTerms/' + thisElem.attr('data-rid');
-			}
-		});
 		$('.edit').click(function() {
 			window.location.href = '/request/edit/' + $(this).attr('data-rid');
 		});
@@ -158,20 +152,7 @@
 			echo '<div class="requestItem">'.
 				'    <div class="riLeft">'.
 				'        <a class="riTitle" href="/request/view/'.$req->resourceId.'">'.$req->signifier.'</a>'.
-				'        <p class="riDate"><span>Date Created:&nbsp;</span>'.date('n/j/Y', ($req->createdOn)/1000).'</p>'.
-				'        <p class="riDate"><strong>Requested Data:</strong>';
-			foreach ($req->termGlossaries as $glossaryName => $terms) {
-				echo '<br><em>'.$glossaryName.'&nbsp;-&nbsp;</em>';
-				$termCount = 0;
-				foreach ($terms as $term) {
-					echo $term->termsignifier;
-					$termCount++;
-					if ($termCount < sizeof($terms)) {
-						echo ',&nbsp;&nbsp;';
-					}
-				}
-			}
-			echo '</p>';
+				'        <p class="riDate"><span>Date Created:&nbsp;</span>'.date('n/j/Y', ($req->createdOn)/1000).'</p>';
 			echo '<div class="status-details-flex"><div class="status-wrapper">';
 			if($req->statusReference->signifier == 'Completed'){
 				echo '<div class="status-cell light-green-border left">In Progress</div><div class="status-cell green-border right active">Completed</div>';
@@ -184,7 +165,7 @@
 			}
 			echo '</div>';
 
-			echo '	<a class="details-btn grow" data-rid="'.$req->resourceId.'"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a>';
+			echo '	<a class="details-btn grow" data-rid="'.$req->resourceId.'"><span class="detailsLess">Hide</span><span class="detailsMore">Show</span>&nbsp;Details</a>';
 
 			echo '</div></div>';
 
@@ -210,7 +191,26 @@
 			echo '</div></div>';
 			echo '	<div class="detailsBody" id="'.$req->resourceId.'">';
 ?>
-
+			<h3 class="headerTab">Requested Data</h3><a class="edit-btn grow" href="/request/editTerms/<?=$req->resourceId?>" title="Add/Remove Terms"></a>
+			<div class="clear"></div>
+			<div class="attrValue">
+				<?php $glossaryCount = 0;
+				foreach ($req->termGlossaries as $glossaryName => $terms) {
+					echo '<em>'.$glossaryName.'&nbsp;-&nbsp;</em>';
+					$glossaryCount++;
+					$termCount = 0;
+					foreach ($terms as $term) {
+						echo $term->termsignifier;
+						$termCount++;
+						if ($termCount < sizeof($terms)) {
+							echo ',&nbsp;&nbsp;';
+						}
+					}
+					if ($glossaryCount < sizeof($req->termGlossaries)) {
+						echo '<br>';
+					}
+				} ?>
+			</div>
 			<h3 class="headerTab">Requester</h3>
 			<div class="clear"></div>
 			<div class="data-col">
@@ -255,7 +255,7 @@
 			</div>
 			<div class="clear"></div>
 
-			<h3 class="headerTab">Collaborators</h3>
+			<h3 class="headerTab">Collaborators</h3><div class="edit-btn grow collaborators" title="Add Collaborators"></div>
 			<div class="clear"></div>
 			<div class="attrValue collaborators-view">
 				<?php foreach ($req->attributeReferences->attributeReference['Collaborators'] as $col) {
@@ -307,11 +307,9 @@
 			if (empty($req->dataUsages)) {
 				echo '<div class="lower-btn delete grow" data-rid="'.$req->resourceId.'">Delete</div>';
 				echo '<div class="lower-btn edit grow" data-rid="'.$req->resourceId.'">Edit</div>';
-				echo '<div class="lower-btn terms grow" data-rid="'.$req->resourceId.'">Add/remove terms</div>';
 			}
 			echo '<div class="lower-btn print grow" data-rid="'.$req->resourceId.'">Print</div>';
 			echo '<div class="lower-btn share grow" data-rid="'.$req->resourceId.'">Share</div>';
-			echo '<div class="lower-btn collaborators grow" data-rid="'.$req->resourceId.'">Add collaborators</div>';
 			echo '</div>';
 
 			foreach($req->dataUsages as $du) {
@@ -370,7 +368,7 @@
 					echo '<div class="status-cell obsolete">Obsolete</div>';
 				}
 				echo '</div>';
-				echo '	<a class="details-btn grow" data-rid="'.$du->id.'"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a></div></div>';
+				echo '	<a class="details-btn grow" data-rid="'.$du->id.'"><span class="detailsLess">Hide</span><span class="detailsMore">Show</span>&nbsp;Details</a></div></div>';
 
 				echo '<div class="detailsBody" id="'.$du->id.'">';
 				echo '<p class="riDate"><strong>Requested Data:</strong>';
