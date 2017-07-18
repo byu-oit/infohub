@@ -3,6 +3,20 @@
 	$this->Html->css('search', null, array('inline' => false));
 	$hasSelectable = false;
 ?>
+<script>
+	$(document).ready(function() {
+
+		$('input.fieldset').change(function() {
+			var thisElem = $(this);
+			thisElem.closest('tbody').find('input.chk').each(function() {
+				if ($(this).attr('fieldset').indexOf(thisElem.attr('data-title')) != -1) {
+					$(this).prop('checked', thisElem.prop('checked'));
+				}
+			});
+		});
+
+	});
+</script>
 <style type="text/css">
 	table.api-terms tr:hover {
 		background-color: #eee
@@ -44,14 +58,38 @@
 					<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" api="<?= $hasSelectable ? 'false' : 'true' ?>" onclick="addToQueue(this, false, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
 					<table class="api-terms checkBoxes">
 						<tr class="header">
+							<th><input type="checkbox" onclick="toggleAllCheckboxes(this)" checked="checked" name="toggleCheckboxes"/></th>
 							<th class="fieldColumn">Field</th>
 							<th class="termColumn">Business Term</th>
 							<th>Classification</th>
-							<th><input type="checkbox" onclick="toggleAllCheckboxes(this)" checked="checked" name="toggleCheckboxes"/></th>
 						</tr>
 						<?php foreach ($terms as $term): ?>
 
 							<tr>
+								<td>
+									<?php if (!empty($term->businessTerm[0])): ?>
+										<input
+										type="checkbox"
+										name="terms[]"
+										data-title="<?= h($term->businessTerm[0]->term) ?>"
+										data-vocabID="<?= h($term->businessTerm[0]->termCommunityId) ?>"
+										value="<?= h($term->businessTerm[0]->termId) ?>"
+										class="chk"
+										id="chk<?= h($term->businessTerm[0]->termId) ?>"
+										checked="checked"
+										fieldset="<?= $term->name ?>">
+									<?php else: ?>
+										<input
+										type="checkbox"
+										name="terms[]"
+										data-title="<?= $term->name ?>"
+										data-vocabID=""
+										value=""
+										class="chk<?php if ($term->assetType == 'Fieldset') echo ' fieldset'; ?>"
+										checked="checked"
+										fieldset="<?= $term->name ?>">
+									<?php endif ?>
+								</td>
 								<td><?php
 									$termPath = explode('.', $term->name);
 									foreach ($termPath as $pathStep) {
@@ -103,27 +141,6 @@
 										}
 										echo '<img class="classIcon" src="/img/icon'.$classification.'.png">&nbsp;'.$classificationTitle;
 									endif ?>
-								</td>
-								<td>
-									<?php if (!empty($term->businessTerm[0])): ?>
-										<input
-											type="checkbox"
-											name="terms[]"
-											data-title="<?= h($term->businessTerm[0]->term) ?>"
-											data-vocabID="<?= h($term->businessTerm[0]->termCommunityId) ?>"
-											value="<?= h($term->businessTerm[0]->termId) ?>"
-											class="chk<?= h($term->businessTerm[0]->termId) ?>"
-											checked="checked">
-									<?php else: ?>
-										<input
-											type="checkbox"
-											name="terms[]"
-											data-title="<?= $term->name ?>"
-											data-vocabID=""
-											value=""
-											class="chk"
-											checked="checked">
-									<?php endif ?>
 								</td>
 							</tr>
 						<?php endforeach ?>
