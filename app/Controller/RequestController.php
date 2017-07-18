@@ -275,7 +275,7 @@ class RequestController extends AppController {
 		if (!$this->request->is('post')) {
 			return;
 		}
-		if (!isset($this->request->data['dsrId']) || !isset($this->request->data['arrIds'])) {
+		if (!isset($this->request->data['dsrId'])) {
 			return '{"success":0}';
 		}
 
@@ -285,19 +285,77 @@ class RequestController extends AppController {
 
 			$postData['source'] = $this->request->data['dsrId'];
 			$postData['binaryFactType'] = Configure::read('Collibra.relationship.isaRequestToTerm');
-			foreach ($this->request->data['arrIds'] as $termid) {
-				$postData['target'] = $termid;
-				$postString = http_build_query($postData);
-				$resp = $this->CollibraAPI->post('relation', $postString);
+			if (isset($this->request->data['arrBusinessTerms'])) {
+				foreach ($this->request->data['arrBusinessTerms'] as $termid) {
+					$postData['target'] = $termid;
+					$postString = http_build_query($postData);
+					$resp = $this->CollibraAPI->post('relation', $postString);
 
-				if ($resp->code != '201') {
-					$success = false;
-					continue;
+					if ($resp->code != '201') {
+						$success = false;
+						continue;
+					}
+
+					foreach ($arrQueue->businessTerms as $queueId => $queueTerm) {
+						if ($queueId == $termid) {
+							unset($arrQueue->businessTerms[$queueId]);
+							break;
+						}
+					}
+				}
+			}
+
+			if (isset($this->request->data['arrConcepts']) || isset($this->request->data['arrApiFields']) || isset($this->request->data['arrApis'])) {
+				$additionString = "<br/><br/>Addition, ".date('Y-m-d').":";
+				if (isset($this->request->data['arrConcepts'])) {
+					foreach ($this->request->data['arrConcepts'] as $concept) {
+						$additionString .= "<br/>".$concept['term']." (Concept), from API: ".$concept['apiPath'];
+						foreach ($arrQueue->concepts as $queueId => $_) {
+							if ($queueId == $concept['id']) {
+								unset($arrQueue->concepts[$queueId]);
+								break;
+							}
+						}
+					}
+				}
+				if (isset($this->request->data['arrApiFields'])) {
+					foreach ($this->request->data['arrApiFields'] as $field) {
+						$additionString .= "<br/>".$field['field'].", from API: ".$field['apiPath'];
+						foreach ($arrQueue->apiFields as $path => $_) {
+							if ($path == $field['field']) {
+								unset($arrQueue->apiFields[$path]);
+								break;
+							}
+						}
+					}
+				}
+				if (isset($this->request->data['arrApis'])) {
+					foreach ($this->request->data['arrApis'] as $api) {
+						$additionString .= "<br/>".$api." [No specified output fields]";
+						foreach ($arrQueue->emptyApis as $path => $_) {
+							if ($path == $api) {
+								unset($arrQueue->emptyApis[$path]);
+								break;
+							}
+						}
+					}
 				}
 
-				foreach ($arrQueue->businessTerms as $queueId => $queueTerm) {
-					if ($queueId == $termid) {
-						unset($arrQueue->businessTerms[$queueId]);
+				$resp = $this->CollibraAPI->get('term/'.$this->request->data['dsrId']);
+				$request = json_decode($resp);
+
+				foreach ($request->attributeReferences->attributeReference as $attr) {
+					if ($attr->labelReference->signifier == 'Additional Information Requested') {
+						$postData['value'] = $attr->value . $additionString;
+						$postData['rid'] = $attr->resourceId;
+						$postString = http_build_query($postData);
+						$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
+						$formResp = $this->CollibraAPI->post('attribute/'.$attr->resourceId, $postString);
+						$formResp = json_decode($formResp);
+
+						if (!isset($formResp)) {
+							$success = false;
+						}
 						break;
 					}
 				}
@@ -364,7 +422,6 @@ class RequestController extends AppController {
 				'{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldName":"relationrid"}},{"Column":{"fieldName":"startDate"}},{"Column":{"fieldName":"endDate"}},{"Column":{"fieldName":"relstatusrid"}},{"Column":{"fieldName":"relstatusname"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldName":"concepttyperid"}}],"Resources":{"Term":{"Id":{"name":"termrid"},"Signifier":{"name":"termsignifier"},"Relation":{"typeId":"' . Configure::read('Collibra.relationship.isaRequestToTerm') . '","Id":{"name":"relationrid"},"StartingDate":{"name":"startDate"},"EndingDate":{"name":"endDate"},"Status":{"Id":{"name":"relstatusrid"},"Signifier":{"name":"relstatusname"}},"Filter":{"AND":[{"Field":{"name":"reltermrid", "operator":"EQUALS", "value":"'.$requestId.'"}}]},"type":"TARGET","Source":{"Id":{"name":"reltermrid"}}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"}, "Id":{"name":"concepttyperid"}}],"Filter":{"AND":[{"AND":[{"Field":{"name":"reltermrid", "operator":"EQUALS", "value":"'.$requestId.'"}}]}]},"Order":[{"Field":{"name":"termsignifier", "order":"ASC"}}]}},"displayStart":0,"displayLength":100}}'
 		);
 		$requestedTerms = json_decode($resp);
-		// pr($requestedTerms);exit();
 
 		if(isset($requestedTerms->aaData)){
 			$request->terms = $requestedTerms->aaData;
