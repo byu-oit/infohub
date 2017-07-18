@@ -31,8 +31,14 @@ class ApisController extends AppController {
 	public function view() {
 		$args = func_get_args();
 		$hostname = array_shift($args);
-		$basePath = strtolower('/' . implode('/', $args));
+		$basePath = '/' . implode('/', $args);
+		if (!isset($this->request->query['upper'])) {
+			$basePath = strtolower($basePath);
+		}
 		$terms = $this->CollibraAPI->getApiTerms($hostname, $basePath);
+		if (empty($terms) && !isset($this->request->query['upper'])) {
+			return $this->redirect($hostname.'/'.implode('/', $args).'?upper=1');
+		}
 		if (empty($terms)) {
 			//Check if non-existent API, or simply empty API
 			$community = $this->CollibraAPI->findTypeByName('community', $hostname, ['full' => true]);
