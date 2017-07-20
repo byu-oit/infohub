@@ -23,22 +23,30 @@
 						<tr class="header">
 							<th>Field</th>
 							<th>Business Term</th>
-							<th>Context</th>
+							<th>Glossary</th>
 						</tr>
 						<?php foreach ($terms as $index => $term): ?>
 							<tr>
 								<td><?= $term->name ?></td>
 								<td>
 									<?php if (empty($term->businessTerm[0])): ?>
-										<?= $this->Form->input("Api.elements.{$index}.id", ['type' => 'hidden']) ?>
-										<?= $this->Form->input("Api.elements.{$index}.name", ['type' => 'hidden', 'class' => 'data-label', 'data-index' => $index]) ?>
-										<?= $this->Form->input("Api.elements.{$index}.business_term", ['type' => 'hidden', 'id' => "origTerm{$index}"]) ?>
-										<?= $this->Form->input("Api.elements.{$index}.business_term", ['label' => false, 'class' => 'bt-select', 'data-index' => $index, 'type' => 'select']) ?>
+										<input type="hidden" name="data[Api][elements][<?=$index?>][id]" value="<?=$term->id?>" id="ApiElements<?=$index?>Id">
+										<input type="hidden" name="data[Api][elements][<?=$index?>][name]" class="data-label" data-index="<?=$index?>" value="<?=$term->name?>" id="ApiElements<?=$index?>Name">
+										<div class="input select">
+											<select name="data[Api][elements][<?=$index?>][business_term]" class="bt-select" data-index="<?=$index?>" id="ApiElements<?=$index?>BusinessTerm"></select>
+										</div>
 									<?php else: ?>
-										<?= $this->Html->link($term->businessTerm[0]->term, ['controller' => 'search', 'action' => 'term', $term->businessTerm[0]->termId]) ?>
+										<input type="hidden" name="data[Api][elements][<?=$index?>][id]" value="<?=$term->id?>" id="ApiElements<?=$index?>Id">
+										<input type="hidden" name="data[Api][elements][<?=$index?>][name]" class="data-label" data-index="<?=$index?>" value="<?=$term->name?>" id="ApiElements<?=$index?>Name" data-pre-linked="true" data-orig-context="<?=$term->businessTerm[0]->termCommunityName?>" data-orig-id="<?=$term->businessTerm[0]->termId?>" data-orig-name="<?=$term->businessTerm[0]->term?>">
+										<div class="input select">
+											<select name="data[Api][elements][<?=$index?>][business_term]" class="bt-select" data-index="<?=$index?>" id="ApiElements<?=$index?>BusinessTerm" data-orig-term="<?=$term->businessTerm[0]->termId?>">
+												<option value="<?=$term->businessTerm[0]->termId?>" title="<?=$term->businessTerm[0]->termCommunityName?>"><?=$term->businessTerm[0]->term?></option>
+											</select>
 									<?php endif ?>
 								</td>
-								<td class="view-context<?= $index ?>" style="white-space: nowrap"></td>
+								<td class="view-context<?= $index ?>" style="white-space: nowrap">
+									<?php if (!empty($term->businessTerm[0])) echo $term->businessTerm[0]->termCommunityName; ?>
+								</td>
 							</tr>
 						<?php endforeach ?>
 					</table>

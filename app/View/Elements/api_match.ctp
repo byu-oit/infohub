@@ -25,7 +25,7 @@
 		$('#searchAutocomplete')
 			.autocomplete({
 				source: function( request, response ) {
-					$.getJSON("<?= $this->Html->url(['controller' => 'search', 'action' => 'autoCompleteTerm', true]) ?>", {
+					$.getJSON("/search/autoCompleteTerm/1", {
 						q: request.term
 					}, response );
 				},
@@ -65,7 +65,7 @@
 						return false;
 					}
 					addToCache(label, selected.item);
-					$('#origTerm' + index).val(selected.item.name.id);
+					$('#ApiElements' + index + 'BusinessTerm').data('origTerm', selected.item.name.id);
 					$('.data-label')
 						.filter(function () {
 							return $(this).data('label') == label;
@@ -91,6 +91,19 @@
 			var period = full.lastIndexOf('.');
 			var label = full.substring(period + 1);
 			$this.data('label', label);
+
+			if ($this.data('preLinked')) {
+				$this.data('preLinked', false);
+				labelCache[label] = [];
+				labelCache[label][0] = {
+					id: $this.data('origId'),
+					name: $this.data('origName'),
+					context: $this.data('origContext')
+				};
+				idCache[$this.data('origId')] = labelCache[label][0];
+				$('#ApiLabelCache').val(JSON.stringify(labelCache));
+				$('#ApiIdCache').val(JSON.stringify(idCache));
+			}
 			setOptions($this);
 		}).change();
 
@@ -107,7 +120,7 @@
 			}
 
 			if (labelCache[label] === undefined) {
-				$select.html('<option value="">Loading...<option>');
+				$select.html('<option value="">Loading...</option>');
 				loadLabel(label);
 				return;
 			}
@@ -118,13 +131,13 @@
 			if (alreadySelected) {
 				origTerm = alreadySelected;
 			} else {
-				origTerm = $('#origTerm' + index).val();
+				origTerm = $('#ApiElements' + index + 'BusinessTerm').data('origTerm');
 			}
 
 			var matched = false;
 			for (var i in labelCache[label]) {
 				var option = labelCache[label][i]
-				var attributes = {value: option.id, text: option.name, title: option.title};
+				var attributes = {value: option.id, text: option.name};
 				if (option.id == origTerm) {
 					matched = true;
 					attributes.selected = 'selected';
@@ -145,7 +158,7 @@
 				return;
 			}
 			loadingStatus[label] = true;
-			$.post('<?= $this->Html->url(['controller' => 'swagger', 'action' => 'find_business_term']) ?>', {label: label}, function(data) {
+			$.post('/swagger/find_business_term', {label: label}, function(data) {
 				delete loadingStatus[label];
 				if (!data instanceof Array) {
 					return;
@@ -164,24 +177,15 @@
 		}
 
 		function addToCache(label, data) {
-			var title = '';
 			var context = '';
-			var definition = '';
 			if (data.context !== undefined && data.context.val) {
 				context = data.context.val
-				title = context + ' - ';
-			}
-			if (data.definition !== undefined) {
-				definition = data.definition.val
-				title += definition;
 			}
 			var i = labelCache[label].length;
 			labelCache[label][i] = {
 				id: data.name.id,
 				name: data.name.val,
-				title: title,
-				context: context,
-				definition: definition
+				context: context
 			};
 			idCache[data.name.id] = labelCache[label][i];
 			$('#ApiLabelCache').val(JSON.stringify(labelCache));
