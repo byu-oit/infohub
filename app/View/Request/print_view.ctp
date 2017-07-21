@@ -47,53 +47,32 @@
 	            <p class="riDate data-col"><span>Date Created:&nbsp;</span><?= date('n/j/Y', ($request->createdOn)/1000) ?></p>
 	            <p class="status data-col"><span>Approval Status:&nbsp;</span><?= $request->statusReference->signifier ?></p>
 	        </div>
-			<h4 class="coordinators"><?php echo $parent ? 'Request' : 'Agreement'; ?> Coordinator(s)</h4>
+	<div class="clear"></div>
+
+	<h3>Application Name</h3>
+	<div class="form-field"><?= $request->attributeReferences->attributeReference['Application Name']->value ?></div>
+
 <?php
-	// display approvers and their info
-	////////////////////////////////////////
-	if ($parent) {
-		foreach($request->roles['Request Cordinator'] as $rc){
-			$approverName = $rc->firstName.' '.$rc->lastName;
-			if($approverName != ''){
-				$approverEmail = $rc->emailAddress;
-				echo '<div class="approver">'.
-						'<div class="contactName">'.$approverName.'</div>'.
-						'<div class="contactEmail">'.$approverEmail.'</div>'.
-					 '</div>';
-			}
-		}
-	} else {
-		$oneApprover = (
-			$request->roles['Steward'][0]->firstName . " " . $request->roles['Steward'][0]->lastName
-			== $request->roles['Custodian'][0]->firstName . " " . $request->roles['Custodian'][0]->lastName
-		);
-		$approverName = $request->roles['Steward'][0]->firstName . " " . $request->roles['Steward'][0]->lastName;
-		if($approverName != ''){
-			$approverEmail = $request->roles['Steward'][0]->emailAddress;
-			echo '<div class="approver steward">'.
-				'		<div class="contactName">'.$approverName.'</div>'.
-				'		<div class="approverRole">';
-				if ($oneApprover) {
-					echo 'Custodian and ';
+	$arrOrderedFormFields = [
+		"Description of Intended Use",
+		"Access Rights",
+		"Access Method",
+		"Impact on System",
+		"Additional Information Requested"
+	];
+	if (empty($request->dataUsages)) {
+		foreach ($arrOrderedFormFields as $field) {
+			foreach ($request->attributeReferences->attributeReference as $attrRef) {
+				if ($attrRef->labelReference->signifier == $field) {
+					echo '<h3>'.$attrRef->labelReference->signifier.'</h3>'.
+						'<div class="form-field">'.$attrRef->value.'</div>';
+					break;
 				}
-				echo 'Steward</div>'.
-				'		<div class="contactEmail">'.$approverEmail.'</div>'.
-				'</div>';
-		}
-		if(!$oneApprover){
-			$approverName = $request->roles['Custodian'][0]->firstName . " " . $request->roles['Custodian'][0]->lastName;
-			if($approverName != ''){
-				$approverEmail = $request->roles['Custodian'][0]->emailAddress;
-				echo '<div class="approver custodian">'.
-					'	<div class="contactName">'.$approverName.'</div>'.
-					'	<div class="approverRole">Custodian</div>'.
-					'	<div class="contactEmail">'.$approverEmail.'</div>'.
-					'</div>';
 			}
 		}
 	}
 ?>
-	<div class="clear"></div>
+
 	<div class="two-col-row">
 		<div class="data-col">
 			<h3>Requester</h3>
@@ -123,29 +102,10 @@
 	</div>
 	<div class="clear"></div>
 
-	<h3>Application Name</h3>
-	<div class="form-field"><?= $request->attributeReferences->attributeReference['Application Name']->value ?></div>
-
 <?php
-	$arrOrderedFormFields = [
-		"Description of Intended Use",
-		"Access Rights",
-		"Access Method",
-		"Impact on System",
-		"Additional Information Requested"
-	];
 	if (empty($request->dataUsages)) {
-		foreach ($arrOrderedFormFields as $field) {
-			foreach ($request->attributeReferences->attributeReference as $attrRef) {
-				if ($attrRef->labelReference->signifier == $field) {
-					echo '<h3>'.$attrRef->labelReference->signifier.'</h3>'.
-						'<div class="form-field">'.$attrRef->value.'</div>';
-					break;
-				}
-			}
-		}
 		if (!empty($request->policies)) {
-			echo '<h3>Data Usage Policies</h3>';
+			echo '<h3 style="page-break-before:always;">Data Usage Policies</h3>';
 			foreach ($request->policies as $policy) {
 				echo '<h5>'.$policy->policyName.'</h5>';
 				echo '<div class="form-field">'.$policy->policyDescription.'</div>';
@@ -176,34 +136,6 @@
 			break;
 		}
 		echo '</p>';
-		$oneApprover = (
-			$du->roles['Steward'][0]->firstName . " " . $du->roles['Steward'][0]->lastName
-			== $du->roles['Custodian'][0]->firstName . " " . $du->roles['Custodian'][0]->lastName
-		);
-		$approverName = $du->roles['Steward'][0]->firstName . " " . $du->roles['Steward'][0]->lastName;
-		if($approverName != ''){
-			$approverEmail = $du->roles['Steward'][0]->emailAddress;
-			echo '<div class="approver steward">'.
-				'		<div class="contactName">'.$approverName.'</div>'.
-				'		<div class="approverRole">';
-				if ($oneApprover) {
-					echo 'Custodian and ';
-				}
-				echo 'Steward</div>'.
-				'		<div class="contactEmail">'.$approverEmail.'</div>'.
-				'</div>';
-		}
-		if(!$oneApprover){
-			$approverName = $du->roles['Custodian'][0]->firstName . " " . $du->roles['Custodian'][0]->lastName;
-			if($approverName != ''){
-				$approverEmail = $du->roles['Custodian'][0]->emailAddress;
-				echo '<div class="approver custodian">'.
-					'	<div class="contactName">'.$approverName.'</div>'.
-					'	<div class="approverRole">Custodian</div>'.
-					'	<div class="contactEmail">'.$approverEmail.'</div>'.
-					'</div>';
-			}
-		}
 ?>
         <div class="status"><span>Approval Status:&nbsp;</span><?= $du->status ?></div>
 		<br>
