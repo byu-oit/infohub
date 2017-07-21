@@ -753,6 +753,8 @@ class RequestController extends AppController {
 			$dsr->parent = $this->CollibraAPI->getDataUsageParent($dsr->resourceId);
 		}
 
+		if (!$parent) $dsr->policies = $this->CollibraAPI->getDataUsagePolicies($dsrId);
+
 		// load terms submitted in request
 		////////////////////////////////////////////
 		$termRequestId = $parent ? $dsr->resourceId : $dsr->parent[0]->id;
@@ -823,6 +825,8 @@ class RequestController extends AppController {
 		} else {
 			$dsr->parent = $this->CollibraAPI->getDataUsageParent($dsr->resourceId);
 		}
+
+		if (!$parent) $dsr->policies = $this->CollibraAPI->getDataUsagePolicies($dsrId);
 
 		// load terms submitted in request
 		////////////////////////////////////////////

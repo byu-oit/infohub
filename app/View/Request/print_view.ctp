@@ -144,6 +144,13 @@
 				}
 			}
 		}
+		if (!empty($request->policies)) {
+			echo '<h3>Data Usage Policies</h3>';
+			foreach ($request->policies as $policy) {
+				echo '<h5>'.$policy->policyName.'</h5>';
+				echo '<div class="form-field">'.$policy->policyDescription.'</div>';
+			}
+		}
 	} else {
 		echo '<br><h2>Associated Data Sharing Agreements</h2>';
 	}
@@ -202,12 +209,19 @@
 		<br>
 <?php
 		foreach ($arrOrderedFormFields as $field) {
-			foreach ($request->attributeReferences->attributeReference as $attrRef) {
+			foreach ($du->attributeReferences->attributeReference as $attrRef) {
 				if ($attrRef->labelReference->signifier == $field) {
 					echo '<h3>'.$attrRef->labelReference->signifier.'</h3>'.
 						'<div class="form-field">'.$attrRef->value.'</div>';
 					break;
 				}
+			}
+		}
+		if (!empty($du->policies)) {
+			echo '<h3>Data Usage Policies</h3>';
+			foreach ($du->policies as $policy) {
+				echo '<h5>'.$policy->policyName.'</h5>';
+				echo '<div class="form-field">'.$policy->policyDescription.'</div>';
 			}
 		}
 		echo '</div>';

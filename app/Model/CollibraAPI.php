@@ -790,7 +790,13 @@ class CollibraAPI extends Model {
 				['Column' => ['fieldName' => 'id']],
 				['Column' => ['fieldName' => 'vocabularyId']],
 				['Column' => ['fieldName' => 'signifier']],
-				['Column' => ['fieldName' => 'status']]],
+				['Column' => ['fieldName' => 'status']],
+				['Group' => [
+					'name' => 'policies',
+					'Columns' => [
+						['Column' => ['fieldName' => 'policyId']],
+						['Column' => ['fieldName' => 'policyName']],
+						['Column' => ['fieldName' => 'policyDescription']]]]]],
 			'Resources' => [
 				'Term' => [
 					'Id' => ['name' => 'id'],
@@ -809,7 +815,15 @@ class CollibraAPI extends Model {
 								'Field' => [
 										'name' => 'dsaId',
 										'operator' => 'EQUALS',
-										'value' => $dsaId]]]]]],
+										'value' => $dsaId]]]]],
+					[
+						'typeId' => Configure::read('Collibra.relationship.DSAtoPolicy'),
+						'type' => 'SOURCE',
+						'Target' => [
+							'Id' => ['name' => 'policyId'],
+							'Signifier' => ['name' => 'policyName'],
+							'StringAttribute' => [[
+								'Value' => ['name' => 'policyDescription']]]]]],
 					'Filter' => [
 						'AND' => [[
 							'Field' => [
@@ -876,6 +890,47 @@ class CollibraAPI extends Model {
 			$usage->roles = $this->getResponsibilities($usage->vocabularyId);
 		}
 		return $usages;
+	}
+
+	public function getDataUsagePolicies($dsaId) {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Group' => [
+					'name' => 'arrPolicies',
+					'Columns' => [
+						['Column' => ['fieldName' => 'policyId']],
+						['Column' => ['fieldName' => 'policyName']],
+						['Column' => ['fieldName' => 'policyDescription']]]]]],
+			'Resources' => [
+				'Term' => [
+					'Relation' => [[
+						'typeId' => Configure::read('Collibra.relationship.DSAtoPolicy'),
+						'type' => 'SOURCE',
+						'Source' => [
+							'Id' => ['name' => 'dsaId']],
+						'Target' => [
+							'Id' => ['name' => 'policyId'],
+							'Signifier' => ['name' => 'policyName'],
+							'StringAttribute' => [[
+								'Value' => ['name' => 'policyDescription']]],
+							'Filter' => [
+								'AND' => [[
+									'Field' => [
+											'name' => 'dsaId',
+											'operator' => 'NOT_NULL']]]]]]],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+									'name' => 'dsaId',
+									'operator' => 'EQUALS',
+									'value' => $dsaId]]]]]],
+			'displayStart' => 0,
+			'displayLength' => -1]];
+		$policies = $this->fullDataTable($tableConfig);
+		if (!empty($policies)) {
+			return $policies[0]->arrPolicies;
+		}
+		return $policies;
 	}
 
 	protected function _updateSessionCookies() {

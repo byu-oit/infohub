@@ -514,11 +514,14 @@
 }
 #accountMid #accountMain .requestItem .detailsBody h3.headerTab,
 #accountMid #accountMain .requestItem .riBelow .detailsBody h3.headerTab {
+  background-color: white;
+  border: rgba(14, 50, 100, 0.85) solid 2px;
+  color: rgba(14, 50, 100, 0.85);
   float: left;
   font-size: 18px;
   margin: 15px 0 10px 0;
   padding: 4px 18px;
-  font-weight: normal;
+  font-weight: bold;
   -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
@@ -558,7 +561,8 @@
 }
 #accountMid #accountMain .requestItem .riLeft .parent-btn,
 #accountMid #accountMain .requestItem .riLeft .status-details-flex .details-btn,
-#accountMid #accountMain .requestItem .riBelow .status-details-flex .details-btn {
+#accountMid #accountMain .requestItem .riBelow .status-details-flex .details-btn,
+#accountMid #accountMain .requestItem .detailsBody .policies-btn {
   padding: 2px 10px;
   font-size: 12px;
   font-weight: 600;
@@ -571,17 +575,26 @@
   text-decoration: none;
 }
 #accountMid #accountMain .requestItem .riLeft .status-details-flex .details-btn .detailsLess,
-#accountMid #accountMain .requestItem .riBelow .status-details-flex .details-btn .detailsLess {
+#accountMid #accountMain .requestItem .riBelow .status-details-flex .details-btn .detailsLess,
+#accountMid #accountMain .requestItem .detailsBody .policies-btn .policiesHide {
   display: none;
   float: left;
 }
 #accountMid #accountMain .requestItem .riLeft .status-details-flex .details-btn.active .detailsLess,
-#accountMid #accountMain .requestItem .riBelow .status-details-flex .details-btn.active .detailsLess {
+#accountMid #accountMain .requestItem .riBelow .status-details-flex .details-btn.active .detailsLess,
+#accountMid #accountMain .requestItem .detailsBody .policies-btn.active .policiesHide {
   display: block;
 }
 #accountMid #accountMain .requestItem .riLeft .status-details-flex .details-btn.active .detailsMore,
-#accountMid #accountMain .requestItem .riBelow .status-details-flex .details-btn.active .detailsMore {
+#accountMid #accountMain .requestItem .riBelow .status-details-flex .details-btn.active .detailsMore,
+#accountMid #accountMain .requestItem .detailsBody .policies-btn.active .policiesShow {
   display: none;
+}
+#accountMid #accountMain .requestItem .detailsBody .policy-header-wrapper {
+  width: 325px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
 }
 @media screen and (max-width: 720px) {
   #accountMid #accountTop {

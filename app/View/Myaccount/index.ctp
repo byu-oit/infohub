@@ -35,6 +35,11 @@
 			$('#'+rid).slideToggle();
 			$(this).toggleClass('active');
 		});
+		$('.policies-btn').click(function() {
+			var rid = $(this).attr('data-rid');
+			$('#'+rid+'policies').slideToggle();
+			$(this).toggleClass('active');
+		});
 		$('.share').click(function() {
 			window.location.href = '/request/view/' + $(this).attr('data-rid');
 		});
@@ -393,6 +398,16 @@
 						echo '<h3 class="headerTab">'.$attr->labelReference->signifier.'</h3><div class="clear"></div>'.
 							'<div class="attrValue">'.$attr->value.'</div>';
 					}
+				}
+
+				if (!empty($du->policies)) {
+					echo '<div class="policy-header-wrapper"><h3 class="headerTab">Data Usage Policies</h3><a class="policies-btn grow" data-rid="'.$du->id.'"><span class="policiesHide">Hide</span><span class="policiesShow">Show</span>&nbsp;Policies</a></div>';
+					echo '<div class="clear"></div><div class="policies" id="'.$du->id.'policies" style="display:none;">';
+					foreach ($du->policies as $policy) {
+						echo '<h5>'.$policy->policyName.'</h5>';
+						echo '<div class=attrValue>'.$policy->policyDescription.'</div><div class="clear"></div>';
+					}
+					echo '</div>';
 				}
 
 				if (!in_array($du->status, $completedStatuses)) {
