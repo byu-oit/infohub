@@ -57,6 +57,17 @@ class SwaggerController extends AppController {
 				$this->Session->setFlash('Error: ' . implode('<br>', $this->Swagger->parseErrors), 'default', ['class' => 'error']);
 				return $this->redirect(['action' => 'index']);
 			}
+			$terms = $this->CollibraAPI->getApiTerms($this->request->data['Api']['host'], $this->request->data['Api']['basePath'].'/'.$this->request->data['Api']['version']);
+			if (!empty($terms)) {
+				for ($i = 0; $i < count($this->request->data['Api']['elements']); $i++) {
+					foreach ($terms as $existingTerm) {
+						if ($this->request->data['Api']['elements'][$i]['name'] == $existingTerm->name) {
+							$this->request->data['Api']['elements'][$i]['businessTerm'] = $existingTerm->businessTerm;
+							break;
+						}
+					}
+				}
+			}
 		}
 	}
 

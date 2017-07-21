@@ -734,7 +734,7 @@ class CollibraAPI extends Model {
 				'type' => [
 					'asset' => [Configure::read('Collibra.businessTermTypeId')]],
 				'community' => [Configure::read('Collibra.community.byu')]],
-			'fields' => [Configure::read('Collibra.standardFieldName')],
+			'fields' => [Configure::read('Collibra.attribute.standardFieldName')],
 			'order' => [
 				'by' => 'score',
 				'sort' => 'desc'],
