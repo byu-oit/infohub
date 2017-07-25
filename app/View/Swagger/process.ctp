@@ -33,7 +33,7 @@
 								<input name="data[Api][elements][<?=$index?>][name]" class="data-label" data-index="<?=$index?>" value="<?=$element['name']?>" type="text" id="ApiElements<?=$index?>Name" data-pre-linked="true" data-orig-context="<?=$element['businessTerm'][0]->termCommunityName?>" data-orig-id="<?=$element['businessTerm'][0]->termId?>" data-orig-name="<?=$element['businessTerm'][0]->term?>"/>
 							<?php endif ?>
 						</div>
-						<input type="hidden" name="data[Api][elements][<?=$index?>][type]" value="fieldset" id="ApiElements<?=$index?>Type"/>
+						<input type="hidden" name="data[Api][elements][<?=$index?>][type]" value="<?=$element['type']?>" id="ApiElements<?=$index?>Type"/>
 					</td>
 					<td>
 						<input type="hidden" name="data[Api][elements][<?=$index?>][business_term]" id="origTerm<?=$index?>"/>

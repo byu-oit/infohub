@@ -558,10 +558,21 @@ class CollibraAPI extends Model {
 			$this->errors[] = "Host \"{$swagger['host']}\" does not exist in Collibra";
 			return false;
 		}
-		$vocabularyId = $this->createVocabulary("{$swagger['basePath']}/{$swagger['version']}", $hostCommunity->resourceId);
-		if (empty($vocabularyId)) {
-			$this->errors[] = "Unable to create vocabulary \"{$swagger['basePath']}/{$swagger['version']}\" in community \"{$swagger['host']}\"";
-			return false;
+
+		$vocabulary = $this->get("vocabulary/name/full?name={$swagger['basePath']}/{$swagger['version']}", ['json' => true])->vocabulary;
+		$existentTerms = array();
+		if (!empty($vocabulary)) {
+			$vocabularyId = $vocabulary[0]->resourceId;
+			foreach ($vocabulary[0]->termReferences->termReference as $term) {
+				$existentTerms[$term->resourceId] = $term->signifier;
+			}
+		}
+		else {
+			$vocabularyId = $this->createVocabulary("{$swagger['basePath']}/{$swagger['version']}", $hostCommunity->resourceId);
+			if (empty($vocabularyId)) {
+				$this->errors[] = "Unable to create vocabulary \"{$swagger['basePath']}/{$swagger['version']}\" in community \"{$swagger['host']}\"";
+				return false;
+			}
 		}
 
 		$fields = [];
@@ -575,12 +586,15 @@ class CollibraAPI extends Model {
 			if (empty($name)) {
 				continue;
 			}
+			$elements[$name] = $element;
+			if (in_array($name, $existentTerms)) {
+				continue;
+			}
 			if (!empty($element['type']) && $element['type'] == 'fieldset') {
 				$fieldSets[$name] = $name;
 			} else {
 				$fields[$name] = $name;
 			}
-			$elements[$name] = $element;
 		}
 		//Add fields
 		if (!empty($fields)) {
@@ -601,6 +615,7 @@ class CollibraAPI extends Model {
 		}
 
 		//Link created terms to selected Business Terms
+		$relationshipTypeId = Configure::read('Collibra.relationship.termToField');
 		foreach (['fieldsResult', 'fieldSetsResult'] as $result) {
 			if (empty(${$result})) {
 				continue;
@@ -609,7 +624,6 @@ class CollibraAPI extends Model {
 			if (empty($terms->termReference)) {
 				continue;
 			}
-			$relationshipTypeId = Configure::read('Collibra.relationship.termToField');
 			foreach ($terms->termReference as $term) {
 				if (empty($term->signifier) || empty($term->resourceId) || empty($elements[$term->signifier]['business_term'])) {
 					continue;
@@ -620,6 +634,17 @@ class CollibraAPI extends Model {
 					'inverse' => 'true'
 				]);
 			}
+		}
+		//Link already existent terms to Business Terms, if selected
+		foreach ($existentTerms as $id => $signifier) {
+			if (empty($elements[$signifier]['business_term'])) {
+				continue;
+			}
+			$this->post("term/{$id}/relations", [
+				'type' => $relationshipTypeId,
+				'target' => $elements[$signifier]['business_term'],
+				'inverse' => 'true'
+			]);
 		}
 		return true;
 	}
