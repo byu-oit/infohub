@@ -658,6 +658,16 @@ class CollibraAPI extends Model {
 		return true;
 	}
 
+	public function createAllAPIObjects() {
+		$apiCommunity = $this->get("community/15ff6967-4e8a-426c-a78f-62e352fb2a63", ['json' => true]);
+		foreach ($apiCommunity->vocabularyReferences->vocabularyReference as $api) {
+			if (!empty($api->meta)) {
+				continue;
+			}
+			$this->addTermsToVocabulary($api->resourceId, Configure::read('Collibra.type.api'), [$api->name]);
+		}
+	}
+
 	public function addTermsToVocabulary($vocabularyId, $conceptType, $terms) {
 		if (empty($terms)) {
 			return true;
