@@ -596,6 +596,15 @@ class CollibraAPI extends Model {
 				$fields[$name] = $name;
 			}
 		}
+		//Create API object
+		if (!in_array("{$swagger['basePath']}/{$swagger['version']}", $existentTerms)) {
+			$apiResult = $this->addTermstoVocabulary($vocabularyId, Configure::read('Collibra.type.api'), ["{$swagger['basePath']}/{$swagger['version']}"]);
+			if (empty($apiResult) || !$apiResult->isOk()) {
+				$this->errors[] = "Error creating an object representing \"{$swagger['basePath']}/{$swagger['version']}\"";
+				$this->deleteVocabulary($vocabularyId);
+				return false;
+			}
+		}
 		//Add fields
 		if (!empty($fields)) {
 			$fieldsResult = $this->addTermsToVocabulary($vocabularyId, Configure::read('Collibra.type.field'), $fields);
