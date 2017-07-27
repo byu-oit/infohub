@@ -258,9 +258,9 @@ function clearRequestQueue(){
 			$('#request-queue .request-num').text('0').addClass('request-hidden');
 			$('#request-popup').find('.clearQueue').fadeOut('fast');
 			$('#request-popup').find('h3').html('Requested Items: 0');
-			$('.irLower').find('li').fadeOut('fast');
+			$('.irLower').find('ul.cart').find('li').fadeOut('fast');
 			$('.irLower').find('#request-undo').fadeOut('fast');
-			$('<div class="cart-cleared">Request items removed.</div>').insertBefore('.irLower ul');
+			$('<div class="cart-cleared">Request items removed.</div>').insertBefore('.irLower ul.cart');
 		});
 }
 function getCurrentRequestTerms(){

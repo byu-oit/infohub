@@ -97,7 +97,7 @@
 				<h3 class="headerTab">Information Requested</h3>
 				<div class="clear"></div>
 				<div class="resultItem">
-					<div class="irLower"><ul>
+					<div class="irLower"><ul class="cart">
 						<?php
 					if(!empty($termDetails->aaData) || !empty($arrQueue->concepts) || !empty($arrQueue->emptyApis) || !empty($arrQueue->apiFields)) {
 							foreach ($termDetails->aaData as $term){

@@ -93,7 +93,7 @@
 					<?php if (!empty($arrQueue->businessTerms)): ?>
 					<div class="checkAll"><input type="checkbox" onclick="toggleAllCheckboxes(this)" checked="checked">Check/Uncheck all</div>
 					<?php endif; ?>
-					<div class="irLower"><ul>
+					<div class="irLower"><ul class="cart">
 						<?php
 						if(!empty($arrQueue->businessTerms) || !empty($arrQueue->concepts) || !empty($arrQueue->emptyApis) || !empty($arrQueue->apiFields)) {
 							foreach ($arrQueue->businessTerms as $id => $term){
