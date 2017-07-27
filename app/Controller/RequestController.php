@@ -193,7 +193,7 @@ class RequestController extends AppController {
 		$request = json_decode($resp);
 
 		foreach($request->attributeReferences->attributeReference as $attr) {
-			if (($attr->labelReference->signifier == 'Requester Person Id' || $attr->labelReference->signifier == 'Requester Net Id') && $attr->value == $person->identifiers->net_id) {
+			if ($attr->labelReference->signifier == 'Requester Net Id' && $attr->value == $person->identifiers->net_id) {
 				return '{"success":0,"message":"This person is already a collaborator on this request."}';
 			}
 		}
@@ -251,7 +251,7 @@ class RequestController extends AppController {
 			$resp = $this->CollibraAPI->get('term/'.$du->id);
 			$dataUsage = json_decode($resp);
 			foreach ($dataUsage->attributeReferences->attributeReference as $attr) {
-				if (($attr->labelReference->signifier == 'Requester Person Id' || $attr->labelReference->signifier == 'Requester Net Id') && $attr->value == $netId) {
+				if ($attr->labelReference->signifier == 'Requester Net Id' && $attr->value == $netId) {
 					$this->CollibraAPI->delete('attribute/'.$attr->resourceId);
 					break;
 				}
@@ -260,7 +260,7 @@ class RequestController extends AppController {
 		}
 
 		foreach ($request->attributeReferences->attributeReference as $attr) {
-			if (($attr->labelReference->signifier == 'Requester Person Id' || $attr->labelReference->signifier == 'Requester Net Id') && $attr->value == $netId) {
+			if ($attr->labelReference->signifier == 'Requester Net Id' && $attr->value == $netId) {
 				$this->CollibraAPI->delete('attribute/'.$attr->resourceId);
 				$this->Flash->success("You are no longer a collaborator on \"{$request->signifier}\"");
 				break;
@@ -389,7 +389,7 @@ class RequestController extends AppController {
 
 		$guest = true;
 		foreach($request->attributeReferences->attributeReference as $attr) {
-			if ($attr->labelReference->signifier == 'Requester Person Id' || $attr->labelReference->signifier == 'Requester Net Id') {
+			if ($attr->labelReference->signifier == 'Requester Net Id') {
 				if ($attr->value == $netID) {
 					$guest = false;
 					break;
@@ -508,7 +508,7 @@ class RequestController extends AppController {
 
 		$guest = true;
 		foreach($request->attributeReferences->attributeReference as $attr) {
-			if ($attr->labelReference->signifier == 'Requester Person Id' || $attr->labelReference->signifier == 'Requester Net Id') {
+			if ($attr->labelReference->signifier == 'Requester Net Id') {
 				if ($attr->value == $netID) {
 					$guest = false;
 					break;
@@ -782,7 +782,7 @@ class RequestController extends AppController {
 		$arrNewAttr = [];
 		$arrCollaborators = array();
 			foreach($dsr->attributeReferences->attributeReference as $attr){
-				if ($attr->labelReference->signifier == 'Requester Person Id' || $attr->labelReference->signifier == 'Requester Net Id') {
+				if ($attr->labelReference->signifier == 'Requester Net Id') {
 					$person = $this->BYUAPI->personalSummary($attr->value);
 					unset($person->person_summary_line, $person->identifiers, $person->personal_information, $person->student_information, $person->relationships);
 					array_push($arrCollaborators, $person);

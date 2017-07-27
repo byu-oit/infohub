@@ -93,7 +93,7 @@ class MyaccountController extends AppController {
 		// to a netID. Then we query with the netID.
 		foreach ($isaRequests->results as $req) {
 			foreach($req->attributes as $attr) {
-				if ($attr->type == 'Requester Person Id' || $attr->type == 'Requester Net Id') {
+				if ($attr->type == 'Requester Net Id') {
 					$person = $this->BYUAPI->personalSummary($attr->val);
 					$postData['value'] = $person->identifiers->net_id;
 					$postData['rid'] = $attr->id;
@@ -172,7 +172,7 @@ class MyaccountController extends AppController {
 			$arrNewAttr = array();
 			$arrCollaborators = array();
 			foreach($r->attributeReferences->attributeReference as $attr){
-				if ($attr->labelReference->signifier == 'Requester Person Id' || $attr->labelReference->signifier == 'Requester Net Id') {
+				if ($attr->labelReference->signifier == 'Requester Net Id') {
 					$person = $this->BYUAPI->personalSummary($attr->value);
 					unset($person->person_summary_line, $person->identifiers, $person->personal_information, $person->student_information, $person->relationships);
 					array_push($arrCollaborators, $person);

@@ -312,7 +312,6 @@
 			"Sponsor Role",
 			"Sponsor Email",
 			"Sponsor Phone",
-			"Requester Person Id",
 			"Requester Net Id",
 			"Request Date",
 			"Application Name"
