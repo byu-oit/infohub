@@ -1,6 +1,7 @@
 <?php
 	$this->Html->css('secondary', null, array('inline' => false));
 	$this->Html->css('search', null, array('inline' => false));
+	$this->Html->css('account', null, array('inline' => false));
 ?>
 <style type="text/css">
 	table.api-terms tr:hover {
@@ -8,6 +9,10 @@
 	}
 	table.api-terms tr.header:hover {
 		background-color: inherit;
+	}
+	.resultItem #apiForm .lower-btn {
+	  top: 25px !important;
+	  text-decoration: none;
 	}
 </style>
 <div id="searchBody" class="innerLower">
@@ -38,6 +43,8 @@
 									<?php else: ?>
 										<input type="hidden" name="data[Api][elements][<?=$index?>][id]" value="<?=$term->id?>" id="ApiElements<?=$index?>Id">
 										<input type="hidden" name="data[Api][elements][<?=$index?>][name]" class="data-label" data-index="<?=$index?>" value="<?=$term->name?>" id="ApiElements<?=$index?>Name" data-pre-linked="true" data-orig-context="<?=$term->businessTerm[0]->termCommunityName?>" data-orig-id="<?=$term->businessTerm[0]->termId?>" data-orig-name="<?=$term->businessTerm[0]->term?>">
+										<input type="hidden" name="data[Api][elements][<?=$index?>][previous_business_term]" value="<?=$term->businessTerm[0]->termId?>">
+										<input type="hidden" name="data[Api][elements][<?=$index?>][previous_business_term_relation]" value="<?=$term->businessTerm[0]->termRelationId?>">
 										<div class="input select">
 											<select name="data[Api][elements][<?=$index?>][business_term]" class="bt-select" data-index="<?=$index?>" id="ApiElements<?=$index?>BusinessTerm" data-orig-term="<?=$term->businessTerm[0]->termId?>">
 												<option value="<?=$term->businessTerm[0]->termId?>" title="<?=$term->businessTerm[0]->termCommunityName?>"><?=$term->businessTerm[0]->term?></option>
@@ -50,13 +57,10 @@
 							</tr>
 						<?php endforeach ?>
 					</table>
-					<div style="float: right">
-						<?= $this->Html->link(
-							'Cancel',
-							array_merge(['controller' => 'apis', 'action' => 'view', 'hostname' => $hostname], explode('/', $basePath)),
-							['class' => 'inputButton']) ?>
+					<a class="lower-btn grow" href="/apis/<?=$hostname.$basePath?>">Cancel</a>
+					<div class="submit">
+						<input type="submit" class="grow" value="Save">
 					</div>
-					<?= $this->Form->submit('Save') ?>
 				<?= $this->Form->end() ?>
 			</div>
 		</div>

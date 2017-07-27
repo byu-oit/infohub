@@ -603,7 +603,9 @@ img.resultBodyLoading {
 #searchBody #requestForm #srLower .resultItem .requestAccess,
 #apiBody #requestForm #srLower .resultItem .requestAccess,
 #searchBody #searchSuccess #srLower .resultItem .requestAccess,
-#apiBody #searchSuccess #srLower .resultItem .requestAccess {
+#apiBody #searchSuccess #srLower .resultItem .requestAccess,
+#searchBody #searchResults #srLower .resultItem .submit input,
+#searchBody #searchResults #srLower .resultItem #apiForm .submit input {
   color: #fff;
   font-size: 12.5px;
   text-decoration: none;

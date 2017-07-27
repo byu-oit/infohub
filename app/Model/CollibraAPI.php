@@ -323,6 +323,7 @@ class CollibraAPI extends Model {
 							['Column' => ['fieldName' => 'termCommunityName']],
 							['Column' => ['fieldName' => 'termClassification']],
 							['Column' => ['fieldName' => 'termId']],
+							['Column' => ['fieldName' => 'termRelationId']],
 							['Column' => ['fieldName' => 'term']]]]]],
 				'Resources' => [
 					'Term' => [
@@ -334,6 +335,7 @@ class CollibraAPI extends Model {
 						'Relation' => [[ /* Yes, intentional [[ there */
 							'typeId' => Configure::read('Collibra.relationship.termToField'),
 							'type' => 'TARGET',
+							'Id' => ['name' => 'termRelationId'],
 							'Source' => [
 								'Id' => ['name' => 'termId'],
 								'SingleValueListAttribute' => [[
@@ -677,7 +679,16 @@ class CollibraAPI extends Model {
 	public function updateApiBusinessTermLinks($terms) {
 		$relationshipTypeId = Configure::read('Collibra.relationship.termToField');
 		foreach ($terms as $term) {
-			if (empty($term['id']) || empty($term['business_term'])) {
+			if (empty($term['id'])) {
+				continue;
+			}
+			if (isset($term['previous_business_term'])) {
+				if ($term['previous_business_term'] == $term['business_term']) {
+					continue;
+				}
+				$this->delete("relation/{$term['previous_business_term_relation']}");
+			}
+			if (empty($term['business_term'])) {
 				continue;
 			}
 			$this->post("term/{$term['id']}/relations", [
