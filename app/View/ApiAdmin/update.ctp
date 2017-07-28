@@ -57,6 +57,7 @@
 							</tr>
 						<?php endforeach ?>
 					</table>
+					<a class="lower-btn grow" href="/api_admin/proposeTerms/<?=$hostname.$basePath?>">Propose New Business Terms</a>
 					<a class="lower-btn grow" href="/apis/<?=$hostname.$basePath?>">Cancel</a>
 					<div class="submit">
 						<input type="submit" class="grow" value="Save">

@@ -34,12 +34,16 @@ if (!function_exists('denv')) {
 			'byu' => 'c690b823-4341-4125-8a81-22d592c23773',
 		],
 		'vocabulary' => [
-			'isaRequest' => '00000000-0000-0000-0000-000000031231'
+			'isaRequest' => '00000000-0000-0000-0000-000000031231',
+			'newBusinessTerms' => '00000000-0000-0000-0000-000000006013'
 		],
 		'isaWorkflow' => [
 			'id' => '8bfbed57-c387-4717-8f5d-c3cfebb485de',
 			'requiredElementsString' => 'requiredElements',
 			'additionalElementsString' => 'additionalElements'
+		],
+		'newBusinessTermWorkflow' => [
+			'id' => '27028f8b-3d2b-4286-a567-b9658418be51'
 		],
 		'dataAssetDomainTypeId' => '00000000-0000-0000-0000-000000030011',
 		'techAssetDomainTypeId' => '00000000-0000-0000-0000-000000030004',
