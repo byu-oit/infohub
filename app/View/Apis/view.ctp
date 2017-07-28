@@ -16,6 +16,15 @@
 		});
 
 	});
+
+	function displayPendingApproval(elem) {
+		$('#searchResults').append('<div id="pendingApprovalMessage">The classification of this element is pending approval.</div>');
+		$('#pendingApprovalMessage').offset({top:$(elem).offset().top - 45, left:$(elem).offset().left - 77});
+	}
+
+	function hidePendingAproval() {
+		$('#pendingApprovalMessage').remove();
+	}
 </script>
 <style type="text/css">
 	table.api-terms tr:hover {
@@ -105,7 +114,7 @@
 										<?= $this->Html->link($term->businessTerm[0]->term, ['controller' => 'search', 'action' => 'term', $term->businessTerm[0]->termId]) ?>
 									<?php endif ?>
 								</td>
-								<td>
+								<td style="white-space:nowrap;">
 									<?php if (!empty($term->businessTerm[0])):
 										$classification = $term->businessTerm[0]->termClassification;
 										switch($classification){
@@ -140,6 +149,10 @@
 												break;
 										}
 										echo '<img class="classIcon" src="/img/icon'.$classification.'.png">&nbsp;'.$classificationTitle;
+
+										if ($term->businessTerm[0]->approvalStatus == 'Pending Approval') {
+											echo '&nbsp;&nbsp;<img class="pendingApprovalIcon" src="/img/alert.png" onmouseover="displayPendingApproval(this)" onmouseout="hidePendingAproval()">';
+										}
 									endif ?>
 								</td>
 							</tr>
