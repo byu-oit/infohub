@@ -56,7 +56,8 @@ class ApisController extends AppController {
 				return $this->redirect(['action' => 'host', 'hostname' => $hostname]);
 			}
 		}
-		$this->set(compact('hostname', 'basePath', 'terms'));
+		$isOITEmployee = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04');
+		$this->set(compact('hostname', 'basePath', 'terms', 'isOITEmployee'));
 
 		if (array_key_exists('checkout', $this->request->query)) {
 			return $this->_autoCheckout($hostname, $basePath, $terms);

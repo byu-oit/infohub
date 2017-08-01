@@ -28,6 +28,37 @@ class BYUAPI extends Model {
 		return $data->PersonSummaryService->response;
 	}
 
+	public function isGROGroupMember($netid, $group) {
+		if (empty($netid) || empty($group)) {
+			return false;
+		}
+
+		$response = $this->_get("domains/legacy/identity/access/ismember/v1/{$group}/{$netid}");
+		$data = json_decode($response);
+
+		if (!isset($data->{'isMember Service'}->response->isMember) || !$data->{'isMember Service'}->response->isMember) {
+			return false;
+		}
+		return true;
+	}
+
+	public function directorySearch($queryString, $length = 5) {
+        $queryString = preg_replace('/ /', '%20', $queryString);
+		$response = $this->_get("domains/legacy/identity/person/directorylookup2.1/v1/{$queryString}");
+		$data = json_decode($response);
+
+        if (!$data || isset($data->PersonLookupService->errors)) {
+            return array();
+        }
+
+		$arrResults = array_filter($data->PersonLookupService->response->information, function ($person) {
+			return !empty($person->net_id);
+		});
+        $arrResults = array_slice($arrResults, 0, $length);
+
+        return $arrResults;
+	}
+
 	public function supervisorLookup($netidRaw){
 		$selfInfo = $this->personalSummary($netidRaw);
 		if (empty($selfInfo) || empty($selfInfo->employee_information->reportsToId)) {

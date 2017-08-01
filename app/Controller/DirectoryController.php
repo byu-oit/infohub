@@ -1,7 +1,7 @@
 <?php
 
 class DirectoryController extends AppController {
-	public $uses = array('BYUDirectoryAPI', 'BYUAPI');
+	public $uses = array('BYUAPI');
 
     public function lookup() {
         $this->autoRender = false;
@@ -10,7 +10,7 @@ class DirectoryController extends AppController {
 			$this->redirect(['controller' => 'search', 'action' => 'index']);
 		}
 
-		$arrPeople = $this->BYUDirectoryAPI->directorySearch($this->request->query['term'], 5);
+		$arrPeople = $this->BYUAPI->directorySearch($this->request->query['term'], 5);
 
 		$arrReturn = [];
 		foreach ($arrPeople as $person) {
