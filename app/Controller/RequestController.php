@@ -651,13 +651,11 @@ class RequestController extends AppController {
 		$guestID = $guestUserResp->resourceId;
 		*/
 
+		$netID = $this->Auth->user('username');
+		$byuUser = $this->BYUAPI->personalSummary($netID);
 
-		// $netID = $this->Auth->user('username');
-		// $byuUser = $this->BYUAPI->personalSummary($netID);
-		// $postData = ['requesterPersonId' => $byuUser->identifiers->net_id];
-		// $postData['requesterNetId'] = $byuUser->identifiers->net_id;
-		$postData = ['requesterPersonId' => $this->Auth->user('username')];
-		$postData['requesterNetId'] = $this->Auth->user('username');
+		$postData['requesterPersonId'] = $byuUser->identifiers->net_id;
+		$postData['requesterNetId'] = $byuUser->identifiers->net_id;
 		foreach($this->request->data as $key => $val){
 			if (!in_array($key, ['name', 'phone', 'email', 'role', 'terms', 'apiTerms', 'requestSubmit', 'collibraUser'])) {
 				$postData[$key] = $val;
