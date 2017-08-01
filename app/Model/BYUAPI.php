@@ -52,7 +52,7 @@ class BYUAPI extends Model {
         }
 
 		$arrResults = array_filter($data->PersonLookupService->response->information, function ($person) {
-			return !empty($person->net_id);
+			return !empty($person->person_id);
 		});
         $arrResults = array_slice($arrResults, 0, $length);
 
