@@ -76,32 +76,8 @@ class MyaccountController extends AppController {
 		$netID = $this->Auth->user('username');
 		$this->loadModel('BYUAPI');
 		$byuUser = $this->BYUAPI->personalSummary($netID);
-		$personID = $byuUser->identifiers->person_id;
 
 		$this->loadModel('CollibraAPI');
-		// attempt to reindex source to make sure latest requests are displayed
-		/*$resp = $this->CollibraAPI->post('search/re-index');*/
-
-		// get all request for this user
-		$resp = $this->CollibraAPI->postJSON(
-				'search',
-				'{"query":"'.$personID.'", "filter": {"category": ["TE"], "type": {"asset": ["' . Configure::read('Collibra.vocabulary.isaRequest') . '"] }}, "fields": ["' . Configure::read('Collibra.attribute.isaRequestNetId') . '"] }'
-		);
-		$isaRequests = json_decode($resp);
-		// In the past, DSRs were tied to users via the user's person ID, but we want to move
-		// to netIDs, so first we find all DSRs with the user's person ID and then change each
-		// to a netID. Then we query with the netID.
-		foreach ($isaRequests->results as $req) {
-			foreach($req->attributes as $attr) {
-				if ($attr->type == 'Requester Net Id') {
-					$person = $this->BYUAPI->personalSummary($attr->val);
-					$postData['value'] = $person->identifiers->net_id;
-					$postData['rid'] = $attr->id;
-					$postString = http_build_query($postData);
-					$formResp = $this->CollibraAPI->post('attribute/'.$attr->id, $postString);
-				}
-			}
-		}
 		$resp = $this->CollibraAPI->postJSON(
 				'search',
 				'{"query":"'.$netID.'", "filter": {"category": ["TE"], "type": {"asset": ["' . Configure::read('Collibra.vocabulary.isaRequest') . '"] }}, "fields": ["' . Configure::read('Collibra.attribute.isaRequestNetId') . '"] }'
@@ -165,15 +141,16 @@ class MyaccountController extends AppController {
 		// sort results by date added
 		usort($arrRequests, 'self::sortRequests');
 
-		// sort request attribute data based on workflow form field order
-		$workflowResp = $this->CollibraAPI->get('workflow/'.Configure::read('Collibra.isaWorkflow.id').'/form/start');
-		$workflowResp = json_decode($workflowResp);
 		foreach($arrRequests as $r){
 			$arrNewAttr = array();
 			$arrCollaborators = array();
 			foreach($r->attributeReferences->attributeReference as $attr){
 				if ($attr->labelReference->signifier == 'Requester Net Id') {
-					$person = $this->BYUAPI->personalSummary($attr->value);
+					if ($attr->value == $netID) {
+						$person = $byuUser;
+					} else {
+						$person = $this->BYUAPI->personalSummary($attr->value);
+					}
 					unset($person->person_summary_line, $person->identifiers, $person->personal_information, $person->student_information, $person->relationships);
 					array_push($arrCollaborators, $person);
 					continue;
@@ -203,6 +180,9 @@ class MyaccountController extends AppController {
 				$resp = json_decode($resp);
 				$r->dataUsages[$i]->attributeReferences = $resp->attributeReferences;
 				foreach($r->dataUsages[$i]->attributeReferences->attributeReference as $attr) {
+					if (isset($attr->date)) {
+						continue;
+					}
 					if (preg_match('/<div>/', $attr->value)) {
 						$postData['value'] = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->value);
 						$postData['rid'] = $attr->resourceId;
@@ -220,7 +200,7 @@ class MyaccountController extends AppController {
 		$psRole = 'N/A';
 		$psDepartment = 'N/A';
 		$psEmail = '';
-		$psNetID = $byuUser->identifiers->net_id;
+		$psNetID = $netID;
 		if(isset($byuUser->names->preferred_name)){
 			$psName = $byuUser->names->preferred_name;
 		}

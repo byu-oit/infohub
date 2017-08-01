@@ -837,6 +837,9 @@ class CollibraAPI extends Model {
 			'Columns' => [
 				['Column' => ['fieldName' => 'id']],
 				['Column' => ['fieldName' => 'vocabularyId']],
+				['Column' => ['fieldName' => 'vocabularyName']],
+				['Column' => ['fieldName' => 'communityId']],
+				['Column' => ['fieldName' => 'communityName']],
 				['Column' => ['fieldName' => 'signifier']],
 				['Column' => ['fieldName' => 'status']],
 				['Group' => [
@@ -852,7 +855,11 @@ class CollibraAPI extends Model {
 					'Status' => [
 						'Signifier' => ['name' => 'status']],
 					'Vocabulary' => [
-						'Id' => ['name' => 'vocabularyId']],
+						'Id' => ['name' => 'vocabularyId'],
+						'Name' => ['name' => 'vocabularyName'],
+						'Community' => [
+							'Id' => ['name' => 'communityId'],
+							'Name' => ['name' => 'communityName']]],
 					'Relation' => [[
 						'typeId' => Configure::read('Collibra.relationship.dataUsageToDSA'),
 						'type' => 'SOURCE',
@@ -886,10 +893,6 @@ class CollibraAPI extends Model {
 			'displayLength' => -1]];
 		$usages = $this->fullDataTable($tableConfig);
 		foreach ($usages as &$usage) {
-			$vocab = json_decode($this->get('vocabulary/'.$usage->vocabularyId));
-			$usage->vocabularyName = $vocab->name;
-			$usage->communityId = $vocab->communityReference->resourceId;
-			$usage->communityName = $vocab->communityReference->name;
 			$usage->roles = $this->getResponsibilities($usage->vocabularyId);
 		}
 		return $usages;
