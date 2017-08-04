@@ -20,7 +20,7 @@ class MyaccountController extends AppController {
 	}
 
 	public function login() {
-		$this->redirect('/');
+		$this->redirect($this->request->query['return']);
 	}
 
 	public function logout() {

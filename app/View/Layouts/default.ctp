@@ -68,6 +68,11 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 	<?php else: ?>
 		FS.identify(false);
 	<?php endif ?>
+	function login() {
+		window.location.href = '/login?return=' + encodeURIComponent(window.location.pathname);
+	}
+
+
 </script>
 
 </head>
@@ -111,7 +116,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 					<span class="userInfo">
 						<?php
 							if(!$casAuthenticated){
-								echo '<a href="/login" class="login">Login</a>';
+								echo '<a href="javascript:login()" class="login">Login</a>';
 							}else{
 								echo '<a href="/myaccount">'.$byuUsername.'</a>';
 								echo '<br><a href="/myaccount/logout" class="logout">Logout</a>';
