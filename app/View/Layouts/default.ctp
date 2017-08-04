@@ -60,6 +60,14 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 	    d=n.domain;while(1){n.cookie='fs_uid=;domain='+d+
 	    ';path=/;expires='+new Date(0).toUTCString();i=d.indexOf('.');if(i<0)break;d=d.slice(i+1)}}};
 	})(window,document,window['_fs_namespace'],'script','user');
+	<?php if ($casAuthenticated): ?>
+		FS.identify('<?=$netID?>', {
+			displayName: '<?=$byuUsername?>',
+			department: '<?=$byuUserDepartment?>'
+		});
+	<?php else: ?>
+		FS.identify(false);
+	<?php endif ?>
 </script>
 
 </head>

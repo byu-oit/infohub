@@ -39,22 +39,29 @@ class AppController extends Controller {
 
 		if ($authUser = $this->Session->read('Auth.User')) {
 			$this->set('casAuthenticated', true);
+			$netID = $authUser['username'];
+			$this->set('netID', $netID);
 
 			// get username from BYU web service to display in to navigation
 			if(empty($_SESSION["byuUsername"])){
-				$netID = $authUser['username'];
 				$this->loadModel('BYUAPI');
 				$byuUser = $this->BYUAPI->personalSummary($netID);
 				if(isset($byuUser->names->preferred_name)){
 					$byuUsername = $byuUser->names->preferred_name;
 					$_SESSION["byuUsername"] = $byuUsername;
 				}
+				if(isset($byuUser->employee_information->department)){
+					$byuUserDepartment = $byuUser->employee_information->department;
+					$_SESSION["byuUserDepartment"] = $byuUserDepartment;
+				}
 			}else{
 				$byuUsername = $_SESSION["byuUsername"];
+				$byuUserDepartment = $_SESSION["byuUserDepartment"];
 			}
 		}else{
 			$this->set('casAuthenticated', false);
 			$_SESSION["byuUsername"] = '';
+			$_SESSION["byuUserDepartment"] = '';
 		}
 
 		//$this->disableCache();
@@ -77,6 +84,7 @@ class AppController extends Controller {
 							  sizeof($arrQueue->emptyApis);
 
 		$this->set('byuUsername', $byuUsername);
+		$this->set('byuUserDepartment', $byuUserDepartment);
 		$this->set('quickLinks', $quickLinks);
 		$this->set('requestedTermCount', $requestedTermCount);
 		$this->set('controllerName', $controllerName = $this->request->params['controller']);
