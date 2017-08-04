@@ -55,7 +55,7 @@ if (!function_exists('denv')) {
 			'isaRequestToApproval' => '8750ed82-b3be-4a61-92ac-6df2e41b408c',
 			'termToField' => '00000000-0000-0000-0000-000000007038',
 			'dataUsageToDSA' => '00000000-0000-0000-0000-000000007055',
-			'DSAtoPolicy' => '00000000-0000-0000-0000-000000007018'
+			'DSAtoPolicy' => 'd22051bf-af3e-4771-862c-c2b3f10bce05'
 		],
 		'type' => [
 			'synonym' => '2c2d6491-a41c-4e9e-af52-759b43948951',
