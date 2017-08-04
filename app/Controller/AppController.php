@@ -36,6 +36,7 @@ class AppController extends Controller {
 
 	public function initBeforeFilter(){
 		$byuUsername = '';
+		$byuUserDepartment = '';
 
 		if ($authUser = $this->Session->read('Auth.User')) {
 			$this->set('casAuthenticated', true);
