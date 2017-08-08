@@ -112,12 +112,20 @@ class SwaggerController extends AppController {
 			return ['error' => ['messages' => $this->Swagger->parseErrors]];
 		}
 
+		$termToFieldRelationshipId = Configure::read('Collibra.relationship.termToField');
+		foreach ($swagger['elements'] as &$elem) {
+			$businessTerm = $this->CollibraAPI->searchStandardLabel($elem['name']);
+			if (!empty($businessTerm)) {
+				$elem['business_term'] = $businessTerm[0]->name->id;
+			}
+		}
+
 		$import = $this->CollibraAPI->importSwagger($swagger);
 		if (empty($import)) {
 			return ['error' => ['messages' => $this->CollibraAPI->errors]];
 		}
 
-		return ['status' => 'success'];
+		return ['status' => 'success', 'link' => "{$this->request->host()}/apis/{$swagger['host']}{$swagger['basePath']}/{$swagger['version']}"];
 	}
 
 	protected function _getUploadedSwagger() {
