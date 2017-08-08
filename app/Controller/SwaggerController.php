@@ -9,7 +9,7 @@ class SwaggerController extends AppController {
 		if ($this->request->param('action') == 'import') {
 			$this->Auth->authenticate = ['QuickDirty'];
 		}
-		$this->Auth->deny();
+		$this->Auth->allow('import');
 	}
 
 	public function index() {
