@@ -95,8 +95,8 @@ class SwaggerController extends AppController {
 			return ['error' => ['messages' => ['POST only']]];
 		}
 
-		if (!empty($this->request->query['url'])) {
-			$json = @file_get_contents($this->request->query['url']);
+		if (isset($this->request->data['url'])) {
+			$json = @file_get_contents($this->request->data['url']);
 			if (empty($json)) {
 				return ['error' => ['messages' => ["Unable to download swagger from {$this->request->query['url']}"]]];
 			}
