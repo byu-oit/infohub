@@ -161,7 +161,7 @@
 				if($approverName != ''){
 					$approverImage = '../photos/collibraview/'.$rc->resourceId;
 					$approverEmail = $rc->emailAddress;
-					echo '<div class="approver">'.
+					echo '<div class="approver" user-id="'.$rc->resourceId.'">'.
 						'	<div class="user-icon" style="background-image: url(../'.$approverImage.');"></div>'.
 						'	<div class="info">'.
 						'		<div class="contactName">'.$approverName.'</div>'.
@@ -179,7 +179,7 @@
 			if($approverName != ''){
 				$approverImage = '../photos/collibraview/'.$request->roles['Steward'][0]->resourceId;
 				$approverEmail = $request->roles['Steward'][0]->emailAddress;
-				echo '<div class="approver steward">'.
+				echo '<div class="approver steward" user-id="'.$request->roles['Steward'][0]->resourceId.'">'.
 					'	<div class="user-icon" style="background-image: url(../'.$approverImage.');"></div>'.
 					'	<div class="info">'.
 					'		<div class="contactName">'.$approverName.'</div>';
@@ -198,7 +198,7 @@
 				if($approverName != ''){
 					$approverImage = '../photos/collibraview/'.$request->roles['Custodian'][0]->resourceId;
 					$approverEmail = $request->roles['Custodian'][0]->emailAddress;
-					echo '<div class="approver custodian">'.
+					echo '<div class="approver custodian" user-id="'.$request->roles['Custodian'][0]->resourceId.'">'.
 						'	<div class="user-icon" style="background-image: url(../'.$approverImage.');"></div>'.
 						'	<div class="info">'.
 						'		<div class="contactName">'.$approverName.'</div>'.
