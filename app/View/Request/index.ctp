@@ -18,8 +18,38 @@
 		if (isValid) return;	// If we're leaving the page because we've successfully submitted
 								// the request, we don't want to save the form fields.
 		var saveNeeded = false;
-		var savables = ['applicationName', 'descriptionOfIntendedUse', 'accessRights', 'accessMethod', 'impactOnSystem'];
-		var arrSaveData = {applicationName: '', descriptionOfIntendedUse: '', accessRights: '', accessMethod: '', impactOnSystem: ''};
+		var savables = [
+			'name',
+			'phone',
+			'role',
+			'email',
+			'requestingOrganization',
+			'sponsorName',
+			'sponsorPhone',
+			'sponsorRole',
+			'sponsorEmail',
+			'applicationName',
+			'descriptionOfIntendedUse',
+			'accessRights',
+			'accessMethod',
+			'impactOnSystem'
+		];
+		var arrSaveData = {
+			name: '',
+			phone: '',
+			role: '',
+			email: '',
+			requestingOrganization: '',
+			sponsorName: '',
+			sponsorPhone: '',
+			sponsorRole: '',
+			sponsorEmail: '',
+			applicationName: '',
+			descriptionOfIntendedUse: '',
+			accessRights: '',
+			accessMethod: '',
+			impactOnSystem: ''
+		};
 		$('#srLower').find('input').each(function() {
 			if ($.inArray($(this).prop('name'), savables) > -1 && $(this).val() != "") {
 				saveNeeded = true;
@@ -127,25 +157,25 @@
 					<!-- <div class="infoCol"> -->
 						<div class="field-container">
 							<label for="name">Requester Name*</label>
-							<input type="text" id="name" name="name" class="inputShade noPlaceHolder" value="<?= h($psName) ?>">
+							<input type="text" id="name" name="name" class="inputShade noPlaceHolder" value="<?= empty($preFilled['name']) ? h($psName) : h($preFilled['name']) ?>">
 						</div>
 						<div class="field-container">
 							<label for="phone">Requester Phone*</label>
-							<input type="text" id="phone" name="phone" class="inputShade noPlaceHolder" value="<?= h($psPhone) ?>">
+							<input type="text" id="phone" name="phone" class="inputShade noPlaceHolder" value="<?= empty($preFilled['phone']) ? h($psPhone) : h($preFilled['phone']) ?>">
 						</div>
 					<!-- </div>
 					<div class="infoCol"> -->
 						<div class="field-container">
 							<label for="role">Requester Role*</label>
-							<input type="text" id="role" name="role" class="inputShade noPlaceHolder" value="<?= h($psRole) ?>">
+							<input type="text" id="role" name="role" class="inputShade noPlaceHolder" value="<?= empty($preFilled['role']) ? h($psRole) : h($preFilled['role']) ?>">
 						</div>
 						<div class="field-container">
 							<label for="email">Requester Email*</label>
-							<input type="text" id="email" name="email" class="inputShade noPlaceHolder" value="<?= h($psEmail) ?>">
+							<input type="text" id="email" name="email" class="inputShade noPlaceHolder" value="<?= empty($preFilled['email']) ? h($psEmail) : h($preFilled['email']) ?>">
 						</div>
 						<div class="field-container">
 							<label for="requestingOrganization">Requester Organization*</label>
-							<input type="text" id="requestingOrganization" name="requestingOrganization" class="inputShade noPlaceHolder" value="<?= h($psDepartment) ?>">
+							<input type="text" id="requestingOrganization" name="requestingOrganization" class="inputShade noPlaceHolder" value="<?= empty($preFilled['requestingOrganization']) ? h($psDepartment) : h($preFilled['requestingOrganization']) ?>">
 						</div>
 					<!-- </div> -->
 				</div>
@@ -155,19 +185,19 @@
 				<div class="fieldGroup">
 					<div class="field-container">
 						<label for="sponsorName">Sponsor Name*</label>
-						<input type="text" id="sponsorName" name="sponsorName" class="inputShade noPlaceHolder" value="<?= empty($supervisorInfo->name) ? '' : h($supervisorInfo->name) ?>">
+						<input type="text" id="sponsorName" name="sponsorName" class="inputShade noPlaceHolder" value="<?= empty($preFilled['sponsorName']) ? ( empty($supervisorInfo->name) ? '' : h($supervisorInfo->name) ) : $preFilled['sponsorName'] ?>">
 					</div>
 					<div class="field-container">
 						<label for="sponsorPhone">Sponsor Phone*</label>
-						<input type="text" id="sponsorPhone" name="sponsorPhone" class="inputShade noPlaceHolder" value="<?= empty($supervisorInfo->phone) ? '' : h($supervisorInfo->phone) ?>">
+						<input type="text" id="sponsorPhone" name="sponsorPhone" class="inputShade noPlaceHolder" value="<?= empty($preFilled['sponsorPhone']) ? ( empty($supervisorInfo->phone) ? '' : h($supervisorInfo->phone) ) : $preFilled['sponsorPhone'] ?>">
 					</div>
 					<div class="field-container">
 						<label for="sponsorRole">Sponsor Role*</label>
-						<input type="text" id="sponsorRole" name="sponsorRole" class="inputShade noPlaceHolder" value="<?= empty($supervisorInfo->job_title) ? '' : h($supervisorInfo->job_title) ?>">
+						<input type="text" id="sponsorRole" name="sponsorRole" class="inputShade noPlaceHolder" value="<?= empty($preFilled['sponsorRole']) ? ( empty($supervisorInfo->job_title) ? '' : h($supervisorInfo->job_title) ) : $preFilled['sponsorRole'] ?>">
 					</div>
 					<div class="field-container">
 						<label for="sponsorEmail">Sponsor Email*</label>
-						<input type="text" id="sponsorEmail" name="sponsorEmail" class="inputShade noPlaceHolder" value="<?= empty($supervisorInfo->email) ? '' : h($supervisorInfo->email) ?>">
+						<input type="text" id="sponsorEmail" name="sponsorEmail" class="inputShade noPlaceHolder" value="<?= empty($preFilled['sponsorEmail']) ? ( empty($supervisorInfo->email) ? '' : h($supervisorInfo->email) ) : $preFilled['sponsorEmail'] ?>">
 					</div>
 
 				</div>
