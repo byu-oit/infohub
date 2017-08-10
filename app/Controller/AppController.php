@@ -68,6 +68,10 @@ class AppController extends Controller {
 		//$this->disableCache();
 
 		$quickLinks = (array)$this->Cookie->read('QL');
+		// If anyone at all is using the QuickLinks system, email the devs
+		if (!empty($quickLinks)) {
+			mail('jeremy_rees@byu.edu', 'We\'re not useless!', "{$byuUsername}\r\n".json_encode($quickLinks), 'From: quicklinks@infohub.byu.edu');
+		}
 
 		if (!$this->Session->check('queue')) {
 			$arrQueue = new stdClass();
