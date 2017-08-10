@@ -6,10 +6,10 @@
 		Print Request	</title>
 	<link href="/favicon.ico" type="image/x-icon" rel="icon"/>
     <link href="/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
-    <link rel="stylesheet" type="text/css" href="/css/font-awesome.min.css"/>
-    <link rel="stylesheet" type="text/css" href="/css/admin-nav.css"/>
-	<link rel="stylesheet" type="text/css" href="/css/styles.css"/>
-	<link rel="stylesheet" type="text/css" href="/css/print.css"/>
+    <?php echo $this->Html->css('font-awesome');
+		  echo $this->Html->css('admin-nav');
+		  echo $this->Html->css('styles');
+		  echo $this->Html->css('print'); ?>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	<link href='//fonts.googleapis.com/css?family=Rokkitt:400,700' rel='stylesheet' type='text/css'>
 	<link href='//fonts.googleapis.com/css?family=Open+Sans:400,600,700,300' rel='stylesheet' type='text/css'>
