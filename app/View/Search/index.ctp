@@ -40,7 +40,7 @@
                             '       <li><a href=""><img src="/img/dataLoading-sm.gif" alt="Loading..."></a></li>'+
                             '   </ul>';
                     }else{
-                        html += '   <a href="#">'+comm.subcommunity+'</a>';
+                        html += '   <div>'+comm.subcommunity+'<span class="no-glossary">&nbsp;&nbsp;(No terms in glossary... yet)</span></div>';
                     }
                     html += '</li>';
                 }

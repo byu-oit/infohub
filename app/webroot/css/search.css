@@ -110,6 +110,7 @@ img.resultBodyLoading {
   padding: 5px 0 0;
 }
 #searchBody #searchMain #smLower ul li a,
+#searchBody #searchMain #smLower ul li div,
 #apiBody #searchMain #smLower ul li a {
   color: #282828;
   display: block;
@@ -118,8 +119,11 @@ img.resultBodyLoading {
   -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
-  cursor: pointer;
   text-decoration: none;
+}
+#searchBody #searchMain #smLower ul li div span.no-glossary {
+  color: #888888;
+  font-size: 10px;
 }
 #searchBody #searchMain #smLower ul li a:hover,
 #apiBody #searchMain #smLower ul li a:hover {
