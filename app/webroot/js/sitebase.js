@@ -185,26 +185,16 @@ function showTermDef(elem){
 ///////////////////////////////
 function toggleRequestQueue(){
 	if ($('#request-popup').css('display') == 'none'){
-		$.get("/request/cartDropdown")
-			.done(function(data){
-				if($(window).scrollTop()>50){
-					var requestIconPos = $('#request-queue .request-num').offset();
-					var left = requestIconPos.left - $('#request-popup').width() - 16;
-					$('#request-popup').addClass('fixed').css('left', left);
-				}else{
-					$('#request-popup').removeClass('fixed').css('left', 'auto');
-				}
-				$('#request-popup').html(data).slideDown('fast');
-			});
+		showRequestQueue();
 	}else{
-		$('#request-popup').hide();
+		hideRequestQueue();
 	}
 }
 function showRequestQueue(){
 	$.get("/request/cartDropdown")
 		.done(function(data){
 			if($(window).scrollTop()>50){
-				var requestIconPos = $('#request-queue .request-num').offset();
+				var requestIconPos = $('#request-queue').offset();
 				var left = requestIconPos.left - $('#request-popup').width() - 16;
 				$('#request-popup').addClass('fixed').css('left', left);
 			}else{
@@ -376,7 +366,7 @@ $(document).on( 'click', function ( e ) {
 
 $(window).scroll(function(){
 	if($(this).scrollTop()>50){
-		var requestIconPos = $('#request-queue .request-num').offset();
+		var requestIconPos = $('#request-queue').offset();
 		var left = requestIconPos.left - $('#request-popup').width() - 16;
 		$('#request-popup').addClass('fixed').css('left', left);
 	}else{
