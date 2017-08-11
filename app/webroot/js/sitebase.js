@@ -177,9 +177,9 @@ function showTermDef(elem){
 	var winTop = pos.top - $('#info-win').outerHeight() - 5;
 	$('#info-win').css('top',winTop).css('left',winLeft);
 }
-	function hideTermDef(){
-			$('#info-win').hide();
-	}
+function hideTermDef(){
+	$('#info-win').hide();
+}
 
 // Request functions
 ///////////////////////////////
@@ -238,7 +238,7 @@ function removeFromRequestQueue(id){
 					$(this).remove();
 					$('#requestItem'+id).fadeIn('fast');
 				});
-				getCurrentRequestTerms();
+				updateQueueSize();
 			});
 	});
 }
@@ -253,20 +253,14 @@ function clearRequestQueue(){
 			$('<div class="cart-cleared">Request items removed.</div>').insertBefore('.irLower ul.cart');
 		});
 }
-function getCurrentRequestTerms(){
-	$.get("/request/getQueueJSArray")
+function updateQueueSize(){
+	$.get("/request/getQueueSize")
 		.done(function(data){
-			var originalData = data;
-			data = data.split(',');
-			$('#request-queue .request-num').text(data.length).removeClass('request-hidden');
-			$('input[type=checkbox]').prop('checked', false);
-
-			for(i=0; i<data.length; i++){
-				$('.chk'+data[i]).prop('checked', true);
-			}
-			if(originalData.length <= 0){
+			data = parseInt(data);
+			if (data == 0) {
 				$('#request-queue .request-num').addClass('request-hidden');
-				hideRequestQueue();
+			} else {
+				$('#request-queue .request-num').text(data).removeClass('request-hidden');
 			}
 	});
 }
@@ -290,12 +284,13 @@ function addToQueue(elem, clearRelated, displayCart){
 		$.post("/request/addToQueue", {emptyApi:'false', t:arrTitles, id:arrIDs, vocab:arrVocabIDs, clearRelated:clearRelated, apiHost: apiHost, apiPath: apiPath})
 			.done(function(data){
 				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
+				$('input[type=checkbox]').prop('checked', false);
 				data = parseInt(data);
 				if(data>0){
 					if (displayCart) {
 						showRequestQueue();
 					}
-					getCurrentRequestTerms();
+					updateQueueSize();
 				}
 		});
 	} else {
@@ -310,7 +305,7 @@ function addToQueue(elem, clearRelated, displayCart){
 					if (displayCart) {
 						showRequestQueue();
 					}
-					getCurrentRequestTerms();
+					updateQueueSize();
 				}
 		});
 	}

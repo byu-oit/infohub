@@ -137,16 +137,14 @@ class RequestController extends AppController {
 		$this->Session->delete('queue');
 	}
 
-	public function getQueueJSArray() {
+	public function getQueueSize() {
 		$this->autoRender = false;
-		$JS = '';
 
 		$arrQueue = $this->Session->read('queue');
-		$JS .= implode(',', array_keys($arrQueue->businessTerms));
-		$JS .= implode(',', array_keys($arrQueue->concepts));
-		$JS .= implode(',', array_keys($arrQueue->apiFields));
-		$JS .= implode(',', array_keys($arrQueue->emptyApis));
-		echo $JS;
+		echo  sizeof($arrQueue->businessTerms) +
+			  sizeof($arrQueue->concepts) +
+			  sizeof($arrQueue->apiFields) +
+			  sizeof($arrQueue->emptyApis);
 	}
 
 	public function saveFormFields() {
