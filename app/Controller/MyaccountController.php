@@ -120,21 +120,6 @@ class MyaccountController extends AppController {
 					}
 				}
 			}
-			////////////////////////////////////////////
-
-			// load approval objects for request
-			////////////////////////////////////////////
-			$termRid = $r->name->id;
-			$resp = $this->CollibraAPI->postJSON(
-					'output/data_table',
-					'{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldName":"relationrid"}},{"Column":{"fieldName":"startDate"}},{"Column":{"fieldName":"endDate"}},{"Column":{"fieldName":"relstatusrid"}},{"Column":{"fieldName":"relstatusname"}},{"Column":{"fieldName":"Attr4331ec0988a248e6b0969ece6648aff3rid"}},{"Column":{"fieldName":"Attr4331ec0988a248e6b0969ece6648aff3longExpr"}},{"Column":{"fieldName":"Attr4331ec0988a248e6b0969ece6648aff3"}},{"Column":{"fieldName":"Attr0cbbfd32fc9747cebef1a89ae4e77ee8rid"}},{"Column":{"fieldName":"Attr0cbbfd32fc9747cebef1a89ae4e77ee8longExpr"}},{"Column":{"fieldName":"Attr0cbbfd32fc9747cebef1a89ae4e77ee8"}},{"Column":{"fieldName":"Attr9a18e247c09040c3896eab97335ae759rid"}},{"Column":{"fieldName":"Attr9a18e247c09040c3896eab97335ae759longExpr"}},{"Column":{"fieldName":"Attr9a18e247c09040c3896eab97335ae759"}},{"Column":{"fieldName":"statusrid"}},{"Column":{"fieldName":"statusname"}}],"Resources":{"Term":{"Id":{"name":"termrid"},"Signifier":{"name":"termsignifier"},"Relation":{"typeId":"' . Configure::read('Collibra.relationship.isaRequestToApproval') . '","Id":{"name":"relationrid"},"StartingDate":{"name":"startDate"},"EndingDate":{"name":"endDate"},"Status":{"Id":{"name":"relstatusrid"},"Signifier":{"name":"relstatusname"}},"Filter":{"AND":[{"Field":{"name":"reltermrid","operator":"EQUALS","value":"'.$termRid.'"}}]},"type":"TARGET","Source":{"Id":{"name":"reltermrid"}}},"StringAttribute":[{"Id":{"name":"Attr4331ec0988a248e6b0969ece6648aff3rid"},"labelId":"' . Configure::read('Collibra.attribute.stewardName') . '","LongExpression":{"name":"Attr4331ec0988a248e6b0969ece6648aff3longExpr"},"Value":{"name":"Attr4331ec0988a248e6b0969ece6648aff3"}},{"Id":{"name":"Attr0cbbfd32fc9747cebef1a89ae4e77ee8rid"},"labelId":"' . Configure::read('Collibra.attribute.stewardEmail') . '","LongExpression":{"name":"Attr0cbbfd32fc9747cebef1a89ae4e77ee8longExpr"},"Value":{"name":"Attr0cbbfd32fc9747cebef1a89ae4e77ee8"}},{"Id":{"name":"Attr9a18e247c09040c3896eab97335ae759rid"},"labelId":"' . Configure::read('Collibra.attribute.stewardPhone') . '","LongExpression":{"name":"Attr9a18e247c09040c3896eab97335ae759longExpr"},"Value":{"name":"Attr9a18e247c09040c3896eab97335ae759"}}],"Status":{"Id":{"name":"statusrid"},"Signifier":{"name":"statusname"}},"Filter":{"AND":[{"AND":[{"Field":{"name":"reltermrid","operator":"EQUALS","value":"'.$termRid.'"}}]}]},"Order":[{"Field":{"name":"termsignifier","order":"ASC"}}]}},"displayStart":0,"displayLength":100}}'
-			);
-			$approvalObjects = json_decode($resp);// add property to request object to hold approvals
-			if(isset($approvalObjects->aaData)){
-				$request->approvals = $approvalObjects;
-			}
-			////////////////////////////////////////////
-
 			// add to request data array
 			array_push($arrRequests, $request);
 		}
