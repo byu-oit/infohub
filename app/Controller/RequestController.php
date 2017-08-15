@@ -773,6 +773,20 @@ class RequestController extends AppController {
 			}
 		}
 
+		// load additionally included terms
+		////////////////////////////////////////////
+		$resp = $this->CollibraAPI->getAdditionallyIncludedTerms($termRequestId);
+		if (!empty($resp)) {
+			$dsr->additionallyIncluded->termGlossaries = [];
+			foreach ($resp as $term) {
+				if (array_key_exists($term->domainname, $dsr->additionallyIncluded->termGlossaries)) {
+					array_push($dsr->additionallyIncluded->termGlossaries[$term->domainname], $term);
+				} else {
+					$dsr->additionallyIncluded->termGlossaries[$term->domainname] = array($term);
+				}
+			}
+		}
+
 		// sort request attribute data based on workflow form field order
 		$workflowResp = $this->CollibraAPI->get('workflow/'.Configure::read('Collibra.isaWorkflow.id').'/form/start');
 		$workflowResp = json_decode($workflowResp);
@@ -842,6 +856,20 @@ class RequestController extends AppController {
 					array_push($dsr->termGlossaries[$term->domainname], $term);
 				} else {
 					$dsr->termGlossaries[$term->domainname] = array($term);
+				}
+			}
+		}
+
+		// load additionally included terms
+		////////////////////////////////////////////
+		$resp = $this->CollibraAPI->getAdditionallyIncludedTerms($termRequestId);
+		if (!empty($resp)) {
+			$dsr->additionallyIncluded->termGlossaries = [];
+			foreach ($resp as $term) {
+				if (array_key_exists($term->domainname, $dsr->additionallyIncluded->termGlossaries)) {
+					array_push($dsr->additionallyIncluded->termGlossaries[$term->domainname], $term);
+				} else {
+					$dsr->additionallyIncluded->termGlossaries[$term->domainname] = array($term);
 				}
 			}
 		}

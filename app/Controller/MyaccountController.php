@@ -120,6 +120,20 @@ class MyaccountController extends AppController {
 					}
 				}
 			}
+
+			//load additionally included terms
+			////////////////////////////////////////////
+			$resp = $this->CollibraAPI->getAdditionallyIncludedTerms($r->name->id);
+			if (!empty($resp)) {
+				$request->additionallyIncluded->termGlossaries = [];
+				foreach ($resp as $term) {
+					if (array_key_exists($term->domainname, $request->additionallyIncluded->termGlossaries)) {
+						array_push($request->additionallyIncluded->termGlossaries[$term->domainname], $term);
+					} else {
+						$request->additionallyIncluded->termGlossaries[$term->domainname] = array($term);
+					}
+				}
+			}
 			// add to request data array
 			array_push($arrRequests, $request);
 		}

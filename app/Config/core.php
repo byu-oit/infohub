@@ -54,7 +54,8 @@ if (!function_exists('denv')) {
 			'isaRequestToTerm' => 'edc9e81b-98dc-4bde-8191-1ae75161ab67',
 			'termToField' => '00000000-0000-0000-0000-000000007038',
 			'dataUsageToDSA' => '00000000-0000-0000-0000-000000007055',
-			'DSAtoPolicy' => 'd22051bf-af3e-4771-862c-c2b3f10bce05'
+			'DSAtoPolicy' => 'd22051bf-af3e-4771-862c-c2b3f10bce05',
+			'DSRtoAdditionallyIncludedAsset' => '71be0418-dbb7-4ee0-ad9e-ef9d5eca13ab'
 		],
 		'type' => [
 			'synonym' => '2c2d6491-a41c-4e9e-af52-759b43948951',

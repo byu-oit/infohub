@@ -447,6 +447,20 @@
 #accountMid #accountMain .requestItem .riBelow .detailsBody:after {
   clear: both;
 }
+.infoIcon {
+  width: 19px;
+  height: auto;
+  border-radius: 7px;
+  margin: 22px 0px 10px 12px;
+}
+#helpText {
+  height: 39px;
+  width: 230px;
+  padding: 4px;
+  border: solid 1px rgba(14, 50, 100, 0.85);
+  background-color: white;
+  text-align: center;
+}
 #accountMid #accountMain .requestItem .detailsBody .data-col,
 #accountMid #accountMain .requestItem .riBelow .detailsBody .data-col {
   float: left;

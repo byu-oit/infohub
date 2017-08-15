@@ -1012,6 +1012,58 @@ class CollibraAPI extends Model {
 		return $policies;
 	}
 
+	public function getAdditionallyIncludedTerms($dsaId) {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'termid']],
+				['Column' => ['fieldName' => 'termsignifier']],
+				['Column' => ['fieldName' => 'domainrid']],
+				['Column' => ['fieldName' => 'domainname']],
+				['Column' => ['fieldName' => 'concept']],
+				['Column' => ['fieldName' => 'classification']],
+				['Column' => ['fieldName' => 'commrid']],
+				['Column' => ['fieldName' => 'communityname']],
+				['Column' => ['fieldName' => 'statusname']]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'termid'],
+					'Signifier' => ['name' => 'termsignifier'],
+					'BooleanAttribute' => [[
+						'Value' => ['name' => 'concept'],
+						'labelId' => Configure::read('Collibra.attribute.concept')]],
+					'SingleValueListAttribute' => [[
+						'Value' => ['name' => 'classification'],
+						'labelId' => Configure::read('Collibra.attribute.classification')]],
+					'Status' => [
+						'Signifier' => ['name' => 'statusname']],
+					'Vocabulary' => [
+						'Community' => [
+							'Name' => ['name' => 'communityname'],
+							'Id' => ['name' => 'commrid']],
+						'Id' => ['name' => 'domainrid'],
+						'Name' => ['name' => 'domainname']],
+					'Relation' => [[
+						'typeId' => Configure::read('Collibra.relationship.DSRtoAdditionallyIncludedAsset'),
+						'type' => 'TARGET',
+						'Source' => [
+							'Id' => ['name' => 'dsaId']],
+						'Filter' => [
+							'AND' => [[
+								'Field' => [
+										'name' => 'dsaId',
+										'operator' => 'EQUALS',
+										'value' => $dsaId]]]]]],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+								'name' => 'dsaId',
+								'operator' => 'EQUALS',
+								'value' => $dsaId]]]]]]]];
+
+		$terms = $this->fullDataTable($tableConfig);
+		return $terms;
+	}
+
 	protected function _updateSessionCookies() {
 		$config = $this->client()->config;
 		if (empty($config['request']['cookies'])) {

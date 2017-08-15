@@ -43,6 +43,21 @@
 	}
 ?>
 	        </p>
+			<p class="riData"><strong>Additionally Included Data:</strong>
+<?php
+	foreach ($request->additionallyIncluded->termGlossaries as $glossaryName => $terms) {
+		echo '<br><em>'.$glossaryName.'&nbsp;-&nbsp;</em>';
+		$termCount = 0;
+		foreach ($terms as $term) {
+			echo $term->termsignifier;
+			$termCount++;
+			if ($termCount < sizeof($terms)) {
+				echo ',&nbsp;&nbsp;';
+			}
+		}
+	}
+?>
+	        </p>
 	        <div class="two-col-row">
 	            <p class="riDate data-col"><span>Date Created:&nbsp;</span><?= date('n/j/Y', ($request->createdOn)/1000) ?></p>
 	            <p class="status data-col"><span>Approval Status:&nbsp;</span><?= $request->statusReference->signifier ?></p>
