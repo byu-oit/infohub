@@ -61,7 +61,8 @@ class AppController extends Controller {
 			}
 
 			$this->loadModel('CollibraAPI');
-			if (!empty($this->CollibraAPI->checkForDSRDraft($netID)) && !$this->Session->check('draftLoaded')) {
+			$draftId = $this->CollibraAPI->checkForDSRDraft($netID);
+			if (!empty($draftId) && !$this->Session->check('draftLoaded')) {
 				$this->set('hasUnloadedDraft', true);
 			} else {
 				$this->set('hasUnloadedDraft', false);

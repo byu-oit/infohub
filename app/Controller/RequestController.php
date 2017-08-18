@@ -156,9 +156,8 @@ class RequestController extends AppController {
 		$this->autoRender = false;
 		$responseHTML = '';
 		$this->loadModel('CollibraAPI');
-		$hasUnloadedDraft =
-			!empty($this->CollibraAPI->checkForDSRDraft($this->Auth->user('username')))
-			&& !$this->Session->check('draftLoaded');
+		$draftId = $this->CollibraAPI->checkForDSRDraft($this->Auth->user('username'));
+		$hasUnloadedDraft =	!empty($draftId) && !$this->Session->check('draftLoaded');
 
 		$arrQueue = $this->Session->read('queue');
 		$responseHTML=  '<h3>Requested Items: '.(count($arrQueue['businessTerms']) + count($arrQueue['concepts']) + count($arrQueue['apiFields']) + count($arrQueue['emptyApis'])).'</h3>'.
