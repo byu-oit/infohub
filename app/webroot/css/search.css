@@ -250,12 +250,12 @@ img.resultBodyLoading {
   margin-right: 10px;
   padding-right: 5px;
 }
-#searchBody #requestForm #srLower #saveNotification {
+#searchBody #requestForm #srLower .saveNotification {
   color: rgba(14, 50, 100, 0.85);
   font-size: 18px;
-  line-height: 16px;
+  line-height: 22px;
   width: auto;
-  padding-bottom: 12px;
+  padding-bottom: 18px;
 }
 #searchBody #searchResults #srLower .resultItem,
 #apiBody #searchResults #srLower .resultItem,
@@ -1356,10 +1356,25 @@ form#request #searchBody #requestForm #srLower .removeTerms {
   -moz-box-shadow: 0px 2px 7px 1px rgba(50, 50, 50, 0.4);
   box-shadow: 0px 2px 7px 1px rgba(50, 50, 50, 0.4);
 }
+form#request #formSubmit #requestSave {
+  padding: 2px 14px 5px 14px;
+  margin-left: 10px;
+  font-size: 13px;
+  display: inline;
+  position: relative;
+  top: 1px;
+  font-weight: 600;
+  color: white;
+  background-color: #114477;
+  cursor: pointer;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+}
 form#request #searchBody #requestForm #srLower .removeTerms {
   background-color: #b3041a;
 }
-form#request #formSubmit label {
+form#request #formSubmit div {
   float: right;
 }
 form#request #mobileReqd {

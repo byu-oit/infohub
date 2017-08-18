@@ -6,7 +6,7 @@ class RequestController extends AppController {
 
 	function beforeFilter() {
 		parent::beforeFilter();
-		$this->Auth->deny('index', 'submit');
+		$this->Auth->deny('index', 'submit', 'loadDraft');
 	}
 
 	private static function sortUsers($a, $b){
@@ -30,14 +30,14 @@ class RequestController extends AppController {
 				$apiHost = $this->request->data['apiHost'];
 
 				$arrQueue = $this->Session->read('queue');
-				foreach ($arrQueue->emptyApis as $path => $host) {
+				foreach ($arrQueue['emptyApis'] as $path => $host) {
 					if ($path == $apiPath) {
 						$newTermsAdded = 0;
 					}
 				}
 
 				if ($newTermsAdded) {
-					$arrQueue->emptyApis[$apiPath] = ['apiHost' => $apiHost];
+					$arrQueue['emptyApis'][$apiPath] = ['apiHost' => $apiHost];
 				}
 
 				$this->Session->write('queue', $arrQueue);
@@ -55,15 +55,15 @@ class RequestController extends AppController {
 				if($clearRelated) {
 					// Remove all terms in vocabularies passed and then re-add the ones selected by the user.
 					foreach ($arrVocabIDs as $communityId){
-						foreach ($arrQueue->businessTerms as $termId => $term) {
+						foreach ($arrQueue['businessTerms'] as $termId => $term) {
 							if ($term['communityId'] == $communityId) {
-								unset($arrQueue->businessTerms[$termId]);
+								unset($arrQueue['businessTerms'][$termId]);
 								break;
 							}
 						}
-						foreach ($arrQueue->concepts as $termId => $term) {
+						foreach ($arrQueue['concepts'] as $termId => $term) {
 							if ($term['communityId'] == $communityId) {
-								unset($arrQueue->concepts[$termId]);
+								unset($arrQueue['concepts'][$termId]);
 								break;
 							}
 						}
@@ -75,7 +75,7 @@ class RequestController extends AppController {
 					$termID = $arrTermIDs[$i];
 					$vocabID = $arrVocabIDs[$i];
 
-					if(!empty($termID) && empty($arrQueue->businessTerms[$termID]) && empty($arrQueue->concepts[$termID])){ // Specified business term
+					if(!empty($termID) && empty($arrQueue['businessTerms'][$termID]) && empty($arrQueue['concepts'][$termID])){ // Specified business term
 						$requestable = true;
 						$concept = false;
 						$termResp = $this->CollibraAPI->get('term/'.$termID);
@@ -97,14 +97,14 @@ class RequestController extends AppController {
 
 						if($requestable && !$concept){
 							$newTermsAdded++;
-							$arrQueue->businessTerms[$termID] = ['term' => $term, 'communityId' => $vocabID, 'apiHost' => $apiHost, 'apiPath' => $apiPath];
+							$arrQueue['businessTerms'][$termID] = ['term' => $term, 'communityId' => $vocabID, 'apiHost' => $apiHost, 'apiPath' => $apiPath];
 						} else if ($requestable && $concept) {
 							$newTermsAdded++;
-							$arrQueue->concepts[$termID] = ['term' => $term, 'communityId' => $vocabID, 'apiHost' => $apiHost, 'apiPath' => $apiPath];
+							$arrQueue['concepts'][$termID] = ['term' => $term, 'communityId' => $vocabID, 'apiHost' => $apiHost, 'apiPath' => $apiPath];
 						}
-					} else if (empty($termID) && !empty($term) && empty($arrQueue->apiFields[$term])) { // Unspecified API field
+					} else if (empty($termID) && !empty($term) && empty($arrQueue['apiFields'][$term])) { // Unspecified API field
 						$newTermsAdded++;
-						$arrQueue->apiFields[$term] = ['name' => end((explode(".", $term))), 'apiHost' => $apiHost, 'apiPath' => $apiPath];
+						$arrQueue['apiFields'][$term] = ['name' => end((explode(".", $term))), 'apiHost' => $apiHost, 'apiPath' => $apiPath];
 					}
 				}
 
@@ -119,14 +119,14 @@ class RequestController extends AppController {
 		if($this->request->is('post')){
 			$termID = $this->request->data['id'];
 			$arrQueue = $this->Session->read('queue');
-			if(array_key_exists($termID, $arrQueue->businessTerms)) {
-				unset($arrQueue->businessTerms[$termID]);
-			} else if (array_key_exists($termID, $arrQueue->concepts)) {
-				unset($arrQueue->concepts[$termID]);
-			} else if (array_key_exists($termID, $arrQueue->apiFields)) {
-				unset($arrQueue->apiFields[$termID]);
-			} else if (array_key_exists($termID, $arrQueue->emptyApis)) {
-				unset($arrQueue->emptyApis[$termID]);
+			if(array_key_exists($termID, $arrQueue['businessTerms'])) {
+				unset($arrQueue['businessTerms'][$termID]);
+			} else if (array_key_exists($termID, $arrQueue['concepts'])) {
+				unset($arrQueue['concepts'][$termID]);
+			} else if (array_key_exists($termID, $arrQueue['apiFields'])) {
+				unset($arrQueue['apiFields'][$termID]);
+			} else if (array_key_exists($termID, $arrQueue['emptyApis'])) {
+				unset($arrQueue['emptyApis'][$termID]);
 			}
 			$this->Session->write('queue', $arrQueue);
 		}
@@ -141,10 +141,10 @@ class RequestController extends AppController {
 		$this->autoRender = false;
 
 		$arrQueue = $this->Session->read('queue');
-		echo  sizeof($arrQueue->businessTerms) +
-			  sizeof($arrQueue->concepts) +
-			  sizeof($arrQueue->apiFields) +
-			  sizeof($arrQueue->emptyApis);
+		echo  sizeof($arrQueue['businessTerms']) +
+			  sizeof($arrQueue['concepts']) +
+			  sizeof($arrQueue['apiFields']) +
+			  sizeof($arrQueue['emptyApis']);
 	}
 
 	public function saveFormFields() {
@@ -155,17 +155,25 @@ class RequestController extends AppController {
 	public function cartDropdown() {
 		$this->autoRender = false;
 		$responseHTML = '';
+		$this->loadModel('CollibraAPI');
+		$hasUnloadedDraft =
+			!empty($this->CollibraAPI->checkForDSRDraft($this->Auth->user('username')))
+			&& !$this->Session->check('draftLoaded');
 
 		$arrQueue = $this->Session->read('queue');
-		$responseHTML=  '<h3>Requested Items: '.(count($arrQueue->businessTerms) + count($arrQueue->concepts) + count($arrQueue->apiFields) + count($arrQueue->emptyApis)).'</h3>'.
+		$responseHTML=  '<h3>Requested Items: '.(count($arrQueue['businessTerms']) + count($arrQueue['concepts']) + count($arrQueue['apiFields']) + count($arrQueue['emptyApis'])).'</h3>'.
 			'<a class="close" href="javascript: hideRequestQueue()">X</a>'.
 			'<div class="arrow"></div>'.
 			'<a class="clearQueue" href="javascript: clearRequestQueue()">Empty cart</a>';
+		if ($hasUnloadedDraft) {
+			$responseHTML .= '<a class="loadDraft" href="/request/loadDraft">Load Draft</a>'.
+				'<a class="deleteDraft" href="javascript: deleteDraft()">Delete Draft</a>';
+		}
 		if(
-			!empty($arrQueue->businessTerms) ||
-			!empty($arrQueue->concepts) ||
-			!empty($arrQueue->apiFields) ||
-			!empty($arrQueue->emptyApis)
+			!empty($arrQueue['businessTerms']) ||
+			!empty($arrQueue['concepts']) ||
+			!empty($arrQueue['apiFields']) ||
+			!empty($arrQueue['emptyApis'])
 		){
 			$responseHTML .= '<a class="btn-orange" href="/request">View Request</a>';
 		}
@@ -196,7 +204,7 @@ class RequestController extends AppController {
 			}
 		}
 
-		if ($request->conceptType->resourceId != Configure::read('Collibra.vocabulary.isaRequest')) {
+		if ($request->conceptType->resourceId != Configure::read('Collibra.type.isaRequest')) {
 			$parent = $this->CollibraAPI->getDataUsageParent($dsrId);
 			return $this->addCollaborator($parent[0]->id, $personId);
 		}
@@ -237,7 +245,7 @@ class RequestController extends AppController {
 		$resp = $this->CollibraAPI->get('term/'.$dsrId);
 		$request = json_decode($resp);
 
-		if ($request->conceptType->resourceId != Configure::read('Collibra.vocabulary.isaRequest')) {
+		if ($request->conceptType->resourceId != Configure::read('Collibra.type.isaRequest')) {
 			$parent = $this->CollibraAPI->getDataUsageParent($dsrId);
 			$this->removeCollaborator($parent[0]->id, $netId);
 			return;
@@ -268,6 +276,108 @@ class RequestController extends AppController {
 		$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
 	}
 
+	public function saveDraft() {
+		$this->autoRender = false;
+		$netId = $this->Auth->user('username');
+
+		//First check if there already is a draft for this user; if so, delete it
+		$this->loadModel('CollibraAPI');
+		$draft = $this->CollibraAPI->checkForDSRDraft($netId);
+		if (!empty($draft)) {
+			$this->CollibraAPI->delete('term/'.$draft[0]->id);
+		}
+
+		$resp = $this->CollibraAPI->post('term', [
+			'vocabulary' => Configure::read('Collibra.vocabulary.dataSharingRequests'),
+			'signifier' => "DRAFT-{$netId}",
+			'conceptType' => Configure::read('Collibra.type.dataSharingRequestDraft')
+		]);
+		$resp = json_decode($resp);
+		$draftId = $resp->resourceId;
+
+		$arrQueue = $this->Session->read('queue');
+		$this->request->data['descriptionOfInformation'] = json_encode($arrQueue);
+
+		foreach ($this->request->data as $label => $value) {
+			if (empty($value)) continue;
+			$postData['label'] = Configure::read("Collibra.formFields.{$label}");
+			$postData['value'] = $value;
+			$postString = http_build_query($postData);
+			$resp = $this->CollibraAPI->post('term/'.$draftId.'/attributes', $postString);
+			if ($resp->code != '201') {
+				$error = true;
+			}
+		}
+
+		if (isset($error)) {
+			return json_encode(['success' => 0]);
+		}
+		$this->Session->write('draftLoaded', true);
+		return json_encode(['success' => 1]);
+	}
+
+	public function loadDraft() {
+		$netId = $this->Auth->user('username');
+		$this->loadModel('CollibraAPI');
+		$draftId = $this->CollibraAPI->checkForDSRDraft($netId);
+
+		if (empty($draftId)) {
+			$this->redirect(['controller' => 'search', 'action' => 'index']);
+		}
+
+		$draft = $this->CollibraAPI->get('term/'.$draftId[0]->id);
+		$draft = json_decode($draft);
+
+		$arrLabelMatch = [
+			'Requester Name' => 'name',
+			'Requester Phone' => 'phone',
+			'Requester Role' => 'role',
+			'Requester Email' => 'email',
+			'Requesting Organization' => 'requestingOrganization',
+			'Sponsor Name' => 'sponsorName',
+			'Sponsor Phone' => 'sponsorPhone',
+			'Sponsor Role' => 'sponsorRole',
+			'Sponsor Email' => 'sponsorEmail',
+			'Application Name' => 'applicationName',
+			'Additional Information Requested' => 'descriptionOfInformation',
+			'Description of Intended Use' => 'descriptionOfIntendedUse',
+			'Access Rights' => 'accessRights',
+			'Access Method' => 'accessMethod',
+			'Impact on System' => 'impactOnSystem'
+		];
+		$arrFormFields = [];
+		foreach ($draft->attributeReferences->attributeReference as $attr) {
+			if ($attr->labelReference->signifier == 'Additional Information Requested') {
+				$arrQueue = json_decode($attr->value, true);
+				$this->Session->write('queue', $arrQueue);
+				continue;
+			}
+			$label = $arrLabelMatch[$attr->labelReference->signifier];
+			$arrFormFields[$label] = $attr->value;
+		}
+
+		$this->Session->write('inProgressFormFields', $arrFormFields);
+		$this->Session->write('draftLoaded', true);
+
+		$this->redirect(['action' => 'index']);
+	}
+
+	public function deleteDraft() {
+		$this->autoRender = false;
+		if (!$netId = $this->Auth->user('username')) {
+			return json_encode(['success' => '0', 'message' => 'User not logged in']);
+		}
+
+		$this->loadModel('CollibraAPI');
+		$draftId = $this->CollibraAPI->checkForDSRDraft($netId);
+		if (empty($draftId)) {
+			return json_encode(['success' => '0', 'message' => 'User doesn\'t have a draft saved']);
+		}
+
+		$this->CollibraAPI->delete('term/'.$draftId[0]->id);
+		return json_encode(['success' => '1']);
+	}
+
 	public function editTermsSubmit() {
 		$this->autoRender = false;
 		if (!$this->request->is('post')) {
@@ -294,9 +404,9 @@ class RequestController extends AppController {
 						continue;
 					}
 
-					foreach ($arrQueue->businessTerms as $queueId => $queueTerm) {
+					foreach ($arrQueue['businessTerms'] as $queueId => $queueTerm) {
 						if ($queueId == $termid) {
-							unset($arrQueue->businessTerms[$queueId]);
+							unset($arrQueue['businessTerms'][$queueId]);
 							break;
 						}
 					}
@@ -308,9 +418,9 @@ class RequestController extends AppController {
 				if (isset($this->request->data['arrConcepts'])) {
 					foreach ($this->request->data['arrConcepts'] as $concept) {
 						$additionString .= "<br/>".$concept['term']." (Concept), from API: ".$concept['apiPath'];
-						foreach ($arrQueue->concepts as $queueId => $_) {
+						foreach ($arrQueue['concepts'] as $queueId => $_) {
 							if ($queueId == $concept['id']) {
-								unset($arrQueue->concepts[$queueId]);
+								unset($arrQueue['concepts'][$queueId]);
 								break;
 							}
 						}
@@ -319,9 +429,9 @@ class RequestController extends AppController {
 				if (isset($this->request->data['arrApiFields'])) {
 					foreach ($this->request->data['arrApiFields'] as $field) {
 						$additionString .= "<br/>".$field['field'].", from API: ".$field['apiPath'];
-						foreach ($arrQueue->apiFields as $path => $_) {
+						foreach ($arrQueue['apiFields'] as $path => $_) {
 							if ($path == $field['field']) {
-								unset($arrQueue->apiFields[$path]);
+								unset($arrQueue['apiFields'][$path]);
 								break;
 							}
 						}
@@ -330,9 +440,9 @@ class RequestController extends AppController {
 				if (isset($this->request->data['arrApis'])) {
 					foreach ($this->request->data['arrApis'] as $api) {
 						$additionString .= "<br/>".$api." [No specified output fields]";
-						foreach ($arrQueue->emptyApis as $path => $_) {
+						foreach ($arrQueue['emptyApis'] as $path => $_) {
 							if ($path == $api) {
-								unset($arrQueue->emptyApis[$path]);
+								unset($arrQueue['emptyApis'][$path]);
 								break;
 							}
 						}
@@ -402,7 +512,7 @@ class RequestController extends AppController {
 		}
 
 		// Check whether $request is a DSR or DSA
-		$isaRequest = $request->conceptType->resourceId == Configure::read('Collibra.vocabulary.isaRequest');
+		$isaRequest = $request->conceptType->resourceId == Configure::read('Collibra.type.isaRequest');
 		if (!$isaRequest) {
 			$this->Flash->error('You cannot edit the terms on a DSA.');
 			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
@@ -527,7 +637,7 @@ class RequestController extends AppController {
 		}
 
 		// Check whether $request is a DSR or DSA
-		$isaRequest = $request->conceptType->resourceId == Configure::read('Collibra.vocabulary.isaRequest');
+		$isaRequest = $request->conceptType->resourceId == Configure::read('Collibra.type.isaRequest');
 
 		// load form fields for ISA workflow
 		$formResp = $this->CollibraAPI->get('workflow/'.Configure::read('Collibra.isaWorkflow.id').'/form/start');
@@ -597,10 +707,10 @@ class RequestController extends AppController {
 
 		$arrQueue = $this->Session->read('queue');
 		if (
-			empty($arrQueue->businessTerms) &&
-			empty($arrQueue->concepts) &&
-			empty($arrQueue->apiFields) &&
-			empty($arrQueue->emptyApis)
+			empty($arrQueue['businessTerms']) &&
+			empty($arrQueue['concepts']) &&
+			empty($arrQueue['apiFields']) &&
+			empty($arrQueue['emptyApis'])
 		) {
 			$this->redirect(['action' => 'index', '?' => ['err' => 1]]);
 			exit;
@@ -608,25 +718,25 @@ class RequestController extends AppController {
 
 		$businessTermIds = [];
 		$apis = [];
-		foreach ($arrQueue->businessTerms as $id => $term) {
+		foreach ($arrQueue['businessTerms'] as $id => $term) {
 			array_push($businessTermIds, $id);
 			if (!empty($term['apiPath']) && !empty($term['apiHost'])) {
 				$apis[$term['apiHost']][$term['apiPath']] = [];
 			}
 		}
-		foreach ($arrQueue->concepts as $id => $term) {
+		foreach ($arrQueue['concepts'] as $id => $term) {
 			if (!empty($term['apiPath']) && !empty($term['apiHost'])) {
 				$apis[$term['apiHost']][$term['apiPath']] = [];
 			}
 		}
-		foreach ($arrQueue->apiFields as $fieldName => $field) {
+		foreach ($arrQueue['apiFields'] as $fieldName => $field) {
 			if (!empty($field['apiPath']) && !empty($field['apiHost'])) {
 				$apis[$field['apiHost']][$field['apiPath']] = [];
 			}
 		}
 
 		$additionalInformationAPIs = "";
-		foreach ($arrQueue->emptyApis as $path => $api) {
+		foreach ($arrQueue['emptyApis'] as $path => $api) {
 			$additionalInformationAPIs .= "\n    {$api['apiHost']}/{$path}\n        [No specified output fields]";
 		}
 		$this->request->data['descriptionOfInformation'] .= $additionalInformationAPIs;
@@ -680,7 +790,7 @@ class RequestController extends AppController {
 						if (empty($term->businessTerm[0]->termId)) {
 							continue;
 						}
-						if (!array_key_exists($term->businessTerm[0]->termId, $arrQueue->businessTerms)) {
+						if (!array_key_exists($term->businessTerm[0]->termId, $arrQueue['businessTerms'])) {
 							array_push($postData[$additionalElementsString], $term->businessTerm[0]->termId);
 						}
 					}
@@ -717,6 +827,8 @@ class RequestController extends AppController {
 			// attempt to reindex source to make sure latest requests are displayed
 			$resp = $this->CollibraAPI->post('search/re-index');
 
+			$this->deleteDraft();
+
 			// clear items in queue
 			$this->Session->delete('queue');
 			$this->Session->delete('inProgressFormFields');
@@ -742,7 +854,7 @@ class RequestController extends AppController {
 		$resp = $this->CollibraAPI->get('term/'.$dsrId);
 		$dsr = json_decode($resp);
 
-		$parent = $dsr->conceptType->resourceId == Configure::read('Collibra.vocabulary.isaRequest');
+		$parent = $dsr->conceptType->resourceId == Configure::read('Collibra.type.isaRequest');
 
 		$dsr->roles = $this->CollibraAPI->getResponsibilities($dsr->vocabularyReference->resourceId);
 		if($parent) {
@@ -829,7 +941,7 @@ class RequestController extends AppController {
 		$resp = $this->CollibraAPI->get('term/'.$dsrId);
 		$dsr = json_decode($resp);
 
-		$parent = $dsr->conceptType->resourceId == Configure::read('Collibra.vocabulary.isaRequest');
+		$parent = $dsr->conceptType->resourceId == Configure::read('Collibra.type.isaRequest');
 
 		$dsr->roles = $this->CollibraAPI->getResponsibilities($dsr->vocabularyReference->resourceId);
 		if($parent) {
@@ -909,10 +1021,10 @@ class RequestController extends AppController {
 		// make sure terms have been added to the users's queue
 		$arrQueue = $this->Session->read('queue');
 		if(
-			empty($arrQueue->businessTerms) &&
-			empty($arrQueue->concepts) &&
-			empty($arrQueue->apiFields) &&
-			empty($arrQueue->emptyApis)
+			empty($arrQueue['businessTerms']) &&
+			empty($arrQueue['concepts']) &&
+			empty($arrQueue['apiFields']) &&
+			empty($arrQueue['emptyApis'])
 		) {
 			header('location: /search');
 			exit;
@@ -927,7 +1039,7 @@ class RequestController extends AppController {
 			'           "OR":[';
 
 		$apis = [];
-		foreach ($arrQueue->businessTerms as $termId => $term){
+		foreach ($arrQueue['businessTerms'] as $termId => $term){
 			$requestFilter .= '{"Field":{'.
 				'   "name":"termrid",'.
 				'   "operator":"EQUALS",'.
@@ -937,7 +1049,7 @@ class RequestController extends AppController {
 				$apis[$term['apiHost']][$term['apiPath']] = [];
 			}
 		}
-		foreach ($arrQueue->apiFields as $fieldName => $field) {
+		foreach ($arrQueue['apiFields'] as $fieldName => $field) {
 			if (!empty($field['apiPath']) && !empty($field['apiHost'])) {
 				$apis[$field['apiHost']][$field['apiPath']] = [];
 			}
@@ -952,15 +1064,15 @@ class RequestController extends AppController {
 						continue;
 					}
 					if (empty($term->businessTerm[0]->termId)) {
-						if (array_key_exists($term->name, $arrQueue->apiFields)) {
+						if (array_key_exists($term->name, $arrQueue['apiFields'])) {
 							$apis[$apiHost][$apiPath]['unmapped']['requested'][] = $term->name;
 						} else {
 							$apis[$apiHost][$apiPath]['unmapped']['unrequested'][] = $term->name;
 						}
 					} else {
-						if (array_key_exists($term->businessTerm[0]->termId, $arrQueue->concepts)) {
+						if (array_key_exists($term->businessTerm[0]->termId, $arrQueue['concepts'])) {
 							$apis[$apiHost][$apiPath]['requestedConcept'][] = $term->businessTerm[0]->term;
-						} else if (!array_key_exists($term->businessTerm[0]->termId, $arrQueue->businessTerms)) {
+						} else if (!array_key_exists($term->businessTerm[0]->termId, $arrQueue['businessTerms'])) {
 							$apis[$apiHost][$apiPath]['unrequested'][] = $term->businessTerm[0]->term;
 						}
 					}
@@ -1024,8 +1136,8 @@ class RequestController extends AppController {
 			foreach ($termResp->aaData as $term) {
 				$domains[]  = $term->domainname;
 				$termNames[] = $term->termsignifier;
-				$term->apihost = $arrQueue->businessTerms[$term->termrid]['apiHost'];
-				$term->apipath = $arrQueue->businessTerms[$term->termrid]['apiPath'];
+				$term->apihost = $arrQueue['businessTerms'][$term->termrid]['apiHost'];
+				$term->apipath = $arrQueue['businessTerms'][$term->termrid]['apiPath'];
 			}
 			array_multisort($domains, SORT_ASC, $termNames, SORT_ASC, $termResp->aaData);
 		}

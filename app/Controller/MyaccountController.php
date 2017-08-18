@@ -80,7 +80,7 @@ class MyaccountController extends AppController {
 		$this->loadModel('CollibraAPI');
 		$resp = $this->CollibraAPI->postJSON(
 				'search',
-				'{"query":"'.$netID.'", "filter": {"category": ["TE"], "type": {"asset": ["' . Configure::read('Collibra.vocabulary.isaRequest') . '"] }}, "fields": ["' . Configure::read('Collibra.attribute.isaRequestNetId') . '"] }'
+				'{"query":"'.$netID.'", "filter": {"category": ["TE"], "type": {"asset": ["' . Configure::read('Collibra.type.isaRequest') . '"] }}, "fields": ["' . Configure::read('Collibra.attribute.isaRequestNetId') . '"] }'
 		);
 		$isaRequests = json_decode($resp);
 

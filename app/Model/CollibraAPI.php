@@ -832,6 +832,24 @@ class CollibraAPI extends Model {
 		return $output;
 	}
 
+	public function checkForDSRDraft($netId) {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'id']]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'id'],
+					'Signifier' => ['name' => 'draftname'],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+								'name' => 'draftname',
+								'operator' => 'EQUALS',
+								'value' => "DRAFT-{$netId}"]]]]]]]];
+		$results = $this->fullDataTable($tableConfig);
+		return $results;
+	}
+
 	public function getDataUsages($dsaId) {
 		$tableConfig = ['TableViewConfig' => [
 			'Columns' => [

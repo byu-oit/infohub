@@ -76,21 +76,21 @@
 					<!-- <div class="infoCol"> -->
 						<div class="field-container">
 							<label for="name">Requester Name*</label>
-							<input type="text" id="name" name="<?= Configure::read('Collibra.formFields.requesterName') ?>" class="inputShade noPlaceHolder" value="<?= h($request->attributeReferences->attributeReference['Requester Name']->value) ?>">
+							<input type="text" id="name" name="<?= Configure::read('Collibra.formFields.name') ?>" class="inputShade noPlaceHolder" value="<?= h($request->attributeReferences->attributeReference['Requester Name']->value) ?>">
 						</div>
 						<div class="field-container">
 							<label for="phone">Requester Phone*</label>
-							<input type="text" id="phone" name="<?= Configure::read('Collibra.formFields.requesterPhone') ?>" class="inputShade noPlaceHolder" value="<?= h($request->attributeReferences->attributeReference['Requester Phone']->value) ?>">
+							<input type="text" id="phone" name="<?= Configure::read('Collibra.formFields.phone') ?>" class="inputShade noPlaceHolder" value="<?= h($request->attributeReferences->attributeReference['Requester Phone']->value) ?>">
 						</div>
 					<!-- </div>
 					<div class="infoCol"> -->
 						<div class="field-container">
 							<label for="role">Requester Role*</label>
-							<input type="text" id="role" name="<?= Configure::read('Collibra.formFields.requesterRole') ?>" class="inputShade noPlaceHolder" value="<?= h($request->attributeReferences->attributeReference['Requester Role']->value) ?>">
+							<input type="text" id="role" name="<?= Configure::read('Collibra.formFields.role') ?>" class="inputShade noPlaceHolder" value="<?= h($request->attributeReferences->attributeReference['Requester Role']->value) ?>">
 						</div>
 						<div class="field-container">
 							<label for="email">Requester Email*</label>
-							<input type="text" id="email" name="<?= Configure::read('Collibra.formFields.requesterEmail') ?>" class="inputShade noPlaceHolder" value="<?= h($request->attributeReferences->attributeReference['Requester Email']->value) ?>">
+							<input type="text" id="email" name="<?= Configure::read('Collibra.formFields.email') ?>" class="inputShade noPlaceHolder" value="<?= h($request->attributeReferences->attributeReference['Requester Email']->value) ?>">
 						</div>
 						<div class="field-container">
 							<label for="requestingOrganization">Requester Organization*</label>

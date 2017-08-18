@@ -34,7 +34,7 @@ if (!function_exists('denv')) {
 			'byu' => 'c690b823-4341-4125-8a81-22d592c23773',
 		],
 		'vocabulary' => [
-			'isaRequest' => '00000000-0000-0000-0000-000000031231',
+			'dataSharingRequests' => '00000000-0000-0000-0000-000000006016',
 			'newBusinessTerms' => '00000000-0000-0000-0000-000000006013'
 		],
 		'isaWorkflow' => [
@@ -58,6 +58,8 @@ if (!function_exists('denv')) {
 			'DSRtoAdditionallyIncludedAsset' => '71be0418-dbb7-4ee0-ad9e-ef9d5eca13ab'
 		],
 		'type' => [
+			'isaRequest' => '00000000-0000-0000-0000-000000031231',
+			'dataSharingRequestDraft' => 'cebd255b-fb1b-41c5-a67d-45061aac4fbc',
 			'synonym' => '2c2d6491-a41c-4e9e-af52-759b43948951',
 			'term' => '00000000-0000-0000-0000-000000011001',
 			'api' => '43efdd9e-8173-4f42-8055-9ae73d6134b1',
@@ -77,7 +79,8 @@ if (!function_exists('denv')) {
 			'notes' => '00000000-0000-0000-0000-000000003116'
 		],
 		'status' => [
-			'archived' => '6c8bfba8-11cc-48be-be8e-a433b91e0d28'
+			'archived' => '6c8bfba8-11cc-48be-be8e-a433b91e0d28',
+			'draft' => '1bf171b3-1c4a-4417-8c38-5b0fca59f252'
 		],
 		'term' => [
 			'custodian' => '6f666b9e-be07-4521-95fa-36fecfe2ff71',
@@ -89,10 +92,10 @@ if (!function_exists('denv')) {
 			'custodian' => '00000000-0000-0000-0000-000000005041'
 		],
 		'formFields' => [
-			'requesterName' => 'f7ebce1f-c0b5-48c8-bc62-bddd976994fc',
-			'requesterPhone' => 'c3252e20-c566-405d-8bfe-dd69377042c2',
-			'requesterRole' => '688e8cf3-0db8-4ad1-b577-215f09b8e613',
-			'requesterEmail' => '52404e00-7448-456a-8eac-bad31aea7e61',
+			'name' => 'f7ebce1f-c0b5-48c8-bc62-bddd976994fc',
+			'phone' => 'c3252e20-c566-405d-8bfe-dd69377042c2',
+			'role' => '688e8cf3-0db8-4ad1-b577-215f09b8e613',
+			'email' => '52404e00-7448-456a-8eac-bad31aea7e61',
 			'requestingOrganization' => '97a41292-5627-49cc-bc36-efad1b996d37',
 			'sponsorName' => '81e2e950-e9f7-4340-9d39-7faa7e88733a',
 			'sponsorPhone' => 'd16d9253-e1fc-4d3b-a5a7-39d2ffb92560',

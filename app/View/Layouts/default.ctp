@@ -104,11 +104,14 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 						<?php
 							$reqHiddenClass = '';
 							if($requestedTermCount==0){
-								$reqHiddenClass = 'request-hidden';
+								$reqHiddenClass = ' request-hidden';
 							}
 						?>
 						<a href="javascript: toggleRequestQueue()" title="Request Queue">
-							<div class="request-num <?php echo $reqHiddenClass ?>"><?php echo $requestedTermCount ?></div>
+							<?php if ($hasUnloadedDraft): ?>
+								<div class="draft-alert" title="You have a request draft saved">!</div>
+							<?php endif ?>
+							<div class="request-num<?php echo $reqHiddenClass ?>"><?php echo $requestedTermCount ?></div>
 							<img class="icon" src="/img/icon-cart.png" alt="Request Queue" title="Your Request">
 						</a>
 						<div id="request-popup"></div>

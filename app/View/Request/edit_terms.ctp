@@ -90,24 +90,24 @@
 				<h3 class="headerTab">Add Information</h3>
 				<div class="clear"></div>
 				<div class="resultItem">
-					<?php if (!empty($arrQueue->businessTerms)): ?>
+					<?php if (!empty($arrQueue['businessTerms'])): ?>
 					<div class="checkAll"><input type="checkbox" onclick="toggleAllCheckboxes(this)" checked="checked">Check/Uncheck all</div>
 					<?php endif; ?>
 					<div class="irLower"><ul class="cart">
 						<?php
-						if(!empty($arrQueue->businessTerms) || !empty($arrQueue->concepts) || !empty($arrQueue->emptyApis) || !empty($arrQueue->apiFields)) {
-							foreach ($arrQueue->businessTerms as $id => $term){
+						if(!empty($arrQueue['businessTerms']) || !empty($arrQueue['concepts']) || !empty($arrQueue['emptyApis']) || !empty($arrQueue['apiFields'])) {
+							foreach ($arrQueue['businessTerms'] as $id => $term){
 								echo '<li id="requestItem'.$id.'"><input type="checkbox" name="businessTerms[]" value="'.$id.'" checked="checked">'.$term['term'].'</li>';
 							}
-							foreach ($arrQueue->concepts as $id => $term) {
+							foreach ($arrQueue['concepts'] as $id => $term) {
 								echo '<li id="requestItem'.$id.'"><input type="checkbox" name="concepts[]" value="'.$id.'" term-name="'.$term['name'].'" apiPath="'.$term['apiPath'].'" checked="checked">'.$term['term'].'</li>';
 							}
-							foreach ($arrQueue->emptyApis as $path => $api){
+							foreach ($arrQueue['emptyApis'] as $path => $api){
 								$displayName = strlen($path) > 28 ? substr($path, 0, 28) . "..." : $path;
 								$id = preg_replace('/\//', '', $path);
 								echo '<li id="requestItem'.$id.'"><input type="checkbox" name="apis[]" value="'.$path.'" checked="checked">'.$displayName.'</li>';
 							}
-							foreach ($arrQueue->apiFields as $fieldPath => $field) {
+							foreach ($arrQueue['apiFields'] as $fieldPath => $field) {
 								echo '<li id="requestItem'.$fieldPath.'"><input type="checkbox" name="apiFields[]" value="'.$fieldPath.'" apiPath="'.$field['apiPath'].'" checked="checked">'.$field['name'].'</li>';
 							}
 							echo '</ul><a class="addTerms grow">Add to this DSR</a>';

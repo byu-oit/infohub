@@ -12,6 +12,23 @@
 				echo "alert('An error occured with your request. Please try again.');";
 			}
 		?>
+
+		$('#requestSave').click(function() {
+			var postData = {};
+			$('#srLower').find('input, textarea').each(function() {
+				postData[$(this).prop('name')] = $(this).prop('value');
+			});
+
+			$.post('request/saveDraft', postData)
+				.done(function(data) {
+					data = JSON.parse(data);
+					if (data.success) {
+						alert('Your request was saved successfully.');
+					} else {
+						alert('There was a problem saving your request.');
+					}
+				});
+		});
 	});
 
 	$(window).unload(function() {
@@ -50,18 +67,12 @@
 			accessMethod: '',
 			impactOnSystem: ''
 		};
-		$('#srLower').find('input').each(function() {
+		$('#srLower').find('input, textarea').each(function() {
 			if ($.inArray($(this).prop('name'), savables) > -1 && $(this).val() != "") {
 				saveNeeded = true;
 				arrSaveData[$(this).prop('name')] = $(this).prop('value');
 			}
 		});
-		$('#srLower').find('textarea').each(function() {
-			if ($.inArray($(this).prop('name'), savables) > -1 && $(this).val() != "") {
-				saveNeeded = true;
-				arrSaveData[$(this).prop('name')] = $(this).prop('value');
-			}
-		})
 		if (saveNeeded) {
 			$.ajax({
 				method: "POST",
@@ -122,26 +133,27 @@
 			<h2 class="headerTab">Request Form</h2>
 
 			<div id="srLower" class="whiteBox">
-				<div id="saveNotification">Feel free to leave this page and come back; your changes will be saved.</div>
+				<div class="saveNotification">If you leave this page and stick around InfoHub, your changes will be saved automatically.<br>
+				<strong>If you'd like to leave the site and finish later,</strong> be sure to hit the 'Save' button below.</div>
 
 				<h3 class="headerTab">Information Requested</h3>
 				<div class="clear"></div>
 				<div class="resultItem">
 					<div class="irLower"><ul class="cart">
 						<?php
-					if(!empty($termDetails->aaData) || !empty($arrQueue->concepts) || !empty($arrQueue->emptyApis) || !empty($arrQueue->apiFields)) {
+					if(!empty($termDetails->aaData) || !empty($arrQueue['concepts']) || !empty($arrQueue['emptyApis']) || !empty($arrQueue['apiFields'])) {
 							foreach ($termDetails->aaData as $term){
 								echo '<li id="requestItem'.$term->termrid.'" data-title="'.$term->termsignifier.'" data-rid="'.$term->termrid.'" data-vocabID="'.$term->commrid.'" api-host="'.$term->apihost.'" api-path="'.$term->apipath.'" api="false"><a class="delete" href="javascript:removeFromRequestQueue(\''.$term->termrid.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$term->termsignifier.'</li>';
 							}
-							foreach ($arrQueue->concepts as $id => $term) {
+							foreach ($arrQueue['concepts'] as $id => $term) {
 								echo '<li id="requestItem'.$id.'" data-title"'.$term['term'].'" data-rid="'.$id.'"data-vocabID="'.$term['communityId'].'" api-host="'.$term['apiHost'].'" api-path="'.$term['apiPath'].'" api="false"><a class="delete" href="javascript:removeFromRequestQueue(\''.$id.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$term['term'].'</li>';
 							}
-							foreach ($arrQueue->emptyApis as $path => $api){
+							foreach ($arrQueue['emptyApis'] as $path => $api){
 								$displayName = strlen($path) > 28 ? substr($path, 0, 28) . "..." : $path;
 								$id = preg_replace('/\//', '', $path);
 								echo '<li id="requestItem'.$id.'" data-title="'.$path.'" api-host="'.$api['apiHost'].'" api="true"><a class="delete" href="javascript:removeFromRequestQueue(\''.$path.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$displayName.'</li>';
 							}
-							foreach ($arrQueue->apiFields as $fieldPath => $field) {
+							foreach ($arrQueue['apiFields'] as $fieldPath => $field) {
 								echo '<li id="requestItem'.$fieldPath.'" data-title="'.$fieldPath.'" api-host="'.$field['apiHost'].'" api-path="'.$field['apiPath'].'" api="false"><a class="delete" href="javascript:removeFromRequestQueue(\''.$fieldPath.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$field['name'].'</li>';
 							}
 							echo '</ul><a class="clearQueue" href="javascript: clearRequestQueue()">Clear All Items</a>';
@@ -256,7 +268,8 @@
 	</div>
 	<div id="formSubmit" class="innerLower">
 		<input type="submit" value="Submit Request" id="requestSubmit" name="requestSubmit" class="grow">
-		<label for="requestSubmit" class="mobileHide">*Required field</label>
+		<div id="requestSave" class="grow">Save</div>
+		<div class="mobileHide">*Required field</div>
 		<div class="clear"></div>
 	</div>
 	<div class="clear"></div>

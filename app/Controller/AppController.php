@@ -59,10 +59,18 @@ class AppController extends Controller {
 				$byuUsername = $_SESSION["byuUsername"];
 				$byuUserDepartment = $_SESSION["byuUserDepartment"];
 			}
+
+			$this->loadModel('CollibraAPI');
+			if (!empty($this->CollibraAPI->checkForDSRDraft($netID)) && !$this->Session->check('draftLoaded')) {
+				$this->set('hasUnloadedDraft', true);
+			} else {
+				$this->set('hasUnloadedDraft', false);
+			}
 		}else{
 			$this->set('casAuthenticated', false);
 			$_SESSION["byuUsername"] = '';
 			$_SESSION["byuUserDepartment"] = '';
+			$this->set('hasUnloadedDraft', false);
 		}
 
 		//$this->disableCache();
@@ -74,19 +82,19 @@ class AppController extends Controller {
 		}
 
 		if (!$this->Session->check('queue')) {
-			$arrQueue = new stdClass();
-			$arrQueue->businessTerms = [];
-			$arrQueue->concepts = [];
-			$arrQueue->apiFields = [];
-			$arrQueue->emptyApis = [];
+			$arrQueue = [];
+			$arrQueue['businessTerms'] = [];
+			$arrQueue['concepts'] = [];
+			$arrQueue['apiFields'] = [];
+			$arrQueue['emptyApis'] = [];
 			$this->Session->write('queue', $arrQueue);
 		}
 
 		$arrQueue = $this->Session->read('queue');
-		$requestedTermCount = sizeof($arrQueue->businessTerms) +
-							  sizeof($arrQueue->concepts) +
-							  sizeof($arrQueue->apiFields) +
-							  sizeof($arrQueue->emptyApis);
+		$requestedTermCount = sizeof($arrQueue['businessTerms']) +
+							  sizeof($arrQueue['concepts']) +
+							  sizeof($arrQueue['apiFields']) +
+							  sizeof($arrQueue['emptyApis']);
 
 		$this->set('byuUsername', $byuUsername);
 		$this->set('byuUserDepartment', $byuUserDepartment);
