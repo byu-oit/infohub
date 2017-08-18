@@ -82,6 +82,13 @@ class AppController extends Controller {
 			mail('jeremy_rees@byu.edu', 'We\'re not useless!', "{$byuUsername}\r\n".json_encode($quickLinks), 'From: quicklinks@infohub.byu.edu');
 		}
 
+		if ($this->Session->check('queue')) {
+			$arrQueue = $this->Session->read('queue');
+			if (is_object($arrQueue)) {
+				$this->Session->delete('queue');
+			}
+		}
+
 		if (!$this->Session->check('queue')) {
 			$arrQueue = [];
 			$arrQueue['businessTerms'] = [];

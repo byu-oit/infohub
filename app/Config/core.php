@@ -59,7 +59,7 @@ if (!function_exists('denv')) {
 		],
 		'type' => [
 			'isaRequest' => '00000000-0000-0000-0000-000000031231',
-			'dataSharingRequestDraft' => 'cebd255b-fb1b-41c5-a67d-45061aac4fbc',
+			'dataSharingRequestDraft' => '6bee7c91-3f51-4db6-b2d1-f1a3411fad49',
 			'synonym' => '2c2d6491-a41c-4e9e-af52-759b43948951',
 			'term' => '00000000-0000-0000-0000-000000011001',
 			'api' => '43efdd9e-8173-4f42-8055-9ae73d6134b1',
