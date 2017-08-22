@@ -766,4 +766,5 @@ img {
 }
 footer {
   margin-top: 100px;
+  z-index: 20;
 }

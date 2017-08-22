@@ -8,6 +8,7 @@
   position: absolute;
   padding: 0;
   margin: 0;
+  z-index: -100;
 }
 #accountMid {
   position: relative;
