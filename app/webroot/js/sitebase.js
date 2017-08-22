@@ -29,17 +29,6 @@ $(document).ready(function(){
 	$("#mobileHelp").click(function() {
 		$("#nhContent").slideToggle();
 	});
-
-	$('.editQL').click(function() {
-		$('.ql-edit').addClass('active');
-		$('.ql-list').addClass('ql-active');
-		$('.quickLink').addClass('active-link')
-	});
-	$('.saveEdit').click(function() {
-		$('.ql-edit').removeClass('active');
-		$('.ql-list').removeClass('ql-active');
-		$('.quickLink').removeClass('active-link')
-	});
 });
 
 $(document).ready(resizeFonts);
@@ -330,42 +319,6 @@ function deleteDraft(){
 		});
 }
 /////////////////////////////
-
-// QuickLinks functions
-/////////////////////////////
-function removeQL(li, id, starClick){
-	$.ajax({
-		type: 'POST',
-		url: '/quickLinks/remove',
-		data: {'id':id}
-	});
-	if (!starClick) {
-		$(li).parent().remove();
-	} else {
-		$(li).remove();
-	}
-	$('#term'+id+' .addQuickLink img').attr('src', '/img/iconStarBlue.gif');
-}
-
-function addQL(t, id) {
-	$.ajax({
-		type: 'POST',
-		url: '/quickLinks/add',
-		data: {'ql':t, 'id':id}
-	})
-	.done(function(data){
-		$('#term'+id+' .addQuickLink img').attr('src', '/img/iconStarOrange.gif');
-		if(data==1){
-			var html = '<li id="term-' + id + '-list-item">'+
-				'    <a class="ql-list ql-remove" href="#" onclick="removeQL(this,\''+id+'\'); return false;"><img src="/img/ql-delete.png"></a>'+
-				'    <a class="quickLink" href="/search/term/'+id+'">'+t+'</a>'+
-				'</li>';
-			$('#QLContainer ul').append(html);
-		}else{
-			removeQL('#term-'+id+'-list-item', id, 1);
-		}
-	});
-}
 
 $(document).on( 'click', function ( e ) {
 	if ( $( e.target ).closest('.autoComplete').length === 0 ) {

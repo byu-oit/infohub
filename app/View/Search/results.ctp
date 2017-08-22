@@ -266,16 +266,6 @@
 						<div class="clear"></div>
 					</div>
 				</div>
-				<a href="javascript:addQL('<?php echo $term->termsignifier; ?>', '<?php echo $term->termrid; ?>')" class="addQuickLink grow">
-				<?php
-					if(isset($term->saved) && $term->saved == '1'){
-						echo '<img src="/img/iconStarOrange.gif" alt="Quick Link">';
-					}else{
-						echo '<img src="/img/iconStarBlue.gif" alt="Quick Link">';
-					}
-				?>
-
-				</a>
 				<?php
 					if(!$notRequestable || Configure::read('allowUnrequestableTerms')){
 				?>
@@ -301,6 +291,3 @@
 		</div>
 	</div>
 </div>
-
-<!-- Quick links -->
-<?php echo $this->element('quick_links'); ?>

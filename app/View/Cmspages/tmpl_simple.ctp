@@ -28,9 +28,9 @@
 			$('.contentBody, .aside').css('height', 'initial');
 			$('aside').css('height', 'initial');
 		}
-		
+
 	});
-		
+
 	$(window).resize(function() {
 		if($(window).width() > 750) {
 			$('.contentBody, .aside').css('height', 'initial');
@@ -41,7 +41,7 @@
 			$('.contentBody, .aside').css('height', 'initial');
 			$('aside').css('height', 'initial');
 		}
-		
+
 	});
 
 	function colHeight() {
@@ -80,6 +80,3 @@
 		</div>
 	</div>
 </div>
-
-<!-- Quick links -->
-<?php echo $this->element('quick_links'); ?>

@@ -31,7 +31,6 @@ App::uses('Controller', 'Controller');
  * @link		http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
  */
 class AppController extends Controller {
-	private $quickLinks;
 	public $components = array('Session', 'Cookie', 'Auth' => array('authorize' => 'Controller'), 'Flash');
 
 	public function initBeforeFilter(){
@@ -76,12 +75,6 @@ class AppController extends Controller {
 
 		//$this->disableCache();
 
-		$quickLinks = (array)$this->Cookie->read('QL');
-		// If anyone at all is using the QuickLinks system, email the devs
-		if (!empty($quickLinks)) {
-			mail('jeremy_rees@byu.edu', 'We\'re not useless!', "{$byuUsername}\r\n".json_encode($quickLinks), 'From: quicklinks@infohub.byu.edu');
-		}
-
 		if ($this->Session->check('queue')) {
 			$arrQueue = $this->Session->read('queue');
 			if (is_object($arrQueue)) {
@@ -106,7 +99,6 @@ class AppController extends Controller {
 
 		$this->set('byuUsername', $byuUsername);
 		$this->set('byuUserDepartment', $byuUserDepartment);
-		$this->set('quickLinks', $quickLinks);
 		$this->set('requestedTermCount', $requestedTermCount);
 		$this->set('controllerName', $controllerName = $this->request->params['controller']);
 		$this->set('isAdmin', $this->Auth->user('infohubUserId'));

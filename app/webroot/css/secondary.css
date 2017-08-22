@@ -198,161 +198,6 @@
   left: 50px;
   top: -53px;
 }
-.quickLinks {
-  clear: left;
-  padding-top: 50px;
-  position: relative;
-}
-.quickLinks .qlTab {
-  background-color: #30547f;
-  padding: 15px 16px 9px;
-  float: left;
-}
-.quickLinks .qlTab h3 {
-  color: white;
-  margin: 0;
-  font-family: 'Rokkitt', serif;
-  font-size: 18px;
-}
-.quickLinks .qlTab h3:before {
-  content: "";
-  background: url('/img/iconStar.jpg') no-repeat;
-  padding: 0 3px 4px;
-  background-position: 0px 3px;
-  margin-top: -2px;
-  display: block;
-  float: left;
-  height: 20px;
-  width: 20px;
-  background-size: 17px;
-}
-.quickLinks .qlBody {
-  position: relative;
-  clear: left;
-  -moz-column-count: 5;
-  -moz-column-gap: 16px;
-  -webkit-column-count: 5;
-  -webkit-column-gap: 16px;
-  column-count: 5;
-  column-gap: 16px;
-  background-color: #f4f4f4;
-  padding: 20px 2.5% 10px;
-  margin-bottom: 50px;
-  border-bottom: 24px solid #f4f4f4;
-  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
-  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
-  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
-}
-.quickLinks .qlBody #QLContainer {
-  padding-right: 12px;
-}
-.quickLinks .qlBody ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  *zoom: 1;
-  clear: both;
-}
-.quickLinks .qlBody ul:before,
-.quickLinks .qlBody ul:after {
-  content: "";
-  display: table;
-}
-.quickLinks .qlBody ul:after {
-  clear: both;
-}
-.quickLinks .qlBody ul li {
-  float: left;
-  margin: 0;
-  padding: 0;
-}
-.quickLinks .qlBody ul li {
-  width: 100%;
-  -webkit-column-break-inside: avoid;
-  /* Chrome, Safari */
-  page-break-inside: avoid;
-  /* Theoretically FF 20+ */
-  break-inside: avoid-column;
-  /* IE 11 */
-  display: table;
-}
-.quickLinks .qlBody ul li a {
-  text-decoration: none;
-  font-size: 12px;
-  color: #336699;
-  display: block;
-  padding: 6px 0;
-  float: left;
-  line-height: 1.2em;
-}
-.quickLinks .qlBody ul li a:hover {
-  text-decoration: underline;
-}
-.quickLinks .qlBody ul li a.ql-remove {
-  float: left;
-  width: 12px;
-  padding: 7px 5px 0 0;
-  display: none;
-}
-.quickLinks .qlBody ul li a.ql-remove img {
-  width: 100%;
-}
-.quickLinks .qlBody ul li a.ql-active {
-  display: block;
-}
-.quickLinks .qlBody ul li a.active-link {
-  width: 88%;
-}
-.quickLinks .ql-edit {
-  float: left;
-  background-color: #4775ab;
-  padding: 5px 10px;
-  position: absolute;
-  bottom: -24px;
-  left: 3%;
-}
-.quickLinks .ql-edit a {
-  text-decoration: none;
-  color: white;
-  font-size: 10px;
-  display: block;
-  cursor: pointer;
-}
-.quickLinks .ql-edit a:after {
-  content: "";
-  background: url("/img/right-arrow.gif") no-repeat;
-  padding: 0px 3px 0 2px;
-  margin-left: 4px;
-  background-position: 0px 3px;
-  background-size: 5px;
-}
-.quickLinks .ql-edit .saveEdit,
-.quickLinks .ql-edit .resetDefault {
-  display: none;
-}
-.quickLinks .ql-edit.active {
-  background-color: rgba(71, 117, 171, 0.3);
-}
-.quickLinks .ql-edit.active .editQL,
-.quickLinks .ql-edit.active .resetDefault {
-  display: none;
-}
-.quickLinks .ql-edit.active .saveEdit,
-.quickLinks .ql-edit.active .resetDefault {
-  color: #9f0f13;
-  display: block;
-  float: left;
-  font-weight: bold;
-}
-.quickLinks .ql-edit.active .saveEdit:after,
-.quickLinks .ql-edit.active .resetDefault:after {
-  background: none;
-  margin: 0;
-  padding: 0;
-}
-.quickLinks .ql-edit.active:after {
-  border-left: 10px solid #ffd480;
-}
 .contactBox .contactTitle.blueText {
   text-decoration: none;
   color: #1b7bdb;
@@ -424,30 +269,10 @@
     margin-left: 3%;
   }
 }
-@media screen and (max-width: 980px) {
-  .quickLinks .qlBody {
-    -moz-column-count: 4;
-    -webkit-column-count: 4;
-    column-count: 4;
-  }
-}
-@media screen and (max-width: 850px) {
-  .quickLinks .qlBody {
-    -moz-column-count: 3;
-    -webkit-column-count: 3;
-    column-count: 3;
-  }
-}
 @media screen and (max-width: 650px) {
   .libOnebg {
     background-position: -645px bottom;
     height: 421px;
-  }
-  .quickLinks .qlBody {
-    -moz-column-count: 2;
-    -webkit-column-count: 2;
-    column-count: 2;
-    padding: 20px 4.5% 12px;
   }
 }
 @media screen and (max-width: 550px) {
@@ -484,24 +309,5 @@
   .innerLower {
     width: 90%;
     margin-left: 5%;
-  }
-  .quickLinks .qlTab {
-    width: 100%;
-    padding: 15px 0 9px;
-  }
-  .quickLinks .qlTab h3 {
-    margin: 0 auto;
-    width: 183px;
-  }
-  .quickLinks .qlBody {
-    -moz-column-count: 1;
-    -webkit-column-count: 1;
-    column-count: 1;
-  }
-  .quickLinks .qlBody ul li {
-    width: 100%;
-    padding-right: 0;
-    display: list-item;
-    text-align: center;
   }
 }

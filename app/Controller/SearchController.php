@@ -424,10 +424,6 @@ class SearchController extends AppController {
 				}
 				$fullCommunityName .= $term[$i]->communityname;
 				$term[$i]->communityname = $fullCommunityName;
-
-				// check to see if this terms is stored in user's quick links cookie
-				$arrQl = (array)$this->Cookie->read('QL');
-				$term[$i]->saved = !empty($arrQl[$term[$i]->termrid]);
 			}
 		}
 
@@ -508,10 +504,6 @@ class SearchController extends AppController {
 				}
 				$fullCommunityName .= $term[$i]->communityname;
 				$term[$i]->communityname = $fullCommunityName;
-
-				// check to see if this terms is stored in user's quick links cookie
-				$arrQl = (array)$this->Cookie->read('QL');
-				$term[$i]->saved = !empty($arrQl[$term[$i]->termrid]);
 			}
 		}
 
@@ -546,10 +538,6 @@ class SearchController extends AppController {
 				}
 				$fullCommunityName .= $term[$i]->communityname;
 				$term[$i]->communityname = $fullCommunityName;
-
-				// check to see if this terms is stored in user's quick links cookie
-				$arrQl = (array)$this->Cookie->read('QL');
-				$term[$i]->saved = !empty($arrQl[$term[$i]->termrid]);
 			}
 		}
 		return $resp;

@@ -12,6 +12,7 @@
   margin: 0;
   background-position: center;
   height: 506px;
+  z-index: -100;
   background-position: left center;
   background-size: inherit;
 }

@@ -456,6 +456,3 @@
 ?>
 	</div>
 </div>
-
-<!-- Quick links -->
-<?php echo $this->element('quick_links'); ?>
