@@ -899,10 +899,6 @@ class RequestController extends AppController {
 			}
 		}
 
-		// sort request attribute data based on workflow form field order
-		$workflowResp = $this->CollibraAPI->get('workflow/'.Configure::read('Collibra.isaWorkflow.id').'/form/start');
-		$workflowResp = json_decode($workflowResp);
-
 		$arrNewAttr = [];
 		$arrCollaborators = array();
 			foreach($dsr->attributeReferences->attributeReference as $attr){
