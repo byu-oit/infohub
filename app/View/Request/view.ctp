@@ -322,9 +322,6 @@
 			<input type="text" class="collaborators-input" placeholder="Type name (last, first) or Net ID">
 			<div class="lower-btn close grow">X</div>
 		</div>
-		<?php if (!empty($netID) && count($request->attributeReferences->attributeReference['Collaborators']) > 1):?>
-		<div class="lower-btn remove grow" data-rid="<?= $request->resourceId ?>">Remove me</div>
-		<?php endif ?>
 		<div class="clear"></div>
 
 		<h3 class="headerTab">Application Name</h3>
