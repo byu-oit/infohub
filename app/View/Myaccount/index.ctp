@@ -316,27 +316,23 @@
 			<div class="attrValue"><?= $req->attributeReferences->attributeReference['Application Name']->value ?></div>
 
 <?php
-			$arrNonDisplay = [
-				"Requester Name",
-				"Requester Email",
-				"Requester Phone",
-				"Information Elements",
-				"Requester Role",
-				"Requesting Organization",
-				"Sponsor Name",
-				"Sponsor Role",
-				"Sponsor Email",
-				"Sponsor Phone",
-				"Requester Net Id",
-				"Request Date",
-				"Application Name"
+			$arrOrderedFormFields = [
+				"Description of Intended Use",
+				"Access Rights",
+				"Access Method",
+				"Impact on System",
+				"Application Identity",
+				"Additional Information Requested"
 			];
 			$completedStatuses = ['Completed', 'Approved', 'Obsolete'];
 			if (empty($req->dataUsages)) {
-				foreach($req->attributeReferences->attributeReference as $attrRef){
-					if(!in_array($attrRef->labelReference->signifier, $arrNonDisplay) && !empty($attrRef->value)){
-						echo '<h3 class="headerTab">'.$attrRef->labelReference->signifier.'</h3><div class="clear"></div>'.
-							'<div class="attrValue">'.$attrRef->value.'</div>';
+				foreach ($arrOrderedFormFields as $field) {
+					foreach ($req->attributeReferences->attributeReference as $attrRef) {
+						if (!empty($attrRef->value) && $attrRef->labelReference->signifier == $field) {
+							echo '<h3 class="headerTab">'.$attrRef->labelReference->signifier.'</h3><div class="clear"></div>'.
+								'<div class="attrValue">'.$attrRef->value.'</div>';
+							break;
+						}
 					}
 				}
 			}
@@ -424,10 +420,13 @@
 					break;
 				}
 				echo '</p>';
-				foreach($du->attributeReferences->attributeReference as $attr){
-					if(!in_array($attr->labelReference->signifier, $arrNonDisplay) && !empty($attr->value)){
-						echo '<h3 class="headerTab">'.$attr->labelReference->signifier.'</h3><div class="clear"></div>'.
-							'<div class="attrValue">'.$attr->value.'</div>';
+				foreach ($arrOrderedFormFields as $field) {
+					foreach ($du->attributeReferences->attributeReference as $attrRef) {
+						if (!empty($attrRef->value) && $attrRef->labelReference->signifier == $field) {
+							echo '<h3 class="headerTab">'.$attrRef->labelReference->signifier.'</h3><div class="clear"></div>'.
+								'<div class="attrValue">'.$attrRef->value.'</div>';
+							break;
+						}
 					}
 				}
 
