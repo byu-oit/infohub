@@ -125,6 +125,7 @@ class MyaccountController extends AppController {
 			////////////////////////////////////////////
 			$resp = $this->CollibraAPI->getAdditionallyIncludedTerms($r->name->id);
 			if (!empty($resp)) {
+				$request->additionallyIncluded = new stdClass();
 				$request->additionallyIncluded->termGlossaries = [];
 				foreach ($resp as $term) {
 					if (array_key_exists($term->domainname, $request->additionallyIncluded->termGlossaries)) {

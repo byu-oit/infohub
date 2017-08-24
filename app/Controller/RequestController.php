@@ -888,6 +888,7 @@ class RequestController extends AppController {
 		////////////////////////////////////////////
 		$resp = $this->CollibraAPI->getAdditionallyIncludedTerms($termRequestId);
 		if (!empty($resp)) {
+			$dsr->additionallyIncluded = new stdClass();
 			$dsr->additionallyIncluded->termGlossaries = [];
 			foreach ($resp as $term) {
 				if (array_key_exists($term->domainname, $dsr->additionallyIncluded->termGlossaries)) {
@@ -975,6 +976,7 @@ class RequestController extends AppController {
 		////////////////////////////////////////////
 		$resp = $this->CollibraAPI->getAdditionallyIncludedTerms($termRequestId);
 		if (!empty($resp)) {
+			$dsr->additionallyIncluded = new stdClass();
 			$dsr->additionallyIncluded->termGlossaries = [];
 			foreach ($resp as $term) {
 				if (array_key_exists($term->domainname, $dsr->additionallyIncluded->termGlossaries)) {

@@ -1012,19 +1012,19 @@ class CollibraAPI extends Model {
 			'displayStart' => 0,
 			'displayLength' => -1]];
 		$policies = $this->fullDataTable($tableConfig);
-		foreach($policies[0]->arrPolicies as &$policy) {
-			// Collibra can insert weird HTML into text attributes; cleaning it up here
-			if (preg_match('/<div>/', $policy->policyDescription)) {
-				$postData['value'] = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/', '/<\/?span[^>]*>/'], ['<br/>', '', '<br/>', ''], $policy->policyDescription);
-				$postData['rid'] = $policy->policyDescriptionId;
-				$postString = http_build_query($postData);
-				$this->post('attribute/'.$policy->policyDescriptionId, $postString);
-
-				// After updating the value in Collibra, just replace the value for this page load
-				$policy->policyDescription = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/', '/<\/?span[^>]*/'], ['<br/>', '', '<br/>', ''], $policy->policyDescription);
-			}
-		}
 		if (!empty($policies)) {
+			foreach($policies[0]->arrPolicies as &$policy) {
+				// Collibra can insert weird HTML into text attributes; cleaning it up here
+				if (preg_match('/<div>/', $policy->policyDescription)) {
+					$postData['value'] = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/', '/<\/?span[^>]*>/'], ['<br/>', '', '<br/>', ''], $policy->policyDescription);
+					$postData['rid'] = $policy->policyDescriptionId;
+					$postString = http_build_query($postData);
+					$this->post('attribute/'.$policy->policyDescriptionId, $postString);
+
+					// After updating the value in Collibra, just replace the value for this page load
+					$policy->policyDescription = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/', '/<\/?span[^>]*/'], ['<br/>', '', '<br/>', ''], $policy->policyDescription);
+				}
+			}
 			return $policies[0]->arrPolicies;
 		}
 		return $policies;
