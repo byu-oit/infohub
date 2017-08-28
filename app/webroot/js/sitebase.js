@@ -254,6 +254,14 @@ function updateQueueSize(){
 	});
 }
 function addToQueue(elem, clearRelated, displayCart){
+	var i = 0;
+	var loadingTexts = ['Working on it   ','Working on it.  ','Working on it.. ','Working on it...'];
+	var loadingTextInterval = setInterval(function() {
+		$(elem).parent().find('.requestAccess').attr('value', loadingTexts[i]);
+		i++;
+		if (i == loadingTexts.length) i = 0;
+	}, 250);
+
 	if ($(elem).attr('api') == 'false') {
 		var arrTitles = [$(elem).attr('data-title')];
 		var arrIDs = [$(elem).attr('data-rid')];
@@ -272,6 +280,7 @@ function addToQueue(elem, clearRelated, displayCart){
 		});
 		$.post("/request/addToQueue", {emptyApi:'false', t:arrTitles, id:arrIDs, vocab:arrVocabIDs, clearRelated:clearRelated, apiHost: apiHost, apiPath: apiPath})
 			.done(function(data){
+				clearInterval(loadingTextInterval);
 				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
 				$('input[type=checkbox]').prop('checked', false);
 				data = parseInt(data);
@@ -288,6 +297,7 @@ function addToQueue(elem, clearRelated, displayCart){
 		var apiHost = $(elem).attr('data-apiHost');
 		$.post("/request/addToQueue", {emptyApi:'true', t:arrTitle, apiHost:apiHost})
 			.done(function(data){
+				clearInterval(loadingTextInterval);
 				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
 				data = parseInt(data);
 				if(data>0){

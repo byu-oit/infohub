@@ -14,6 +14,16 @@
 		?>
 
 		$('#requestSave').click(function() {
+			var thisElem = this;
+
+			var i = 0;
+			var loadingTexts = ['Saving&nbsp;&nbsp;&nbsp;','Saving.&nbsp;&nbsp;','Saving..&nbsp;','Saving...'];
+			var loadingTextInterval = setInterval(function() {
+				$(thisElem).html(loadingTexts[i]);
+				i++;
+				if (i == loadingTexts.length) i = 0;
+			}, 250);
+
 			var postData = {};
 			$('#srLower').find('input, textarea').each(function() {
 				postData[$(this).prop('name')] = $(this).prop('value');
@@ -21,6 +31,8 @@
 
 			$.post('request/saveDraft', postData)
 				.done(function(data) {
+					clearInterval(loadingTextInterval);
+					$(thisElem).html('Save');
 					data = JSON.parse(data);
 					if (data.success) {
 						alert('Your request was saved successfully.');
