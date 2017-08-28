@@ -207,7 +207,10 @@
 			echo '</div></div>';
 			echo '	<div class="detailsBody" id="'.$req->resourceId.'">';
 ?>
-			<h3 class="headerTab">Requested Data</h3><a class="edit-btn grow" href="/request/editTerms/<?=$req->resourceId?>" title="Add/Remove Terms"></a>
+			<h3 class="headerTab">Requested Data</h3>
+			<?php if ($req->statusReference->signifier != 'Completed'): ?>
+				<a class="edit-btn grow" href="/request/editTerms/<?=$req->resourceId?>" title="Add/Remove Terms"></a>
+			<?php endif ?>
 			<div class="clear"></div>
 			<div class="attrValue">
 				<?php $glossaryCount = 0;
