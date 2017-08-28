@@ -760,9 +760,9 @@ class RequestController extends AppController {
 
 		$netID = $this->Auth->user('username');
 		$byuUser = $this->BYUAPI->personalSummary($netID);
+		$supervisorInfo = $this->BYUAPI->supervisorLookup($netID);
 
-		$postData['requesterPersonId'] = $byuUser->identifiers->net_id;
-		$postData['requesterNetId'] = $byuUser->identifiers->net_id;
+		$postData['requesterNetId'] = [$byuUser->identifiers->net_id, $supervisorInfo->net_id];
 		foreach($this->request->data as $key => $val){
 			if (!in_array($key, ['name', 'phone', 'email', 'role', 'terms', 'apiTerms', 'requestSubmit', 'collibraUser'])) {
 				$postData[$key] = $val;
@@ -808,6 +808,7 @@ class RequestController extends AppController {
 		//For array data, PHP's http_build_query creates query/POST string in a format Collibra doesn't like,
 		//so we have to tweak the output a bit
 		$postString = http_build_query($postData);
+		$postString = preg_replace("/requesterNetId%5B[0-9]*%5D/", "requesterNetId", $postString);
 		$postString = preg_replace("/{$requiredElementsString}%5B[0-9]*%5D/", $requiredElementsString, $postString);
 		if (!empty($additionalElementsString)) {
 			$postString = preg_replace("/{$additionalElementsString}%5B[0-9]*%5D/", $additionalElementsString, $postString);

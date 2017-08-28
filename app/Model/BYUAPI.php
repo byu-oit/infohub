@@ -68,12 +68,12 @@ class BYUAPI extends Model {
 		$data = $this->personalSummary($selfInfo->employee_information->reportsToId);
 		$supervisor = new stdClass();
 		$supervisor->name = empty($data->names->preferred_name) ? '' : $data->names->preferred_name;
+		$supervisor->net_id = empty($data->identifiers->net_id) ? '' : $data->identifiers->net_id;
 		$supervisor->phone = empty($data->contact_information->work_phone) ? '' : $data->contact_information->work_phone;
 		$supervisor->email = empty($data->contact_information->email) ? '' : $data->contact_information->email;
 		$supervisor->job_title = empty($data->employee_information->job_title) ? '' : $data->employee_information->job_title;
 		return $supervisor;
 	}
-
 
 	public function deepLinks($basePathRaw){
 		$config = $this->getDataSource()->config;
