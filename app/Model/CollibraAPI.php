@@ -301,6 +301,43 @@ class CollibraAPI extends Model {
 		return $hosts;
 	}
 
+	public function getApiObject($host, $path) {
+		$hostCommunity = $this->findTypeByName('community', $host);
+		if (empty($hostCommunity->resourceId)) {
+			return null;
+		}
+		$vocabulary = $this->findTypeByName('vocabulary', $path, ['parent' => $hostCommunity->resourceId]);
+		if (empty($vocabulary->resourceId)) {
+			return null;
+		}
+		$query = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'id']],
+				['Column' => ['fieldName' => 'name']],
+				['Column' => ['fieldName' => 'status']]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'id'],
+					'Signifier' => ['name' => 'name'],
+					'Status' => ['name' => 'status'],
+					'Vocabulary' => [
+						'Id' => ['name' => 'vocabId']],
+					'ConceptType' => [
+						'Id' => ['name' => 'assetTypeId']],
+					'Filter' => [
+						'AND' => [
+							['Field' => [
+								'name' => 'vocabId',
+								'operator' => 'EQUALS',
+								'value' => $vocabulary->resourceId]],
+							['Field' => [
+								'name' => 'assetTypeId',
+								'operator' => 'EQUALS',
+								'value' => Configure::read('Collibra.type.api')]]]]]]]];
+		$result = $this->fullDataTable($query);
+		return $result[0];
+	}
+
 	public function getApiTerms($host, $path) {
 		$hostCommunity = $this->findTypeByName('community', $host);
 		if (empty($hostCommunity->resourceId)) {

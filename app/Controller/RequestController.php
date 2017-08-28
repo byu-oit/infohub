@@ -777,10 +777,13 @@ class RequestController extends AppController {
 		$requiredElementsString = Configure::read('Collibra.isaWorkflow.requiredElementsString');
 		$additionalElementsString = Configure::read('Collibra.isaWorkflow.additionalElementsString');
 		$postData[$requiredElementsString] = !empty($businessTermIds) ? $businessTermIds : '';
+		$postData['api'] = [];
 		if (!empty($additionalElementsString)) {
 			$postData[$additionalElementsString] = array();
 			foreach ($apis as $apiHost => $apiPaths) {
 				foreach ($apiPaths as $apiPath => $ignore) {
+					$apiObject = $this->CollibraAPI->getApiObject($apiHost, $apiPath);
+					array_push($postData['api'], $apiObject->id);
 					$apiTerms = $this->CollibraAPI->getApiTerms($apiHost, $apiPath);
 					foreach ($apiTerms as $term) {
 						if (!empty($term->assetType) && strtolower($term->assetType) == 'fieldset') {
@@ -805,10 +808,16 @@ class RequestController extends AppController {
 			}
 		}
 
+		foreach ($arrQueue['emptyApis'] as $path => $api) {
+			$apiObject = $this->CollibraAPI->getApiObject($api['apiHost'],$path);
+			array_push($postData['api'], $apiObject->id);
+		}
+
 		//For array data, PHP's http_build_query creates query/POST string in a format Collibra doesn't like,
 		//so we have to tweak the output a bit
 		$postString = http_build_query($postData);
 		$postString = preg_replace("/requesterNetId%5B[0-9]*%5D/", "requesterNetId", $postString);
+		$postString = preg_replace("/api%5B[0-9]*%5D/", "api", $postString);
 		$postString = preg_replace("/{$requiredElementsString}%5B[0-9]*%5D/", $requiredElementsString, $postString);
 		if (!empty($additionalElementsString)) {
 			$postString = preg_replace("/{$additionalElementsString}%5B[0-9]*%5D/", $additionalElementsString, $postString);

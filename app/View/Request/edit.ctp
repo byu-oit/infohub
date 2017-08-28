@@ -133,6 +133,7 @@
 						"sponsorRole",
 						"sponsorEmail",
 						"sponsorPhone",
+						"api",
 						Configure::read('Collibra.isaWorkflow.requiredElementsString'),
 						Configure::read('Collibra.isaWorkflow.additionalElementsString')
                     ];
