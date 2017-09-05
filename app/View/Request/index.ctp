@@ -166,7 +166,8 @@
 								echo '<li id="requestItem'.$id.'" data-title="'.$path.'" api-host="'.$api['apiHost'].'" api="true"><a class="delete" href="javascript:removeFromRequestQueue(\''.$path.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$displayName.'</li>';
 							}
 							foreach ($arrQueue['apiFields'] as $fieldPath => $field) {
-								echo '<li id="requestItem'.$fieldPath.'" data-title="'.$fieldPath.'" api-host="'.$field['apiHost'].'" api-path="'.$field['apiPath'].'" api="false"><a class="delete" href="javascript:removeFromRequestQueue(\''.$fieldPath.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$field['name'].'</li>';
+								$id = preg_replace('/\./', '', $fieldPath);
+								echo '<li id="requestItem'.$id.'" data-title="'.$fieldPath.'" api-host="'.$field['apiHost'].'" api-path="'.$field['apiPath'].'" api="false"><a class="delete" href="javascript:removeFromRequestQueue(\''.$fieldPath.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$field['name'].'</li>';
 							}
 							echo '</ul><a class="clearQueue" href="javascript: clearRequestQueue()">Clear All Items</a>';
 						}else{

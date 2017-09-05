@@ -203,6 +203,10 @@ function removeFromRequestQueue(id){
 			if (id.indexOf('/') > -1) {
 				id = id.replace(/\//g, '');
 			}
+			// Likewise for unlinked API fields
+			if (id.indexOf('.') > -1) {
+				id = id.replace(/\./g, '');
+			}
 			if ($('#requestItem'+id).attr('api') == 'false') {
 				var title = $('#requestItem'+id).attr('data-title');
 				var rID = $('#requestItem'+id).attr('data-rid');
