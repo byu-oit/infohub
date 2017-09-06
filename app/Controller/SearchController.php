@@ -92,6 +92,20 @@ class SearchController extends AppController {
 		$domainID = $this->request->params['pass'][0];
 		$terms = $this->getDomainTerms($domainID, $page-1);
 
+		foreach ($terms->aaData as &$term) {
+			if (!empty($term->synonym_for)) {
+				$synonym = $this->CollibraAPI->get('term/'.$term->synonym_for[0]->synonymid);
+				$synonym = json_decode($synonym);
+
+				foreach ($synonym->attributeReferences->attributeReference as $attr) {
+					if ($attr->labelReference->signifier == 'Definition') {
+						$term->description = $attr->value;
+						break;
+					}
+				}
+			}
+		}
+
 		$this->set('commonSearches', $this->getCommonSearches());
 		//$this->set('totalPages', ceil($terms->iTotalDisplayRecords/25));
 		//$this->set('pageNum', $page);
@@ -165,6 +179,17 @@ class SearchController extends AppController {
 			$wrapBefore = '<span class="highlight">';
 			$wrapAfter  = '</span>';
 			foreach ($terms->aaData as &$term) {
+				if (!empty($term->synonym_for)) {
+					$synonym = $this->CollibraAPI->get('term/'.$term->synonym_for[0]->synonymid);
+					$synonym = json_decode($synonym);
+
+					foreach ($synonym->attributeReferences->attributeReference as $attr) {
+						if ($attr->labelReference->signifier == 'Definition') {
+							$term->description = $attr->value;
+							break;
+						}
+					}
+				}
 				if (empty($term->description)) {
 					continue;
 				}
