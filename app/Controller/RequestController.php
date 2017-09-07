@@ -812,6 +812,10 @@ class RequestController extends AppController {
 			$apiObject = $this->CollibraAPI->getApiObject($api['apiHost'],$path);
 			array_push($postData['api'], $apiObject->id);
 		}
+		if (empty($postData['api'])) {
+			//See above comment regarding "additionalElements"
+			$postData['api'] = '';
+		}
 
 		//For array data, PHP's http_build_query creates query/POST string in a format Collibra doesn't like,
 		//so we have to tweak the output a bit
