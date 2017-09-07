@@ -73,6 +73,10 @@
 							setOptions($(this));
 						});
 				}
+				$('.searchDialog').dialog({
+					height: 450,
+					width: 350
+				});
 				$('.searchDialog').dialog('open');
 			}
 

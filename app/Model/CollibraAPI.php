@@ -411,7 +411,7 @@ class CollibraAPI extends Model {
 		return $terms;
 	}
 
-	public function searchTerms($query, $limit = 5, $community = null) {
+	public function searchTerms($query, $limit = 10, $community = null) {
 		if (empty($community)) {
 			$community = Configure::read('Collibra.community.byu');
 		}
