@@ -141,6 +141,13 @@ class MyaccountController extends AppController {
 		// sort results by date added
 		usort($arrRequests, 'self::sortRequests');
 
+		// Temporary fix for a mysterious bug in Collibra that sometimes
+		// returns two copies of the most recently created DSR
+		$numRequests = count($arrRequests);
+		if ($numRequests > 1 && $arrRequests[$numRequests - 1]->resourceId == $arrRequests[$numRequests - 2]->resourceId) {
+			array_pop($arrRequests);
+		}
+
 		foreach($arrRequests as $r){
 			$arrNewAttr = array();
 			$arrCollaborators = array();
