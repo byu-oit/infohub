@@ -244,7 +244,7 @@
 				}
 			} ?>
 		</div>
-		<?php if (isset($req->additionallyIncluded)): ?>
+		<?php if (isset($request->additionallyIncluded)): ?>
 			<h3 class="headerTab">Additionally Included Data</h3><img class="infoIcon" src="/img/icon-question.png" onmouseover="displayHelpText(this)" onmouseout="hideHelpText()">
 			<div class="clear"></div>
 			<div class="attrValue">
