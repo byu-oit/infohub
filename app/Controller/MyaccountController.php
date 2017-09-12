@@ -64,10 +64,6 @@ class MyaccountController extends AppController {
 
 	public function index() {
 		$completedStatuses = ['Completed', 'Obsolete'];
-		$page = 'current';
-		if(isset($this->request->query['s'])){
-			$page = 'past';
-		}
 		$expand = '';
 		if(isset($this->request->query['expand'])){
 			$expand = $this->request->query['expand'];
@@ -84,13 +80,8 @@ class MyaccountController extends AppController {
 		);
 		$isaRequests = json_decode($resp);
 
-		$arrRequests = array();
+		$arrRequests = [];
 		foreach($isaRequests->results as $r){
-			if ($page == 'past' && !in_array($r->status, $completedStatuses)) {
-				continue;
-			} elseif ($page == 'current' && in_array($r->status, $completedStatuses)) {
-				continue;
-			}
 			if ($r->status == 'Archived') {
 				continue;
 			}
@@ -148,6 +139,11 @@ class MyaccountController extends AppController {
 			array_pop($arrRequests);
 		}
 
+		$sortedRequests = [
+			'inProgress' => [],
+			'completed' => []
+		];
+
 		foreach($arrRequests as $r){
 			$arrNewAttr = array();
 			$arrCollaborators = array();
@@ -201,6 +197,12 @@ class MyaccountController extends AppController {
 					}
 				}
 			}
+
+			if ($r->statusReference->signifier == 'In Progress') {
+				array_push($sortedRequests['inProgress'], $r);
+			} else {
+				array_push($sortedRequests['completed'], $r);
+			}
 		}
 
 		$psName = '';
@@ -220,7 +222,7 @@ class MyaccountController extends AppController {
 		if(isset($byuUser->contact_information->email_address)){
 			$psEmail = $byuUser->contact_information->email_address;
 		}
-		$this->set(compact('expand', 'psName', 'psRole', 'psDepartment', 'psEmail', 'psNetID', 'page'));
-		$this->set('requests', $arrRequests);
+		$this->set(compact('expand', 'psName', 'psRole', 'psDepartment', 'psEmail', 'psNetID'));
+		$this->set('requestStatuses', $sortedRequests);
 	}
 }

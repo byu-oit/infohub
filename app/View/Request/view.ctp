@@ -138,7 +138,7 @@
 		</div>
 	</div>
 	<div class="clear"></div>
-	<div id="accountMain" class="whiteBox">
+	<div class="accountMain whiteBox">
 <?php
 		echo '<div class="requestItem">'.
 			'		 <div class="riLeft">'.
