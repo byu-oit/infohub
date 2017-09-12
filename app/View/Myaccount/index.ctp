@@ -243,27 +243,29 @@
 						}
 					} ?>
 				</div>
-				<h3 class="headerTab">Additionally Included Data</h3><img class="infoIcon" src="/img/icon-question.png" onmouseover="displayHelpText(this)" onmouseout="hideHelpText()">
-				<div class="clear"></div>
-				<div class="attrValue">
-					<?php $glossaryCount = 0;
-					$termCount = 0;
-					foreach ($req->additionallyIncluded->termGlossaries as $glossaryName => $terms) {
-						echo '<em>'.$glossaryName.'&nbsp;-&nbsp;</em>';
-						$glossaryCount++;
+				<?php if (isset($req->additionallyIncluded)): ?>
+					<h3 class="headerTab">Additionally Included Data</h3><img class="infoIcon" src="/img/icon-question.png" onmouseover="displayHelpText(this)" onmouseout="hideHelpText()">
+					<div class="clear"></div>
+					<div class="attrValue">
+						<?php $glossaryCount = 0;
 						$termCount = 0;
-						foreach ($terms as $term) {
-							echo $term->termsignifier;
-							$termCount++;
-							if ($termCount < sizeof($terms)) {
-								echo ',&nbsp;&nbsp;';
+						foreach ($req->additionallyIncluded->termGlossaries as $glossaryName => $terms) {
+							echo '<em>'.$glossaryName.'&nbsp;-&nbsp;</em>';
+							$glossaryCount++;
+							$termCount = 0;
+							foreach ($terms as $term) {
+								echo $term->termsignifier;
+								$termCount++;
+								if ($termCount < sizeof($terms)) {
+									echo ',&nbsp;&nbsp;';
+								}
 							}
-						}
-						if ($glossaryCount < sizeof($req->additionallyIncluded->termGlossaries)) {
-							echo '<br>';
-						}
-					} ?>
-				</div>
+							if ($glossaryCount < sizeof($req->additionallyIncluded->termGlossaries)) {
+								echo '<br>';
+							}
+						} ?>
+					</div>
+				<?php endif ?>
 				<h3 class="headerTab">Requester</h3>
 				<div class="clear"></div>
 				<div class="data-col">
