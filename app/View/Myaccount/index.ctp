@@ -77,13 +77,19 @@
 			}
 		});
 
-		$('.remove').click(function() {
-			if (confirm("Are you sure? If you're no longer a collaborator, you won't be able to view or edit this request. (You can still be re-added to the list at any time.)")) {
-				window.location.href = '/request/removeCollaborator/' + $(this).attr('data-rid') + '/<?= $psNetID ?>';
+		$('.detailsBody').on('click', '.remove', function() {
+			if (confirm("Are you sure you'd like to remove this person? (They can still be re-added to the list at any time.)")) {
+				$.post('/request/removeCollaborator/' + $(this).attr('data-dsrid') + '/' + $(this).attr('data-netid'))
+					.done(function(data) {
+						var data = JSON.parse(data);
+						alert(data.message);
+						window.location.reload(false);
+					});
 			}
 		});
 		$('.collaborators').click(function() {
 			$(this).parent().find('.collaborators-input-wrapper').fadeIn('fast');
+			$(this).parent().find('.remove').removeClass('hidden');
 			var inputElement = $(this).parent().find('.collaborators-input');
 			$('html, body').animate({scrollTop: inputElement.offset().top - 150}, 'medium', function() {
 				inputElement.focus();
@@ -91,6 +97,7 @@
 		});
 		$('.close').click(function() {
 			$(this).parent().parent().find('.collaborators-search-result').remove();
+			$(this).parent().parent().find('.remove').addClass('hidden');
 			$(this).parent().fadeOut('fast');
 			$(this).parent().find('.collaborators-input').val('');
 		});
@@ -131,7 +138,8 @@
 					}
 					var html = '<strong>'+data.person.names.preferred_name+':</strong> '
 								+data.person.employee_information.job_title+', '
-								+data.person.contact_information.email_address+'<br>';
+								+data.person.contact_information.email_address+'&nbsp;&nbsp;&nbsp;&nbsp;'
+								+'<div class="remove" data-dsrid="'+thisElem.parent().attr('id')+'" data-netid="'+data.person.identifiers.net_id+'">X</div><br>';
 					thisElem.parent().find('.collaborators-view').append(html);
 				});
 		});
@@ -316,17 +324,16 @@
 					<?php foreach ($req->attributeReferences->attributeReference['Collaborators'] as $col) {
 						echo '<strong>'.$col->names->preferred_name.':</strong> '.
 							$col->employee_information->job_title.', '.
-							$col->contact_information->email_address.'<br>';
+							$col->contact_information->email_address;
+						echo str_repeat("&nbsp;", 4);
+						echo '<div class="remove hidden" data-dsrid="'.$req->resourceId.'" data-netid="'.$col->identifiers->net_id.'">X</div><br>';
 					}
 					?>
 				</div>
 				<div class="collaborators-input-wrapper">
 					<input type="text" class="collaborators-input" placeholder="Type name (last, first) or Net ID">
-					<div class="lower-btn close grow">X</div>
+					<div class="lower-btn close grow">Close</div>
 				</div>
-				<?php if (count($req->attributeReferences->attributeReference['Collaborators']) > 1):?>
-				<div class="lower-btn remove grow" data-rid="<?= $req->resourceId ?>">Remove me</div>
-				<?php endif ?>
 				<div class="clear"></div>
 
 				<h3 class="headerTab">Application Name</h3>

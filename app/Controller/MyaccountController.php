@@ -154,7 +154,7 @@ class MyaccountController extends AppController {
 					} else {
 						$person = $this->BYUAPI->personalSummary($attr->value);
 					}
-					unset($person->person_summary_line, $person->identifiers, $person->personal_information, $person->student_information, $person->relationships);
+					unset($person->person_summary_line, $person->personal_information, $person->student_information, $person->relationships);
 					array_push($arrCollaborators, $person);
 					continue;
 				}

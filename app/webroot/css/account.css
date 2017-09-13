@@ -576,10 +576,24 @@
   background-position: center;
   cursor: pointer;
 }
+#accountMid .accountMain .requestItem .detailsBody .remove {
+  padding: 2px 8px;
+  font-size: 10px;
+  display: inline;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  -webkit-box-shadow: -1px 1px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -1px 1px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -1px 1px 7px 1px rgba(50, 50, 50, 0.22);
+}
+#accountMid .accountMain .requestItem .detailsBody .remove.hidden {
+  display: none;
+}
 #accountMid .accountMain .requestItem .detailsBody .delete,
 #accountMid .accountMain .requestItem .detailsBody .remove,
 #accountMid .accountMain .requestItem .riBelow .detailsBody .delete {
-    background-color: #b3041a;
+  background-color: #b3041a;
 }
 #accountMid .accountMain .requestItem .riLeft .parent-btn,
 #accountMid .accountMain .requestItem .riLeft .status-details-flex .details-btn,

@@ -237,8 +237,7 @@ class RequestController extends AppController {
 		$this->autoRender = false;
 
 		if (empty($dsrId) || empty($netId)) {
-			$this->Flash->error('We ran into an error performing that action.');
-			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
+			return json_encode(['success' => 0, 'message' => 'DSR ID or Net ID missing.']);
 		}
 
 		$resp = $this->CollibraAPI->get('term/'.$dsrId);
@@ -246,8 +245,7 @@ class RequestController extends AppController {
 
 		if ($request->conceptType->resourceId != Configure::read('Collibra.type.isaRequest')) {
 			$parent = $this->CollibraAPI->getDataUsageParent($dsrId);
-			$this->removeCollaborator($parent[0]->id, $netId);
-			return;
+			return $this->removeCollaborator($parent[0]->id, $netId);
 		}
 
 		$request->dataUsages = $this->CollibraAPI->getDataUsages($dsrId);
@@ -261,18 +259,16 @@ class RequestController extends AppController {
 					break;
 				}
 			}
-
 		}
 
 		foreach ($request->attributeReferences->attributeReference as $attr) {
 			if ($attr->labelReference->signifier == 'Requester Net Id' && $attr->value == $netId) {
 				$this->CollibraAPI->delete('attribute/'.$attr->resourceId);
-				$this->Flash->success("You are no longer a collaborator on \"{$request->signifier}\"");
 				break;
 			}
 		}
 
-		$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
+		return json_encode(['success' => 1, 'message' => "This person is no longer a collaborator on \"{$request->signifier}\"."]);
 	}
 
 	public function saveDraft() {
@@ -918,7 +914,7 @@ class RequestController extends AppController {
 			foreach($dsr->attributeReferences->attributeReference as $attr){
 				if ($attr->labelReference->signifier == 'Requester Net Id') {
 					$person = $this->BYUAPI->personalSummary($attr->value);
-					unset($person->person_summary_line, $person->identifiers, $person->personal_information, $person->student_information, $person->relationships);
+					unset($person->person_summary_line, $person->personal_information, $person->student_information, $person->relationships);
 					array_push($arrCollaborators, $person);
 					continue;
 				}
