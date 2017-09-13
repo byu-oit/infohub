@@ -331,7 +331,7 @@
 			?>
 		</div>
 		<div class="collaborators-input-wrapper">
-			<input type="text" class="collaborators-input" placeholder="Type name (last, first) or Net ID">
+			<input type="text" class="collaborators-input" placeholder="Search by name (last, first) or Net ID">
 			<div class="lower-btn close grow">Close</div>
 		</div>
 		<div class="clear"></div>
