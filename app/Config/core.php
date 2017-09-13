@@ -55,6 +55,8 @@ if (!function_exists('denv')) {
 			'termToField' => '00000000-0000-0000-0000-000000007038',
 			'dataUsageToDSA' => '00000000-0000-0000-0000-000000007055',
 			'DSAtoPolicy' => 'd22051bf-af3e-4771-862c-c2b3f10bce05',
+			'DSRtoPolicy' => '0cd17138-7610-48fc-8d11-616a376d44c5',
+			'termToPolicy' => '0b8404c5-b0f2-4109-89ab-374c5f775c14',
 			'DSRtoAdditionallyIncludedAsset' => '71be0418-dbb7-4ee0-ad9e-ef9d5eca13ab'
 		],
 		'type' => [

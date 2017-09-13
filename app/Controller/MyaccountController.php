@@ -90,6 +90,7 @@ class MyaccountController extends AppController {
 			$request = json_decode($resp);
 			$request->roles = $this->CollibraAPI->getResponsibilities($request->vocabularyReference->resourceId);
 			$request->dataUsages = $this->CollibraAPI->getDataUsages($r->name->id);
+			$request->policies = $this->CollibraAPI->getAssetPolicies($r->name->id);
 			//$createdDate = $request->createdOn/1000;
 			//$createdDate = date('m/d/Y', $request->createdOn);
 

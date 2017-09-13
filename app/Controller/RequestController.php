@@ -866,13 +866,12 @@ class RequestController extends AppController {
 		$parent = $dsr->conceptType->resourceId == Configure::read('Collibra.type.isaRequest');
 
 		$dsr->roles = $this->CollibraAPI->getResponsibilities($dsr->vocabularyReference->resourceId);
+		$dsr->policies = $this->CollibraAPI->getAssetPolicies($dsrId);
 		if($parent) {
 			$dsr->dataUsages = $this->CollibraAPI->getDataUsages($dsr->resourceId);
 		} else {
 			$dsr->parent = $this->CollibraAPI->getDataUsageParent($dsr->resourceId);
 		}
-
-		if (!$parent) $dsr->policies = $this->CollibraAPI->getDataUsagePolicies($dsrId);
 
 		// load terms submitted in request
 		////////////////////////////////////////////
@@ -950,13 +949,12 @@ class RequestController extends AppController {
 		$parent = $dsr->conceptType->resourceId == Configure::read('Collibra.type.isaRequest');
 
 		$dsr->roles = $this->CollibraAPI->getResponsibilities($dsr->vocabularyReference->resourceId);
+		$dsr->policies = $this->CollibraAPI->getAssetPolicies($dsrId);
 		if($parent) {
 			$dsr->dataUsages = $this->CollibraAPI->getDataUsages($dsr->resourceId);
 		} else {
 			$dsr->parent = $this->CollibraAPI->getDataUsageParent($dsr->resourceId);
 		}
-
-		if (!$parent) $dsr->policies = $this->CollibraAPI->getDataUsagePolicies($dsrId);
 
 		// load terms submitted in request
 		////////////////////////////////////////////

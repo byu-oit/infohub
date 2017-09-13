@@ -1012,45 +1012,58 @@ class CollibraAPI extends Model {
 		return $usages;
 	}
 
-	public function getDataUsagePolicies($dsaId) {
-		$tableConfig = ['TableViewConfig' => [
-			'Columns' => [
-				['Group' => [
-					'name' => 'arrPolicies',
-					'Columns' => [
-						['Column' => ['fieldName' => 'policyId']],
-						['Column' => ['fieldName' => 'policyName']],
-						['Column' => ['fieldName' => 'policyDescription']],
-						['Column' => ['fieldName' => 'policyDescriptionId']]]]]],
-			'Resources' => [
-				'Term' => [
-					'Relation' => [[
-						'typeId' => Configure::read('Collibra.relationship.DSAtoPolicy'),
-						'type' => 'SOURCE',
-						'Source' => [
-							'Id' => ['name' => 'dsaId']],
-						'Target' => [
-							'Id' => ['name' => 'policyId'],
-							'Signifier' => ['name' => 'policyName'],
-							'StringAttribute' => [[
-								'Id' => ['name' => 'policyDescriptionId'],
-								'Value' => ['name' => 'policyDescription']]],
-							'Filter' => [
-								'AND' => [[
-									'Field' => [
-											'name' => 'dsaId',
-											'operator' => 'NOT_NULL']]]]]]],
-					'Filter' => [
-						'AND' => [[
-							'Field' => [
-									'name' => 'dsaId',
-									'operator' => 'EQUALS',
-									'value' => $dsaId]]]]]],
-			'displayStart' => 0,
-			'displayLength' => -1]];
-		$policies = $this->fullDataTable($tableConfig);
+	public function getAssetPolicies($assetId) {
+		$relTypeIds = [
+			Configure::read('Collibra.relationship.DSAtoPolicy'),
+			Configure::read('Collibra.relationship.DSRtoPolicy')
+		];
+		$policies = [];
+
+		foreach ($relTypeIds as $typeId) {
+			$tableConfig = ['TableViewConfig' => [
+				'Columns' => [
+					['Group' => [
+						'name' => 'arrPolicies',
+						'Columns' => [
+							['Column' => ['fieldName' => 'policyId']],
+							['Column' => ['fieldName' => 'policyName']],
+							['Column' => ['fieldName' => 'policyDescription']],
+							['Column' => ['fieldName' => 'policyDescriptionId']]]]]],
+				'Resources' => [
+					'Term' => [
+						'Relation' => [[
+							'typeId' => $typeId,
+							'type' => 'SOURCE',
+							'Source' => [
+								'Id' => ['name' => 'dsaId']],
+							'Target' => [
+								'Id' => ['name' => 'policyId'],
+								'Signifier' => ['name' => 'policyName'],
+								'StringAttribute' => [[
+									'Id' => ['name' => 'policyDescriptionId'],
+									'Value' => ['name' => 'policyDescription']]],
+								'Filter' => [
+									'AND' => [[
+										'Field' => [
+												'name' => 'dsaId',
+												'operator' => 'NOT_NULL']]]]]]],
+						'Filter' => [
+							'AND' => [
+								['Field' => [
+										'name' => 'dsaId',
+										'operator' => 'EQUALS',
+										'value' => $assetId]]]]]],
+				'displayStart' => 0,
+				'displayLength' => -1]];
+
+			$results = $this->fullDataTable($tableConfig);
+			if (!empty($results)) {
+				$policies = array_merge($policies, $results[0]->arrPolicies);
+			}
+		}
+
 		if (!empty($policies)) {
-			foreach($policies[0]->arrPolicies as &$policy) {
+			foreach($policies as &$policy) {
 				// Collibra can insert weird HTML into text attributes; cleaning it up here
 				if (preg_match('/<div>/', $policy->policyDescription)) {
 					$postData['value'] = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/', '/<\/?span[^>]*>/'], ['<br/>', '', '<br/>', ''], $policy->policyDescription);
@@ -1062,7 +1075,7 @@ class CollibraAPI extends Model {
 					$policy->policyDescription = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/', '/<\/?span[^>]*/'], ['<br/>', '', '<br/>', ''], $policy->policyDescription);
 				}
 			}
-			return $policies[0]->arrPolicies;
+			return $policies;
 		}
 		return $policies;
 	}

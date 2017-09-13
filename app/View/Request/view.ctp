@@ -360,19 +360,17 @@
 					}
 				}
 			}
-		}
 
-		if (!$parent && !empty($request->policies)) {
-			echo '<div class="policy-header-wrapper"><h3 class="headerTab">Data Usage Policies</h3><a class="policies-btn grow" data-rid="'.$du->id.'"><span class="policiesHide">Hide</span><span class="policiesShow">Show</span>&nbsp;Policies</a></div>';
-			echo '<div class="clear"></div><div class="policies" id="'.$request->id.'policies" style="display:none;">';
-			foreach ($request->policies as $policy) {
-				echo '<h5>'.$policy->policyName.'</h5>';
-				echo '<div class=attrValue>'.$policy->policyDescription.'</div><div class="clear"></div>';
+			if (!empty($request->policies)) {
+				echo '<div class="policy-header-wrapper"><h3 class="headerTab">Data Usage Policies</h3><a class="policies-btn grow" data-rid="'.$du->id.'"><span class="policiesHide">Hide</span><span class="policiesShow">Show</span>&nbsp;Policies</a></div>';
+				echo '<div class="clear"></div><div class="policies" id="'.$request->id.'policies" style="display:none;">';
+				foreach ($request->policies as $policy) {
+					echo '<h5>'.$policy->policyName.'</h5>';
+					echo '<div class=attrValue>'.$policy->policyDescription.'</div><div class="clear"></div>';
+				}
+				echo '</div>';
 			}
-			echo '</div>';
-		}
 
-		if (empty($request->dataUsages)) {
 			echo '<div class="lower-btn edit grow" data-rid="'.$request->resourceId.'">Edit</div>';
 		}
 		echo '<div class="lower-btn print grow" data-rid="'.$request->resourceId.'">Print</div>';

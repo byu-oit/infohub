@@ -360,8 +360,17 @@
 							}
 						}
 					}
-				}
-				if (empty($req->dataUsages)) {
+
+					if (!empty($req->policies)) {
+						echo '<div class="policy-header-wrapper"><h3 class="headerTab">Data Usage Policies</h3><a class="policies-btn grow" data-rid="'.$req->resourceId.'"><span class="policiesHide">Hide</span><span class="policiesShow">Show</span>&nbsp;Policies</a></div>';
+						echo '<div class="clear"></div><div class="policies" id="'.$req->resourceId.'policies" style="display:none;">';
+						foreach ($req->policies as $policy) {
+							echo '<h5>'.$policy->policyName.'</h5>';
+							echo '<div class=attrValue>'.$policy->policyDescription.'</div><div class="clear"></div>';
+						}
+						echo '</div>';
+					}
+
 					echo '<div class="lower-btn delete grow" data-rid="'.$req->resourceId.'">Delete</div>';
 					echo '<div class="lower-btn edit grow" data-rid="'.$req->resourceId.'">Edit</div>';
 				}
