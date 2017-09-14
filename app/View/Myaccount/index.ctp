@@ -191,14 +191,19 @@
 					'        <a class="riTitle" href="/request/view/'.$req->resourceId.'">'.$req->signifier.'</a>'.
 					'        <p class="riDate"><span>Date Created:&nbsp;</span>'.date('n/j/Y', ($req->createdOn)/1000).'</p>';
 				echo '<div class="status-details-flex"><div class="status-wrapper">';
-				if($req->statusReference->signifier == 'Completed'){
-					echo '<div class="status-cell light-green-border left">In Progress</div><div class="status-cell green-border right active">Completed</div>';
-				}elseif($req->statusReference->signifier == 'Rejected'){
-					echo '<div class="status-cell light-red-border left">In Progress</div><div class="status-cell red-border right active">Rejected</div>';
-				}elseif($req->statusReference->signifier == 'In Progress'){
-					echo '<div class="status-cell green-border left active">In Progress</div><div class="status-cell light-green-border right">Completed</div>';
-				}else{
-					echo '<div class="status-cell obsolete">Obsolete</div>';
+				switch ($req->statusReference->signifier) {
+					case 'In Progress':
+						echo '<div class="status-cell green-border left active">In Progress</div><div class="status-cell light-green-border right">Completed</div>';
+						break;
+					case 'Completed':
+						echo '<div class="status-cell light-green-border left">In Progress</div><div class="status-cell green-border right active">Completed</div>';
+						break;
+					case 'Obsolete':
+						echo '<div class="status-cell obsolete">Obsolete</div>';
+						break;
+					case 'Canceled':
+						echo '<div class="status-cell canceled">Canceled</div>';
+						break;
 				}
 				echo '</div>';
 
@@ -424,14 +429,28 @@
 					echo '</div>';
 					echo '<br />';
 					echo '<div class="status-details-flex"><div class="status-wrapper">';
-					if($dsaStatus == 'candidate' || $dsaStatus == 'in progress'){
-						echo '<div class="status-cell green-border left active">In Progress</div><div class="status-cell light-green-border right">Approved</div>';
-					}elseif($dsaStatus == 'approved'){
-						echo '<div class="status-cell light-green-border left">In Progress</div><div class="status-cell green-border right active">Approved</div>';
-					}elseif($dsaStatus == 'rejected'){
-						echo '<div class="status-cell light-red-border left">In Progress</div><div class="status-cell red-border right active">Rejected</div>';
-					}else{
-						echo '<div class="status-cell obsolete">Obsolete</div>';
+					switch ($dsaStatus) {
+						case 'pending custodian':
+							echo '<div class="status-cell green-border left active">Pending Custodian</div><div class="status-cell light-green-border">Pending Steward</div><div class="status-cell light-green-border right">Approved</div>';
+							break;
+						case 'pending steward':
+							echo '<div class="status-cell light-green-border left">Pending Custodian</div><div class="status-cell green-border active">Pending Steward</div><div class="status-cell light-green-border right">Approved</div>';
+							break;
+						case 'approved':
+							echo '<div class="status-cell light-green-border left">Pending Custodian</div><div class="status-cell light-green-border">Pending Steward</div><div class="status-cell green-border right active">Approved</div>';
+							break;
+						case 'rejected':
+							echo '<div class="status-cell light-red-border left">Pending Custodian</div><div class="status-cell light-red-border">Pending Steward</div><div class="status-cell red-border right active">Rejected</div>';
+							break;
+						case 'canceled':
+							echo '<div class="status-cell canceled">Canceled</div>';
+							break;
+						case 'obsolete':
+							echo '<div class="status-cell obsolete">Obsolete</div>';
+							break;
+						case 'deleted':
+							echo '<div class="status-cell deleted">Deleted</div>';
+							break;
 					}
 					echo '</div>';
 					echo '	<a class="details-btn grow" data-rid="'.$du->id.'"><span class="detailsLess">Hide</span><span class="detailsMore">Show</span>&nbsp;Details</a></div></div>';

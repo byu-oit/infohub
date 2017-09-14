@@ -219,11 +219,32 @@
 #accountMid .accountMain .requestItem .status-details-flex .status-wrapper .red-border {
   border-color: #d85858;
 }
-#accountMid .accountMain .requestItem .status-details-flex .status-wrapper .obsolete {
+#accountMid .accountMain .requestItem .status-details-flex .status-wrapper .obsolete,
+#accountMid .accountMain .requestItem .status-details-flex .status-wrapper .canceled,
+#accountMid .accountMain .requestItem .status-details-flex .status-wrapper .deleted {
   width: 250px;
   border-color: #d8e8ab;
   border-radius: 16px;
   font-style: italic;
+}
+#accountMid .accountMain .requestItem .status-details-flex .status-wrapper .deleted {
+  border-color: #fc9898;
+}
+#accountMid .accountMain .requestItem .status-details-flex .status-wrapper.dsa {
+  width: 330px;
+}
+#accountMid .accountMain .requestItem .status-details-flex .status-wrapper.dsa .status-cell {
+  width: 93px;
+  height: 33px;
+}
+#accountMid .accountMain .requestItem .status-details-flex .status-wrapper.dsa .right {
+  line-height: 33px;
+}
+#accountMid .accountMain .requestItem .status-details-flex .status-wrapper.dsa .obsolete,
+#accountMid .accountMain .requestItem .status-details-flex .status-wrapper.dsa .canceled,
+#accountMid .accountMain .requestItem .status-details-flex .status-wrapper.dsa .deleted {
+  width: 250px;
+  height: 16px;
 }
 #accountMid .accountMain .requestItem .riRight {
   width: 35%;
@@ -391,14 +412,14 @@
   width: 634px;
 }
 #accountMid .accountMain .requestItem .riBelow .status-details-flex .status-wrapper {
-  width: 190px;
+  width: 370px;
   margin-left: -5px;
   display: block;
   clear: both;
 }
 #accountMid .accountMain .requestItem .riBelow .status-details-flex .status-wrapper .status-cell {
   display: inline-block;
-  width: 73px;
+  width: 110px;
   height: 14px;
   text-align: center;
   vertical-align: middle;
@@ -427,11 +448,16 @@
 #accountMid .accountMain .requestItem .riBelow .status-details-flex .status-wrapper .red-border {
   border-color: #d85858;
 }
-#accountMid .accountMain .requestItem .riBelow .status-details-flex .status-wrapper .obsolete {
-    width: 146px;
-    border-color: #d8e8ab;
-    border-radius: 12px;
-    font-style: italic;
+#accountMid .accountMain .requestItem .riBelow .status-details-flex .status-wrapper .obsolete,
+#accountMid .accountMain .requestItem .riBelow .status-details-flex .status-wrapper .canceled,
+#accountMid .accountMain .requestItem .riBelow .status-details-flex .status-wrapper .deleted {
+  width: 146px;
+  border-color: #d8e8ab;
+  border-radius: 12px;
+  font-style: italic;
+}
+#accountMid .accountMain .requestItem .riBelow .status-details-flex .status-wrapper .deleted {
+  border-color: #fc9898;
 }
 #accountMid .accountMain .requestItem .detailsBody,
 #accountMid .accountMain .requestItem .riBelow .detailsBody {

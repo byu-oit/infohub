@@ -81,8 +81,7 @@ if (!function_exists('denv')) {
 			'notes' => '00000000-0000-0000-0000-000000003116'
 		],
 		'status' => [
-			'archived' => '6c8bfba8-11cc-48be-be8e-a433b91e0d28',
-			'draft' => '1bf171b3-1c4a-4417-8c38-5b0fca59f252'
+			'deleted' => '5ed07772-862c-4898-aa31-9c781ab13a1e'
 		],
 		'term' => [
 			'custodian' => '6f666b9e-be07-4521-95fa-36fecfe2ff71',

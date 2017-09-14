@@ -685,7 +685,7 @@ class RequestController extends AppController {
 			$this->delete($du->id);
 		}
 
-		$postData['status'] = Configure::read('Collibra.status.archived');
+		$postData['status'] = Configure::read('Collibra.status.deleted');
 		$postString = http_build_query($postData);
 		$this->CollibraAPI->post("term/{$dsrId}/status", $postString);
 		$this->Flash->success('Request deleted.');

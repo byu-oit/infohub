@@ -82,7 +82,7 @@ class MyaccountController extends AppController {
 
 		$arrRequests = [];
 		foreach($isaRequests->results as $r){
-			if ($r->status == 'Archived') {
+			if ($r->status == 'Deleted') {
 				continue;
 			}
 			// load terms details
@@ -201,7 +201,7 @@ class MyaccountController extends AppController {
 
 			if ($r->statusReference->signifier == 'In Progress') {
 				array_push($sortedRequests['inProgress'], $r);
-			} else {
+			} else if ($r->statusReference->signifier == 'Completed' || $r->statusReference->signifier == 'Obsolete') {
 				array_push($sortedRequests['completed'], $r);
 			}
 		}
