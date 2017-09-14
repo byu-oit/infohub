@@ -44,7 +44,7 @@
 
 		$('.atTab').click(function() {
 			var thisElem = $(this);
-			$('.accountMain[id!="'+thisElem.attr('id')+'View"]').slideUp(700, function() {
+			$('.accountMain[id!="'+thisElem.attr('id')+'View"]').slideUp(700).promise().done(function() {
 				$('#'+thisElem.attr('id')+'View').slideDown();
 			});
 
@@ -176,6 +176,7 @@
 	<div class="accountTabs">
 		<div id="inProgress" class="atTab active">In Progress</div>
 		<div id="completed" class="atTab">Completed</div>
+		<div id="canceled" class="atTab">Canceled</div>
 	</div>
 	<div class="clear"></div>
 	<!-- <div class="accountMain whiteBox"> -->

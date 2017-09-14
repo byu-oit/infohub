@@ -142,7 +142,8 @@ class MyaccountController extends AppController {
 
 		$sortedRequests = [
 			'inProgress' => [],
-			'completed' => []
+			'completed' => [],
+			'canceled' => []
 		];
 
 		foreach($arrRequests as $r){
@@ -203,6 +204,8 @@ class MyaccountController extends AppController {
 				array_push($sortedRequests['inProgress'], $r);
 			} else if ($r->statusReference->signifier == 'Completed' || $r->statusReference->signifier == 'Obsolete') {
 				array_push($sortedRequests['completed'], $r);
+			} else if ($r->statusReference->signifier == 'Canceled') {
+				array_push($sortedRequests['canceled'], $r);
 			}
 		}
 
