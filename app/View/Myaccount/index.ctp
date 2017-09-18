@@ -1,6 +1,7 @@
 <?php
 	$this->Html->css('secondary', null, array('inline' => false));
 	$this->Html->css('account', null, array('inline' => false));
+	$this->assign('title', 'My Requests');
 ?>
 <script>
 	$(window).resize(colSize);
@@ -29,8 +30,7 @@
 
 	function displayHelpText(elem) {
 		$('#container')
-			.append('<div id="helpText">These are data elements that you didn\'t'+
-			' request but are included in the APIs to which you requested access.</div>');
+			.append('<div id="helpText">'+$(elem).attr('helpText')+'</div>');
 		$('#helpText').offset({top:$(elem).offset().top - 58, left:$(elem).offset().left - 112});
 	}
 
@@ -258,7 +258,7 @@
 					} ?>
 				</div>
 				<?php if (isset($req->additionallyIncluded)): ?>
-					<h3 class="headerTab">Additionally Included Data</h3><img class="infoIcon" src="/img/icon-question.png" onmouseover="displayHelpText(this)" onmouseout="hideHelpText()">
+					<h3 class="headerTab">Additionally Included Data</h3><img class="infoIcon" src="/img/icon-question.png" onmouseover="displayHelpText(this)" onmouseout="hideHelpText()" helpText="These are data elements that you didn't request but are included in the APIs to which you requested access.">
 					<div class="clear"></div>
 					<div class="attrValue">
 						<?php $glossaryCount = 0;
@@ -324,7 +324,7 @@
 				</div>
 				<div class="clear"></div>
 
-				<h3 class="headerTab">Collaborators</h3><div class="edit-btn grow collaborators" title="Add Collaborators"></div>
+				<h3 class="headerTab">Collaborators</h3><div class="edit-btn grow collaborators" title="Add Collaborators"></div><img class="infoIcon" src="/img/icon-question.png" onmouseover="displayHelpText(this)" onmouseout="hideHelpText()" helpText="People on the collaborators list will see this request listed on their 'My Requests' page.">
 				<div class="clear"></div>
 				<div class="attrValue collaborators-view">
 					<?php foreach ($req->attributeReferences->attributeReference['Collaborators'] as $col) {
