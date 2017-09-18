@@ -1153,6 +1153,24 @@ class RequestController extends AppController {
 			array_multisort($domains, SORT_ASC, $termNames, SORT_ASC, $termResp->aaData);
 		}
 
+		$policies = [];
+		$allPolicies = $this->CollibraAPI->getPolicies();
+		foreach ($allPolicies as $policy) {
+			switch($policy->policyName) {
+				case 'Standard Data Usage Policies':
+					array_push($policies, $policy);
+					break;
+				case 'Trusted Partner Security Standards':
+					foreach ($arrQueue['businessTerms'] as $term) {
+						if ($term['communityId'] == Configure::read('Collibra.community.academicRecords')) {
+							array_push($policies, $policy);
+							break;
+						}
+					}
+					break;
+			}
+		}
+
 		// load form fields for ISA workflow
 		$formResp = $this->CollibraAPI->get('workflow/'.Configure::read('Collibra.isaWorkflow.id').'/form/start');
 		$formResp = json_decode($formResp);
@@ -1185,7 +1203,7 @@ class RequestController extends AppController {
 			$psDepartment = $byuUser->employee_information->department;
 		}
 
-		$this->set(compact('preFilled', 'arrQueue', 'psName', 'psPhone', 'psEmail', 'psRole', 'psDepartment', 'psReportsToName', 'supervisorInfo'));
+		$this->set(compact('preFilled', 'arrQueue', 'psName', 'psPhone', 'psEmail', 'psRole', 'psDepartment', 'psReportsToName', 'supervisorInfo', 'policies'));
 		$this->set('submitErr', isset($this->request->query['err']));
 	}
 }

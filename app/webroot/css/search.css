@@ -1050,6 +1050,47 @@ img.resultBodyLoading {
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
+#searchBody #requestForm #srLower .policy-header-wrapper {
+  width: 300px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+#searchBody #requestForm #srLower .policy-header-wrapper .policies-btn {
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  background-color: #114477;
+  cursor: pointer;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  text-decoration: none;
+}
+#searchBody #requestForm #srLower .policy-header-wrapper .policies-btn .policiesShow {
+  display: none;
+}
+#searchBody #requestForm #srLower .policy-header-wrapper .policies-btn.collapsed .policiesHide {
+  display: none;
+}
+#searchBody #requestForm #srLower .policy-header-wrapper .policies-btn.collapsed .policiesShow {
+  display: inline;
+}
+#searchBody #requestForm #srLower .taBox div.info {
+  font-size: 14px;
+  margin: 0px;
+}
+#searchBody #requestForm #srLower .taBox h5.policy-name {
+  font-size: 15px;
+  font-weight: bold;
+  color: #114477;
+  margin: 20px 0 3px 0;
+}
+#searchBody #requestForm #srLower .taBox h6.applies {
+  margin: 0px;
+  font-size: 12px;
+}
 #searchBody #requestForm #srLower textarea,
 #apiBody #requestForm #srLower textarea,
 #searchBody #searchSuccess #srLower textarea,

@@ -32,10 +32,12 @@ if (!function_exists('denv')) {
 		'community' => [
 			'api' => 'd9f1c1bb-17cf-4fcb-9046-49d35f839623',
 			'byu' => 'c690b823-4341-4125-8a81-22d592c23773',
+			'academicRecords' => 'e467b5c3-c497-4fb6-a0d0-cf48815e9bec'
 		],
 		'vocabulary' => [
 			'dataSharingRequests' => '00000000-0000-0000-0000-000000006016',
-			'newBusinessTerms' => '00000000-0000-0000-0000-000000006013'
+			'newBusinessTerms' => '00000000-0000-0000-0000-000000006013',
+			'infoGovPolicies' => '2a1eaea2-62b0-45c0-b499-177f3ddf0551'
 		],
 		'isaWorkflow' => [
 			'id' => '8bfbed57-c387-4717-8f5d-c3cfebb485de',
@@ -70,6 +72,7 @@ if (!function_exists('denv')) {
 		],
 		'attribute' => [
 			'definition' => '00000000-0000-0000-0000-000000000202',
+			'description' => '00000000-0000-0000-0000-000000003114',
 			'descriptiveExample' => '00000000-0000-0000-0000-000000003115',
 			'standardFieldName' => 'ea92faa8-685d-4cb0-8665-14808de08dd2',
 			'classification' => '80cae8d4-856f-4b9a-971a-164514e79744',
@@ -78,7 +81,8 @@ if (!function_exists('denv')) {
 			'stewardPhone' => '9a18e247-c090-40c3-896e-ab97335ae759',
 			'stewardEmail' => '0cbbfd32-fc97-47ce-bef1-a89ae4e77ee8',
 			'stewardName' => '4331ec09-88a2-48e6-b096-9ece6648aff3',
-			'notes' => '00000000-0000-0000-0000-000000003116'
+			'notes' => '00000000-0000-0000-0000-000000003116',
+			'inclusionScenario' => '00000000-0000-0000-0001-000500000026'
 		],
 		'status' => [
 			'deleted' => '5ed07772-862c-4898-aa31-9c781ab13a1e'

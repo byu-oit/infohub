@@ -13,6 +13,11 @@
 			}
 		?>
 
+		$('.policies-btn').click(function() {
+			$(this).toggleClass('collapsed');
+			$('#policies').slideToggle(600);
+		});
+
 		$('#requestSave').click(function() {
 			var thisElem = this;
 
@@ -271,6 +276,26 @@
 							echo '<input type="text" name="'.$field->id.'" id="'.$field->id.'" value="'.$val.'" class="inputShade full noPlaceHolder" placeholder="'.$placeholderText.'" />';
 						}
 
+						echo '</div>';
+					}
+
+					if (!empty($policies)) {
+						echo '<div class="policy-header-wrapper"><label class="headerTab">Data Usage Policies</label>
+								  <div class="policies-btn grow">
+								  	<span class="policiesHide">Collapse</span>
+									<span class="policiesShow">Expand</span>
+								  </div>
+							  </div>';
+						echo '<div class="clear"></div>';
+						echo '<div id="policies" class="taBox">
+								<div class="info">In accordance with the business terms included in
+								your request, the following usage policies will be automatically
+								applied and must be complied to.</div>';
+						foreach ($policies as $policy) {
+							echo '<h5 class="policy-name">'.$policy->policyName.'</h5>'.
+								 '<h6 class="applies">'.$policy->inclusionScenario.'</h6>';
+							echo '<p>'.$policy->body.'</p><br>';
+						}
 						echo '</div>';
 					}
 				?>

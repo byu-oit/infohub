@@ -1080,6 +1080,38 @@ class CollibraAPI extends Model {
 		return $policies;
 	}
 
+	public function getPolicies() {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'id']],
+				['Column' => ['fieldName' => 'policyName']],
+				['Column' => ['fieldName' => 'body']],
+				['Column' => ['fieldName' => 'inclusionScenario']]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'id'],
+					'Signifier' => ['name' => 'policyName'],
+					'StringAttribute' => [[
+						'Value' => ['name' => 'body'],
+						'labelId' => Configure::read('Collibra.attribute.description')],
+					[
+						'Value' => ['name' => 'inclusionScenario'],
+						'labelId' => Configure::read('Collibra.attribute.inclusionScenario')]],
+					'Vocabulary' => [
+						'Id' => ['name' => 'vocabId']],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+								'name' => 'vocabId',
+								'operator' => 'EQUALS',
+								'value' => Configure::read('Collibra.vocabulary.infoGovPolicies')]]]]]],
+			'displayStart' => 0,
+			'displayLength' => -1]];
+
+		$policies = $this->fullDataTable($tableConfig);
+		return $policies;
+	}
+
 	public function getAdditionallyIncludedTerms($dsaId) {
 		$tableConfig = ['TableViewConfig' => [
 			'Columns' => [
