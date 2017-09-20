@@ -149,7 +149,7 @@
 										}
 										echo '<img class="classIcon" src="/img/icon'.$classification.'.png">&nbsp;'.$classificationTitle;
 
-										if ($term->businessTerm[0]->approvalStatus == 'Pending Approval') {
+										if ($term->businessTerm[0]->approvalStatus != 'Approved') {
 											echo '&nbsp;&nbsp;<img class="pendingApprovalIcon" src="/img/alert.png" onmouseover="displayPendingApproval(this)" onmouseout="hidePendingAproval()">';
 										}
 									endif ?>
