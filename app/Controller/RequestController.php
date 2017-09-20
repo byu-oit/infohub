@@ -102,7 +102,7 @@ class RequestController extends AppController {
 							$newTermsAdded++;
 							$arrQueue['concepts'][$termID] = ['term' => $term, 'communityId' => $vocabID, 'apiHost' => $apiHost, 'apiPath' => $apiPath];
 						}
-					} else if (empty($termID) && !empty($term) && empty($arrQueue['apiFields'][$term])) { // Unspecified API field
+					} else if ((empty($termID) || $termID == 'undefined') && !empty($term) && empty($arrQueue['apiFields'][$term])) { // Unspecified API field
 						$newTermsAdded++;
 						$arrQueue['apiFields'][$term] = ['name' => end((explode(".", $term))), 'apiHost' => $apiHost, 'apiPath' => $apiPath];
 					}
