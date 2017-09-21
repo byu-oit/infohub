@@ -361,6 +361,7 @@ class CollibraAPI extends Model {
 							['Column' => ['fieldName' => 'termClassification']],
 							['Column' => ['fieldName' => 'approvalStatus']],
 							['Column' => ['fieldName' => 'termId']],
+							['Column' => ['fieldName' => 'termDescription']],
 							['Column' => ['fieldName' => 'termRelationId']],
 							['Column' => ['fieldName' => 'term']]]]]],
 				'Resources' => [
@@ -378,6 +379,9 @@ class CollibraAPI extends Model {
 								'Id' => ['name' => 'termId'],
 								'Status' => [
 									'signifier' => ['name' => 'approvalStatus']],
+								'StringAttribute' => [[
+									'Value' => ['name' => 'termDescription'],
+									'labelId' => Configure::read('Collibra.attribute.definition')]],
 								'SingleValueListAttribute' => [[
 									'Value' => ['name' => 'termClassification'],
 									'labelId' => Configure::read('Collibra.attribute.classification')]],

@@ -110,7 +110,9 @@
 								?></td>
 								<td>
 									<?php if (!empty($term->businessTerm[0])): ?>
+										<?php $termDef = nl2br(str_replace("\n\n\n", "\n\n", htmlentities(strip_tags(str_replace(['<div>', '<br>', '<br/>'], "\n", $term->businessTerm[0]->termDescription))))); ?>
 										<?= $this->Html->link($term->businessTerm[0]->term, ['controller' => 'search', 'action' => 'term', $term->businessTerm[0]->termId]) ?>
+										<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="<?=$termDef?>" class="info"><img src="/img/iconInfo.png"></div>
 									<?php endif ?>
 								</td>
 								<td style="white-space:nowrap;">
