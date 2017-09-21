@@ -305,10 +305,15 @@ class RequestController extends AppController {
 
 	public function updateDraftCart() {
 		$this->autoRender = false;
-		$netId = $this->Auth->user('username');
+		if (!$netId = $this->Auth->user('username')) {
+			return;
+		}
 
 		$this->loadModel('CollibraAPI');
 		$draft = $this->CollibraAPI->checkForDSRDraft($netId);
+		if (empty($draft)) {
+			return;
+		}
 		$draftId = $draft[0]->id;
 
 		$arrQueue = $this->Session->read('queue');
