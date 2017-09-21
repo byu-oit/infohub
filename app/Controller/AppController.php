@@ -59,18 +59,14 @@ class AppController extends Controller {
 				$byuUserDepartment = $_SESSION["byuUserDepartment"];
 			}
 
-			$this->loadModel('CollibraAPI');
-			$draftId = $this->CollibraAPI->checkForDSRDraft($netID);
-			if (!empty($draftId) && !$this->Session->check('draftLoaded')) {
-				$this->set('hasUnloadedDraft', true);
-			} else {
-				$this->set('hasUnloadedDraft', false);
+			if (!$this->Session->check('cartLoaded')) {
+				$this->loadCart();
+				$this->Session->write('cartLoaded', true);
 			}
 		}else{
 			$this->set('casAuthenticated', false);
 			$_SESSION["byuUsername"] = '';
 			$_SESSION["byuUserDepartment"] = '';
-			$this->set('hasUnloadedDraft', false);
 		}
 
 		//$this->disableCache();
@@ -123,6 +119,29 @@ class AppController extends Controller {
 
 	public function isAdmin($user) {
 		return !empty($user['infohubUserId']);
+	}
+
+	public function loadCart() {
+		$netId = $this->Auth->user('username');
+		$this->loadModel('CollibraAPI');
+		$draftId = $this->CollibraAPI->checkForDSRDraft($netId);
+
+		if (empty($draftId)) {
+			return;
+		}
+
+		$draft = $this->CollibraAPI->get('term/'.$draftId[0]->id);
+		$draft = json_decode($draft);
+
+		foreach ($draft->attributeReferences->attributeReference as $attr) {
+			if ($attr->labelReference->signifier == 'Additional Information Requested') {
+				$arrQueue = json_decode($attr->value, true);
+				$this->Session->write('queue', $arrQueue);
+				continue;
+			}
+		}
+
+		return;
 	}
 
 	public function implementedEvents() {

@@ -6,7 +6,7 @@ class RequestController extends AppController {
 
 	function beforeFilter() {
 		parent::beforeFilter();
-		$this->Auth->deny('index', 'submit', 'loadDraft');
+		$this->Auth->deny('index', 'submit');
 	}
 
 	private static function sortUsers($a, $b){
@@ -109,6 +109,7 @@ class RequestController extends AppController {
 				}
 
 				$this->Session->write('queue', $arrQueue);
+				$this->updateDraftCart();
 				echo $newTermsAdded;
 			}
 		}
@@ -129,12 +130,14 @@ class RequestController extends AppController {
 				unset($arrQueue['emptyApis'][$termID]);
 			}
 			$this->Session->write('queue', $arrQueue);
+			$this->updateDraftCart();
 		}
 	}
 
 	public function clearQueue() {
 		$this->autoRender = false;
 		$this->Session->delete('queue');
+		$this->updateDraftCart();
 	}
 
 	public function getQueueSize() {
@@ -147,27 +150,17 @@ class RequestController extends AppController {
 			  sizeof($arrQueue['emptyApis']);
 	}
 
-	public function saveFormFields() {
-		$this->autoRender = false;
-		$this->Session->write('inProgressFormFields', $this->request->data);
-	}
-
 	public function cartDropdown() {
 		$this->autoRender = false;
 		$responseHTML = '';
 		$this->loadModel('CollibraAPI');
-		$draftId = $this->CollibraAPI->checkForDSRDraft($this->Auth->user('username'));
-		$hasUnloadedDraft =	!empty($draftId) && !$this->Session->check('draftLoaded');
 
 		$arrQueue = $this->Session->read('queue');
 		$responseHTML=  '<h3>Requested Items: '.(count($arrQueue['businessTerms']) + count($arrQueue['concepts']) + count($arrQueue['apiFields']) + count($arrQueue['emptyApis'])).'</h3>'.
 			'<a class="close" href="javascript: hideRequestQueue()">X</a>'.
 			'<div class="arrow"></div>'.
 			'<a class="clearQueue" href="javascript: clearRequestQueue()">Empty cart</a>';
-		if ($hasUnloadedDraft) {
-			$responseHTML .= '<a class="loadDraft" href="/request/loadDraft">Load Draft</a>'.
-				'<a class="deleteDraft" href="javascript: deleteDraft()">Delete Draft</a>';
-		}
+
 		if(
 			!empty($arrQueue['businessTerms']) ||
 			!empty($arrQueue['concepts']) ||
@@ -305,56 +298,24 @@ class RequestController extends AppController {
 		}
 
 		if (isset($error)) {
-			return json_encode(['success' => 0]);
+			return json_encode(['success' => 0, 'message' => 'Could not save draft']);
 		}
-		$this->Session->write('draftLoaded', true);
-		return json_encode(['success' => 1]);
+		return json_encode(['success' => 1, 'message' => 'Saved successfully']);
 	}
 
-	public function loadDraft() {
+	public function updateDraftCart() {
+		$this->autoRender = false;
 		$netId = $this->Auth->user('username');
+
 		$this->loadModel('CollibraAPI');
-		$draftId = $this->CollibraAPI->checkForDSRDraft($netId);
+		$draft = $this->CollibraAPI->checkForDSRDraft($netId);
+		$draftId = $draft[0]->id;
 
-		if (empty($draftId)) {
-			$this->redirect(['controller' => 'search', 'action' => 'index']);
-		}
-
-		$draft = $this->CollibraAPI->get('term/'.$draftId[0]->id);
-		$draft = json_decode($draft);
-
-		$arrLabelMatch = [
-			'Requester Name' => 'name',
-			'Requester Phone' => 'phone',
-			'Requester Role' => 'role',
-			'Requester Email' => 'email',
-			'Requesting Organization' => 'requestingOrganization',
-			'Sponsor Name' => 'sponsorName',
-			'Sponsor Phone' => 'sponsorPhone',
-			'Sponsor Role' => 'sponsorRole',
-			'Sponsor Email' => 'sponsorEmail',
-			'Application Name' => 'applicationName',
-			'Additional Information Requested' => 'descriptionOfInformation',
-			'Description of Intended Use' => 'descriptionOfIntendedUse',
-			'Access Rights' => 'accessRights',
-			'Access Method' => 'accessMethod',
-			'Impact on System' => 'impactOnSystem'
-		];
-		$arrFormFields = [];
-		foreach ($draft->attributeReferences->attributeReference as $attr) {
-			if ($attr->labelReference->signifier == 'Additional Information Requested') {
-				$arrQueue = json_decode($attr->value, true);
-				$this->Session->write('queue', $arrQueue);
-				continue;
-			}
-			$label = $arrLabelMatch[$attr->labelReference->signifier];
-			$arrFormFields[$label] = $attr->value;
-		}
-
-		$this->Session->write('inProgressFormFields', $arrFormFields);
-		$this->Session->write('draftLoaded', true);
-
-		$this->redirect(['action' => 'index']);
+		$arrQueue = $this->Session->read('queue');
+		$postData['label'] = Configure::read('Collibra.formFields.descriptionOfInformation');
+		$postData['value'] = json_encode($arrQueue);
+		$postString = http_build_query($postData);
+		$resp = $this->CollibraAPI->post('term/'.$draftId.'/attributes', $postString);
 	}
 
 	public function deleteDraft() {
@@ -840,7 +801,6 @@ class RequestController extends AppController {
 
 			// clear items in queue
 			$this->Session->delete('queue');
-			$this->Session->delete('inProgressFormFields');
 
 			$this->redirect(['action' => 'success']);
 		}else{
@@ -1118,13 +1078,37 @@ class RequestController extends AppController {
 			$preFilled['descriptionOfInformation'] = $apiList;
 		}
 
-		// If the customer's already filled in some of the request form, retrieve their work
-		if ($this->Session->check('inProgressFormFields')) {
-			$savedFields = $this->Session->read('inProgressFormFields');
-			foreach ($savedFields as $id => $val) {
-				if (!empty($val)) {
-					$preFilled[$id] = $val;
+		// Retrieve the customer's work if they have a draft
+		$draftId = $this->CollibraAPI->checkForDSRDraft($this->Auth->user('username'));
+		if (!empty($draftId)) {
+
+			$draft = $this->CollibraAPI->get('term/'.$draftId[0]->id);
+			$draft = json_decode($draft);
+
+			$arrLabelMatch = [
+				'Requester Name' => 'name',
+				'Requester Phone' => 'phone',
+				'Requester Role' => 'role',
+				'Requester Email' => 'email',
+				'Requesting Organization' => 'requestingOrganization',
+				'Sponsor Name' => 'sponsorName',
+				'Sponsor Phone' => 'sponsorPhone',
+				'Sponsor Role' => 'sponsorRole',
+				'Sponsor Email' => 'sponsorEmail',
+				'Application Name' => 'applicationName',
+				//'Additional Information Requested' => 'descriptionOfInformation',
+				'Description of Intended Use' => 'descriptionOfIntendedUse',
+				'Access Rights' => 'accessRights',
+				'Access Method' => 'accessMethod',
+				'Impact on System' => 'impactOnSystem'
+			];
+			$arrFormFields = [];
+			foreach ($draft->attributeReferences->attributeReference as $attr) {
+				if ($attr->labelReference->signifier == 'Additional Information Requested') {
+					continue;
 				}
+				$label = $arrLabelMatch[$attr->labelReference->signifier];
+				$preFilled[$label] = $attr->value;
 			}
 		}
 

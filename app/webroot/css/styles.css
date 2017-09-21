@@ -163,17 +163,6 @@ header #headerInner #headerRight #request-queue .request-num {
   border-radius: 10px;
   border: solid 2px #ffa921;
 }
-header #headerInner #headerRight #request-queue .draft-alert {
-  margin: -7px 0 0 -5px;
-  min-width: 13px;
-  height: 13px;
-  text-align: center;
-  font-weight: bold;
-  position: absolute;
-  background-color: white;
-  border-radius: 10px;
-  border: solid 2px #21ceff;
-}
 header #headerInner #headerRight #request-popup {
   display: none;
   position: absolute;
@@ -266,14 +255,7 @@ header #headerInner #headerRight #request-popup .close,
   text-align: center;
   border-radius: 7px;
 }
-header #headerInner #headerRight #request-popup .draft-deleted {
-  padding: 2px 10px;
-  color: #0418b3;
-  background-color: #bfd2f2;
-  text-align: center;
-}
 header #headerInner #headerRight #request-popup .clearQueue,
-header #headerInner #headerRight #request-popup .deleteDraft,
 #request #searchBody #requestForm #srLower .resultItem .irLower .clearQueue {
   margin: 8px 0px;
   padding: 2px 10px;
@@ -287,25 +269,6 @@ header #headerInner #headerRight #request-popup .deleteDraft,
   -webkit-box-shadow: -1px 1px 5px 1px rgba(50, 50, 50, 0.22);
   -moz-box-shadow: -1px 1px 5px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -1px 1px 5px 1px rgba(50, 50, 50, 0.22);
-}
-header #headerInner #headerRight #request-popup .loadDraft {
-  margin: 8px 0px;
-  padding: 2px 10px;
-  float: left;
-  font-size: 10px;
-  font-weight: 700;
-  color: white;
-  background-color: #114477;
-  cursor: pointer;
-  text-decoration: none;
-  -webkit-box-shadow: -1px 1px 5px 1px rgba(50, 50, 50, 0.22);
-  -moz-box-shadow: -1px 1px 5px 1px rgba(50, 50, 50, 0.22);
-  box-shadow: -1px 1px 5px 1px rgba(50, 50, 50, 0.22);
-}
-header #headerInner #headerRight #request-popup .deleteDraft {
-  margin-top: 0px;
-  clear: both;
-  float: left;
 }
 header #headerInner #headerRight #request-popup .btn-orange {
   clear: both;

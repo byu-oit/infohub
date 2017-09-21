@@ -318,20 +318,6 @@ function toggleAllCheckboxes(elem) {
 		$(this).prop('checked', $(elem).prop('checked'));
 	});
 }
-function deleteDraft(){
-	$.post("/request/deleteDraft")
-		.done(function(data){
-			data = JSON.parse(data);
-			if (!data.success) {
-				alert(data.message);
-			} else {
-				$('#request-popup').find('.loadDraft').fadeOut('fast');
-				$('#request-popup').find('.deleteDraft').fadeOut('fast');
-				$('#request-queue').find('.draft-alert').fadeOut('fast');
-				$('#request-popup').find('h3').after('<div class="draft-deleted">Draft deleted.</div>');
-			}
-		});
-}
 /////////////////////////////
 
 $(document).on( 'click', function ( e ) {

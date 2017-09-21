@@ -18,16 +18,33 @@
 			$('#policies').slideToggle(600);
 		});
 
-		$('#requestSave').click(function() {
-			var thisElem = this;
+		$('#srLower').find('input, textarea').on('input', function() {
+			autoSave();
+		});
+		$('.irLower').find('a').on('click', function() {
+			autoSave();
+		});
+		$('.irLower').on('click', '#request-undo', function() {
+			autoSave();
+		});
+	});
+
+	$(window).resize(resultsWidth);
+
+	function autoSave() {
+
+		window.clearTimeout($('#srLower').data('timeout'));
+		$('#srLower').data('timeout', setTimeout(function() {
 
 			var i = 0;
-			var loadingTexts = ['Saving&nbsp;&nbsp;&nbsp;','Saving.&nbsp;&nbsp;','Saving..&nbsp;','Saving...'];
-			var loadingTextInterval = setInterval(function() {
-				$(thisElem).html(loadingTexts[i]);
+			var savingTexts = ['Saving&nbsp;&nbsp;&nbsp;','Saving.&nbsp;&nbsp;','Saving..&nbsp;','Saving...'];
+			var savingTextInterval = setInterval(function() {
+				$('#saving').html(savingTexts[i]);
 				i++;
-				if (i == loadingTexts.length) i = 0;
+				if (i == savingTexts.length) i = 0;
 			}, 250);
+
+			$('#saving').slideDown();
 
 			var postData = {};
 			$('#srLower').find('input, textarea').each(function() {
@@ -36,71 +53,20 @@
 
 			$.post('request/saveDraft', postData)
 				.done(function(data) {
-					clearInterval(loadingTextInterval);
-					$(thisElem).html('Save');
 					data = JSON.parse(data);
-					if (data.success) {
-						alert('Your request was saved successfully.');
-					} else {
-						alert('There was a problem saving your request.');
-					}
+					clearInterval(savingTextInterval);
+
+					$('#saving').html(data.message);
+					data.success ? $('#saving').addClass('success') : $('#saving').addClass('error');
+					setTimeout(function() {
+						$('#saving').slideUp().promise().done(function() {
+							$('#saving').html(savingTexts[0]).removeClass('success error');
+						});
+					}, 1000);
+
 				});
-		});
-	});
-
-	$(window).unload(function() {
-		if (isValid) return;	// If we're leaving the page because we've successfully submitted
-								// the request, we don't want to save the form fields.
-		var saveNeeded = false;
-		var savables = [
-			'name',
-			'phone',
-			'role',
-			'email',
-			'requestingOrganization',
-			'sponsorName',
-			'sponsorPhone',
-			'sponsorRole',
-			'sponsorEmail',
-			'applicationName',
-			'descriptionOfIntendedUse',
-			'accessRights',
-			'accessMethod',
-			'impactOnSystem'
-		];
-		var arrSaveData = {
-			name: '',
-			phone: '',
-			role: '',
-			email: '',
-			requestingOrganization: '',
-			sponsorName: '',
-			sponsorPhone: '',
-			sponsorRole: '',
-			sponsorEmail: '',
-			applicationName: '',
-			descriptionOfIntendedUse: '',
-			accessRights: '',
-			accessMethod: '',
-			impactOnSystem: ''
-		};
-		$('#srLower').find('input, textarea').each(function() {
-			if ($.inArray($(this).prop('name'), savables) > -1 && $(this).val() != "") {
-				saveNeeded = true;
-				arrSaveData[$(this).prop('name')] = $(this).prop('value');
-			}
-		});
-		if (saveNeeded) {
-			$.ajax({
-				method: "POST",
-				url: "request/saveFormFields",
-				data: arrSaveData,
-				async: false
-			});
-		}
-	});
-
-	$(window).resize(resultsWidth);
+		}, 4000));
+	}
 
 	function resultsWidth() {
 		if ($(window).width() > 680) {
@@ -111,9 +77,8 @@
 		}
 	}
 
-	var isValid = false;
 	function validate(){
-		isValid = true;
+		var isValid = true;
 		$('#request input').each(function() {
 			if($(this).val()==''){
 				isValid = false;
@@ -150,8 +115,7 @@
 			<h2 class="headerTab">Request Form</h2>
 
 			<div id="srLower" class="whiteBox">
-				<div class="saveNotification">If you leave this page and stick around InfoHub, your changes will be saved automatically.<br>
-				<strong>If you'd like to leave the site and finish later,</strong> be sure to hit the 'Save' button below.</div>
+				<div class="saveNotification">Feel free to leave this page and finish later; your changes will be saved automatically.</div>
 
 				<h3 class="headerTab">Information Requested</h3>
 				<div class="clear"></div>
@@ -307,9 +271,9 @@
 	</div>
 	<div id="formSubmit" class="innerLower">
 		<input type="submit" value="Submit Request" id="requestSubmit" name="requestSubmit" class="grow">
-		<div id="requestSave" class="grow">Save</div>
 		<div class="mobileHide">*Required field</div>
 		<div class="clear"></div>
 	</div>
 	<div class="clear"></div>
+	<div id="saving"></div>
 </form>
