@@ -55,7 +55,7 @@ class ApiAdminController extends AppController {
 			$postData['intakeVocabulary'] = Configure::read('Collibra.vocabulary.newBusinessTerms');
 			$postData['conceptType'] = Configure::read('Collibra.type.term');
 			foreach ($this->request->data['fields'] as $field) {
-				$postData['signifier'] = $field['name'];
+				$postData['signifier'] = substr($field['name'], strpos($field['name'], '.')+1);
 				$postData['definition'] = $field['desc'].$originatingApi;
 				$postString = http_build_query($postData);
 				$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
