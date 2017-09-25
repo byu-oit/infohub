@@ -6,6 +6,8 @@ use Rs\Json\Pointer\InvalidPointerException;
 use Rs\Json\Pointer\NonexistentValueReferencedException;
 use Rs\Json\Pointer\NonWalkableJsonException;
 
+require_once "../../vendor/spyc/Spyc.php";
+
 class Pointer
 {
     const POINTER_CHAR = '/';
@@ -31,7 +33,13 @@ class Pointer
         $this->json = json_decode($json, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new InvalidJsonException('Cannot operate on invalid Json.');
+            // Try interpreting input as yaml file
+            $this->yaml = spyc_load($json);
+            $this->json = json_decode(json_encode($this->yaml), true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new InvalidJsonException('Cannot operate on invalid input.');
+            }
         }
 
         if (!$this->isWalkableJson()) {
