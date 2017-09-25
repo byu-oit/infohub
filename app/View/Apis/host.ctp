@@ -14,7 +14,7 @@
 					<ul>
 						<?php foreach ($community->vocabularyReferences->vocabularyReference as $endpoint): ?>
 							<?php
-								if (empty($endpoint->typeReference->resourceId) || !in_array($endpoint->typeReference->resourceId, [$dataAssetDomainTypeId, $techAssetDomainTypeId])) {
+								if ($endpoint->meta == 1) {
 									continue;
 								}
 							?>

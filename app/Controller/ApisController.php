@@ -23,9 +23,7 @@ class ApisController extends AppController {
 					return strcmp(strtolower($a->name), strtolower($b->name));
 				});
 		}
-		$dataAssetDomainTypeId = Configure::read('Collibra.dataAssetDomainTypeId');
-		$techAssetDomainTypeId = Configure::read('Collibra.techAssetDomainTypeId');
-		$this->set(compact('hostname', 'community', 'dataAssetDomainTypeId', 'techAssetDomainTypeId'));
+		$this->set(compact('hostname', 'community'));
 	}
 
 	public function view() {
