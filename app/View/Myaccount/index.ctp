@@ -240,7 +240,9 @@
 				<?php endif ?>
 				<div class="clear"></div>
 				<div class="attrValue">
-					<?php $glossaryCount = 0;
+					<?php if (empty($req->termGlossaries)) echo '[No requested business terms]';
+
+					$glossaryCount = 0;
 					foreach ($req->termGlossaries as $glossaryName => $terms) {
 						echo '<em>'.$glossaryName.'&nbsp;-&nbsp;</em>';
 						$glossaryCount++;

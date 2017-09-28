@@ -30,6 +30,8 @@
 			<h4 class="riTitle"><?= $request->signifier ?></h4><div id="print">Print</div>
 			<p class="riData"><strong>Requested Data:</strong>
 <?php
+	if (empty($request->termGlossaries)) echo 'No requested business terms';
+
 	foreach ($request->termGlossaries as $glossaryName => $terms) {
 		echo '<br><em>'.$glossaryName.'&nbsp;-&nbsp;</em>';
 		$termCount = 0;
@@ -43,7 +45,9 @@
 	}
 ?>
 	        </p>
-			<p class="riData"><strong>Additionally Included Data:</strong>
+			<?php if (!empty($request->additionallyIncluded->termGlossaries)): ?>
+				<p class="riData"><strong>Additionally Included Data:</strong>
+			<?php endif ?>
 <?php
 	foreach ($request->additionallyIncluded->termGlossaries as $glossaryName => $terms) {
 		echo '<br><em>'.$glossaryName.'&nbsp;-&nbsp;</em>';

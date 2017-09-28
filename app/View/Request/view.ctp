@@ -270,7 +270,9 @@
 		<h3 class="headerTab">Requested Data</h3><?php if ($parent && empty($request->dataUsages)): ?><a class="edit-btn grow" href="/request/editTerms/<?=$request->resourceId?>" title="Add/Remove Terms"></a><?php endif ?>
 		<div class="clear"></div>
 		<div class="attrValue">
-			<?php $glossaryCount = 0;
+			<?php if (empty($request->termGlossaries)) echo '[No requested business terms]';
+
+			$glossaryCount = 0;
 			foreach ($request->termGlossaries as $glossaryName => $terms) {
 				echo '<em>'.$glossaryName.'&nbsp;-&nbsp;</em>';
 				$glossaryCount++;
