@@ -945,7 +945,8 @@ class CollibraAPI extends Model {
 							'Signifier' => ['name' => 'policyName'],
 							'StringAttribute' => [[
 								'Id' => ['name' => 'policyDescriptionId'],
-								'Value' => ['name' => 'policyDescription']]]]]],
+								'Value' => ['name' => 'policyDescription'],
+								'labelId' => Configure::read('Collibra.attribute.description')]]]]],
 					'Filter' => [
 						'AND' => [[
 							'Field' => [
@@ -1051,7 +1052,8 @@ class CollibraAPI extends Model {
 								'Signifier' => ['name' => 'policyName'],
 								'StringAttribute' => [[
 									'Id' => ['name' => 'policyDescriptionId'],
-									'Value' => ['name' => 'policyDescription']]],
+									'Value' => ['name' => 'policyDescription'],
+									'labelId' => Configure::read('Collibra.attribute.description')]],
 								'Filter' => [
 									'AND' => [[
 										'Field' => [
