@@ -41,19 +41,19 @@
 		<div class="btnLinks">
 			<a href="https://developer.byu.edu/" id="doc_link" class="inputButton" target="_blank">Read API documentation</a>
 			<a href="https://api.byu.edu/store/" id="store_link" class="inputButton" target="_blank">View this API in the store</a>
+			<?php if ($isOITEmployee): ?>
+				<div style="float: right">
+					<?= $this->Html->link(
+						'Update Unlinked Terms',
+						array_merge(['controller' => 'api_admin', 'action' => 'update', $hostname], explode('/', $basePath)),
+						['class' => 'inputButton', 'id' => 'admin']) ?>
+				</div>
+			<?php endif ?>
 		</div>
-		<div id="api_help_btn" class="apiHelpButton">Do you need access to call this API?</div>
-		<div id="api_help" class="apiHelp">There are potentially two steps you'll need to complete.<br><br>1. Subscribe to the API in the API store (WSO2). This gives you the ability to call the API with your own credentials for self-service. You'll need to create an "application" in WSO2 and subscribe to the each API you are interested in. You must complete this step in the API store. An overview of the process is available in the <a href="https://developer.byu.edu/docs/consume-api/5-minute-quickstart">Developer Portal.<br>https://developer.byu.edu/docs/consume-api/5-minute-quickstart</a><br><br>2. Request elevated access to the API. Many APIs can return more data if you have elevated permissions. Select the elements of the API that you need for your application and click the "Add to request" button. Once you've added all the elements you want access to, submit your request from the shopping cart icon at the top of the page. This will initiate the process of securing approvals (if needed) from the appropriate data stewards. More <a href="https://developer.byu.edu/docs/consume-api/get-elevated-access">detailed instructions</a> for this step are available.<br><a href="https://developer.byu.edu/docs/consume-api/get-elevated-access">https://developer.byu.edu/docs/consume-api/get-elevated-access</a></div>
+		<div id="api_help_btn" class="apiHelp">Do you need access to call this API?</div>
+		<div id="api_help" class="apiHelpSml">There are potentially two steps you'll need to complete.<br><br>1. Subscribe to the API in the API store (WSO2). This gives you the ability to call the API with your own credentials for self-service. You'll need to create an "application" in WSO2 and subscribe to the each API you are interested in. You must complete this step in the API store. An overview of the process is available in the <a href="https://developer.byu.edu/docs/consume-api/5-minute-quickstart">Developer Portal.<br>https://developer.byu.edu/docs/consume-api/5-minute-quickstart</a><br><br>2. Request elevated access to the API. Many APIs can return more data if you have elevated permissions. Select the elements of the API that you need for your application and click the "Add to request" button. Once you've added all the elements you want access to, submit your request from the shopping cart icon at the top of the page. This will initiate the process of securing approvals (if needed) from the appropriate data stewards. More <a href="https://developer.byu.edu/docs/consume-api/get-elevated-access">detailed instructions</a> for this step are available.<br><a href="https://developer.byu.edu/docs/consume-api/get-elevated-access">https://developer.byu.edu/docs/consume-api/get-elevated-access</a></div>
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
-				<?php if ($isOITEmployee): ?>
-					<div style="float: right">
-						<?= $this->Html->link(
-							'Update Unlinked Terms',
-							array_merge(['controller' => 'api_admin', 'action' => 'update', $hostname], explode('/', $basePath)),
-							['class' => 'inputButton', 'id' => 'admin']) ?>
-					</div>
-				<?php endif ?>
 				<?php if (empty($terms)): ?>
 					<h3>Well, this is embarrassing. We haven't yet specified the output fields for this API, but it is functional, and you can still request access to it.</h3>
 				<?php else: ?>

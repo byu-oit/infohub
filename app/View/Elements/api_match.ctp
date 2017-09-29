@@ -82,10 +82,26 @@
 
 			if (idCache[selected] === undefined) {
 				$('.view-context' + index).html('');
-				$('.view-definition' + index).html('');
+				$('#view-definition' + index).html('');
 			} else {
 				$('.view-context' + index).html(idCache[selected].context);
-				$('.view-definition' + index).html(idCache[selected].definition);
+
+				if (idCache[selected].definition !== undefined) {
+					if (idCache[selected].definition.length > 70) {
+						var truncated = idCache[selected].definition.substring(0, 70);
+						$('#view-definition' + index).html(
+							'<span class="truncated">'+
+								truncated+
+							'... <a href="javascript:toggleDefinition('+index+')">See More</a></span>'+
+
+							'<span class="full">'+
+								idCache[selected].definition+
+							' <a href="javascript:toggleDefinition('+index+')">See Less</a></span>'
+						);
+					} else {
+						$('#view-definition' + index).html(idCache[selected].definition);
+					}
+				}
 			}
 		});
 
@@ -102,7 +118,8 @@
 				labelCache[label][0] = {
 					id: $this.data('origId'),
 					name: $this.data('origName'),
-					context: $this.data('origContext')
+					context: $this.data('origContext'),
+					definition: $this.data('origDef')
 				};
 				idCache[$this.data('origId')] = labelCache[label][0];
 				$('#ApiLabelCache').val(JSON.stringify(labelCache));
@@ -185,15 +202,25 @@
 			if (data.context !== undefined && data.context.val) {
 				context = data.context.val
 			}
+			if (data.definition === undefined) {
+				data.definition = {
+					val: '(No definition exists)'
+				};
+			}
 			var i = labelCache[label].length;
 			labelCache[label][i] = {
 				id: data.name.id,
 				name: data.name.val,
-				context: context
+				context: context,
+				definition: data.definition.val
 			};
 			idCache[data.name.id] = labelCache[label][i];
 			$('#ApiLabelCache').val(JSON.stringify(labelCache));
 			$('#ApiIdCache').val(JSON.stringify(idCache));
 		}
 	})
+
+	function toggleDefinition(index) {
+		$('#view-definition'+index).toggleClass('expanded');
+	}
 </script>

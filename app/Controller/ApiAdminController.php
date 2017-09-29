@@ -25,9 +25,11 @@ class ApiAdminController extends AppController {
 
 		if ($this->request->is('post')) {
 			$success = $this->CollibraAPI->updateApiBusinessTermLinks($this->request->data('Api.elements'));
-			if (!empty($success)) {
+			if (!empty($success) && $this->request->data['propose'] == 'false') {
 				$this->Session->setFlash('API updated successfully');
 				$this->redirect(array_merge(['controller' => 'apis', 'action' => 'view', 'hostname' => $hostname], $args));
+			} else if (!empty($success) && $this->request->data['propose'] == 'true') {
+				$this->redirect('/api_admin/proposeTerms/'.$hostname.$basePath);
 			}
 			$this->Session->setFlash('Error: ' . implode('<br>', $this->CollibraAPI->errors), 'default', ['class' => 'error']);
 		} else {
@@ -50,13 +52,13 @@ class ApiAdminController extends AppController {
 		if ($this->request->is('post')) {
 			$this->autoRender = false;
 			$error = false;
-			$originatingApi = "\n\n(Field appears in ".$this->request->data['api'].")";
 
 			$postData['intakeVocabulary'] = Configure::read('Collibra.vocabulary.newBusinessTerms');
 			$postData['conceptType'] = Configure::read('Collibra.type.term');
 			foreach ($this->request->data['fields'] as $field) {
-				$postData['signifier'] = substr($field['name'], strpos($field['name'], '.')+1);
-				$postData['definition'] = $field['desc'].$originatingApi;
+				$postData['signifier'] = $field['propName'];
+				$postData['definition'] =
+					$field['desc']."\n\n(Field appears in ".$this->request->data['api'].": ".$field['fieldName'].")";
 				$postString = http_build_query($postData);
 				$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
 				$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.newBusinessTermWorkflow.id').'/start', $postString);

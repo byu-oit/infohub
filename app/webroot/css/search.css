@@ -610,7 +610,7 @@ img.resultBodyLoading {
 #searchBody #searchSuccess #srLower .resultItem .requestAccess,
 #apiBody #searchSuccess #srLower .resultItem .requestAccess,
 #searchBody #searchResults #srLower .resultItem .submit input,
-#searchBody #searchResults #srLower .resultItem #apiForm .submit input {
+#apiBody #searchResults #srLower .resultItem #apiForm .submit input {
   color: #fff;
   font-size: 12.5px;
   text-decoration: none;
@@ -1319,11 +1319,8 @@ img.resultBodyLoading {
   padding: 0 30px;
   text-decoration: none;
 }
-#apiBody .inputButton#admin {
-  position: relative;
-  top: -101px;
-}
-#apiBody .apiHelpButton {
+#apiBody .apiHelp {
+  margin-top: 15px;
   color: rgba(14, 50, 100, 0.85);
   font-size: 18px;
   line-height: 16px;
@@ -1331,7 +1328,7 @@ img.resultBodyLoading {
   cursor: pointer;
   padding-bottom: 8px;
 }
-#apiBody .apiHelp {
+#apiBody .apiHelpSml {
   font-size: 14px;
   width: 100%;
   display: none;
@@ -1355,6 +1352,24 @@ img.resultBodyLoading {
 }
 #apiBody .api-terms tbody .header {
   text-align: left;
+}
+/*#apiBody .api-terms tbody .view-definition {
+  height: 1em;
+}
+#apiBody .api-terms tbody .view-definition.expanded {
+  height: auto;
+}*/
+#apiBody .api-terms tbody .view-definition .truncated {
+  display: inline;
+}
+#apiBody .api-terms tbody .view-definition .full {
+  display: none;
+}
+#apiBody .api-terms tbody .view-definition.expanded .truncated {
+  display: none;
+}
+#apiBody .api-terms tbody .view-definition.expanded .full {
+  display: inline;
 }
 .classIcon {
   width: 13px;
@@ -1407,8 +1422,8 @@ form#request #formSubmit div {
 form#request #saving {
   display: none;
   position: fixed;
-  left: 30px;
-  top: 28px;
+  right: 30px;
+  bottom: 28px;
   width: 125px;
   background-color: white;
   border: solid 2px #66aaff;
