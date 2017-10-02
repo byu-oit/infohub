@@ -61,6 +61,26 @@ class Swagger extends AppModel {
 		];
 	}
 
+	public function downloadFile($url) {
+		$requestOptions = [];
+		if (preg_match('/api\.github\.com/', $url)) {
+			//Special case for Github: need custom auth token
+			$requestOptions['header'] = [
+				'Accept' => 'application/vnd.github.v3.raw',
+				'Authorization' => 'token ' . Configure::read('github.api_token')
+			];
+		}
+
+		App::uses('HttpSocket', 'Network/Http');
+		$HttpSocket = new HttpSocket();
+		$results = $HttpSocket->get($url, [], $requestOptions);
+		if (!$results || !$results->isOk()) {
+			return null;
+		}
+
+		return $results->body();
+	}
+
 	protected function _getRef($ref) {
 		if (strpos($ref, '#') !== false) {
 			$ref = substr($ref, strpos($ref, '#') + 1);

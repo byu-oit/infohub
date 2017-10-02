@@ -18,7 +18,7 @@ class SwaggerController extends AppController {
 			$swagUrl = $this->request->data('Swagger.url');
 			$filename = $this->_swaggerFilename();
 			if (!empty($swagUrl)) {
-				$swag = file_get_contents($swagUrl);
+				$swag = $this->Swagger->downloadFile($swagUrl);
 				if (empty($swag)) {
 					$this->Session->setFlash('Error downloading from URL', 'default', ['class' => 'error']);
 					return;
