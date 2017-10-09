@@ -92,7 +92,15 @@
 					return;
 				}
 
-				$.get("/directory/lookup?term="+inputElement.val())
+				var searchName = '';
+				if (inputElement.val().match(/[a-z]+ [a-z]+/i)) {
+					var names = inputElement.val().split(' ');
+					searchName = names[1] + ', ' + names[0];
+				} else {
+					searchName = inputElement.val();
+				}
+
+				$.get("/directory/lookup?term="+searchName)
 					.done(function(data) {
 						inputWrapper.parent().find('.collaborators-search-result').remove();
 						data = JSON.parse(data);
@@ -368,7 +376,7 @@
 			?>
 		</div>
 		<div class="collaborators-input-wrapper">
-			<input type="text" class="collaborators-input" placeholder="Search by name (last, first) or Net ID">
+			<input type="text" class="collaborators-input" placeholder="Search by name or Net ID">
 			<div class="lower-btn close grow">Close</div>
 		</div>
 		<div class="clear"></div>
