@@ -70,9 +70,9 @@ class ApiAdminController extends AppController {
 			}
 
 			if (!$error) {
-				return '{"success":1}';
+				return json_encode(['success' => 1]);
 			}
-			return '{"success":0}';
+			return json_encode(['success' => 0]);
 		}
 
 		$args = func_get_args();

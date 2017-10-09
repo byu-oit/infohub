@@ -179,12 +179,12 @@ class RequestController extends AppController {
 		$this->autoRender = false;
 
 		if (empty($dsrId) || empty($personId)) {
-			return '{"success":0,"message":"Bad request"}';
+			return json_encode(['success' => 0, 'message' => 'Bad request']);
 		}
 
 		$person = $this->BYUAPI->personalSummary($personId);
 		if (!isset($person)) {
-			return '{"success":0,"message":"Person\'s information could not be loaded"}';
+			return json_encode(['success' => 0, 'message' => 'Person\'s information could not be loaded']);
 		}
 
 		$resp = $this->CollibraAPI->get('term/'.$dsrId);
@@ -192,7 +192,7 @@ class RequestController extends AppController {
 
 		foreach($request->attributeReferences->attributeReference as $attr) {
 			if ($attr->labelReference->signifier == 'Requester Net Id' && $attr->value == $person->identifiers->net_id) {
-				return '{"success":0,"message":"This person is already a collaborator on this request."}';
+				return json_encode(['success' => 0, 'message' => 'This person is already a collaborator on this request.']);
 			}
 		}
 
@@ -208,7 +208,7 @@ class RequestController extends AppController {
 		$formResp = $this->CollibraAPI->post('term/'.$dsrId.'/attributes', $postString);
 		$formResp = json_decode($formResp);
 		if (!isset($formResp)) {
-			return '{"success":0,"message":"We had a problem getting to Collibra"}';
+			return json_encode(['success' => 0, 'message' => 'We had a problem getting to Collibra']);
 		}
 
 		// Add to DSAs as well
@@ -219,11 +219,11 @@ class RequestController extends AppController {
 			$formResp = $this->CollibraAPI->post('term/'.$du->id.'/attributes', $postString);
 			$formResp = json_decode($formResp);
 			if (!isset($formResp)) {
-				return '{"success":0,"message":"We had a problem getting to Collibra"}';
+				return json_encode(['success' => 0, 'message' => 'We had a problem getting to Collibra']);
 			}
 		}
 
-		return '{"success":1,"person":'.json_encode($person).'}';
+		return json_encode(['success' => 1, 'person' => $person]);
 	}
 
 	public function removeCollaborator($dsrId, $netId) {
@@ -345,7 +345,7 @@ class RequestController extends AppController {
 			return;
 		}
 		if (!isset($this->request->data['dsrId'])) {
-			return '{"success":0}';
+			return json_encode(['success' => 0]);
 		}
 
 		if ($this->request->data['action'] == 'add') {
@@ -431,7 +431,7 @@ class RequestController extends AppController {
 			}
 
 			$this->Session->write('queue', $arrQueue);
-			return $success ? '{"success":1}' : '{"success":0}';
+			return $success ? json_encode(['success' => 1]) : json_encode(['success' => 0]);
 		}
 		else if ($this->request->data['action'] == 'remove') {
 			$success = true;
@@ -441,9 +441,9 @@ class RequestController extends AppController {
 					$success = false;
 				}
 			}
-			return $success ? '{"success":1}' : '{"success":0}';
+			return $success ? json_encode(['success' => 1]) : json_encode(['success' => 0]);
 		}
-		return '{"success":0}';
+		return json_encode(['success' => 0]);
 	}
 
 	public function editTerms($dsrId) {
