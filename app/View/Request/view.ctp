@@ -54,12 +54,23 @@
 		});
 
 		$('.detailsBody').on('click', '.remove', function() {
+			var thisElem = $(this);
 			if (confirm("Are you sure you'd like to remove this person? (They can still be re-added to the list at any time.)")) {
 				$.post('/request/removeCollaborator/' + $(this).attr('data-dsrid') + '/' + $(this).attr('data-netid'))
 					.done(function(data) {
 						var data = JSON.parse(data);
 						alert(data.message);
-						window.location.reload(false);
+
+						if (data.success) {
+							// Remove line in question from collaborators list html
+							var oldHtml = thisElem.parent().html();
+							var regex = new RegExp(
+								// ((?!<br>).)*  =>  anything but a line break
+								'<strong>((?!<br>).)*data-netid="'+thisElem.data('netid')+'"((?!<br>).)*<br>'
+							);
+							var newHtml = oldHtml.replace(regex, '');
+							thisElem.parent().html(newHtml);
+						}
 					});
 			}
 		});
