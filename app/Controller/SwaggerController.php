@@ -94,7 +94,7 @@ class SwaggerController extends AppController {
 		if (!$this->request->is('post')) {
 			return ['error' => ['messages' => ['POST only']]];
 		}
-
+pr($this->request->input());exit();
 		if (isset($this->request->data['url'])) {
 			$json = $this->Swagger->downloadFile($this->request->data['url']);
 			if (empty($json)) {
