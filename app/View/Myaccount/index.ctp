@@ -254,7 +254,9 @@
 				echo '	<div class="detailsBody" id="'.$req->resourceId.'">';
 	?>
 				<h3 class="headerTab">Requested Data</h3>
-				<?php if ($req->statusReference->signifier != 'Completed'): ?>
+				<?php
+				$pendingStatuses = ['Pending Custodian', 'Pending Steward', 'In Progress', 'Request In Progress', 'Agreement Review'];
+				if (in_array($req->statusReference->signifier, $pendingStatuses)): ?>
 					<a class="edit-btn grow" href="/request/editTerms/<?=$req->resourceId?>" title="Add/Remove Terms"></a>
 				<?php endif ?>
 				<div class="clear"></div>
@@ -376,7 +378,7 @@
 					"Application Identity",
 					"Additional Information Requested"
 				];
-				$completedStatuses = ['Completed', 'Approved', 'Obsolete'];
+
 				if (empty($req->dataUsages)) {
 					foreach ($arrOrderedFormFields as $field) {
 						foreach ($req->attributeReferences->attributeReference as $attrRef) {
@@ -398,8 +400,10 @@
 						echo '</div>';
 					}
 
-					echo '<div class="lower-btn delete grow" data-rid="'.$req->resourceId.'">Delete</div>';
-					echo '<div class="lower-btn edit grow" data-rid="'.$req->resourceId.'">Edit</div>';
+					if (in_array($req->statusReference->signifier, $pendingStatuses)) {
+						echo '<div class="lower-btn delete grow" data-rid="'.$req->resourceId.'">Delete</div>';
+						echo '<div class="lower-btn edit grow" data-rid="'.$req->resourceId.'">Edit</div>';
+					}
 				}
 				echo '<div class="lower-btn print grow" data-rid="'.$req->resourceId.'">Print</div>';
 				echo '<div class="lower-btn share grow" data-rid="'.$req->resourceId.'">Share</div>';
@@ -515,7 +519,7 @@
 						echo '</div>';
 					}
 
-					if (!in_array($du->status, $completedStatuses)) {
+					if (in_array($du->status, $pendingStatuses)) {
 						echo '<div class="lower-btn delete grow" data-rid="'.$du->id.'">Delete</div>';
 						echo '<div class="lower-btn edit grow" data-rid="'.$du->id.'">Edit</div>';
 					}

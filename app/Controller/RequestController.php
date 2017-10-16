@@ -466,9 +466,9 @@ class RequestController extends AppController {
 			}
 		}
 
-		$completedStatuses = ['Completed', 'Approved', 'Obsolete'];
-		if (in_array($request->statusReference->signifier, $completedStatuses)) {
-			$this->Flash->error('You cannot edit a completed Request.');
+		$pendingStatuses = ['In Progress', 'Request In Progress', 'Agreement Review'];
+		if (!in_array($request->statusReference->signifier, $pendingStatuses)) {
+			$this->Flash->error('You cannot edit a Request that isn\'t currently in progress.');
 			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
 		}
 

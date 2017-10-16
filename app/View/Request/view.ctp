@@ -286,7 +286,9 @@
 		echo '	<div class="detailsBody" id="'.$request->resourceId.'">';
 ?>
 
-		<h3 class="headerTab">Requested Data</h3><?php if ($parent && empty($request->dataUsages)): ?><a class="edit-btn grow" href="/request/editTerms/<?=$request->resourceId?>" title="Add/Remove Terms"></a><?php endif ?>
+		<h3 class="headerTab">Requested Data</h3>
+		<?php $pendingStatuses = ['Pending Custodian', 'Pending Steward', 'In Progress', 'Request In Progress', 'Agreement Review'];
+		if ($parent && in_array($request->statusReference->signifier, $pendingStatuses) && empty($request->dataUsages)): ?><a class="edit-btn grow" href="/request/editTerms/<?=$request->resourceId?>" title="Add/Remove Terms"></a><?php endif ?>
 		<div class="clear"></div>
 		<div class="attrValue">
 			<?php if (empty($request->termGlossaries)) echo '[No requested business terms]';
@@ -405,7 +407,7 @@
 			"Application Identity",
 			"Additional Information Requested"
 		];
-		$completedStatuses = ['Completed', 'Approved', 'Obsolete'];
+
 		if (empty($request->dataUsages)) {
 			foreach ($arrOrderedFormFields as $field) {
 				foreach ($request->attributeReferences->attributeReference as $attrRef) {
@@ -427,7 +429,9 @@
 				echo '</div>';
 			}
 
-			echo '<div class="lower-btn edit grow" data-rid="'.$request->resourceId.'">Edit</div>';
+			if (in_array($request->statusReference->signifier, $pendingStatuses)) {
+				echo '<div class="lower-btn edit grow" data-rid="'.$request->resourceId.'">Edit</div>';
+			}
 		}
 		echo '<div class="lower-btn print grow" data-rid="'.$request->resourceId.'">Print</div>';
 		echo '</div>';
@@ -543,7 +547,7 @@
 					echo '</div>';
 				}
 
-				if (!in_array($du->status, $completedStatuses)) {
+				if (in_array($du->status, $pendingStatuses)) {
 					echo '<div class="lower-btn edit grow" data-rid="'.$du->id.'">Edit</div>';
 				}
 				echo '<div class="lower-btn print grow" data-rid="'.$du->id.'">Print</div>';
