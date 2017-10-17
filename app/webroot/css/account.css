@@ -230,19 +230,19 @@
 #accountMid .accountMain .requestItem .status-details-flex .status-wrapper .deleted {
   border-color: #fc9898;
 }
-#accountMid .accountMain .requestItem .status-details-flex .status-wrapper.dsa {
+#accountMid .accountMain .requestItem .status-details-flex .status-wrapper.compressed {
   width: 330px;
 }
-#accountMid .accountMain .requestItem .status-details-flex .status-wrapper.dsa .status-cell {
+#accountMid .accountMain .requestItem .status-details-flex .status-wrapper.compressed .status-cell {
   width: 93px;
   height: 33px;
 }
-#accountMid .accountMain .requestItem .status-details-flex .status-wrapper.dsa .right {
+#accountMid .accountMain .requestItem .status-details-flex .status-wrapper.compressed .right {
   line-height: 33px;
 }
-#accountMid .accountMain .requestItem .status-details-flex .status-wrapper.dsa .obsolete,
-#accountMid .accountMain .requestItem .status-details-flex .status-wrapper.dsa .canceled,
-#accountMid .accountMain .requestItem .status-details-flex .status-wrapper.dsa .deleted {
+#accountMid .accountMain .requestItem .status-details-flex .status-wrapper.compressed .obsolete,
+#accountMid .accountMain .requestItem .status-details-flex .status-wrapper.compressed .canceled,
+#accountMid .accountMain .requestItem .status-details-flex .status-wrapper.compressed .deleted {
   width: 250px;
   height: 16px;
 }

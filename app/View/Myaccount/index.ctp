@@ -210,15 +210,17 @@
 					'    <div class="riLeft">'.
 					'        <a class="riTitle" href="/request/view/'.$req->resourceId.'">'.$req->signifier.'</a>'.
 					'        <p class="riDate"><span>Date Created:&nbsp;</span>'.date('n/j/Y', ($req->createdOn)/1000).'</p>';
-				echo '<div class="status-details-flex"><div class="status-wrapper">';
+				echo '<div class="status-details-flex"><div class="status-wrapper compressed">';
 				switch ($req->statusReference->signifier) {
 					case 'In Progress':
 					case 'Request In Progress':
+						echo '<div class="status-cell green-border left active">Request In Progress</div><div class="status-cell light-green-border">Agreement Review</div><div class="status-cell light-green-border right">Completed</div>';
+						break;
 					case 'Agreement Review':
-						echo '<div class="status-cell green-border left active">In Progress</div><div class="status-cell light-green-border right">Completed</div>';
+						echo '<div class="status-cell light-green-border left">Request In Progress</div><div class="status-cell green-border active">Agreement Review</div><div class="status-cell light-green-border right">Completed</div>';
 						break;
 					case 'Completed':
-						echo '<div class="status-cell light-green-border left">In Progress</div><div class="status-cell green-border right active">Completed</div>';
+						echo '<div class="status-cell light-green-border left">Request In Progress</div><div class="status-cell light-green-border">Agreement Review</div><div class="status-cell green-border right active">Completed</div>';
 						break;
 					case 'Obsolete':
 						echo '<div class="status-cell obsolete">Obsolete</div>';

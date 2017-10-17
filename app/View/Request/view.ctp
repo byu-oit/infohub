@@ -172,16 +172,18 @@
 			'        <div class="riDate"';if(!$parent)echo'style="display:inline-block;"';echo'><span>Date Created:&nbsp;</span>'.date('n/j/Y', ($request->createdOn)/1000).'</div>';
 			if (!$parent) echo '<a class="parent-btn grow" href="/request/view/'.$request->parent[0]->id.'">View parent request</a>';
 		echo '<div class="status-details-flex">';//pr($request);exit();
+		echo '<div class="status-wrapper compressed">';
 		if ($parent) {
-			echo '<div class="status-wrapper">';
 			switch ($request->statusReference->signifier) {
 				case 'In Progress':
 				case 'Request In Progress':
+					echo '<div class="status-cell green-border left active">Request In Progress</div><div class="status-cell light-green-border">Agreement Review</div><div class="status-cell light-green-border right">Completed</div>';
+					break;
 				case 'Agreement Review':
-					echo '<div class="status-cell green-border left active">In Progress</div><div class="status-cell light-green-border right">Completed</div>';
+					echo '<div class="status-cell light-green-border left">Request In Progress</div><div class="status-cell green-border active">Agreement Review</div><div class="status-cell light-green-border right">Completed</div>';
 					break;
 				case 'Completed':
-					echo '<div class="status-cell light-green-border left">In Progress</div><div class="status-cell green-border right active">Completed</div>';
+					echo '<div class="status-cell light-green-border left">Request In Progress</div><div class="status-cell light-green-border">Agreement Review</div><div class="status-cell green-border right active">Completed</div>';
 					break;
 				case 'Obsolete':
 					echo '<div class="status-cell obsolete">Obsolete</div>';
@@ -194,7 +196,6 @@
 					break;
 			}
 		} else {
-			echo '<div class="status-wrapper dsa">';
 			switch ($request->statusReference->signifier) {
 				case 'Pending Custodian':
 					echo '<div class="status-cell green-border left active">Pending Custodian</div><div class="status-cell light-green-border">Pending Steward</div><div class="status-cell light-green-border right">Approved</div>';
