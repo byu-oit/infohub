@@ -176,6 +176,8 @@
 			echo '<div class="status-wrapper">';
 			switch ($request->statusReference->signifier) {
 				case 'In Progress':
+				case 'Request In Progress':
+				case 'Agreement Review':
 					echo '<div class="status-cell green-border left active">In Progress</div><div class="status-cell light-green-border right">Completed</div>';
 					break;
 				case 'Completed':

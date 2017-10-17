@@ -200,7 +200,8 @@ class MyaccountController extends AppController {
 				}
 			}
 
-			if ($r->statusReference->signifier == 'In Progress') {
+			$pendingStatuses = ['In Progress', 'Request In Progress', 'Agreement Review'];
+			if (in_array($r->statusReference->signifier, $pendingStatuses)) {
 				array_push($sortedRequests['inProgress'], $r);
 			} else if ($r->statusReference->signifier == 'Completed' || $r->statusReference->signifier == 'Obsolete') {
 				array_push($sortedRequests['completed'], $r);
