@@ -51,28 +51,34 @@ class ApiAdminController extends AppController {
 	public function proposeTerms() {
 		if ($this->request->is('post')) {
 			$this->autoRender = false;
-			$error = false;
 
-			$postData['intakeVocabulary'] = Configure::read('Collibra.vocabulary.newBusinessTerms');
-			$postData['conceptType'] = Configure::read('Collibra.type.term');
-			foreach ($this->request->data['fields'] as $field) {
-				$postData['signifier'] = $field['propName'];
-				$postData['definition'] =
-					$field['desc']."\n\n(Field appears in ".$this->request->data['api'].": ".$field['fieldName'].")";
-				$postString = http_build_query($postData);
-				$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
-				$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.newBusinessTermWorkflow.id').'/start', $postString);
+			foreach ($this->request->data['fields'] as &$field) {
+				$resp = $this->CollibraAPI->post('term', [
+					'vocabulary' => Configure::read('Collibra.vocabulary.newBusinessTerms'),
+					'signifier' => $field['propName'],
+					'conceptType' => Configure::read('Collibra.type.term')
+				]);
 				$resp = json_decode($resp);
+				$termId = $resp->resourceId;
 
-				if (!isset($resp->startWorkflowResponses[0]->successmessage)) {
+				$field['business_term'] = $termId;
+
+				$postString = http_build_query([
+					'label' => Configure::read('Collibra.attribute.definition'),
+					'value' => $field['desc']."\n\n(Field appears in ".$this->request->data['api'].": ".$field['fieldName'].")"
+				]);
+				$resp = $this->CollibraAPI->post('term/'.$termId.'/attributes', $postString);
+				if ($resp->code != '201') {
 					$error = true;
 				}
 			}
 
-			if (!$error) {
-				return json_encode(['success' => 1]);
+			$this->CollibraAPI->updateApiBusinessTermLinks($this->request->data['fields']);
+
+			if (isset($error)) {
+				return json_encode(['success' => 0]);
 			}
-			return json_encode(['success' => 0]);
+			return json_encode(['success' => 1]);
 		}
 
 		$args = func_get_args();

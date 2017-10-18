@@ -117,7 +117,7 @@ class RequestController extends AppController {
 
 	public function removeFromQueue() {
 		$this->autoRender = false;
-		if($this->request->is('post')){
+		if ($this->request->is('post')) {
 			$termID = $this->request->data['id'];
 			$arrQueue = $this->Session->read('queue');
 			if(array_key_exists($termID, $arrQueue['businessTerms'])) {
@@ -1140,6 +1140,13 @@ class RequestController extends AppController {
 				$term->apipath = $arrQueue['businessTerms'][$term->termrid]['apiPath'];
 			}
 			array_multisort($domains, SORT_ASC, $termNames, SORT_ASC, $termResp->aaData);
+		}
+		// If a business term in the cart has been deleted in Collibra, remove from cart
+		foreach ($arrQueue['businessTerms'] as $termID => $term) {
+			if (!in_array($term['term'], $termNames)) {
+				unset($arrQueue['businessTerms'][$termID]);
+				$this->Session->write('queue', $arrQueue);
+			}
 		}
 
 		$policies = [];
