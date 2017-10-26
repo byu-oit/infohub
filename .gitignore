@@ -3,6 +3,7 @@
 /app/Config/core-local.php
 /app/tmp
 /app/webroot/*info.php
+/app/webroot/robots.txt
 /lib/Cake/Console/Templates/skel/tmp/
 /plugins
 /vendors

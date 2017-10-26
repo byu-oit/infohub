@@ -26,6 +26,9 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 		<?php echo $this->fetch('title'); ?>
 	</title>
 	<?php
+		if (Configure::read('debug') > 0) {
+			echo '<meta name="robots" content="noindex" />';
+		}
 		echo $this->Html->meta('icon');
 		// echo $this->Html->css('cake.generic');
 		echo $this->Html->css('styles');
