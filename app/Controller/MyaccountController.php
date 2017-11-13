@@ -94,22 +94,13 @@ class MyaccountController extends AppController {
 			//$createdDate = $request->createdOn/1000;
 			//$createdDate = date('m/d/Y', $request->createdOn);
 
-			// load terms submitted in request
-			////////////////////////////////////////////
-			$resp = $this->CollibraAPI->postJSON(
-					'output/data_table',
-					'{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldName":"relationrid"}},{"Column":{"fieldName":"startDate"}},{"Column":{"fieldName":"endDate"}},{"Column":{"fieldName":"relstatusrid"}},{"Column":{"fieldName":"relstatusname"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldName":"concepttyperid"}}],"Resources":{"Term":{"Id":{"name":"termrid"},"Signifier":{"name":"termsignifier"},"Relation":{"typeId":"' . Configure::read('Collibra.relationship.isaRequestToTerm') . '","Id":{"name":"relationrid"},"StartingDate":{"name":"startDate"},"EndingDate":{"name":"endDate"},"Status":{"Id":{"name":"relstatusrid"},"Signifier":{"name":"relstatusname"}},"Filter":{"AND":[{"Field":{"name":"reltermrid", "operator":"EQUALS", "value":"'.$r->name->id.'"}}]},"type":"TARGET","Source":{"Id":{"name":"reltermrid"}}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"}, "Id":{"name":"concepttyperid"}}],"Filter":{"AND":[{"AND":[{"Field":{"name":"reltermrid", "operator":"EQUALS", "value":"'.$r->name->id.'"}}]}]},"Order":[{"Field":{"name":"termsignifier", "order":"ASC"}}]}},"displayStart":0,"displayLength":100}}'
-			);
-			$requestedTerms = json_decode($resp);
-			// add property to request object to hold terms
-			if(isset($requestedTerms->aaData)){
-				$request->termGlossaries = array();
-				foreach ($requestedTerms->aaData as $term) {
-					if (array_key_exists($term->domainname, $request->termGlossaries)) {
-						array_push($request->termGlossaries[$term->domainname], $term);
-					} else {
-						$request->termGlossaries[$term->domainname] = array($term);
-					}
+			$requestedTerms = $this->CollibraAPI->getRequestedTerms($r->name->id);
+			$request->termGlossaries = array();
+			foreach ($requestedTerms as $term) {
+				if (array_key_exists($term->domainname, $request->termGlossaries)) {
+					array_push($request->termGlossaries[$term->domainname], $term);
+				} else {
+					$request->termGlossaries[$term->domainname] = array($term);
 				}
 			}
 

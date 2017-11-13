@@ -485,16 +485,7 @@ class RequestController extends AppController {
 			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
 		}
 
-		$requestId = $request->resourceId;
-		$resp = $this->CollibraAPI->postJSON(
-				'output/data_table',
-				'{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldName":"relationrid"}},{"Column":{"fieldName":"startDate"}},{"Column":{"fieldName":"endDate"}},{"Column":{"fieldName":"relstatusrid"}},{"Column":{"fieldName":"relstatusname"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldName":"concepttyperid"}}],"Resources":{"Term":{"Id":{"name":"termrid"},"Signifier":{"name":"termsignifier"},"Relation":{"typeId":"' . Configure::read('Collibra.relationship.isaRequestToTerm') . '","Id":{"name":"relationrid"},"StartingDate":{"name":"startDate"},"EndingDate":{"name":"endDate"},"Status":{"Id":{"name":"relstatusrid"},"Signifier":{"name":"relstatusname"}},"Filter":{"AND":[{"Field":{"name":"reltermrid", "operator":"EQUALS", "value":"'.$requestId.'"}}]},"type":"TARGET","Source":{"Id":{"name":"reltermrid"}}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"}, "Id":{"name":"concepttyperid"}}],"Filter":{"AND":[{"AND":[{"Field":{"name":"reltermrid", "operator":"EQUALS", "value":"'.$requestId.'"}}]}]},"Order":[{"Field":{"name":"termsignifier", "order":"ASC"}}]}},"displayStart":0,"displayLength":100}}'
-		);
-		$requestedTerms = json_decode($resp);
-
-		if(isset($requestedTerms->aaData)){
-			$request->terms = $requestedTerms->aaData;
-		}
+		$request->terms = $this->CollibraAPI->getRequestedTerms($request->resourceId);
 
 		$arrQueue = $this->Session->read('queue');
 		$this->set(compact('request', 'guest', 'arrQueue'));
@@ -838,23 +829,14 @@ class RequestController extends AppController {
 			$dsr->parent = $this->CollibraAPI->getDataUsageParent($dsr->resourceId);
 		}
 
-		// load terms submitted in request
-		////////////////////////////////////////////
 		$termRequestId = $parent ? $dsr->resourceId : $dsr->parent[0]->id;
-		$resp = $this->CollibraAPI->postJSON(
-				'output/data_table',
-				'{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldName":"relationrid"}},{"Column":{"fieldName":"startDate"}},{"Column":{"fieldName":"endDate"}},{"Column":{"fieldName":"relstatusrid"}},{"Column":{"fieldName":"relstatusname"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldName":"concepttyperid"}}],"Resources":{"Term":{"Id":{"name":"termrid"},"Signifier":{"name":"termsignifier"},"Relation":{"typeId":"' . Configure::read('Collibra.relationship.isaRequestToTerm') . '","Id":{"name":"relationrid"},"StartingDate":{"name":"startDate"},"EndingDate":{"name":"endDate"},"Status":{"Id":{"name":"relstatusrid"},"Signifier":{"name":"relstatusname"}},"Filter":{"AND":[{"Field":{"name":"reltermrid", "operator":"EQUALS", "value":"'.$termRequestId.'"}}]},"type":"TARGET","Source":{"Id":{"name":"reltermrid"}}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"}, "Id":{"name":"concepttyperid"}}],"Filter":{"AND":[{"AND":[{"Field":{"name":"reltermrid", "operator":"EQUALS", "value":"'.$termRequestId.'"}}]}]},"Order":[{"Field":{"name":"termsignifier", "order":"ASC"}}]}},"displayStart":0,"displayLength":100}}'
-		);
-		$requestedTerms = json_decode($resp);
-		// add property to request object to hold terms
-		if(isset($requestedTerms->aaData)){
-			$dsr->termGlossaries = array();
-			foreach ($requestedTerms->aaData as $term) {
-				if (array_key_exists($term->domainname, $dsr->termGlossaries)) {
-					array_push($dsr->termGlossaries[$term->domainname], $term);
-				} else {
-					$dsr->termGlossaries[$term->domainname] = array($term);
-				}
+		$requestedTerms = $this->CollibraAPI->getRequestedTerms($termRequestId);
+		$dsr->termGlossaries = array();
+		foreach ($requestedTerms as $term) {
+			if (array_key_exists($term->domainname, $dsr->termGlossaries)) {
+				array_push($dsr->termGlossaries[$term->domainname], $term);
+			} else {
+				$dsr->termGlossaries[$term->domainname] = array($term);
 			}
 		}
 
@@ -921,23 +903,14 @@ class RequestController extends AppController {
 			$dsr->parent = $this->CollibraAPI->getDataUsageParent($dsr->resourceId);
 		}
 
-		// load terms submitted in request
-		////////////////////////////////////////////
 		$termRequestId = $parent ? $dsr->resourceId : $dsr->parent[0]->id;
-		$resp = $this->CollibraAPI->postJSON(
-				'output/data_table',
-				'{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldName":"relationrid"}},{"Column":{"fieldName":"startDate"}},{"Column":{"fieldName":"endDate"}},{"Column":{"fieldName":"relstatusrid"}},{"Column":{"fieldName":"relstatusname"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldName":"concepttyperid"}}],"Resources":{"Term":{"Id":{"name":"termrid"},"Signifier":{"name":"termsignifier"},"Relation":{"typeId":"' . Configure::read('Collibra.relationship.isaRequestToTerm') . '","Id":{"name":"relationrid"},"StartingDate":{"name":"startDate"},"EndingDate":{"name":"endDate"},"Status":{"Id":{"name":"relstatusrid"},"Signifier":{"name":"relstatusname"}},"Filter":{"AND":[{"Field":{"name":"reltermrid", "operator":"EQUALS", "value":"'.$termRequestId.'"}}]},"type":"TARGET","Source":{"Id":{"name":"reltermrid"}}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"}, "Id":{"name":"concepttyperid"}}],"Filter":{"AND":[{"AND":[{"Field":{"name":"reltermrid", "operator":"EQUALS", "value":"'.$termRequestId.'"}}]}]},"Order":[{"Field":{"name":"termsignifier", "order":"ASC"}}]}},"displayStart":0,"displayLength":100}}'
-		);
-		$requestedTerms = json_decode($resp);
-		// add property to request object to hold terms
-		if(isset($requestedTerms->aaData)){
-			$dsr->termGlossaries = array();
-			foreach ($requestedTerms->aaData as $term) {
-				if (array_key_exists($term->domainname, $dsr->termGlossaries)) {
-					array_push($dsr->termGlossaries[$term->domainname], $term);
-				} else {
-					$dsr->termGlossaries[$term->domainname] = array($term);
-				}
+		$requestedTerms = $this->CollibraAPI->getRequestedTerms($termRequestId);
+		$dsr->termGlossaries = array();
+		foreach ($requestedTerms as $term) {
+			if (array_key_exists($term->domainname, $dsr->termGlossaries)) {
+				array_push($dsr->termGlossaries[$term->domainname], $term);
+			} else {
+				$dsr->termGlossaries[$term->domainname] = array($term);
 			}
 		}
 
@@ -1000,21 +973,8 @@ class RequestController extends AppController {
 			exit;
 		}
 
-		//$termID = $this->request->params['pass'][0];
-		$requestFilter = '{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"createdOn"}},{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202longExpr"}},{"Column":{"fieldName":"Attr00000000000000000000000000000202rid"}},{"Group":{"Columns":[{"Column":{"label":"Steward User ID","fieldName":"userRole00000000000000000000000000005016rid"}},{"Column":{"label":"Steward Gender","fieldName":"userRole00000000000000000000000000005016gender"}},{"Column":{"label":"Steward First Name","fieldName":"userRole00000000000000000000000000005016fn"}},{"Column":{"label":"Steward Last Name","fieldName":"userRole00000000000000000000000000005016ln"}}],"name":"Role00000000000000000000000000005016"}},{"Group":{"Columns":[{"Column":{"label":"Steward Group ID","fieldName":"groupRole00000000000000000000000000005016grid"}},{"Column":{"label":"Steward Group Name","fieldName":"groupRole00000000000000000000000000005016ggn"}}],"name":"Role00000000000000000000000000005016g"}},{"Column":{"fieldName":"statusname"}},{"Column":{"fieldName":"statusrid"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldName":"concepttyperid"}}],'.
-			'"Resources":{"Term":{"CreatedOn":{"name":"createdOn"},"Id":{"name":"termrid"},"Signifier":{"name":"termsignifier"},"StringAttribute":[{"Value":{"name":"Attr00000000000000000000000000000202"},"LongExpression":{"name":"Attr00000000000000000000000000000202longExpr"},"Id":{"name":"Attr00000000000000000000000000000202rid"},"labelId":"' . Configure::read('Collibra.attribute.definition') . '"}],"Member":[{"User":{"Gender":{"name":"userRole00000000000000000000000000005016gender"},"FirstName":{"name":"userRole00000000000000000000000000005016fn"},"Id":{"name":"userRole00000000000000000000000000005016rid"},"LastName":{"name":"userRole00000000000000000000000000005016ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016sig"},"name":"Role00000000000000000000000000005016","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016rid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005016ggn"},"Id":{"name":"groupRole00000000000000000000000000005016grid"}},"roleId":"00000000-0000-0000-0000-000000005016"}],"Status":{"Signifier":{"name":"statusname"},"Id":{"name":"statusrid"}},"Vocabulary":{"Community":{"Name":{"name":"communityname"},"Id":{"name":"commrid"}},"Name":{"name":"domainname"},"Id":{"name":"domainrid"}},"ConceptType":[{"Signifier":{"name":"concepttypename"},"Id":{"name":"concepttyperid"}}],'.
-			'"Filter":{'.
-			'   "AND":['.
-			'        {'.
-			'           "OR":[';
-
 		$apis = [];
-		foreach ($arrQueue['businessTerms'] as $termId => $term){
-			$requestFilter .= '{"Field":{'.
-				'   "name":"termrid",'.
-				'   "operator":"EQUALS",'.
-				'   "value":"'.$termId.'"'.
-				'}},';
+		foreach ($arrQueue['businessTerms'] as $term) {
 			if (!empty($term['apiPath']) && !empty($term['apiHost'])) {
 				$apis[$term['apiHost']][$term['apiPath']] = [];
 			}
@@ -1117,29 +1077,15 @@ class RequestController extends AppController {
 			}
 		}
 
-		$requestFilter = substr($requestFilter, 0, strlen($requestFilter)-1);
-
-		$requestFilter .= ']'.
-			'        }'.
-			'     ]'.
-			'}'.
-			',"Order":['.
-			'   {"Field":{"name":"termsignifier","order":"ASC"}}'.
-			']'.
-			'}'.
-			'},"displayStart":0,"displayLength":100}}';
-
-		$termResp = $this->CollibraAPI->postJSON('output/data_table', $requestFilter);
-		$termResp = json_decode($termResp);
-		//usort($termResp->aaData, 'self::sortTermsByDomain');
-		if (isset($termResp->aaData)) {
-			foreach ($termResp->aaData as $term) {
+		$termResp = $this->CollibraAPI->getBusinessTermDetails($arrQueue['businessTerms']);
+		if (isset($termResp)) {
+			foreach ($termResp as $term) {
 				$domains[]  = $term->domainname;
 				$termNames[] = $term->termsignifier;
 				$term->apihost = $arrQueue['businessTerms'][$term->termrid]['apiHost'];
 				$term->apipath = $arrQueue['businessTerms'][$term->termrid]['apiPath'];
 			}
-			array_multisort($domains, SORT_ASC, $termNames, SORT_ASC, $termResp->aaData);
+			array_multisort($domains, SORT_ASC, $termNames, SORT_ASC, $termResp);
 		}
 		// If a business term in the cart has been deleted in Collibra, remove from cart
 		foreach ($arrQueue['businessTerms'] as $termID => $term) {

@@ -228,6 +228,130 @@ class CollibraAPI extends Model {
 		return empty($user->UserId) ? null : $user->UserId;
 	}
 
+	public function getUserData() {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'userrid']],
+				['Column' => ['fieldName' => 'userenabled']],
+				['Column' => ['fieldName' => 'userfirstname']],
+				['Group' => [
+					'name' => 'groupname',
+					'Columns' => [
+						['Column' => ['fieldName' => 'groupgroupname']],
+						['Column' => ['fieldName' => 'grouprid']]]]],
+				['Column' => ['fieldName' => 'userlastname']],
+				['Column' => ['fieldName' => 'emailemailaddress']],
+				['Group' => [
+					'name' => 'phonenumber',
+					'Columns' => [
+						['Column' => ['fieldName' => 'phonephonenumber']],
+						['Column' => ['fieldName' => 'phonerid']]]]],
+				['Column' => ['fieldName' => 'useractivated']],
+				['Column' => ['fieldName' => 'isuserldap']],
+				['Group' => [
+					'name' => 'Rolef86d1d3abc2e4beeb17fe0e9985d5afb',
+					'Columns' => [
+						['Column' => ['label' => 'Custodian User ID', 'fieldName' => 'userRolef86d1d3abc2e4beeb17fe0e9985d5afbrid']],
+						['Column' => ['label' => 'Custodian Gender', 'fieldName' => 'userRolef86d1d3abc2e4beeb17fe0e9985d5afbgender']],
+						['Column' => ['label' => 'Custodian First Name', 'fieldName' => 'userRolef86d1d3abc2e4beeb17fe0e9985d5afbfn']],
+						['Column' => ['label' => 'Custodian Last Name', 'fieldName' => 'userRolef86d1d3abc2e4beeb17fe0e9985d5afbln']]]]],
+				['Group' => [
+					'name' => 'Rolef86d1d3abc2e4beeb17fe0e9985d5afbg',
+					'Columns' => [
+						['Column' => ['label' => 'Custodian Group ID', 'fieldName' => 'groupRolef86d1d3abc2e4beeb17fe0e9985d5afbgrid']],
+						['Column' => ['label' => 'Custodian Group Name', 'fieldName' => 'groupRolef86d1d3abc2e4beeb17fe0e9985d5afbggn']]]]],
+				['Group' => [
+					'name' => 'Role8a0a6c89106c4adb9936f09f29b747ac',
+					'Columns' => [
+						['Column' => ['label' => 'Steward User ID', 'fieldName' => 'userRole8a0a6c89106c4adb9936f09f29b747acrid']],
+						['Column' => ['label' => 'Steward Gender', 'fieldName' => 'userRole8a0a6c89106c4adb9936f09f29b747acgender']],
+						['Column' => ['label' => 'Steward First Name', 'fieldName' => 'userRole8a0a6c89106c4adb9936f09f29b747acfn']],
+						['Column' => ['label' => 'Steward Last Name', 'fieldName' => 'userRole8a0a6c89106c4adb9936f09f29b747acln']]]]],
+				['Group' => [
+					'name' => 'Role8a0a6c89106c4adb9936f09f29b747acg',
+					'Columns' => [
+						['Column' => ['label' => 'Steward Group ID', 'fieldName' => 'groupRole8a0a6c89106c4adb9936f09f29b747acgrid']],
+						['Column' => ['label' => 'Steward Group Name', 'fieldName' => 'groupRole8a0a6c89106c4adb9936f09f29b747acggn']]]]]],
+			'Resources' => [
+				'User' => [
+					'Enabled' => ['name' => 'userenabled'],
+					'UserName' => ['name' => 'userusername'],
+					'FirstName' => ['name' => 'userfirstname'],
+					'LastName' => ['name' => 'userlastname'],
+					'Emailaddress' => ['name' => 'emailemailaddress'],
+					'Phone' => [
+						'Phonenumber' => ['name' => 'phonephonenumber'],
+						'Id' => ['name' => 'phonerid']],
+					'Group' => [
+						'Groupname' => ['name' => 'groupgroupname'],
+						'Id' => ['name' => 'grouprid']],
+					'Activated' => ['name' => 'useractivated'],
+					'LDAPUser' => ['name' => 'isuserldap'],
+					'Id' => ['name' => 'userrid'],
+					'Member' => [[
+						'User' => [
+							'Gender' => ['name' => 'userRolef86d1d3abc2e4beeb17fe0e9985d5afbgender'],
+							'FirstName' => ['name' => 'userRolef86d1d3abc2e4beeb17fe0e9985d5afbfn'],
+							'Id' => ['name' => 'userRolef86d1d3abc2e4beeb17fe0e9985d5afbrid'],
+							'LastName' => ['name' => 'userRolef86d1d3abc2e4beeb17fe0e9985d5afbln']],
+						'Role' => [
+							'name' => 'Rolef86d1d3abc2e4beeb17fe0e9985d5afb',
+							'Signifier' => ['hidden' => 'true', 'name' => 'Rolef86d1d3abc2e4beeb17fe0e9985d5afbsig'],
+							'Id' => ['hidden' => 'true', 'name' => 'roleRolef86d1d3abc2e4beeb17fe0e9985d5afbrid']],
+						'roleId' => Configure::read('Collibra.role.custodian')],
+					[
+						'Role' => [
+							'Signifier' => ['hidden' => 'true', 'name' => 'Rolef86d1d3abc2e4beeb17fe0e9985d5afbg'],
+							'Id' => ['hidden' => 'true', 'name' => 'roleRolef86d1d3abc2e4beeb17fe0e9985d5afbgrid']],
+						'Group' => [
+							'GroupName' => ['name' => 'groupRolef86d1d3abc2e4beeb17fe0e9985d5afbggn'],
+							'Id' => ['name' => 'groupRolef86d1d3abc2e4beeb17fe0e9985d5afbgrid']],
+							'roleId' => Configure::read('Collibra.role.custodian')],
+					[
+						'User' => [
+							'Gender' => ['name' => 'userRole8a0a6c89106c4adb9936f09f29b747acgender'],
+							'FirstName' => ['name' => 'userRole8a0a6c89106c4adb9936f09f29b747acfn'],
+							'Id' => ['name' => 'userRole8a0a6c89106c4adb9936f09f29b747acrid'],
+							'LastName' => ['name' => 'userRole8a0a6c89106c4adb9936f09f29b747acln']],
+						'Role' => [
+							'name' => 'Role8a0a6c89106c4adb9936f09f29b747ac',
+							'Signifier' => ['hidden' => 'true', 'name' => 'Role8a0a6c89106c4adb9936f09f29b747acsig'],
+							'Id' => ['hidden' => 'true', 'name' => 'roleRole8a0a6c89106c4adb9936f09f29b747acrid']],
+						'roleId' => Configure::read('Collibra.role.steward')],
+					[
+						'Role' => [
+							'Signifier' => ['hidden' => 'true', 'name' => 'Role8a0a6c89106c4adb9936f09f29b747acg'],
+							'Id' => ['hidden' => 'true', 'name' => 'roleRole8a0a6c89106c4adb9936f09f29b747acgrid']],
+						'Group' => [
+							'GroupName' => ['name' => 'groupRole8a0a6c89106c4adb9936f09f29b747acggn'],
+							'Id' => ['name' => 'groupRole8a0a6c89106c4adb9936f09f29b747acgrid']],
+						'roleId' => Configure::read('Collibra.role.steward')]],
+					'Filter' => [
+						'AND' => [[
+							'OR' => [[
+								'Field' => [
+									'name' => 'userRole8a0a6c89106c4adb9936f09f29b747acrid',
+									'operator' => 'NOT_NULL']],
+							[
+								'Field' => [
+									'name' => 'userRolef86d1d3abc2e4beeb17fe0e9985d5afbrid',
+									'operator' => 'NOT_NULL']]]],
+						[
+							'AND' => [[
+								'Field' => ['name' => 'userenabled',
+									'operator' => 'EQUALS',
+									'value' => 'true']]]]]]]],
+			'Order' => [[
+				'Field' => [
+					'name' => 'userlasttname',
+					'order' => 'ASC']]],
+			'displayStart' => 0,
+			'displayLength' => 1000]];
+
+		$results = $this->fullDataTable($tableConfig);
+		return $results;
+	}
+
 	public function userList($limit = 20, $offset = 0) {
 		$config = $this->buildTableConfig(['User' => ['Id', 'UserName', 'FirstName', 'LastName', 'Emailaddress']]);
 		$config['TableViewConfig']['Resources']['User']['Order'][] = [
@@ -413,6 +537,102 @@ class CollibraAPI extends Model {
 								'order' => 'ASC']]]]]]];
 		$terms = $this->fullDataTable($termsQuery);
 		return $terms;
+	}
+
+	public function getBusinessTermDetails($arrQueuedBusinessTerms) {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'createdOn']],
+				['Column' => ['fieldName' => 'termrid']],
+				['Column' => ['fieldName' => 'termsignifier']],
+				['Column' => ['fieldName' => 'Attr00000000000000000000000000000202']],
+				['Column' => ['fieldName' => 'Attr00000000000000000000000000000202longExpr']],
+				['Column' => ['fieldName' => 'Attr00000000000000000000000000000202rid']],
+				['Group' => [
+					'Columns' => [
+						['Column' => ['label' => 'Steward User ID','fieldName' => 'userRole00000000000000000000000000005016rid']],
+						['Column' => ['label' => 'Steward Gender','fieldName' => 'userRole00000000000000000000000000005016gender']],
+						['Column' => ['label' => 'Steward First Name','fieldName' => 'userRole00000000000000000000000000005016fn']],
+						['Column' => ['label' => 'Steward Last Name','fieldName' => 'userRole00000000000000000000000000005016ln']]
+					],
+					'name' => 'Role00000000000000000000000000005016']],
+				['Group' => [
+					'Columns' => [
+						['Column' => ['label' => 'Steward Group ID','fieldName' => 'groupRole00000000000000000000000000005016grid']],
+						['Column' => ['label' => 'Steward Group Name','fieldName' => 'groupRole00000000000000000000000000005016ggn']]
+					],
+					'name' => 'Role00000000000000000000000000005016g']],
+				['Column' => ['fieldName' => 'statusname']],
+				['Column' => ['fieldName' => 'statusrid']],
+				['Column' => ['fieldName' => 'communityname']],
+				['Column' => ['fieldName' => 'commrid']],
+				['Column' => ['fieldName' => 'domainname']],
+				['Column' => ['fieldName' => 'domainrid']],
+				['Column' => ['fieldName' => 'concepttypename']],
+				['Column' => ['fieldName' => 'concepttyperid']]],
+			'Resources' => [
+				'Term' => [
+					'CreatedOn' => ['name' => 'createdOn'],
+					'Id' => ['name' => 'termrid'],
+					'Signifier' => ['name' => 'termsignifier'],
+					'StringAttribute' => [[
+						'Value' => ['name' => 'Attr00000000000000000000000000000202'],
+						'LongExpression' => ['name' => 'Attr00000000000000000000000000000202longExpr'],
+						'Id' => ['name' => 'Attr00000000000000000000000000000202rid'],
+						'labelId' => Configure::read('Collibra.attribute.definition')]],
+					'Member' => [[
+						'User' => [
+							'Gender' => ['name' => 'userRole00000000000000000000000000005016gender'],
+							'FirstName' => ['name' => 'userRole00000000000000000000000000005016fn'],
+							'Id' => ['name' => 'userRole00000000000000000000000000005016rid'],
+							'LastName' => ['name' => 'userRole00000000000000000000000000005016ln']],
+						'Role' => [
+							'Signifier' => ['hidden' => 'true','name' => 'Role00000000000000000000000000005016sig'],
+							'name' => 'Role00000000000000000000000000005016',
+							'Id' => ['hidden' => 'true','name' => 'roleRole00000000000000000000000000005016rid']],
+						'roleId' => '00000000-0000-0000-0000-000000005016'],
+					[
+						'Role' => [
+							'Signifier' => ['hidden' => 'true','name' => 'Role00000000000000000000000000005016g'],
+							'Id' => ['hidden' => 'true','name' => 'roleRole00000000000000000000000000005016grid']],
+						'Group' => [
+							'GroupName' => ['name' => 'groupRole00000000000000000000000000005016ggn'],
+							'Id' => ['name' => 'groupRole00000000000000000000000000005016grid']],
+						'roleId' => '00000000-0000-0000-0000-000000005016']],
+					'Status' => [
+						'Signifier' => ['name' => 'statusname'],
+						'Id' => ['name' => 'statusrid']],
+					'Vocabulary' => [
+						'Community' => [
+							'Name' => ['name' => 'communityname'],
+							'Id' => ['name' => 'commrid']],
+						'Name' => ['name' => 'domainname'],
+						'Id' => ['name' => 'domainrid']],
+					'ConceptType' => [[
+						'Signifier' => ['name' => 'concepttypename'],
+						'Id' => ['name' => 'concepttyperid']]],
+					'Filter' => [
+						'AND' => [[
+							'OR' => []]]],
+					'Order' => [[
+						'Field' => [
+							'name' => 'termsignifier',
+							'order' => 'ASC']]]]],
+			'displayStart' => 0,
+			'displayLength' => 100]];
+
+		foreach ($arrQueuedBusinessTerms as $termId => $term) {
+			array_push(
+				$tableConfig['TableViewConfig']['Resources']['Term']['Filter']['AND'][0]['OR'],
+				['Field' => [
+					'name' => 'termrid',
+					'operator' => 'EQUALS',
+					'value' => $termId]]
+				);
+		}
+
+		$termResp = $this->fullDataTable($tableConfig);
+		return $termResp;
 	}
 
 	public function searchTerms($query, $limit = 10, $community = null) {
@@ -821,6 +1041,15 @@ class CollibraAPI extends Model {
 		return $results;
 	}
 
+	public function getAllCommunities() {
+		$resp = $this->postJSON(
+				'output/data_table',
+				'{"TableViewConfig":{"Columns":[{"Community":{"name":"Subcommunities","Columns":[{"Column":{"fieldName":"subcommunityid"}},{"Column":{"fieldName":"subcommunity"}},{"Column":{"fieldName":"parentCommunityId"}},{"Column":{"fieldName":"hasNonMetaChildren"}},{"Column":{"fieldName":"description"}},{"Group":{"Columns":[{"Column":{"label":"Custodian User ID","fieldName":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbrid"}},{"Column":{"label":"Custodian Gender","fieldName":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbgender"}},{"Column":{"label":"Custodian First Name","fieldName":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbfn"}},{"Column":{"label":"Custodian Last Name","fieldName":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbln"}}],"name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afb"}},{"Group":{"Columns":[{"Column":{"label":"Custodian Group ID","fieldName":"groupRolef86d1d3abc2e4beeb17fe0e9985d5afbgrid"}},{"Column":{"label":"Custodian Group Name","fieldName":"groupRolef86d1d3abc2e4beeb17fe0e9985d5afbggn"}}],"name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afbg"}},{"Group":{"Columns":[{"Column":{"label":"Steward User ID","fieldName":"userRole8a0a6c89106c4adb9936f09f29b747acrid"}},{"Column":{"label":"Steward Gender","fieldName":"userRole8a0a6c89106c4adb9936f09f29b747acgender"}},{"Column":{"label":"Steward First Name","fieldName":"userRole8a0a6c89106c4adb9936f09f29b747acfn"}},{"Column":{"label":"Steward Last Name","fieldName":"userRole8a0a6c89106c4adb9936f09f29b747acln"}}],"name":"Role8a0a6c89106c4adb9936f09f29b747ac"}},{"Group":{"Columns":[{"Column":{"label":"Steward Group ID","fieldName":"groupRole8a0a6c89106c4adb9936f09f29b747acgrid"}},{"Column":{"label":"Steward Group Name","fieldName":"groupRole8a0a6c89106c4adb9936f09f29b747acggn"}}],"name":"Role8a0a6c89106c4adb9936f09f29b747acg"}},{"Group":{"Columns":[{"Column":{"label":"Trustee User ID","fieldName":"userRolefb97305e00c0459a84cbb3f5ea62d411rid"}},{"Column":{"label":"Trustee Gender","fieldName":"userRolefb97305e00c0459a84cbb3f5ea62d411gender"}},{"Column":{"label":"Trustee First Name","fieldName":"userRolefb97305e00c0459a84cbb3f5ea62d411fn"}},{"Column":{"label":"Trustee Last Name","fieldName":"userRolefb97305e00c0459a84cbb3f5ea62d411ln"}}],"name":"Rolefb97305e00c0459a84cbb3f5ea62d411"}},{"Group":{"Columns":[{"Column":{"label":"Trustee Group ID","fieldName":"groupRolefb97305e00c0459a84cbb3f5ea62d411grid"}},{"Column":{"label":"Trustee Group Name","fieldName":"groupRolefb97305e00c0459a84cbb3f5ea62d411ggn"}}],"name":"Rolefb97305e00c0459a84cbb3f5ea62d411g"}}]}},{"Vocabulary":{"name":"Vocabularies","Columns":[{"Column":{"fieldName":"vocabulary"}},{"Column":{"fieldName":"vocabularyid"}},{"Column":{"fieldName":"vocabularyParentCommunityId"}},{"Group":{"Columns":[{"Column":{"label":"Custodian User ID","fieldName":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbVOCSUFFIXrid"}},{"Column":{"label":"Custodian Gender","fieldName":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbVOCSUFFIXgender"}},{"Column":{"label":"Custodian First Name","fieldName":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbVOCSUFFIXfn"}},{"Column":{"label":"Custodian Last Name","fieldName":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbVOCSUFFIXln"}}],"name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afbVOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Custodian Group ID","fieldName":"groupRolef86d1d3abc2e4beeb17fe0e9985d5afbgVOCSUFFIXrid"}},{"Column":{"label":"Custodian Group Name","fieldName":"groupRolef86d1d3abc2e4beeb17fe0e9985d5afbgVOCSUFFIXgn"}}],"name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afbgVOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Steward User ID","fieldName":"userRole8a0a6c89106c4adb9936f09f29b747acVOCSUFFIXrid"}},{"Column":{"label":"Steward Gender","fieldName":"userRole8a0a6c89106c4adb9936f09f29b747acVOCSUFFIXgender"}},{"Column":{"label":"Steward First Name","fieldName":"userRole8a0a6c89106c4adb9936f09f29b747acVOCSUFFIXfn"}},{"Column":{"label":"Steward Last Name","fieldName":"userRole8a0a6c89106c4adb9936f09f29b747acVOCSUFFIXln"}}],"name":"Role8a0a6c89106c4adb9936f09f29b747acVOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Steward Group ID","fieldName":"groupRole8a0a6c89106c4adb9936f09f29b747acgVOCSUFFIXrid"}},{"Column":{"label":"Steward Group Name","fieldName":"groupRole8a0a6c89106c4adb9936f09f29b747acgVOCSUFFIXgn"}}],"name":"Role8a0a6c89106c4adb9936f09f29b747acgVOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Trustee User ID","fieldName":"userRolefb97305e00c0459a84cbb3f5ea62d411VOCSUFFIXrid"}},{"Column":{"label":"Trustee Gender","fieldName":"userRolefb97305e00c0459a84cbb3f5ea62d411VOCSUFFIXgender"}},{"Column":{"label":"Trustee First Name","fieldName":"userRolefb97305e00c0459a84cbb3f5ea62d411VOCSUFFIXfn"}},{"Column":{"label":"Trustee Last Name","fieldName":"userRolefb97305e00c0459a84cbb3f5ea62d411VOCSUFFIXln"}}],"name":"Rolefb97305e00c0459a84cbb3f5ea62d411VOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Trustee Group ID","fieldName":"groupRolefb97305e00c0459a84cbb3f5ea62d411gVOCSUFFIXrid"}},{"Column":{"label":"Trustee Group Name","fieldName":"groupRolefb97305e00c0459a84cbb3f5ea62d411gVOCSUFFIXgn"}}],"name":"Rolefb97305e00c0459a84cbb3f5ea62d411gVOCSUFFIX"}}]}}],"Resources":{"Community":{"Id":{"name":"subcommunityid"},"Name":{"name":"subcommunity"},"Meta":{"name":"issubmeta"},"hasNonMetaChildren":{"name":"hasNonMetaChildren"},"Description":{"name":"description"},"ParentCommunity":{"Id":{"name":"parentCommunityId"}},"Member":[{"User":{"Gender":{"name":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbgender"},"FirstName":{"name":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbfn"},"Id":{"name":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbrid"},"LastName":{"name":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbln"}},"Role":{"Signifier":{"hidden":"true","name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afbsig"},"name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afb","Id":{"hidden":"true","name":"roleRolef86d1d3abc2e4beeb17fe0e9985d5afbrid"}},"roleId":"' . Configure::read('Collibra.role.custodian') . '"},{"Role":{"Signifier":{"hidden":"true","name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afbg"},"Id":{"hidden":"true","name":"roleRolef86d1d3abc2e4beeb17fe0e9985d5afbgrid"}},"Group":{"GroupName":{"name":"groupRolef86d1d3abc2e4beeb17fe0e9985d5afbggn"},"Id":{"name":"groupRolef86d1d3abc2e4beeb17fe0e9985d5afbgrid"}},"roleId":"' . Configure::read('Collibra.role.custodian') . '"},{"User":{"Gender":{"name":"userRole8a0a6c89106c4adb9936f09f29b747acgender"},"FirstName":{"name":"userRole8a0a6c89106c4adb9936f09f29b747acfn"},"Id":{"name":"userRole8a0a6c89106c4adb9936f09f29b747acrid"},"LastName":{"name":"userRole8a0a6c89106c4adb9936f09f29b747acln"}},"Role":{"Signifier":{"hidden":"true","name":"Role8a0a6c89106c4adb9936f09f29b747acsig"},"name":"Role8a0a6c89106c4adb9936f09f29b747ac","Id":{"hidden":"true","name":"roleRole8a0a6c89106c4adb9936f09f29b747acrid"}},"roleId":"' . Configure::read('Collibra.role.steward') . '"},{"Role":{"Signifier":{"hidden":"true","name":"Role8a0a6c89106c4adb9936f09f29b747acg"},"Id":{"hidden":"true","name":"roleRole8a0a6c89106c4adb9936f09f29b747acgrid"}},"Group":{"GroupName":{"name":"groupRole8a0a6c89106c4adb9936f09f29b747acggn"},"Id":{"name":"groupRole8a0a6c89106c4adb9936f09f29b747acgrid"}},"roleId":"' . Configure::read('Collibra.role.steward') . '"},{"User":{"Gender":{"name":"userRolefb97305e00c0459a84cbb3f5ea62d411gender"},"FirstName":{"name":"userRolefb97305e00c0459a84cbb3f5ea62d411fn"},"Id":{"name":"userRolefb97305e00c0459a84cbb3f5ea62d411rid"},"LastName":{"name":"userRolefb97305e00c0459a84cbb3f5ea62d411ln"}},"Role":{"Signifier":{"hidden":"true","name":"Rolefb97305e00c0459a84cbb3f5ea62d411sig"},"name":"Rolefb97305e00c0459a84cbb3f5ea62d411","Id":{"hidden":"true","name":"roleRolefb97305e00c0459a84cbb3f5ea62d411rid"}},"roleId":"' . Configure::read('Collibra.role.trustee') . '"},{"Role":{"Signifier":{"hidden":"true","name":"Rolefb97305e00c0459a84cbb3f5ea62d411g"},"Id":{"hidden":"true","name":"roleRolefb97305e00c0459a84cbb3f5ea62d411grid"}},"Group":{"GroupName":{"name":"groupRolefb97305e00c0459a84cbb3f5ea62d411ggn"},"Id":{"name":"groupRolefb97305e00c0459a84cbb3f5ea62d411grid"}},"roleId":"' . Configure::read('Collibra.role.trustee') . '"}],"Filter":{"AND":[{"AND":[{"Field":{"name":"issubmeta","operator":"EQUALS","value":false}}]},{"AND":[{"Field":{"name":"parentCommunityId","operator":"NOT_NULL"}}]}]},"Order":[{"Field":{"name":"subcommunity","order":"ASC"}}]},"Vocabulary":{"Name":{"name":"vocabulary"},"Id":{"name":"vocabularyid"},"Meta":{"name":"isvocmeta"},"Community":{"Id":{"name":"vocabularyParentCommunityId"}},"Member":[{"User":{"Gender":{"name":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbVOCSUFFIXgender"},"FirstName":{"name":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbVOCSUFFIXfn"},"Id":{"name":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbVOCSUFFIXrid"},"LastName":{"name":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbVOCSUFFIXln"}},"Role":{"Signifier":{"hidden":"true","name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afbVOCSUFFIXsig"},"name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afbVOCSUFFIX","Id":{"hidden":"true","name":"roleRolef86d1d3abc2e4beeb17fe0e9985d5afbVOCSUFFIXrid"}},"roleId":"' . Configure::read('Collibra.role.custodian') . '"},{"Role":{"Signifier":{"hidden":"true","name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afbgVOCSUFFIX"},"Id":{"hidden":"true","name":"roleRolef86d1d3abc2e4beeb17fe0e9985d5afbgVOCSUFFIXrid"}},"Group":{"GroupName":{"name":"groupRolef86d1d3abc2e4beeb17fe0e9985d5afbgVOCSUFFIXgn"},"Id":{"name":"groupRolef86d1d3abc2e4beeb17fe0e9985d5afbgVOCSUFFIXrid"}},"roleId":"' . Configure::read('Collibra.role.custodian') . '"},{"User":{"Gender":{"name":"userRole8a0a6c89106c4adb9936f09f29b747acVOCSUFFIXgender"},"FirstName":{"name":"userRole8a0a6c89106c4adb9936f09f29b747acVOCSUFFIXfn"},"Id":{"name":"userRole8a0a6c89106c4adb9936f09f29b747acVOCSUFFIXrid"},"LastName":{"name":"userRole8a0a6c89106c4adb9936f09f29b747acVOCSUFFIXln"}},"Role":{"Signifier":{"hidden":"true","name":"Role8a0a6c89106c4adb9936f09f29b747acVOCSUFFIXsig"},"name":"Role8a0a6c89106c4adb9936f09f29b747acVOCSUFFIX","Id":{"hidden":"true","name":"roleRole8a0a6c89106c4adb9936f09f29b747acVOCSUFFIXrid"}},"roleId":"' . Configure::read('Collibra.role.steward') . '"},{"Role":{"Signifier":{"hidden":"true","name":"Role8a0a6c89106c4adb9936f09f29b747acgVOCSUFFIX"},"Id":{"hidden":"true","name":"roleRole8a0a6c89106c4adb9936f09f29b747acgVOCSUFFIXrid"}},"Group":{"GroupName":{"name":"groupRole8a0a6c89106c4adb9936f09f29b747acgVOCSUFFIXgn"},"Id":{"name":"groupRole8a0a6c89106c4adb9936f09f29b747acgVOCSUFFIXrid"}},"roleId":"' . Configure::read('Collibra.role.steward') . '"},{"User":{"Gender":{"name":"userRolefb97305e00c0459a84cbb3f5ea62d411VOCSUFFIXgender"},"FirstName":{"name":"userRolefb97305e00c0459a84cbb3f5ea62d411VOCSUFFIXfn"},"Id":{"name":"userRolefb97305e00c0459a84cbb3f5ea62d411VOCSUFFIXrid"},"LastName":{"name":"userRolefb97305e00c0459a84cbb3f5ea62d411VOCSUFFIXln"}},"Role":{"Signifier":{"hidden":"true","name":"Rolefb97305e00c0459a84cbb3f5ea62d411VOCSUFFIXsig"},"name":"Rolefb97305e00c0459a84cbb3f5ea62d411VOCSUFFIX","Id":{"hidden":"true","name":"roleRolefb97305e00c0459a84cbb3f5ea62d411VOCSUFFIXrid"}},"roleId":"' . Configure::read('Collibra.role.trustee') . '"},{"Role":{"Signifier":{"hidden":"true","name":"Rolefb97305e00c0459a84cbb3f5ea62d411gVOCSUFFIX"},"Id":{"hidden":"true","name":"roleRolefb97305e00c0459a84cbb3f5ea62d411gVOCSUFFIXrid"}},"Group":{"GroupName":{"name":"groupRolefb97305e00c0459a84cbb3f5ea62d411gVOCSUFFIXgn"},"Id":{"name":"groupRolefb97305e00c0459a84cbb3f5ea62d411gVOCSUFFIXrid"}},"roleId":"' . Configure::read('Collibra.role.trustee') . '"}],"Filter":{"AND":[{"AND":[{"Field":{"name":"isvocmeta","operator":"EQUALS","value":false}}]},{"AND":[{"Field":{"name":"vocabularyParentCommunityId","operator":"NOT_NULL"}}]}]},"Order":[{"Field":{"name":"vocabulary","order":"ASC"}}]}},"displayStart":0,"displayLength":500}}'
+			);
+		$json = json_decode($resp);
+		return $json->aaData;
+	}
+
 	public function searchStandardLabel($term) {
 		$query = [
 			'query' => $term,
@@ -1122,6 +1351,70 @@ class CollibraAPI extends Model {
 
 		$policies = $this->fullDataTable($tableConfig);
 		return $policies;
+	}
+
+	public function getRequestedTerms($dsrId) {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'termrid']],
+				['Column' => ['fieldName' => 'termsignifier']],
+				['Column' => ['fieldName' => 'relationrid']],
+				['Column' => ['fieldName' => 'startDate']],
+				['Column' => ['fieldName' => 'endDate']],
+				['Column' => ['fieldName' => 'relstatusrid']],
+				['Column' => ['fieldName' => 'relstatusname']],
+				['Column' => ['fieldName' => 'communityname']],
+				['Column' => ['fieldName' => 'commrid']],
+				['Column' => ['fieldName' => 'domainname']],
+				['Column' => ['fieldName' => 'domainrid']],
+				['Column' => ['fieldName' => 'concepttypename']],
+				['Column' => ['fieldName' => 'concepttyperid']]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'termrid'],
+					'Signifier' => ['name' => 'termsignifier'],
+					'Relation' => [
+						'typeId' => Configure::read('Collibra.relationship.isaRequestToTerm'),
+						'Id' => ['name' => 'relationrid'],
+						'StartingDate' => ['name' => 'startDate'],
+						'EndingDate' => ['name' => 'endDate'],
+						'Status' => [
+							'Id' => ['name' => 'relstatusrid'],
+							'Signifier' => ['name' => 'relstatusname']],
+						'Filter' => [
+							'AND' => [[
+								'Field' => [
+									'name' => 'reltermrid',
+									'operator' => 'EQUALS',
+									'value' => $dsrId]]]],
+						'type' => 'TARGET',
+						'Source' => [
+							'Id' => ['name' => 'reltermrid']]],
+					'Vocabulary' => [
+						'Community' => [
+							'Name' => ['name' => 'communityname'],
+							'Id' => ['name' => 'commrid']],
+						'Name' => ['name' => 'domainname'],
+						'Id' => ['name' => 'domainrid']],
+					'ConceptType' => [[
+						'Signifier' => ['name' => 'concepttypename'],
+						'Id' => ['name' => 'concepttyperid']]],
+					'Filter' => [
+						'AND' => [[
+							'AND' => [[
+								'Field' => [
+									'name' => 'reltermrid',
+									'operator' => 'EQUALS',
+									'value' => $dsrId]]]]]],
+					'Order' => [[
+						'Field' => [
+							'name' => 'termsignifier',
+							'order' => 'ASC']]]]],
+			'displayStart' => 0,
+			'displayLength' => 100]];
+
+			$requestedTerms = $this->fullDataTable($tableConfig);
+			return $requestedTerms;
 	}
 
 	public function getAdditionallyIncludedTerms($dsaId) {

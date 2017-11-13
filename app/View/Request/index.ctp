@@ -122,8 +122,8 @@
 				<div class="resultItem">
 					<div class="irLower"><ul class="cart">
 						<?php
-					if(!empty($termDetails->aaData) || !empty($arrQueue['concepts']) || !empty($arrQueue['emptyApis']) || !empty($arrQueue['apiFields'])) {
-							foreach ($termDetails->aaData as $term){
+					if(!empty($termDetails) || !empty($arrQueue['concepts']) || !empty($arrQueue['emptyApis']) || !empty($arrQueue['apiFields'])) {
+							foreach ($termDetails as $term){
 								echo '<li id="requestItem'.$term->termrid.'" data-title="'.$term->termsignifier.'" data-rid="'.$term->termrid.'" data-vocabID="'.$term->commrid.'" api-host="'.$term->apihost.'" api-path="'.$term->apipath.'" api="false"><a class="delete" href="javascript:removeFromRequestQueue(\''.$term->termrid.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$term->termsignifier.'</li>';
 							}
 							foreach ($arrQueue['concepts'] as $id => $term) {
