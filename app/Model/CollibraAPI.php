@@ -540,6 +540,10 @@ class CollibraAPI extends Model {
 	}
 
 	public function getBusinessTermDetails($arrQueuedBusinessTerms) {
+		if (empty($arrQueuedBusinessTerms)) {
+			return [];
+		}
+
 		$tableConfig = ['TableViewConfig' => [
 			'Columns' => [
 				['Column' => ['fieldName' => 'createdOn']],

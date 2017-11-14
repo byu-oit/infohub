@@ -1078,14 +1078,13 @@ class RequestController extends AppController {
 		}
 
 		$termResp = $this->CollibraAPI->getBusinessTermDetails($arrQueue['businessTerms']);
-		if (isset($termResp)) {
+		if (!empty($termResp)) {
 			foreach ($termResp as $term) {
-				$domains[]  = $term->domainname;
 				$termNames[] = $term->termsignifier;
 				$term->apihost = $arrQueue['businessTerms'][$term->termrid]['apiHost'];
 				$term->apipath = $arrQueue['businessTerms'][$term->termrid]['apiPath'];
 			}
-			array_multisort($domains, SORT_ASC, $termNames, SORT_ASC, $termResp);
+			array_multisort($termNames, SORT_ASC, $termResp);
 		}
 		// If a business term in the cart has been deleted in Collibra, remove from cart
 		foreach ($arrQueue['businessTerms'] as $termID => $term) {
