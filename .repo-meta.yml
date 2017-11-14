@@ -1,26 +1,53 @@
----
-$schemaver: '2.0'
+$schemaver: 2.0
 repo_url: https://github.com/byu-oit/infohub
 software:
-  - name: InfoHub
-    type: Web App
-    aliases:
-    short_description:
-    assignment_group: gro:AD-Front End Technologies and Applications
-    notes:
+  - aliases:
+    assignment_group: 'gro:AD-Front End Technologies and Applications'
+    ddd:
+      business_domain:
+      context_map_url:
+      ubiquitous_language_url:
+    developed_by_byu: true
+    links:
+      swagger_urls:
+      system_documentation_url:
     maintained_by:
       - snelg
       - JeremyRees
       - pauldeden
-    developed_by_byu: true
-    ddd:
-        business_domain:
-        ubiquitous_language_url:
-        context_map_url:
-    links:
-        system_documentation_url:
-        swagger_urls:
     microservice: false
+    name: InfoHub
+    notes:
+    short_description:
+    stages:
+      production:
+        aws_account:
+        hosting_location: BYU
+        relationships:
+          depends_on:
+            db_read_only:
+            db_read_write:
+            software:
+              - 'Collibra DGC 4.6'
+              - 'Collibra DGC 5.0'
+              - InfoHub
+          reverse_proxy:
+          runs_on:
+            blade_server:
+            rack_server:
+            server_cluster:
+            virtual_server:
+          supports:
+            service:
+            software:
+        urls:
+          physical_url:
+          product_page: http://infohub-dev.byu.edu
+          virtual_url:
+    tags:
+      app: InfoHub
+      data-sensitivity: confidential
+      team: 'AD-Front End Technologies and Applications'
     technologies_used:
       - Travis-ci.com
       - PHP
@@ -30,32 +57,5 @@ software:
       - Shell
       - Batchfile
       - ApacheConf
-    stages:
-        production:
-            urls:
-                product_page: http://infohub-dev.byu.edu
-                physical_url:
-                virtual_url:
-            hosting_location: BYU
-            aws_account:
-            relationships:
-                depends_on:
-                    db_read_write:
-                    db_read_only:
-                    software:
-                      - Collibra DGC 4.6
-                      - Collibra DGC 5.0
-                      - InfoHub
-                supports:
-                    software:
-                    service:
-                reverse_proxy:
-                runs_on:
-                    server_cluster:
-                    virtual_server:
-                    rack_server:
-                    blade_server:
-    tags:
-        data-sensitivity: confidential
-        team: AD-Front End Technologies and Applications
-        app: InfoHub
+      - Composer
+    type: 'Web App'
