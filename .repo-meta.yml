@@ -1,8 +1,8 @@
-$schemaver: 2.0
+$schemaver: '2.0'
 repo_url: https://github.com/byu-oit/infohub
 software:
   - aliases:
-    assignment_group: 'gro:AD-Front End Technologies and Applications'
+    assignment_group: gro:AD-Front End Technologies and Applications
     ddd:
       business_domain:
       context_map_url:
@@ -28,8 +28,8 @@ software:
             db_read_only:
             db_read_write:
             software:
-              - 'Collibra DGC 4.6'
-              - 'Collibra DGC 5.0'
+              - Collibra DGC 4.6
+              - Collibra DGC 5.0
               - InfoHub
           reverse_proxy:
           runs_on:
@@ -47,7 +47,7 @@ software:
     tags:
       app: InfoHub
       data-sensitivity: confidential
-      team: 'AD-Front End Technologies and Applications'
+      team: AD-Front End Technologies and Applications
     technologies_used:
       - Travis-ci.com
       - PHP
@@ -58,4 +58,4 @@ software:
       - Batchfile
       - ApacheConf
       - Composer
-    type: 'Web App'
+    type: Web App
