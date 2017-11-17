@@ -4,6 +4,14 @@
 ?>
 <script>
 	function addTerms(elem) {
+		var i = 0;
+		var loadingTexts = ['Working on it   ','Working on it.  ','Working on it.. ','Working on it...'];
+		var loadingTextInterval = setInterval(function() {
+			$(elem).html(loadingTexts[i]);
+			i++;
+			if (i == loadingTexts.length) i = 0;
+		}, 250);
+
 		var dsrId = $(elem).closest('#requestForm').find('h2.headerTab').attr('id');
 		var arrBusinessTerms = [];
 		var arrConcepts = [];
@@ -18,13 +26,15 @@
 					arrConcepts.push({
 						id:$(this).val(),
 						term:$(this).attr('term-name'),
-						apiPath:$(this).attr('apiPath')
+						apiPath:$(this).attr('apiPath'),
+						apiHost:$(this).attr('apiHost')
 					});
 				}
 				else if ($(this).attr('name') == 'apiFields[]') {
 					arrApiFields.push({
 						field:$(this).val(),
-						apiPath:$(this).attr('apiPath')
+						apiPath:$(this).attr('apiPath'),
+						apiHost:$(this).attr('apiHost')
 					});
 				}
 				else if ($(this).attr('name') == 'apis[]') {
@@ -33,8 +43,19 @@
 			}
 		});
 
+		if (
+			arrBusinessTerms.length == 0 &&
+			arrConcepts.length == 0 &&
+			arrApiFields.length == 0 &&
+			arrApis.length == 0
+		) {
+			alert('No elements to add selected');
+			return;
+		}
+
 		$.post("/request/editTermsSubmit", {action:"add",dsrId:dsrId,arrBusinessTerms:arrBusinessTerms,arrConcepts:arrConcepts,arrApiFields:arrApiFields,arrApis:arrApis})
 			.done(function(data) {
+				clearInterval(loadingTextInterval);
 				data = JSON.parse(data);
 				if (data.success == 1) {
 					location.reload();
@@ -90,17 +111,24 @@
 				<h3 class="headerTab">Add Information</h3>
 				<div class="clear"></div>
 				<div class="resultItem">
-					<?php if (!empty($arrQueue['businessTerms'])): ?>
+					<?php if (!empty($arrQueue['businessTerms']) || !empty($arrQueue['concepts']) || !empty($arrQueue['emptyApis']) || !empty($arrQueue['apiFields'])): ?>
 					<div class="checkAll"><input type="checkbox" onclick="toggleAllCheckboxes(this)" checked="checked">Check/Uncheck all</div>
-					<?php endif; ?>
 					<div class="irLower"><ul class="cart">
 						<?php
-						if(!empty($arrQueue['businessTerms']) || !empty($arrQueue['concepts']) || !empty($arrQueue['emptyApis']) || !empty($arrQueue['apiFields'])) {
 							foreach ($arrQueue['businessTerms'] as $id => $term){
+								// Don't allow adding a term that's already requested
+								$alreadyRequested = false;
+								foreach ($request->terms as $requestedTerm) {
+									if ($requestedTerm->termrid == $id) {
+										$alreadyRequested = true;
+										break;
+									}
+								}
+								if ($alreadyRequested) continue;
 								echo '<li id="requestItem'.$id.'"><input type="checkbox" name="businessTerms[]" value="'.$id.'" checked="checked">'.$term['term'].'</li>';
 							}
 							foreach ($arrQueue['concepts'] as $id => $term) {
-								echo '<li id="requestItem'.$id.'"><input type="checkbox" name="concepts[]" value="'.$id.'" term-name="'.$term['name'].'" apiPath="'.$term['apiPath'].'" checked="checked">'.$term['term'].'</li>';
+								echo '<li id="requestItem'.$id.'"><input type="checkbox" name="concepts[]" value="'.$id.'" term-name="'.$term['name'].'" apiHost="'.$term['apiHost'].'" apiPath="'.$term['apiPath'].'" checked="checked">'.$term['term'].'</li>';
 							}
 							foreach ($arrQueue['emptyApis'] as $path => $api){
 								$displayName = strlen($path) > 28 ? substr($path, 0, 28) . "..." : $path;
@@ -108,13 +136,16 @@
 								echo '<li id="requestItem'.$id.'"><input type="checkbox" name="apis[]" value="'.$path.'" checked="checked">'.$displayName.'</li>';
 							}
 							foreach ($arrQueue['apiFields'] as $fieldPath => $field) {
-								echo '<li id="requestItem'.$fieldPath.'"><input type="checkbox" name="apiFields[]" value="'.$fieldPath.'" apiPath="'.$field['apiPath'].'" checked="checked">'.$field['name'].'</li>';
+								echo '<li id="requestItem'.$fieldPath.'"><input type="checkbox" name="apiFields[]" value="'.$fieldPath.'" apiHost="'.$field['apiHost'].'" apiPath="'.$field['apiPath'].'" checked="checked">'.$field['name'].'</li>';
 							}
 							echo '</ul><a class="addTerms grow">Add to this DSR</a>';
-						}else{
-							echo 'To add items to this request, first add the desired information to your cart and then return to this page.</ul>';
-						} ?>
+						?>
 					</div>
+						<?php
+							else:
+								echo '<div class="irLower noCart">To add items to this request, first add the desired information to your cart and then return to this page.</div>';
+							endif;
+						?>
 				</div>
                 <div class="clear"></div>
 

@@ -210,6 +210,11 @@ header #headerInner #headerRight #request-popup h3,
   margin: 0;
   padding: 0 0 0 15px;
 }
+#request #searchBody #requestForm #srLower .resultItem .irLower.noCart {
+  margin-bottom: 10px;
+  font-weight: bold;
+  font-size: 14px;
+}
 #request #searchBody #requestForm #srLower .resultItem .irLower ul li {
   padding: 2px;
   width: 22%;

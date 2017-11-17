@@ -1426,6 +1426,7 @@ class CollibraAPI extends Model {
 			'Columns' => [
 				['Column' => ['fieldName' => 'termid']],
 				['Column' => ['fieldName' => 'termsignifier']],
+				['Column' => ['fieldName' => 'relationid']],
 				['Column' => ['fieldName' => 'domainrid']],
 				['Column' => ['fieldName' => 'domainname']],
 				['Column' => ['fieldName' => 'concept']],
@@ -1453,6 +1454,7 @@ class CollibraAPI extends Model {
 						'Name' => ['name' => 'domainname']],
 					'Relation' => [[
 						'typeId' => Configure::read('Collibra.relationship.DSRtoAdditionallyIncludedAsset'),
+						'Id' => ['name' => 'relationid'],
 						'type' => 'TARGET',
 						'Source' => [
 							'Id' => ['name' => 'dsaId']],
@@ -1471,6 +1473,43 @@ class CollibraAPI extends Model {
 
 		$terms = $this->fullDataTable($tableConfig);
 		return $terms;
+	}
+
+	public function getNecessaryAPIs($dsrId) {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'apirid']],
+				['Column' => ['fieldName' => 'apiname']],
+				['Column' => ['fieldName' => 'domainrid']],
+				['Column' => ['fieldName' => 'domainname']],
+				['Column' => ['fieldName' => 'communityid']],
+				['Column' => ['fieldName' => 'communityname']]],
+			'Resources' => [
+				'Term' => [
+					'typeId' => Configure::read('Collibra.type.api'),
+					'Id' => ['name' => 'apirid'],
+					'Signifier' => ['name' => 'apiname'],
+					'Vocabulary' => [
+						'Id' => ['name' => 'domainrid'],
+						'Name' => ['name' => 'domainname'],
+						'Community' => [
+							'Id' => ['name' => 'communityid'],
+							'Name' => ['name' => 'communityname']]],
+					'Relation' => [
+						'relationTypeId' => Configure::read('Collibra.relationship.DSRtoNecessaryAPI'),
+						'type' => 'TARGET',
+						'Source' => [
+							'typeId' => Configure::read('Collibra.type.isaRequest'),
+							'Id' => ['name' => 'dsrid']]],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+								'name' => 'dsrid',
+								'operator' => 'EQUALS',
+								'value' => $dsrId]]]]]]]];
+
+		$apis = $this->fullDataTable($tableConfig);
+		return $apis;
 	}
 
 	protected function _updateSessionCookies() {

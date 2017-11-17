@@ -352,6 +352,14 @@ class RequestController extends AppController {
 			$success = true;
 			$arrQueue = $this->Session->read('queue');
 
+			$resp = $this->CollibraAPI->get('term/'.$this->request->data['dsrId']);
+			$request = json_decode($resp);
+			$request->additionallyIncluded = $this->CollibraAPI->getAdditionallyIncludedTerms($request->resourceId);
+			$request->isNecessary = $this->CollibraAPI->getNecessaryAPIs($request->resourceId);
+
+			$addedApis = [];
+			$additionString = "<br/><br/>Addition, ".date('Y-m-d').":";
+
 			$postData['source'] = $this->request->data['dsrId'];
 			$postData['binaryFactType'] = Configure::read('Collibra.relationship.isaRequestToTerm');
 			if (isset($this->request->data['arrBusinessTerms'])) {
@@ -360,6 +368,14 @@ class RequestController extends AppController {
 					$postString = http_build_query($postData);
 					$resp = $this->CollibraAPI->post('relation', $postString);
 
+					foreach ($request->additionallyIncluded as $inclTerm) {
+						if ($inclTerm->termid == $termid) {
+							// remove term from DSR's "Additionally Included" list if it's now requested
+							$this->CollibraAPI->delete('relation/'.$inclTerm->relationid);
+							break;
+						}
+					}
+
 					if ($resp->code != '201') {
 						$success = false;
 						continue;
@@ -367,6 +383,8 @@ class RequestController extends AppController {
 
 					foreach ($arrQueue['businessTerms'] as $queueId => $queueTerm) {
 						if ($queueId == $termid) {
+							$addedApis[$queueTerm['apiHost']][$queueTerm['apiPath']] = [];
+							$additionString .= "<br/>".$queueTerm['term']." (Business Term), from API: ".$queueTerm['apiPath'];
 							unset($arrQueue['businessTerms'][$queueId]);
 							break;
 						}
@@ -375,11 +393,11 @@ class RequestController extends AppController {
 			}
 
 			if (isset($this->request->data['arrConcepts']) || isset($this->request->data['arrApiFields']) || isset($this->request->data['arrApis'])) {
-				$additionString = "<br/><br/>Addition, ".date('Y-m-d').":";
 				if (isset($this->request->data['arrConcepts'])) {
 					foreach ($this->request->data['arrConcepts'] as $concept) {
+						$addedApis[$concept['apiHost']][$concept['apiPath']] = [];
 						$additionString .= "<br/>".$concept['term']." (Concept), from API: ".$concept['apiPath'];
-						foreach ($arrQueue['concepts'] as $queueId => $_) {
+						foreach ($arrQueue['concepts'] as $queueId => $queueConcept) {
 							if ($queueId == $concept['id']) {
 								unset($arrQueue['concepts'][$queueId]);
 								break;
@@ -389,6 +407,7 @@ class RequestController extends AppController {
 				}
 				if (isset($this->request->data['arrApiFields'])) {
 					foreach ($this->request->data['arrApiFields'] as $field) {
+						$addedApis[$field['apiHost']][$field['apiPath']] = [];
 						$additionString .= "<br/>".$field['field'].", from API: ".$field['apiPath'];
 						foreach ($arrQueue['apiFields'] as $path => $_) {
 							if ($path == $field['field']) {
@@ -400,6 +419,7 @@ class RequestController extends AppController {
 				}
 				if (isset($this->request->data['arrApis'])) {
 					foreach ($this->request->data['arrApis'] as $api) {
+						$addedApis[$arrQueue['emptyApis'][$api]['apiHost']][$api] = [];
 						$additionString .= "<br/>".$api." [No specified output fields]";
 						foreach ($arrQueue['emptyApis'] as $path => $_) {
 							if ($path == $api) {
@@ -409,25 +429,144 @@ class RequestController extends AppController {
 						}
 					}
 				}
+			}
 
-				$resp = $this->CollibraAPI->get('term/'.$this->request->data['dsrId']);
-				$request = json_decode($resp);
+			foreach ($request->isNecessary as $alreadyListed) {
+				unset($addedApis[$alreadyListed->communityname][substr($alreadyListed->apiname, 1)]);
+				if (empty($addedApis[$alreadyListed->communityname])) {
+					unset($addedApis[$alreadyListed->communityname]);
+				}
+			}
 
-				foreach ($request->attributeReferences->attributeReference as $attr) {
-					if ($attr->labelReference->signifier == 'Additional Information Requested') {
-						$postData['value'] = $attr->value . $additionString;
-						$postData['rid'] = $attr->resourceId;
-						$postString = http_build_query($postData);
-						$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
-						$formResp = $this->CollibraAPI->post('attribute/'.$attr->resourceId, $postString);
-						$formResp = json_decode($formResp);
+			$newApiBusinessTerms = [];
+			$postData = [];
+			$postData['source'] = $this->request->data['dsrId'];
+			$postData['binaryFactType'] = Configure::read('Collibra.relationship.DSRtoNecessaryAPI');
+			foreach ($addedApis as $apiHost => $apiPaths) {
+				foreach ($apiPaths as $apiPath => $_) {
+					$apiObject = $this->CollibraAPI->getApiObject($apiHost, $apiPath);
+					$postData['target'] = $apiObject->id;
+					$postString = http_build_query($postData);
+					$resp = $this->CollibraAPI->post('relation', $postString);
 
-						if (!isset($formResp)) {
-							$success = false;
+					$apiTerms = $this->CollibraAPI->getApiTerms($apiHost, $apiPath);
+					foreach ($apiTerms as $term) {
+						if (!empty($term->assetType) && strtolower($term->assetType) == 'fieldset') {
+							continue;
 						}
-						break;
+						if (empty($term->businessTerm[0]->termId)) {
+							$requestedField = false;
+							if (isset($this->request->data['arrApiFields'])) {
+								foreach ($this->request->data['arrApiFields'] as $field) {
+									if ($term->name == $field['field']) {
+										$requestedField = true;
+										break;
+									}
+								}
+							}
+							if ($requestedField) {
+								$addedApis[$apiHost][$apiPath]['unmapped']['requested'][] = $term->name;
+							} else {
+								$addedApis[$apiHost][$apiPath]['unmapped']['unrequested'][] = $term->name;
+							}
+						} else {
+							array_push($newApiBusinessTerms, $term->businessTerm[0]->termId);
+							$requestedConcept = false;
+							if (isset($this->request->data['arrConcepts'])) {
+								foreach ($this->request->data['arrConcepts'] as $concept) {
+									if ($term->businessTerm[0]->termId == $concept['id']) {
+										$requestedConcept = true;
+										break;
+									}
+								}
+							}
+							if ($requestedConcept) {
+								$addedApis[$apiHost][$apiPath]['requestedConcept'][] = $term->businessTerm[0]->term;
+							} else {
+								$requestedTerm = false;
+								if (isset($this->request->data['arrBusinessTerms'])) {
+									foreach ($this->request->data['arrBusinessTerms'] as $termid) {
+										if ($term->businessTerm[0]->termId == $termid) {
+											$requestedTerm = true;
+											break;
+										}
+									}
+								}
+								if ($requestedTerm) {
+									$addedApis[$apiHost][$apiPath]['requestedBusinessTerm'][] = $term->businessTerm[0]->term;
+								} else {
+									$addedApis[$apiHost][$apiPath]['unrequested'][] = $term->businessTerm[0]->term;
+								}
+							}
+						}
 					}
 				}
+			}
+
+			if (!empty($addedApis)) {
+				$additionString .= "<br/><br/>Newly Requested APIs:<br/>";
+				foreach ($addedApis as $apiHost => $apiPaths) {
+					foreach ($apiPaths as $apiPath => $term) {
+						$additionString .= ". . {$apiHost}/{$apiPath}<br/>";
+						if (!empty($term['requestedBusinessTerm'])) {
+							$term['requestedBusinessTerm'] = array_unique($term['requestedBusinessTerm']);
+							$additionString .= ". . . . Requested business terms:<br/>. . . . . . " . implode("<br/>. . . . . . ", $term['requestedBusinessTerm']) . "<br/>";
+						}
+						if (!empty($term['requestedConcept'])) {
+							$term['requestedConcept'] = array_unique($term['requestedConcept']);
+							$additionString .= ". . . . Requested conceptual terms:<br/>. . . . . . " . implode("<br/>. . . . . . ", $term['requestedConcept']) . "<br/>";
+						}
+						if (!empty($term['unrequested'])) {
+							$term['unrequested'] = array_unique($term['unrequested']);
+							$additionString .= ". . . . Unrequested terms:<br/>. . . . . . " . implode("<br/>. . . . . . ", $term['unrequested']) . "<br/>";
+						}
+						if (!empty($term['unmapped'])) {
+							$additionString .= ". . . . Fields with no Business Terms:<br/>";
+							if (!empty($term['unmapped']['requested'])) {
+								$additionString .= ". . . . . . Requested:<br/>. . . . . . . . " . implode("<br/>. . . . . . . . ", $term['unmapped']['requested']) . "<br/>";
+							}
+							if (!empty($term['unmapped']['unrequested'])) {
+								$additionString .= ". . . . . . Unrequested:<br/>. . . . . . . . " . implode("<br/>. . . . . . . . ", $term['unmapped']['unrequested']) . "<br/>";
+							}
+						}
+						$additionString .= "<br/>";
+					}
+				}
+			}
+
+			foreach ($request->attributeReferences->attributeReference as $attr) {
+				if ($attr->labelReference->signifier == 'Additional Information Requested') {
+					$postData = [];
+					$postData['value'] = $attr->value . $additionString;
+					$postData['rid'] = $attr->resourceId;
+					$postString = http_build_query($postData);
+					$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
+					$formResp = $this->CollibraAPI->post('attribute/'.$attr->resourceId, $postString);
+					$formResp = json_decode($formResp);
+
+					if (!isset($formResp)) {
+						$success = false;
+					}
+					break;
+				}
+			}
+
+			$newApiBusinessTerms = array_filter($newApiBusinessTerms, function($termid) use($request) {
+				foreach ($request->additionallyIncluded as $alreadyIncluded) {
+					if ($alreadyIncluded->termid == $termid) {
+						return false;
+					}
+				}
+				return true;
+			});
+
+			$postData = [];
+			$postData['source'] = $this->request->data['dsrId'];
+			$postData['binaryFactType'] = Configure::read('Collibra.relationship.DSRtoAdditionallyIncludedAsset');
+			foreach ($newApiBusinessTerms as $termid) {
+				$postData['target'] = $termid;
+				$postString = http_build_query($postData);
+				$resp = $this->CollibraAPI->post('relation', $postString);
 			}
 
 			$this->Session->write('queue', $arrQueue);
@@ -690,6 +829,7 @@ class RequestController extends AppController {
 		$additionalInformationAPIs = "";
 		foreach ($arrQueue['emptyApis'] as $path => $api) {
 			$additionalInformationAPIs .= "\n. . {$api['apiHost']}/{$path}\n. . . . [No specified output fields]";
+			$apis[$api['apiHost']][$path] = [];
 		}
 		$this->request->data['descriptionOfInformation'] .= $additionalInformationAPIs;
 
@@ -761,10 +901,6 @@ class RequestController extends AppController {
 			}
 		}
 
-		foreach ($arrQueue['emptyApis'] as $path => $api) {
-			$apiObject = $this->CollibraAPI->getApiObject($api['apiHost'],$path);
-			array_push($postData['api'], $apiObject->id);
-		}
 		if (empty($postData['api'])) {
 			//See above comment regarding "additionalElements"
 			$postData['api'] = '';
