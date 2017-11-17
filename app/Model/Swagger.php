@@ -27,17 +27,19 @@ class Swagger extends AppModel {
 
 		$this->elements = [];
 		foreach ($paths as $pathName => $path) {
-			if (empty($path['get']['responses'][200]['schema'])) {
-				continue;
+			foreach ($path as $method => $operation) {
+				if (empty($operation['responses'][200]['schema'])) {
+					continue;
+				}
+				$schema = $operation['responses'][200]['schema'];
+				if (!empty($schema['$ref'])) {
+					list($name, $refProperties) = $this->_getRef($schema['$ref']);
+					$properties = [$name => $refProperties];
+				} else {
+					$properties = ["result" => $schema];
+				}
+				$this->_addElements([], $properties);
 			}
-			$schema = $path['get']['responses'][200]['schema'];
-			if (!empty($schema['$ref'])) {
-				list($name, $refProperties) = $this->_getRef($schema['$ref']);
-				$properties = [$name => $refProperties];
-			} else {
-				$properties = ["result" => $schema];
-			}
-			$this->_addElements([], $properties);
 		}
 
 		$hostRaw = $this->_getRef('/host');
