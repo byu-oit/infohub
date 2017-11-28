@@ -42,7 +42,7 @@ software:
             software:
         urls:
           physical_url:
-          product_page: http://infohub-dev.byu.edu
+          product_page: https://infohub.byu.edu
           virtual_url:
     tags:
       app: InfoHub
