@@ -55,26 +55,35 @@
 										}
 									}
 								?></td>
-								<td>
-									<?php if (empty($term->businessTerm[0])): ?>
+								<?php if (empty($term->businessTerm[0])): ?>
+									<td>
 										<input type="hidden" name="data[Api][elements][<?=$index?>][id]" value="<?=$term->id?>" id="ApiElements<?=$index?>Id">
 										<input type="hidden" name="data[Api][elements][<?=$index?>][name]" class="data-label" data-index="<?=$index?>" value="<?=$term->name?>" id="ApiElements<?=$index?>Name">
-										<div class="input select">
-											<select name="data[Api][elements][<?=$index?>][business_term]" class="bt-select" data-index="<?=$index?>" id="ApiElements<?=$index?>BusinessTerm"></select>
+										<input type="hidden" name="data[Api][elements][<?=$index?>][business_term]" class="bt" data-index="<?=$index?>" id="ApiElements<?=$index?>BusinessTerm">
+										<div class="term-wrapper display-loading" id="ApiElements<?=$index?>SearchCell">
+											<input type="text" class="bt-search" data-index="<?=$index?>" placeholder="Search for a term"></input>
+											<div class="selected-term"><span class="term-name"></span>  <span class="edit-opt" data-index="<?=$index?>" title="Select new term"></span></div>
+											<div class="loading">Loading...</div>
 										</div>
-									<?php else: ?>
+									</td>
+									<td class="view-context<?= $index ?>" style="white-space: nowrap"></td>
+									<td id="view-definition<?= $index ?>" class="view-definition"></td>
+								<?php else: ?>
+									<td>
 										<input type="hidden" name="data[Api][elements][<?=$index?>][id]" value="<?=$term->id?>" id="ApiElements<?=$index?>Id">
 										<input type="hidden" name="data[Api][elements][<?=$index?>][name]" class="data-label" data-index="<?=$index?>" value="<?=$term->name?>" id="ApiElements<?=$index?>Name"	data-pre-linked="true" data-orig-context="<?=$term->businessTerm[0]->termCommunityName?>" data-orig-id="<?=$term->businessTerm[0]->termId?>" data-orig-name="<?=$term->businessTerm[0]->term?>" data-orig-def="<?=preg_replace('/"/', '&quot;', $term->businessTerm[0]->termDescription)?>">
 										<input type="hidden" name="data[Api][elements][<?=$index?>][previous_business_term]" value="<?=$term->businessTerm[0]->termId?>">
 										<input type="hidden" name="data[Api][elements][<?=$index?>][previous_business_term_relation]" value="<?=$term->businessTerm[0]->termRelationId?>">
-										<div class="input select">
-											<select name="data[Api][elements][<?=$index?>][business_term]" class="bt-select" data-index="<?=$index?>" id="ApiElements<?=$index?>BusinessTerm" data-orig-term="<?=$term->businessTerm[0]->termId?>">
-												<option value="<?=$term->businessTerm[0]->termId?>" title="<?=$term->businessTerm[0]->termCommunityName?>"><?=$term->businessTerm[0]->term?></option>
-											</select>
-									<?php endif ?>
-								</td>
-								<td class="view-context<?= $index ?>" style="white-space: nowrap"></td>
-								<td id="view-definition<?= $index ?>" class="view-definition"></td>
+										<input type="hidden" name="data[Api][elements][<?=$index?>][business_term]" value="<?=$term->businessTerm[0]->termId?>" class="bt" data-index="<?=$index?>" id="ApiElements<?=$index?>BusinessTerm" data-orig-term="<?=$term->businessTerm[0]->termId?>">
+										<div class="term-wrapper" id="ApiElements<?=$index?>SearchCell">
+											<input type="text" class="bt-search" data-index="<?=$index?>" placeholder="Search for a term"></input>
+											<div class="selected-term"><span class="term-name"><?=$term->businessTerm[0]->term?></span>  <span class="edit-opt" data-index="<?=$index?>" title="Select new term"></span></div>
+											<div class="loading">Loading...</div>
+										</div>
+									</td>
+									<td class="view-context<?= $index ?>" style="white-space: nowrap"></td>
+									<td id="view-definition<?= $index ?>" class="view-definition"></td>
+								<?php endif ?>
 							</tr>
 						<?php endforeach ?>
 					</table>

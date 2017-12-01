@@ -1353,12 +1353,48 @@ img.resultBodyLoading {
 #apiBody .api-terms tbody .header {
   text-align: left;
 }
-/*#apiBody .api-terms tbody .view-definition {
-  height: 1em;
+#apiBody .api-terms tbody .term-wrapper .bt-search,
+#apiBody .api-terms tbody .term-wrapper .loading,
+#apiForm .swagger tbody .term-wrapper .bt-search,
+#apiForm .swagger tbody .term-wrapper .loading {
+  display: none;
 }
-#apiBody .api-terms tbody .view-definition.expanded {
-  height: auto;
-}*/
+#apiBody .api-terms tbody .term-wrapper .selected-term,
+#apiForm .swagger tbody .term-wrapper .selected-term {
+  display: block;
+}
+#apiBody .api-terms tbody .term-wrapper.display-loading .loading,
+#apiForm .swagger tbody .term-wrapper.display-loading .loading {
+  display: block;
+}
+#apiBody .api-terms tbody .term-wrapper.display-loading .bt-search,
+#apiBody .api-terms tbody .term-wrapper.display-loading .selected-term,
+#apiForm .swagger tbody .term-wrapper.display-loading .bt-search,
+#apiForm .swagger tbody .term-wrapper.display-loading .selected-term {
+  display: none;
+}
+#apiBody .api-terms tbody .term-wrapper.display-search .bt-search,
+#apiForm .swagger tbody .term-wrapper.display-search .bt-search {
+  display: inline-block;
+}
+#apiBody .api-terms tbody .term-wrapper.display-search .selected-term,
+#apiBody .api-terms tbody .term-wrapper.display-search .loading,
+#apiForm .swagger tbody .term-wrapper.display-search .selected-term,
+#apiForm .swagger tbody .term-wrapper.display-search .loading {
+  display: none;
+}
+#apiBody .api-terms tbody .term-wrapper span.edit-opt,
+#apiForm .swagger tbody .term-wrapper span.edit-opt {
+  display: inline-block;
+  height: 18px;
+  width: 18px;
+  margin: 0px 0px -1px 12px;
+  border-radius: 5px;
+  background-image: url(../img/edit.png);
+  background-size: 25px;
+  background-position: center;
+  cursor: pointer;
+}
 #apiBody .api-terms tbody .view-definition .truncated {
   display: inline;
 }

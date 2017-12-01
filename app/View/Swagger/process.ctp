@@ -1,3 +1,6 @@
+<?php
+	$this->Html->css('search', null, array('inline' => false));
+?>
 <style type="text/css">
 	table.swagger {
 		width: 100%;
@@ -20,7 +23,7 @@
 		<table class="swagger">
 			<tr>
 				<th>Field</th>
-				<th width="1%">Business Term</th>
+				<th width="20%">Business Term</th>
 				<th width="1%">Glossary</th>
 			</tr>
 			<?php foreach ($this->request->data['Api']['elements'] as $index => $element): ?>
@@ -36,20 +39,23 @@
 						<input type="hidden" name="data[Api][elements][<?=$index?>][type]" value="<?=$element['type']?>" id="ApiElements<?=$index?>Type"/>
 					</td>
 					<td>
-						<input type="hidden" name="data[Api][elements][<?=$index?>][business_term]" id="origTerm<?=$index?>"/>
-						<div class="input select">
-							<?php if (empty($element['businessTerm'])): ?>
-								<select name="data[Api][elements][<?=$index?>][business_term]" class="bt-select" data-index="<?=$index?>" id="ApiElements<?=$index?>BusinessTerm">
-								</select>
-							<?php else: ?>
-								<select name="data[Api][elements][<?=$index?>][business_term]" class="bt-select" data-index="<?=$index?>" id="ApiElements<?=$index?>BusinessTerm" data-orig-term="<?=$element['businessTerm'][0]->termId?>">
-									<option value="<?=$element['businessTerm'][0]->termId?>" title="<?=$element['businessTerm'][0]->termCommunityName?>"><?=$element['businessTerm'][0]->term?></option>
-								</select>
-							<?php endif ?>
-						</div>
+						<?php if (empty($element['businessTerm'])): ?>
+							<input type="hidden" name="data[Api][elements][<?=$index?>][business_term]" class="bt" data-index="<?=$index?>" id="ApiElements<?=$index?>BusinessTerm">
+							<div class="term-wrapper display-loading" id="ApiElements<?=$index?>SearchCell">
+								<input type="text" class="bt-search" data-index="<?=$index?>" placeholder="Search for a term"></input>
+								<div class="selected-term"><span class="term-name"></span>  <span class="edit-opt" data-index="<?=$index?>" title="Select new term"></span></div>
+								<div class="loading">Loading...</div>
+							</div>
+						<?php else: ?>
+							<input type="hidden" name="data[Api][elements][<?=$index?>][business_term]" value="<?=$element['businessTerm'][0]->termId?>" class="bt" data-index="<?=$index?>" id="ApiElements<?=$index?>BusinessTerm" data-orig-term="<?=$element['businessTerm'][0]->termId?>">
+							<div class="term-wrapper" id="ApiElements<?=$index?>SearchCell">
+								<input type="text" class="bt-search" data-index="<?=$index?>" placeholder="Search for a term"></input>
+								<div class="selected-term"><span class="term-name"><?=$element['businessTerm'][0]->term?></span>  <span class="edit-opt" data-index="<?=$index?>" title="Select new term"></span></div>
+								<div class="loading">Loading...</div>
+							</div>
+						<?php endif ?>
 					</td>
 					<td class="view-context<?= $index ?>" style="white-space: nowrap"></td>
-					<td class="xview-definition<?= $index ?>"></td>
 				</tr>
 			<?php endforeach ?>
 		</table>
