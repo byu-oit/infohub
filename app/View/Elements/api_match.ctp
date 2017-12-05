@@ -16,9 +16,18 @@
 							return false;
 						}
 					},
+					response: function( event, ui ) {
+						ui.content.push({
+							newTab: true
+						});
+					},
 					select: function(evt, selected) {
 						if (selected.item === undefined) {
 							return false;
+						}
+						if (selected.item.newTab) {
+							window.open(window.location.origin+'/search/results/'+$(this).val(), '_blank');
+							return;
 						}
 						var index = $(this).data('index');
 
@@ -26,9 +35,16 @@
 					}
 				})
 				.autocomplete("instance")._renderItem = function( ul, item ) {
+					if (item.newTab === undefined) {
+						return $( "<li>" )
+							.append( "<div>" + item.name.val + "<br>" + item.context.val + "</div>" )
+							.appendTo( ul );
+					}
+
 					return $( "<li>" )
-					  .append( "<div>" + item.name.val + "<br>" + item.context.val + "</div>" )
-					  .appendTo( ul );
+						.addClass("new-tab")
+						.append( "<div>Search for \""+$(this)[0].term+"\" in new tab</div>" )
+						.appendTo( ul );
 				};
 			});
 

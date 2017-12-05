@@ -1395,6 +1395,12 @@ img.resultBodyLoading {
   background-position: center;
   cursor: pointer;
 }
+.ui-autocomplete {
+  max-width: 170px;
+}
+.ui-autocomplete .ui-menu-item.new-tab {
+  font-style: italic;
+}
 #apiBody .api-terms tbody .view-definition .truncated {
   display: inline;
 }
