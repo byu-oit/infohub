@@ -88,10 +88,10 @@ class AppController extends Controller {
 		}
 
 		$arrQueue = $this->Session->read('queue');
-		$requestedTermCount = sizeof($arrQueue['businessTerms']) +
-							  sizeof($arrQueue['concepts']) +
-							  sizeof($arrQueue['apiFields']) +
-							  sizeof($arrQueue['emptyApis']);
+		$requestedTermCount = count($arrQueue['businessTerms']) +
+							  count($arrQueue['concepts']) +
+							  count($arrQueue['apiFields']) +
+							  count($arrQueue['emptyApis']);
 
 		$this->set('byuUsername', $byuUsername);
 		$this->set('byuUserDepartment', $byuUserDepartment);

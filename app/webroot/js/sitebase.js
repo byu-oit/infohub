@@ -182,6 +182,7 @@ function toggleRequestQueue(){
 function showRequestQueue(){
 	$.get("/request/cartDropdown")
 		.done(function(data){
+			updateQueueSize();
 			if($(window).scrollTop()>50){
 				var requestIconPos = $('#request-queue').offset();
 				var left = requestIconPos.left - $('#request-popup').width() - 16;
@@ -251,14 +252,13 @@ function updateQueueSize(){
 		.done(function(data){
 			data = parseInt(data);
 			if (data == 0) {
-				$('#request-queue .request-num').addClass('request-hidden');
+				$('#request-queue .request-num').text(data).addClass('request-hidden');
 			} else {
 				$('#request-queue .request-num').text(data).removeClass('request-hidden');
 			}
 	});
 }
 function addToQueue(elem, displayCart){
-	console.log(displayCart);
 	var i = 0;
 	var loadingTexts = ['Working on it   ','Working on it.  ','Working on it.. ','Working on it...'];
 	var loadingTextInterval = setInterval(function() {
@@ -283,12 +283,11 @@ function addToQueue(elem, displayCart){
 				}
 			}
 		});
-		console.log({emptyApi:'false', t:arrTitles, id:arrIDs, vocab:arrVocabIDs, apiHost: apiHost, apiPath: apiPath});
 		$.post("/request/addToQueue", {emptyApi:'false', t:arrTitles, id:arrIDs, vocab:arrVocabIDs, apiHost: apiHost, apiPath: apiPath})
-			.done(function(data){console.log(data);
+			.done(function(data){
 				clearInterval(loadingTextInterval);
 				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
-				$('input[type=checkbox]').prop('checked', false);
+				$(elem).closest('.resultItem').find('input[type=checkbox]').prop('checked', false);
 				data = parseInt(data);
 				if(data>0){
 					if (displayCart) {

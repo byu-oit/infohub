@@ -126,10 +126,10 @@ class RequestController extends AppController {
 		$this->autoRender = false;
 
 		$arrQueue = $this->Session->read('queue');
-		echo  sizeof($arrQueue['businessTerms']) +
-			  sizeof($arrQueue['concepts']) +
-			  sizeof($arrQueue['apiFields']) +
-			  sizeof($arrQueue['emptyApis']);
+		echo  count($arrQueue['businessTerms']) +
+			  count($arrQueue['concepts']) +
+			  count($arrQueue['apiFields']) +
+			  count($arrQueue['emptyApis']);
 	}
 
 	public function cartDropdown() {
@@ -138,7 +138,7 @@ class RequestController extends AppController {
 		$this->loadModel('CollibraAPI');
 
 		$arrQueue = $this->Session->read('queue');
-		$responseHTML=  '<h3>Requested Items: '.(count($arrQueue['businessTerms']) + count($arrQueue['concepts']) + count($arrQueue['apiFields']) + count($arrQueue['emptyApis'])).'</h3>'.
+		$responseHTML = '<h3>Requested Items: '.(count($arrQueue['businessTerms']) + count($arrQueue['concepts']) + count($arrQueue['apiFields']) + count($arrQueue['emptyApis'])).'</h3>'.
 			'<a class="close" href="javascript: hideRequestQueue()">X</a>'.
 			'<div class="arrow"></div>'.
 			'<a class="clearQueue" href="javascript: clearRequestQueue()">Empty cart</a>';
