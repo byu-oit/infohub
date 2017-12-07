@@ -227,7 +227,7 @@ function removeFromRequestQueue(id){
 				}
 				$(html).insertBefore('.irLower ul');
 				$('#request-undo').click(function(){
-					addToQueue(this, false, false);
+					addToQueue(this, false);
 					$(this).remove();
 					$('#requestItem'+id).fadeIn('fast');
 				});
@@ -257,7 +257,8 @@ function updateQueueSize(){
 			}
 	});
 }
-function addToQueue(elem, clearRelated, displayCart){
+function addToQueue(elem, displayCart){
+	console.log(displayCart);
 	var i = 0;
 	var loadingTexts = ['Working on it   ','Working on it.  ','Working on it.. ','Working on it...'];
 	var loadingTextInterval = setInterval(function() {
@@ -282,8 +283,9 @@ function addToQueue(elem, clearRelated, displayCart){
 				}
 			}
 		});
-		$.post("/request/addToQueue", {emptyApi:'false', t:arrTitles, id:arrIDs, vocab:arrVocabIDs, clearRelated:clearRelated, apiHost: apiHost, apiPath: apiPath})
-			.done(function(data){
+		console.log({emptyApi:'false', t:arrTitles, id:arrIDs, vocab:arrVocabIDs, apiHost: apiHost, apiPath: apiPath});
+		$.post("/request/addToQueue", {emptyApi:'false', t:arrTitles, id:arrIDs, vocab:arrVocabIDs, apiHost: apiHost, apiPath: apiPath})
+			.done(function(data){console.log(data);
 				clearInterval(loadingTextInterval);
 				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
 				$('input[type=checkbox]').prop('checked', false);

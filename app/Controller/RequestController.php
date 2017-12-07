@@ -47,28 +47,10 @@ class RequestController extends AppController {
 				$arrTerms = $this->request->data['t'];
 				$arrTermIDs = $this->request->data['id'];
 				$arrVocabIDs = $this->request->data['vocab'];
-				$clearRelated = $this->request->data['clearRelated']=='true';
 				$apiHost = empty($this->request->data['apiHost']) ? null : $this->request->data['apiHost'];
 				$apiPath = empty($this->request->data['apiPath']) ? null : $this->request->data['apiPath'];
 
 				$arrQueue = $this->Session->read('queue');
-				if($clearRelated) {
-					// Remove all terms in vocabularies passed and then re-add the ones selected by the user.
-					foreach ($arrVocabIDs as $communityId){
-						foreach ($arrQueue['businessTerms'] as $termId => $term) {
-							if ($term['communityId'] == $communityId) {
-								unset($arrQueue['businessTerms'][$termId]);
-								break;
-							}
-						}
-						foreach ($arrQueue['concepts'] as $termId => $term) {
-							if ($term['communityId'] == $communityId) {
-								unset($arrQueue['concepts'][$termId]);
-								break;
-							}
-						}
-					}
-				}
 
 				for($i=0; $i<sizeof($arrTerms); $i++){
 					$term = $arrTerms[$i];

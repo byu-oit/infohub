@@ -56,7 +56,7 @@
 				<?php if (empty($terms)): ?>
 					<h3>Well, this is embarrassing. We haven't yet specified the output fields for this API, but it is functional, and you can still request access to it.</h3>
 				<?php else: ?>
-					<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" api="<?= empty($terms) ? 'true' : 'false' ?>" onclick="addToQueue(this, false, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
+					<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" api="<?= empty($terms) ? 'true' : 'false' ?>" onclick="addToQueue(this, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
 					<table class="api-terms checkBoxes">
 						<tr class="header">
 							<th><input type="checkbox" onclick="toggleAllCheckboxes(this)" checked="checked" name="toggleCheckboxes"/></th>
@@ -153,7 +153,7 @@
 						<?php endforeach ?>
 					</table>
 				<?php endif ?>
-				<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" api="<?= empty($terms) ? 'true' : 'false' ?>" onclick="addToQueue(this, false, true)" class="requestAccess grow mainRequestBtn" value="Add To Request">
+				<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" api="<?= empty($terms) ? 'true' : 'false' ?>" onclick="addToQueue(this, true)" class="requestAccess grow mainRequestBtn" value="Add To Request">
 			</div>
 		</div>
 	</div>
