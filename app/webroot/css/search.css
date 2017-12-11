@@ -1335,6 +1335,7 @@ img.resultBodyLoading {
   padding-bottom: 8px;
 }
 #apiBody .api-terms {
+  margin-top: 30px;
   padding: 4px;
   font-size: 14px;
 }
