@@ -4,7 +4,7 @@ class MyaccountController extends AppController {
 	function beforeFilter() {
 		parent::beforeFilter();
 		$this->Auth->deny();
-		$this->Auth->allow('logout');
+		$this->Auth->allow('logout', 'getCoordinatorPhoneNumber');
 	}
 
 	private static function sortUsers($a, $b){
