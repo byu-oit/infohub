@@ -4,7 +4,7 @@ class MyaccountController extends AppController {
 	function beforeFilter() {
 		parent::beforeFilter();
 		$this->Auth->deny();
-		$this->Auth->allow('logout', 'getCoordinatorPhoneNumber');
+		$this->Auth->allow('logout');
 	}
 
 	private static function sortUsers($a, $b){
@@ -37,29 +37,6 @@ class MyaccountController extends AppController {
 			}
 		}
 		return $ordered + $array;
-	}
-
-	public function getCoordinatorPhoneNumber($userid) {
-		$this->autoRender = false;
-
-		if (empty($userid)) {
-			return;
-		}
-
-		$this->loadModel('CollibraAPI');
-		$profile = $this->CollibraAPI->get("user/{$userid}", ['json' => true]);
-
-		if (!isset($profile)) {
-			return;
-		}
-
-		if (!empty($profile->phoneNumbers) && count(get_object_vars($profile->phoneNumbers)) > 0) {
-			foreach ($profile->phoneNumbers->phone as $ph) {
-				if ($ph->phoneType == 'WORK') {
-					return $ph->number;
-				}
-			}
-		}
 	}
 
 	public function index() {

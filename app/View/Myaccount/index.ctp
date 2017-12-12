@@ -18,7 +18,7 @@
 	function loadCoordinatorPhones() {
 		$('.approver').each(function() {
 			var thisElem = $(this);
-			$.get('/myaccount/getCoordinatorPhoneNumber/' + $(this).attr('user-id'))
+			$.get('/people/getCoordinatorPhoneNumber/' + $(this).attr('user-id'))
 				.done(function(data) {
 					if (data) {
 						var html = '<div class="contactNumber"><div class="icon"></div>'+data+'</div>';
