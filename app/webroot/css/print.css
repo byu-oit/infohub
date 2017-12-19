@@ -38,9 +38,9 @@
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
-#requestItem .two-col-row .riDate span,
-#requestItem .two-col-row .status span,
-#requestItem .status span {
+#requestItem .two-col-row span.label,
+#requestItem .two-col-row span.label,
+#requestItem .status span.label {
   color: #224d7d;
 }
 #requestItem h3 {
@@ -75,6 +75,8 @@
 #requestItem .two-col-row .data-col {
   display: inline-block;
   width: 49%;
+  -webkit-margin-before: 0.25em;
+  -webkit-margin-after: 0.25em;
 }
 #requestItem .two-col-row .data-col h5 {
   font-size: 13px;

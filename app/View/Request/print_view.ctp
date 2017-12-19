@@ -63,9 +63,15 @@
 ?>
 	        </p>
 	        <div class="two-col-row">
-	            <p class="riDate data-col"><span>Date Created:&nbsp;</span><?= date('n/j/Y', ($request->createdOn)/1000) ?></p>
-	            <p class="status data-col"><span>Approval Status:&nbsp;</span><?= $request->statusReference->signifier ?></p>
+				<p class="data-col"><span class="label">Approval Status:&nbsp;</span><?= $request->statusReference->signifier ?></p>
+	            <p class="data-col"><span class="label">Date Created:&nbsp;</span><?= date('n/j/Y', ($request->createdOn)/1000) ?></p>
 	        </div>
+			<?php if (!$parent): ?>
+				<div class="two-col-row">
+					<p class="data-col"><span class="label">Custodian:&nbsp;</span><?= $request->roles['Custodian'][0]->firstName.' '.$request->roles['Custodian'][0]->lastName ?></p>
+					<p class="data-col"><span class="label">Steward:&nbsp;</span><?= $request->roles['Steward'][0]->firstName.' '.$request->roles['Steward'][0]->lastName ?></p>
+				</div>
+			<?php endif ?>
 	<div class="clear"></div>
 
 	<h3>Application Name</h3>
@@ -102,22 +108,18 @@
 	</div>
 	<div class="two-col-row requester-sponsor">
 		<?php $attrs = $request->attributeReferences->attributeReference; ?>
-		<div class="data-col">
-			<p>
-				<strong><?= $attrs['Requester Name']->value ?></strong><br>
-				<?= $attrs['Requester Role']->value.' | '.$attrs['Requesting Organization']->value ?><br>
-				<?= $attrs['Requester Email']->value ?><br>
-				<?= $attrs['Requester Phone']->value ?>
-			</p>
-		</div>
-		<div class="data-col">
-			<p>
-				<strong><?= $attrs['Sponsor Name']->value ?></strong><br>
-				<?= $attrs['Sponsor Role']->value ?><br>
-				<?= $attrs['Sponsor Email']->value ?><br>
-				<?= $attrs['Sponsor Phone']->value ?>
-			</p>
-		</div>
+		<p class="data-col">
+			<strong><?= $attrs['Requester Name']->value ?></strong><br>
+			<?= $attrs['Requester Role']->value.' | '.$attrs['Requesting Organization']->value ?><br>
+			<?= $attrs['Requester Email']->value ?><br>
+			<?= $attrs['Requester Phone']->value ?>
+		</p>
+		<p class="data-col">
+			<strong><?= $attrs['Sponsor Name']->value ?></strong><br>
+			<?= $attrs['Sponsor Role']->value ?><br>
+			<?= $attrs['Sponsor Email']->value ?><br>
+			<?= $attrs['Sponsor Phone']->value ?>
+		</p>
 	</div>
 	<div class="clear"></div>
 
@@ -156,8 +158,13 @@
 		}
 		echo '</p>';
 ?>
-        <div class="status"><span>Approval Status:&nbsp;</span><?= $du->status ?></div>
-		<br>
+        <div class="two-col-row">
+			<p class="data-col"><span class="label">Approval Status:&nbsp;</span><?= $du->status ?></p>
+		</div>
+		<div class="two-col-row">
+			<p class="data-col"><span class="label">Custodian:&nbsp;</span><?= $du->roles['Custodian'][0]->firstName.' '.$du->roles['Custodian'][0]->lastName ?></p>
+			<p class="data-col"><span class="label">Steward:&nbsp;</span><?= $du->roles['Steward'][0]->firstName.' '.$du->roles['Steward'][0]->lastName ?></p>
+		</div>
 <?php
 		foreach ($arrOrderedFormFields as $field) {
 			foreach ($du->attributeReferences->attributeReference as $attrRef) {
