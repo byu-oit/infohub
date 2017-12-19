@@ -292,17 +292,23 @@ class RequestController extends AppController {
 		}
 
 		$this->loadModel('CollibraAPI');
-		$draft = $this->CollibraAPI->checkForDSRDraft($netId);
-		if (empty($draft)) {
+		$draftId = $this->CollibraAPI->checkForDSRDraft($netId);
+		if (empty($draftId)) {
 			return;
 		}
-		$draftId = $draft[0]->id;
+		$draft = $this->CollibraAPI->get('term/'.$draftId[0]->id);
+		$draft = json_decode($draft);
+
+		foreach ($draft->attributeReferences->attributeReference as $attr) {
+			if ($attr->labelReference->signifier == 'Additional Information Requested') {
+				$attrId = $attr->resourceId;
+			}
+		}
 
 		$arrQueue = $this->Session->read('queue');
-		$postData['label'] = Configure::read('Collibra.formFields.descriptionOfInformation');
 		$postData['value'] = json_encode($arrQueue);
 		$postString = http_build_query($postData);
-		$resp = $this->CollibraAPI->post('term/'.$draftId.'/attributes', $postString);
+		$resp = $this->CollibraAPI->post('attribute/'.$attrId, $postString);
 	}
 
 	public function deleteDraft() {

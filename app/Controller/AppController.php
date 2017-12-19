@@ -59,7 +59,15 @@ class AppController extends Controller {
 				$byuUserDepartment = $_SESSION["byuUserDepartment"];
 			}
 
-			if (!$this->Session->check('cartLoaded')) {
+			$cartEmpty = true;
+			if ($this->Session->check('queue')) {
+				$arrQueue = $this->Session->read('queue');
+				$cartEmpty = empty($arrQueue['businessTerms']) &&
+							 empty($arrQueue['concepts']) &&
+							 empty($arrQueue['apiFields']) &&
+							 empty($arrQueue['emptyApis']);
+			}
+			if (!$this->Session->check('cartLoaded') && $cartEmpty) {
 				$this->loadCart();
 				$this->Session->write('cartLoaded', true);
 			}
