@@ -610,7 +610,8 @@ img.resultBodyLoading {
 #searchBody #searchSuccess #srLower .resultItem .requestAccess,
 #apiBody #searchSuccess #srLower .resultItem .requestAccess,
 #searchBody #searchResults #srLower .resultItem .submit input,
-#apiBody #searchResults #srLower .resultItem #apiForm .submit input {
+#apiBody #searchResults #srLower .resultItem #apiForm .submit input,
+#apiBody #searchResults #srLower .resultItem #apiForm .update-submit {
   color: #fff;
   font-size: 12.5px;
   text-decoration: none;

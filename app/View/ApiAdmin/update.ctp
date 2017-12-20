@@ -3,11 +3,68 @@
 	$this->Html->css('search', null, array('inline' => false));
 	$this->Html->css('account', null, array('inline' => false));
 ?>
+<script type="text/javascript" src="/js/jquery.serialize-object.min.js"></script>
 <script>
+
+	function chunkPostData() {
+		var postData = $('form#apiForm').serializeObject();
+		var host = postData.data.Api.host;
+		var path = postData.data.Api.basePath;
+		var numElements = postData.data.Api.elements.length;
+
+		if (numElements < 150) {
+
+			$.post('/api_admin/update/'+host+path, postData)
+				.done(function(data) {
+					data = JSON.parse(data);
+					if (!data.success) {
+						window.location.reload(true);
+					}
+
+					if (postData.propose == "true") {
+						window.location.href = '/api_admin/proposeTerms/'+host+path;
+					} else {
+						window.location.href = '/apis/'+host+path;
+					}
+				});
+
+		} else {
+
+			var chunkedElements = [];
+			var i;
+			for (i = 0; i < numElements - 149; i += 150) {
+				chunkedElements.push(postData.data.Api.elements.slice(i, i+150))
+			}
+			if (i < numElements) {
+				chunkedElements.push(postData.data.Api.elements.slice(i, numElements));
+			}
+
+			var success = true;
+			for (i = 0; i < chunkedElements.length; i++) {
+				postData.data.Api.elements = chunkedElements[i];
+				$.post('/api_admin/update/'+host+path, postData)
+					.done(function(data) {
+	            		data = JSON.parse(data);
+						if (!data.success) {
+							success = false;
+						}
+					});
+			}
+			if (!success) {
+				window.location.reload(true);
+			}
+
+			if (postData.propose == "true") {
+				window.location.href = '/api_admin/proposeTerms/'+host+path;
+			} else {
+				window.location.href = '/apis/'+host+path;
+			}
+		}
+	}
 
 	function proposeRedirect() {
 		$('#apiForm').find('input[id=propose]').val('true');
-		$('#apiForm').find('input:submit').click();
+		$('#apiForm').find('.update-submit').click();
 	}
 
 </script>
@@ -90,9 +147,7 @@
 					<input type="hidden" id="propose" name="propose" value="false">
 					<a class="lower-btn grow" href="javascript:proposeRedirect()">Propose New Business Terms</a>
 					<a class="lower-btn grow" href="/apis/<?=$hostname.$basePath?>">Cancel</a>
-					<div class="submit">
-						<input type="submit" class="grow" value="Save">
-					</div>
+					<div class="update-submit grow" onclick="chunkPostData()">Save</div>
 				<?= $this->Form->end() ?>
 			</div>
 		</div>
