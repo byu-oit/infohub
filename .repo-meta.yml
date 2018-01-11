@@ -1,4 +1,4 @@
-$schemaver: '2.0'
+$schemaver: 2.1
 repo_url: https://github.com/byu-oit/infohub
 software:
   - aliases:
@@ -29,8 +29,8 @@ software:
             db_read_write:
             software:
               - Collibra DGC 4.6
-              - Collibra DGC 5.0
-              - InfoHub
+              - Collibra DGC 5.0 Web App Production
+              - InfoHub Web App Production
           reverse_proxy:
           runs_on:
             blade_server:
@@ -44,10 +44,6 @@ software:
           physical_url:
           product_page: https://infohub.byu.edu
           virtual_url:
-    tags:
-      app: InfoHub
-      data-sensitivity: confidential
-      team: AD-Front End Technologies and Applications
     technologies_used:
       - Travis-ci.com
       - PHP
@@ -59,3 +55,4 @@ software:
       - ApacheConf
       - Composer
     type: Web App
+    data_sensitivity: confidential
