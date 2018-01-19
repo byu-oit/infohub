@@ -1136,13 +1136,13 @@ class RequestController extends AppController {
 			}
 		}
 		if (!empty($apis)) {
-			$apiList = "Requested APIs:\n";
+			$apiList = "<b>Requested APIs:</b>\n";
 			foreach ($apis as $apiHost => $apiPaths) {
 				foreach ($apiPaths as $apiPath => $term) {
-					$apiList .= ". . {$apiHost}/{$apiPath}\n";
+					$apiList .= ". . <u><b>{$apiHost}/{$apiPath}</u></b>\n";
 					if (!empty($term['requestedBusinessTerm'])) {
 						$term['requestedBusinessTerm'] = array_unique($term['requestedBusinessTerm']);
-						$apiList .= ". . . . Requested business terms:\n. . . . . . " . implode("\n. . . . . . ", $term['requestedBusinessTerm']) . "\n";
+						$apiList .= "\n. . . . <b>Requested business terms:</b>\n. . . . . . " . implode("\n. . . . . . ", $term['requestedBusinessTerm']) . "\n";
 					}
 					if (!empty($term['requestedConcept'])) {
 						$term['requestedConcept'] = array_unique($term['requestedConcept']);
@@ -1150,10 +1150,10 @@ class RequestController extends AppController {
 					}
 					if (!empty($term['unrequested'])) {
 						$term['unrequested'] = array_unique($term['unrequested']);
-						$apiList .= ". . . . Unrequested terms:\n. . . . . . " . implode("\n. . . . . . ", $term['unrequested']) . "\n";
+						$apiList .= "\n. . . . <b>Unrequested terms:</b>\n. . . . . . " . implode("\n. . . . . . ", $term['unrequested']) . "\n";
 					}
 					if (!empty($term['unmapped'])) {
-						$apiList .= ". . . . Fields with no Business Terms:\n";
+						$apiList .= "\n. . . . <b>Fields with no Business Terms:</b>\n";
 						if (!empty($term['unmapped']['requested'])) {
 							$apiList .= ". . . . . . Requested:\n. . . . . . . . " . implode("\n. . . . . . . . ", $term['unmapped']['requested']) . "\n";
 						}
