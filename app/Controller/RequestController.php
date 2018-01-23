@@ -44,49 +44,52 @@ class RequestController extends AppController {
 				echo $newTermsAdded;
 			} else {
 				$newTermsAdded = 0;
-				$arrTerms = $this->request->data['t'];
-				$arrTermIDs = $this->request->data['id'];
-				$arrVocabIDs = $this->request->data['vocab'];
+				$arrTerms = empty($this->request->data['t']) ? null : $this->request->data['t'];
+				$arrFields = empty($this->request->data['f']) ? null : $this->request->data['f'];
 				$apiHost = empty($this->request->data['apiHost']) ? null : $this->request->data['apiHost'];
 				$apiPath = empty($this->request->data['apiPath']) ? null : $this->request->data['apiPath'];
 
 				$arrQueue = $this->Session->read('queue');
 
-				for($i=0; $i<sizeof($arrTerms); $i++){
-					$term = $arrTerms[$i];
-					$termID = $arrTermIDs[$i];
-					$vocabID = $arrVocabIDs[$i];
+				if (isset($arrTerms)) {
+					foreach ($arrTerms as $term) {
+						if (empty($arrQueue['businessTerms'][$term['id']]) && empty($arrQueue['concepts'][$term['id']])) {
+							$requestable = true;
+							$concept = false;
+							$termResp = $this->CollibraAPI->get('term/'.$term['id']);
+							$termResp = json_decode($termResp);
 
-					if(!empty($termID) && empty($arrQueue['businessTerms'][$termID]) && empty($arrQueue['concepts'][$termID])){ // Specified business term
-						$requestable = true;
-						$concept = false;
-						$termResp = $this->CollibraAPI->get('term/'.$termID);
-						$termResp = json_decode($termResp);
-
-						// verify that the term is requestable
-						if(!Configure::read('allowUnrequestableTerms')){
-							foreach($termResp->attributeReferences->attributeReference as $attr){
-								if($attr->labelReference->resourceId == Configure::read('Collibra.attribute.concept')){
-									$concept = $attr->value == 'true';
+							// verify that the term is requestable
+							if(!Configure::read('allowUnrequestableTerms')){
+								foreach($termResp->attributeReferences->attributeReference as $attr){
+									if($attr->labelReference->resourceId == Configure::read('Collibra.attribute.concept')){
+										$concept = $attr->value == 'true';
+									}
 								}
 							}
-						}
 
-						// verify that the term is approved
-						if(!Configure::read('allowUnapprovedTerms')){
-							$requestable = $termResp->statusReference->signifier == 'Accepted';
-						}
+							// verify that the term is approved
+							if(!Configure::read('allowUnapprovedTerms')){
+								$requestable = $termResp->statusReference->signifier == 'Accepted';
+							}
 
-						if($requestable && !$concept){
-							$newTermsAdded++;
-							$arrQueue['businessTerms'][$termID] = ['term' => $term, 'communityId' => $vocabID, 'apiHost' => $apiHost, 'apiPath' => $apiPath];
-						} else if ($requestable && $concept) {
-							$newTermsAdded++;
-							$arrQueue['concepts'][$termID] = ['term' => $term, 'communityId' => $vocabID, 'apiHost' => $apiHost, 'apiPath' => $apiPath];
+							if($requestable && !$concept){
+								$newTermsAdded++;
+								$arrQueue['businessTerms'][$term['id']] = ['term' => $term['title'], 'communityId' => $term['vocabId'], 'apiHost' => $apiHost, 'apiPath' => $apiPath];
+							} else if ($requestable && $concept) {
+								$newTermsAdded++;
+								$arrQueue['concepts'][$term['id']] = ['term' => $term['title'], 'communityId' => $term['vocabId'], 'apiHost' => $apiHost, 'apiPath' => $apiPath];
+							}
 						}
-					} else if ((empty($termID) || $termID == 'undefined') && !empty($term) && empty($arrQueue['apiFields'][$term])) { // Unspecified API field
-						$newTermsAdded++;
-						$arrQueue['apiFields'][$term] = ['name' => end((explode(".", $term))), 'apiHost' => $apiHost, 'apiPath' => $apiPath];
+					}
+				}
+
+				if (isset($arrFields)) {
+					foreach ($arrFields as $field) {
+						if (empty($arrQueue['apiFields'][$field])) {
+							$newTermsAdded++;
+							$arrQueue['apiFields'][$field] = ['name' => end((explode(".", $field))), 'apiHost' => $apiHost, 'apiPath' => $apiPath];
+						}
 					}
 				}
 

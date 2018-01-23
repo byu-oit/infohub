@@ -268,22 +268,32 @@ function addToQueue(elem, displayCart){
 	}, 250);
 
 	if ($(elem).attr('api') == 'false') {
-		var arrTitles = [$(elem).attr('data-title')];
-		var arrIDs = [$(elem).attr('data-rid')];
-		var arrVocabIDs = [$(elem).attr('data-vocabID')];
+		var arrTerms = [{
+			title: $(elem).data('title'),
+			id: $(elem).data('rid'),
+			vocabId: $(elem).data('vocabid')
+		}];
+		var arrFields = [];
 		var apiHost = $(elem).attr('data-apiHost');
 		var apiPath = $(elem).attr('data-apiPath');
 
 		$(elem).parent().find('.checkBoxes').find('input').each(function(){
 			if($(this).prop("checked") && $(this).prop("name") != "toggleCheckboxes"){
-				if ($.inArray($(this).attr('data-title'), arrTitles) == -1) {
-					arrTitles.push($(this).attr('data-title'));
-					arrIDs.push($(this).val());
-					arrVocabIDs.push($(this).attr('data-vocabID'));
+
+				if (!$(this).val()) {		// For an API field with no Business Term:
+					arrFields.push($(this).data('title'));
+				}
+
+				else {						// For a Business Term:
+					arrTerms.push({
+						title: $(this).data('title'),
+						id: $(this).val(),
+						vocabId: $(this).data('vocabid')
+					});
 				}
 			}
 		});
-		$.post("/request/addToQueue", {emptyApi:'false', t:arrTitles, id:arrIDs, vocab:arrVocabIDs, apiHost: apiHost, apiPath: apiPath})
+		$.post("/request/addToQueue", {emptyApi:'false', t:arrTerms, f:arrFields, apiHost:apiHost, apiPath:apiPath})
 			.done(function(data){
 				clearInterval(loadingTextInterval);
 				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
@@ -297,7 +307,7 @@ function addToQueue(elem, displayCart){
 				}
 		});
 	} else {
-		//Add an API without specified fields to cart.
+		// Add an API without specified fields to cart.
 		var arrTitle = [$(elem).attr('data-apiPath')];
 		var apiHost = $(elem).attr('data-apiHost');
 		$.post("/request/addToQueue", {emptyApi:'true', t:arrTitle, apiHost:apiHost})
