@@ -1128,11 +1128,11 @@ class RequestController extends AppController {
 						}
 					} else {
 						if (array_key_exists($term->businessTerm[0]->termId, $arrQueue['concepts'])) {
-							$apis[$apiHost][$apiPath]['requestedConcept'][] = $term->businessTerm[0]->term;
+							$apis[$apiHost][$apiPath]['requestedConcept'][] = '('.$term->businessTerm[0]->termCommunityName.') '.$term->businessTerm[0]->term;
 						} else if (array_key_exists($term->businessTerm[0]->termId, $arrQueue['businessTerms'])) {
-							$apis[$apiHost][$apiPath]['requestedBusinessTerm'][] = $term->businessTerm[0]->term;
+							$apis[$apiHost][$apiPath]['requestedBusinessTerm'][] = '('.$term->businessTerm[0]->termCommunityName.') '.$term->businessTerm[0]->term;
 						} else {
-							$apis[$apiHost][$apiPath]['unrequested'][] = $term->businessTerm[0]->term;
+							$apis[$apiHost][$apiPath]['unrequested'][] = '('.$term->businessTerm[0]->termCommunityName.') '.$term->businessTerm[0]->term;
 						}
 					}
 				}
@@ -1145,18 +1145,21 @@ class RequestController extends AppController {
 					$apiList .= ". . <u><b>{$apiHost}/{$apiPath}</u></b>\n";
 					if (!empty($term['requestedBusinessTerm'])) {
 						$term['requestedBusinessTerm'] = array_unique($term['requestedBusinessTerm']);
+						sort($term['requestedBusinessTerm']);
 						$apiList .= "\n. . . . <b>Requested business terms:</b>\n. . . . . . " . implode("\n. . . . . . ", $term['requestedBusinessTerm']) . "\n";
 					}
 					if (!empty($term['requestedConcept'])) {
 						$term['requestedConcept'] = array_unique($term['requestedConcept']);
+						sort($term['requestedConcept']);
 						$apiList .= ". . . . Requested conceptual terms:\n. . . . . . " . implode("\n. . . . . . ", $term['requestedConcept']) . "\n";
 					}
 					if (!empty($term['unrequested'])) {
 						$term['unrequested'] = array_unique($term['unrequested']);
+						sort($term['unrequested']);
 						$apiList .= "\n. . . . <b>Unrequested terms:</b>\n. . . . . . " . implode("\n. . . . . . ", $term['unrequested']) . "\n";
 					}
 					if (!empty($term['unmapped'])) {
-						$apiList .= "\n. . . . <b>Fields with no Business Terms:</b>\n";
+						$apiList .= "\n. . . . <b>*Fields with no Business Terms:</b>\n";
 						if (!empty($term['unmapped']['requested'])) {
 							$apiList .= ". . . . . . Requested:\n. . . . . . . . " . implode("\n. . . . . . . . ", $term['unmapped']['requested']) . "\n";
 						}
