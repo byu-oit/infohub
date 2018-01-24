@@ -1,5 +1,7 @@
 <?php
 
+require 'fpdf' . DIRECTORY_SEPARATOR . 'fpdf.php';
+
 class RequestController extends AppController {
 	public $helpers = array('Html', 'Form');
 	public $uses = array('CollibraAPI', 'BYUAPI');
@@ -19,6 +21,230 @@ class RequestController extends AppController {
 
 	private static function sortTermsByDomain($a, $b){
 		return strcmp($a->domainname, $b->domainname);
+	}
+
+	// Called by a Collibra workflow upon approval of a DSA
+	public function generatePDF() {
+		$this->autoRender = false;
+
+		if (!$this->request->is('post')) {
+			return;
+		}
+
+		$dsaId = $this->request->data['id'];
+		$dsa = json_decode($this->CollibraAPI->get('term/'.$dsaId));
+		if (empty($dsa)) {
+			return json_encode(['success' => '0', 'message' => 'Invalid DSA ID given.']);
+		}
+		if ($dsa->statusReference->signifier != 'Approved') {
+			return json_encode(['success' => '0', 'message' => 'The DSA must already be approved.']);
+		}
+		$attachments = json_decode($this->CollibraAPI->get('term/'.$dsaId.'/attachments'));
+		foreach ($attachments->attachment as $file) {
+			if ($file->fileName == 'DSA_'.$dsaId.'.pdf') {
+				return json_encode(['success' => '0', 'message' => 'A PDF has already been generated for the specified DSA.']);
+			}
+		}
+
+		// $dsa->roles = $this->CollibraAPI->getResponsibilities($dsa->vocabularyReference->resourceId);
+		$dsa->parent = $this->CollibraAPI->getDataUsageParent($dsaId);
+		$dsa->policies = $this->CollibraAPI->getAssetPolicies($dsaId);
+
+		$requestedTerms = $this->CollibraAPI->getRequestedTerms($dsa->parent[0]->id);
+		$dsa->termGlossaries = array();
+		foreach ($requestedTerms as $term) {
+			if (array_key_exists($term->domainname, $dsa->termGlossaries)) {
+				array_push($dsa->termGlossaries[$term->domainname], $term);
+			} else {
+				$dsa->termGlossaries[$term->domainname] = array($term);
+			}
+		}
+
+		// load additionally included terms
+		////////////////////////////////////////////
+		$resp = $this->CollibraAPI->getAdditionallyIncludedTerms($dsaId);
+		if (!empty($resp)) {
+			$dsa->additionallyIncluded = new stdClass();
+			$dsa->additionallyIncluded->termGlossaries = [];
+			foreach ($resp as $term) {
+				if (array_key_exists($term->domainname, $dsa->additionallyIncluded->termGlossaries)) {
+					array_push($dsa->additionallyIncluded->termGlossaries[$term->domainname], $term);
+				} else {
+					$dsa->additionallyIncluded->termGlossaries[$term->domainname] = array($term);
+				}
+			}
+		}
+
+		// Generate PDF
+		////////////////////////////////////////////
+		$pdf = new FPDF('P','mm','Letter');
+		$pdf->AddPage();
+		$pdf->AddFont('Helvetica','','helvetica.php');
+		$pdf->SetFont('Helvetica','',16);
+		$pdf->SetTextColor(17,68,119);
+		$pdf->Cell(0,20,$dsa->signifier,0,1,'C');
+
+		$pdf->SetFont('','B',10);
+		$pdf->SetTextColor(0);
+		$pdf->Write(5,"Requested Data:");
+		$pdf->SetFont('','');
+
+		foreach ($dsa->termGlossaries as $glossaryName => $terms) {
+			// if ($terms[0]->commrid != $dsa->communityId) {
+			// 	continue;
+			// }
+			$pdf->SetFont('','I');
+			$pdf->Write(5,"\n{$glossaryName} - ");
+			$pdf->SetFont('','');
+			$termCount = 0;
+			foreach ($terms as $term) {
+				$pdf->Write(5,$term->termsignifier);
+				$termCount++;
+				if ($termCount < sizeof($terms)) {
+					$pdf->Write(5,',  ');
+				}
+			}
+		}
+		$pdf->Ln(8);
+
+		if (!empty($dsa->additionallyIncluded->termGlossaries)) {
+			$pdf->SetFont('','B');
+			$pdf->Write(5,"Additionally Included Data:");
+			$pdf->SetFont('','');
+
+			foreach ($dsa->additionallyIncluded->termGlossaries as $glossaryName => $terms) {
+				// if ($terms[0]->commrid != $dsa->communityId) {
+				// 	continue;
+				// }
+				$pdf->SetFont('','I');
+				$pdf->Write(5,"\n{$glossaryName} - ");
+				$pdf->SetFont('','');
+				$termCount = 0;
+				foreach ($terms as $term) {
+					$pdf->Write(5,$term->termsignifier);
+					$termCount++;
+					if ($termCount < sizeof($terms)) {
+						$pdf->Write(5,',  ');
+					}
+				}
+			}
+			$pdf->Ln(10);
+		}
+
+		foreach ($dsa->attributeReferences->attributeReference as $attr) {
+			if (isset($attr->date)) {
+				$effectiveDate = date('n/j/Y', $attr->date/1000);
+				break;
+			}
+		}
+		$pdf->Cell(0,4,"Approved ".date('n/j/Y')."  -  Effective Start Date: {$effectiveDate}");
+		$pdf->Ln(8);
+
+		$arrOrderedFormFields = [
+			"Application Name",
+			"Description of Intended Use",
+			"Access Rights",
+			"Access Method",
+			"Impact on System",
+			"Application Identity",
+			"Additional Information Requested"
+		];
+		foreach ($arrOrderedFormFields as $field) {
+			foreach ($dsa->attributeReferences->attributeReference as $attr) {
+				if ($attr->labelReference->signifier == $field) {
+					$pdf->SetFont('','B',12);
+					$pdf->Cell(0,10,$field,'B',1);
+					$pdf->Ln(2);
+					$pdf->SetFont('','',9);
+
+					$attrText = $attr->value;
+					$attrText = preg_replace('/<br[^\/,>]*\/?>/',"\n",$attrText);
+					$attrText = preg_replace(['/<li[^>]*>/','/<\/li>/'],[" ".chr(127)." ",""],$attrText);
+					$attrText = preg_replace(['/<ul[^>]*>/','/<\/ul>/'],["\n",""],$attrText);
+					$attrText = preg_replace('/<[^><]*>/','',$attrText);
+					$attrText = str_replace(chr(194),'',$attrText);
+					$attrText = preg_replace('/^\s/','',$attrText);
+
+					$pdf->MultiCell(0,4,$attrText,0,'J');
+					$pdf->Ln(4);
+					break;
+				}
+			}
+		}
+
+		$arrPersonInfo = [
+			'Requester Name' => '',
+			'Requester Role' => '',
+			'Requesting Organization' => '',
+			'Requester Email' => '',
+			'Requester Phone' => '',
+			'Sponsor Name' => '',
+			'Sponsor Role' => '',
+			'Sponsor Email' => '',
+			'Sponsor Phone' => ''
+		];
+		foreach ($dsa->attributeReferences->attributeReference as $attr) {
+			if (array_key_exists($attr->labelReference->signifier, $arrPersonInfo)) {
+				$arrPersonInfo[$attr->labelReference->signifier] = html_entity_decode($attr->value);
+			}
+		}
+
+		$pdf->SetFont('','B',12);
+		$w = $pdf->GetPageWidth();
+		$pdf->Cell(($w / 4),8,"Requester",'B');
+		$pdf->Cell(($w / 4),8);
+		$pdf->Cell(($w / 4),8,"Sponsor",'B');
+		$pdf->Cell(($w / 4),8,'',0,1);
+		$pdf->Ln(2);
+
+		$pdf->SetFont('','',9);
+		$pdf->Cell(($w / 2),4,$arrPersonInfo['Requester Name']);
+		$pdf->Cell(($w / 2),4,$arrPersonInfo['Sponsor Name'],0,1);
+		$pdf->Cell(($w / 2),4,$arrPersonInfo['Requester Role'].' | '.$arrPersonInfo['Requesting Organization']);
+		$pdf->Cell(($w / 2),4,$arrPersonInfo['Sponsor Role'],0,1);
+		$pdf->Cell(($w / 2),4,$arrPersonInfo['Requester Email']);
+		$pdf->Cell(($w / 2),4,$arrPersonInfo['Sponsor Email'],0,1);
+		$pdf->Cell(($w / 2),4,$arrPersonInfo['Requester Phone']);
+		$pdf->Cell(($w / 2),4,$arrPersonInfo['Sponsor Phone'],0,1);
+
+		if (!empty($dsa->policies)) {
+			$pdf->AddPage();
+			$pdf->SetFont('','B',12);
+			$pdf->Cell(0,10,'Data Usage Policies','B',1);
+
+			foreach($dsa->policies as $policy) {
+				$pdf->SetFont('','B',9);
+				$pdf->Cell(0,6,$policy->policyName,0,1);
+				$pdf->Ln(1);
+
+				$policyText = $policy->policyDescription;
+				$policyText = preg_replace('/<br[^\/,>]*\/?>/',"\n",$policyText);
+				$policyText = preg_replace(['/<li[^>]*>/','/<\/li>/'],[" ".chr(127)." ",""],$policyText);
+				$policyText = preg_replace(['/<ul[^>]*>/','/<\/ul>/'],["\n",""],$policyText);
+				$policyText = preg_replace('/<[^><]*>/','',$policyText);
+				$policyText = str_replace(chr(194),'',$policyText);
+				$policyText = preg_replace('/^\s/','',$policyText);
+
+				$pdf->SetFont('','',9);
+				$pdf->MultiCell(0,6,$policyText);
+				$pdf->Ln(4);
+			}
+		}
+
+		$pdfString = $pdf->Output('S');
+		$fileId = $this->CollibraAPI->uploadFile($pdfString, "DSA_".$dsaId);
+
+		$postData = [
+			'file' => $fileId,
+			'fileName' => 'DSA_' . $dsaId . '.pdf'
+		];
+		$postString = http_build_query($postData);
+		$resp = $this->CollibraAPI->post('term/'.$dsaId.'/attachment', $postString);
+
+		if ($resp->code != '201') {
+			return json_encode(['success' => '0', 'message' => $resp->body]);
+		}
+		return json_encode(['success' => '1']);
 	}
 
 	public function addToQueue() {
