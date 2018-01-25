@@ -36,9 +36,6 @@ class RequestController extends AppController {
 		if (empty($dsa)) {
 			return json_encode(['success' => '0', 'message' => 'Invalid DSA ID given.']);
 		}
-		if ($dsa->statusReference->signifier != 'Approved') {
-			return json_encode(['success' => '0', 'message' => 'The DSA must already be approved.']);
-		}
 		$attachments = json_decode($this->CollibraAPI->get('term/'.$dsaId.'/attachments'));
 		foreach ($attachments->attachment as $file) {
 			if ($file->fileName == 'DSA_'.$dsaId.'.pdf') {
