@@ -285,6 +285,12 @@ function addToQueue(elem, displayCart){
 				}
 
 				else {						// For a Business Term:
+					for (var i = 0; i < arrTerms.length; i++) {
+						if (arrTerms[i].id == $(this).val()) {
+							return;		// continue;
+						}
+					}
+
 					arrTerms.push({
 						title: $(this).data('title'),
 						id: $(this).val(),
