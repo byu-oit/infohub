@@ -8,7 +8,7 @@
 		$('input.fieldset').change(function() {
 			var thisElem = $(this);
 			thisElem.closest('tbody').find('input.chk').each(function() {
-				if ($(this).attr('fieldset').indexOf(thisElem.attr('data-title')) != -1) {
+				if ($(this).data('name').indexOf(thisElem.data('name')) != -1) {
 					$(this).prop('checked', thisElem.prop('checked'));
 				}
 			});
@@ -71,24 +71,22 @@
 									<?php if (!empty($term->businessTerm[0])): ?>
 										<input
 										type="checkbox"
-										name="terms[]"
 										data-title="<?= h($term->businessTerm[0]->term) ?>"
 										data-vocabID="<?= h($term->businessTerm[0]->termCommunityId) ?>"
 										value="<?= h($term->businessTerm[0]->termId) ?>"
-										class="chk"
+										class="chk<?php if ($term->assetType == 'Fieldset') echo ' fieldset'; ?>"
 										id="chk<?= h($term->businessTerm[0]->termId) ?>"
 										checked="checked"
-										fieldset="<?= $term->name ?>">
+										data-name="<?= $term->name ?>">
 									<?php else: ?>
 										<input
 										type="checkbox"
-										name="terms[]"
 										data-title="<?= $term->name ?>"
 										data-vocabID=""
 										value=""
 										class="chk<?php if ($term->assetType == 'Fieldset') echo ' fieldset'; ?>"
 										checked="checked"
-										fieldset="<?= $term->name ?>">
+										data-name="<?= $term->name ?>">
 									<?php endif ?>
 								</td>
 								<td><?php
