@@ -43,7 +43,7 @@ class RequestController extends AppController {
 			}
 		}
 
-		// $dsa->roles = $this->CollibraAPI->getResponsibilities($dsa->vocabularyReference->resourceId);
+		$dsa->roles = $this->CollibraAPI->getResponsibilities($dsa->vocabularyReference->resourceId);
 		$dsa->parent = $this->CollibraAPI->getDataUsageParent($dsaId);
 		$dsa->policies = $this->CollibraAPI->getAssetPolicies($dsaId);
 
@@ -59,7 +59,7 @@ class RequestController extends AppController {
 
 		// load additionally included terms
 		////////////////////////////////////////////
-		$resp = $this->CollibraAPI->getAdditionallyIncludedTerms($dsaId);
+		$resp = $this->CollibraAPI->getAdditionallyIncludedTerms($dsa->parent[0]->id);
 		if (!empty($resp)) {
 			$dsa->additionallyIncluded = new stdClass();
 			$dsa->additionallyIncluded->termGlossaries = [];
@@ -83,13 +83,15 @@ class RequestController extends AppController {
 
 		$pdf->SetFont('','B',10);
 		$pdf->SetTextColor(0);
-		$pdf->Write(5,"Requested Data:");
-		$pdf->SetFont('','');
 
 		foreach ($dsa->termGlossaries as $glossaryName => $terms) {
-			// if ($terms[0]->commrid != $dsa->communityId) {
-			// 	continue;
-			// }
+			if ($terms[0]->commrid != $dsa->vocabularyReference->communityReference->resourceId) {
+				continue;
+			}
+
+			$pdf->Write(5,"Requested Data:");
+			$pdf->SetFont('','');
+
 			$pdf->SetFont('','I');
 			$pdf->Write(5,"\n{$glossaryName} - ");
 			$pdf->SetFont('','');
@@ -101,18 +103,19 @@ class RequestController extends AppController {
 					$pdf->Write(5,',  ');
 				}
 			}
+			$pdf->Ln(10);
 		}
-		$pdf->Ln(8);
 
 		if (!empty($dsa->additionallyIncluded->termGlossaries)) {
-			$pdf->SetFont('','B');
-			$pdf->Write(5,"Additionally Included Data:");
-			$pdf->SetFont('','');
-
 			foreach ($dsa->additionallyIncluded->termGlossaries as $glossaryName => $terms) {
-				// if ($terms[0]->commrid != $dsa->communityId) {
-				// 	continue;
-				// }
+				if ($terms[0]->commrid != $dsa->vocabularyReference->communityReference->resourceId) {
+					continue;
+				}
+
+				$pdf->SetFont('','B');
+				$pdf->Write(5,"Additionally Included Data:");
+				$pdf->SetFont('','');
+
 				$pdf->SetFont('','I');
 				$pdf->Write(5,"\n{$glossaryName} - ");
 				$pdf->SetFont('','');
@@ -124,8 +127,8 @@ class RequestController extends AppController {
 						$pdf->Write(5,',  ');
 					}
 				}
+				$pdf->Ln(10);
 			}
-			$pdf->Ln(10);
 		}
 
 		foreach ($dsa->attributeReferences->attributeReference as $attr) {
@@ -134,7 +137,16 @@ class RequestController extends AppController {
 				break;
 			}
 		}
-		$pdf->Cell(0,4,"Approved ".date('n/j/Y')."  -  Effective Start Date: {$effectiveDate}");
+		$pdf->Ln(8);
+		$pdf->SetFont('','B',12);
+		$pdf->Cell(0,4,"Approved ".date('n/j/Y')."  -  Effective Start Date: {$effectiveDate}",0,1);
+		if (isset($dsa->roles['Steward'][0])) {
+			$pdf->Cell(0,4,"Steward - {$dsa->roles['Steward'][0]->firstName} {$dsa->roles['Steward'][0]->lastName}");
+		} else if (isset($dsa->roles['Custodian'][0])) {
+			$pdf->Cell(0,4,"Custodian - {$dsa->roles['Custodian'][0]->firstName} {$dsa->roles['Custodian'][0]->lastName}");
+		} else if (isset($dsa->roles['Trustee'][0])) {
+			$pdf->Cell(0,4,"Trustee - {$dsa->roles['Trustee'][0]->firstName} {$dsa->roles['Trustee'][0]->lastName}");
+		}
 		$pdf->Ln(8);
 
 		$arrOrderedFormFields = [
@@ -148,7 +160,7 @@ class RequestController extends AppController {
 		];
 		foreach ($arrOrderedFormFields as $field) {
 			foreach ($dsa->attributeReferences->attributeReference as $attr) {
-				if ($attr->labelReference->signifier == $field) {
+				if ($attr->labelReference->signifier == $field && !empty($attr->value)) {
 					$pdf->SetFont('','B',12);
 					$pdf->Cell(0,10,$field,'B',1);
 					$pdf->Ln(2);

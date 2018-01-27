@@ -1421,7 +1421,7 @@ class CollibraAPI extends Model {
 			return $requestedTerms;
 	}
 
-	public function getAdditionallyIncludedTerms($dsaId) {
+	public function getAdditionallyIncludedTerms($dsrId) {
 		$tableConfig = ['TableViewConfig' => [
 			'Columns' => [
 				['Column' => ['fieldName' => 'termid']],
@@ -1463,13 +1463,13 @@ class CollibraAPI extends Model {
 								'Field' => [
 										'name' => 'dsaId',
 										'operator' => 'EQUALS',
-										'value' => $dsaId]]]]]],
+										'value' => $dsrId]]]]]],
 					'Filter' => [
 						'AND' => [[
 							'Field' => [
 								'name' => 'dsaId',
 								'operator' => 'EQUALS',
-								'value' => $dsaId]]]]]]]];
+								'value' => $dsrId]]]]]]]];
 
 		$terms = $this->fullDataTable($tableConfig);
 		return $terms;
