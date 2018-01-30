@@ -128,7 +128,7 @@
 								echo '<li id="requestItem'.$id.'"><input type="checkbox" name="businessTerms[]" value="'.$id.'" checked="checked">'.$term['term'].'</li>';
 							}
 							foreach ($arrQueue['concepts'] as $id => $term) {
-								echo '<li id="requestItem'.$id.'"><input type="checkbox" name="concepts[]" value="'.$id.'" term-name="'.$term['name'].'" apiHost="'.$term['apiHost'].'" apiPath="'.$term['apiPath'].'" checked="checked">'.$term['term'].'</li>';
+								echo '<li id="requestItem'.$id.'"><input type="checkbox" name="concepts[]" value="'.$id.'" term-name="'.$term['term'].'" apiHost="'.$term['apiHost'].'" apiPath="'.$term['apiPath'].'" checked="checked">'.$term['term'].'</li>';
 							}
 							foreach ($arrQueue['emptyApis'] as $path => $api){
 								$displayName = strlen($path) > 28 ? substr($path, 0, 28) . "..." : $path;

@@ -707,7 +707,7 @@ class RequestController extends AppController {
 								}
 							}
 							if ($requestedConcept) {
-								$addedApis[$apiHost][$apiPath]['requestedConcept'][] = $term->businessTerm[0]->term;
+								$addedApis[$apiHost][$apiPath]['requestedConcept'][] = '('.$term->businessTerm[0]->termCommunityName.') '.$term->businessTerm[0]->term;
 							} else {
 								$requestedTerm = false;
 								if (isset($this->request->data['arrBusinessTerms'])) {
@@ -719,9 +719,9 @@ class RequestController extends AppController {
 									}
 								}
 								if ($requestedTerm) {
-									$addedApis[$apiHost][$apiPath]['requestedBusinessTerm'][] = $term->businessTerm[0]->term;
+									$addedApis[$apiHost][$apiPath]['requestedBusinessTerm'][] = '('.$term->businessTerm[0]->termCommunityName.') '.$term->businessTerm[0]->term;
 								} else {
-									$addedApis[$apiHost][$apiPath]['unrequested'][] = $term->businessTerm[0]->term;
+									$addedApis[$apiHost][$apiPath]['unrequested'][] = '('.$term->businessTerm[0]->termCommunityName.') '.$term->businessTerm[0]->term;
 								}
 							}
 						}
@@ -730,24 +730,27 @@ class RequestController extends AppController {
 			}
 
 			if (!empty($addedApis)) {
-				$additionString .= "<br/><br/>Newly Requested APIs:<br/>";
+				$additionString .= "<br/><br/><b>Newly Requested APIs:</b><br/>";
 				foreach ($addedApis as $apiHost => $apiPaths) {
 					foreach ($apiPaths as $apiPath => $term) {
-						$additionString .= ". . {$apiHost}/{$apiPath}<br/>";
+						$additionString .= ". . <u><b>{$apiHost}/{$apiPath}</u></b><br/>";
 						if (!empty($term['requestedBusinessTerm'])) {
 							$term['requestedBusinessTerm'] = array_unique($term['requestedBusinessTerm']);
-							$additionString .= ". . . . Requested business terms:<br/>. . . . . . " . implode("<br/>. . . . . . ", $term['requestedBusinessTerm']) . "<br/>";
+							sort($term['requestedBusinessTerm']);
+							$additionString .= "<br/>. . . . <b>Requested business terms:</b><br/>. . . . . . " . implode("<br/>. . . . . . ", $term['requestedBusinessTerm']) . "<br/>";
 						}
 						if (!empty($term['requestedConcept'])) {
 							$term['requestedConcept'] = array_unique($term['requestedConcept']);
+							sort($term['requestedConcept']);
 							$additionString .= ". . . . Requested conceptual terms:<br/>. . . . . . " . implode("<br/>. . . . . . ", $term['requestedConcept']) . "<br/>";
 						}
 						if (!empty($term['unrequested'])) {
 							$term['unrequested'] = array_unique($term['unrequested']);
-							$additionString .= ". . . . Unrequested terms:<br/>. . . . . . " . implode("<br/>. . . . . . ", $term['unrequested']) . "<br/>";
+							sort($term['unrequested']);
+							$additionString .= "<br/>. . . . <b>Unrequested terms:</b><br/>. . . . . . " . implode("<br/>. . . . . . ", $term['unrequested']) . "<br/>";
 						}
 						if (!empty($term['unmapped'])) {
-							$additionString .= ". . . . Fields with no Business Terms:<br/>";
+							$additionString .= "<br/>. . . . <b>*Fields with no Business Terms:</b><br/>";
 							if (!empty($term['unmapped']['requested'])) {
 								$additionString .= ". . . . . . Requested:<br/>. . . . . . . . " . implode("<br/>. . . . . . . . ", $term['unmapped']['requested']) . "<br/>";
 							}
