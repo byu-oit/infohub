@@ -580,6 +580,7 @@ class RequestController extends AppController {
 
 			$resp = $this->CollibraAPI->get('term/'.$this->request->data['dsrId']);
 			$request = json_decode($resp);
+			$request->terms = $this->CollibraAPI->getRequestedTerms($request->resourceId);
 			$request->additionallyIncluded = $this->CollibraAPI->getAdditionallyIncludedTerms($request->resourceId);
 			$request->isNecessary = $this->CollibraAPI->getNecessaryAPIs($request->resourceId);
 
@@ -780,9 +781,20 @@ class RequestController extends AppController {
 				}
 			}
 
-			$newApiBusinessTerms = array_filter($newApiBusinessTerms, function($termid) use($request) {
+			$postData = $this->request->data;
+			$newApiBusinessTerms = array_filter($newApiBusinessTerms, function($termid) use($request, $postData) {
+				foreach ($request->terms as $alreadyRequested) {
+					if ($alreadyRequested->termrid == $termid) {
+						return false;
+					}
+				}
 				foreach ($request->additionallyIncluded as $alreadyIncluded) {
 					if ($alreadyIncluded->termid == $termid) {
+						return false;
+					}
+				}
+				foreach ($postData['arrBusinessTerms'] as $newAdditionId) {
+					if ($newAdditionId == $termid) {
 						return false;
 					}
 				}
