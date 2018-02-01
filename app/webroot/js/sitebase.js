@@ -305,7 +305,6 @@ function addToQueue(elem, displayCart){
 					clearInterval(loadingTextInterval);
 					$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
 					$(elem).closest('.resultItem').find('input[type=checkbox]').prop('checked', false);
-					data = parseInt(data);
 					if (displayCart) {
 						showRequestQueue();
 					}
@@ -318,7 +317,6 @@ function addToQueue(elem, displayCart){
 					clearInterval(loadingTextInterval);
 					$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
 					$(elem).closest('.resultItem').find('input[type=checkbox]').prop('checked', false);
-					data = parseInt(data);
 					if (displayCart) {
 						showRequestQueue();
 					}
@@ -333,7 +331,6 @@ function addToQueue(elem, displayCart){
 			.done(function(data) {
 				clearInterval(loadingTextInterval);
 				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
-				data = parseInt(data);
 				if (displayCart) {
 					showRequestQueue();
 				}

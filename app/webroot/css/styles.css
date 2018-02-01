@@ -299,13 +299,17 @@ header #headerInner #headerRight #request-popup #progress-bar[role][aria-valueno
   background: #d5dce4 !important;
 }
 header #headerInner #headerRight #request-popup #progress-bar::-webkit-progress-bar {
-  background: #abcdef;
+  background: #d5dce4;
 }
 header #headerInner #headerRight #request-popup #progress-bar {
   color: #31507b;
 }
-header #headerInner #headerRight #request-popup #progress-bar::-moz-progress-bar,
-header #headerInner #headerRight #request-popup #progress-bar::-webkit-progress-value,
+header #headerInner #headerRight #request-popup #progress-bar::-moz-progress-bar {
+  background: #31507b;
+}
+header #headerInner #headerRight #request-popup #progress-bar::-webkit-progress-value {
+  background: #31507b;
+}
 header #headerInner #headerRight #request-popup #progress-bar[aria-valuenow]:before {
   background: #31507b;
 }
