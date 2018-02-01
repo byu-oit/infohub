@@ -299,36 +299,103 @@ function addToQueue(elem, displayCart){
 				}
 			}
 		});
-		$.post("/request/addToQueue", {emptyApi:'false', t:arrTerms, f:arrFields, apiHost:apiHost, apiPath:apiPath})
-			.done(function(data){
-				clearInterval(loadingTextInterval);
-				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
-				$(elem).closest('.resultItem').find('input[type=checkbox]').prop('checked', false);
-				data = parseInt(data);
-				if(data>0){
+		if ((arrTerms.length * 3) + arrFields.length < 500) {
+			$.post("/request/addToQueue", {emptyApi:'false', t:arrTerms, f:arrFields, apiHost:apiHost, apiPath:apiPath})
+				.done(function(data) {
+					clearInterval(loadingTextInterval);
+					$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
+					$(elem).closest('.resultItem').find('input[type=checkbox]').prop('checked', false);
+					data = parseInt(data);
 					if (displayCart) {
 						showRequestQueue();
 					}
 					updateQueueSize();
-				}
-		});
+			});
+		} else {
+			largeAddProgressSetUp(arrTerms.length, arrFields.length);
+			largeAddToQueue(arrTerms, arrFields, apiHost, apiPath)
+				.then(function(data) {
+					clearInterval(loadingTextInterval);
+					$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
+					$(elem).closest('.resultItem').find('input[type=checkbox]').prop('checked', false);
+					data = parseInt(data);
+					if (displayCart) {
+						showRequestQueue();
+					}
+					updateQueueSize();
+				});
+		}
 	} else {
 		// Add an API without specified fields to cart.
 		var arrTitle = [$(elem).attr('data-apiPath')];
 		var apiHost = $(elem).attr('data-apiHost');
 		$.post("/request/addToQueue", {emptyApi:'true', t:arrTitle, apiHost:apiHost})
-			.done(function(data){
+			.done(function(data) {
 				clearInterval(loadingTextInterval);
 				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
 				data = parseInt(data);
-				if(data>0){
-					if (displayCart) {
-						showRequestQueue();
-					}
-					updateQueueSize();
+				if (displayCart) {
+					showRequestQueue();
 				}
+				updateQueueSize();
 		});
 	}
+}
+function largeAddToQueue(arrTerms, arrFields, apiHost, apiPath, termsStride = 75, fieldsStride = 150) {
+	if (arrTerms.length > termsStride) {
+		return new Promise(function(resolve) {
+			var request = $.post("/request/addToQueue", {emptyApi:'false', t:arrTerms.slice(0, termsStride), f:[], apiHost:apiHost, apiPath:apiPath})
+				.then(() => {
+					largeAddProgressIncrement();
+				});
+			var recur = largeAddToQueue(arrTerms.slice(termsStride), arrFields, apiHost, apiPath, termsStride, fieldsStride);
+
+			Promise.all([request, recur]).then(() => resolve());
+			});
+	}
+	else if (arrFields.length > fieldsStride) {
+		return new Promise(function(resolve) {
+			var request = $.post("/request/addToQueue", {emptyApi:'false', t:[], f:arrFields.slice(0, fieldsStride), apiHost:apiHost, apiPath:apiPath})
+				.then(() => {
+					largeAddProgressIncrement();
+				});
+			var recur = largeAddToQueue(arrTerms, arrFields.slice(fieldsStride), apiHost, apiPath, termsStride, fieldsStride);
+
+			Promise.all([request, recur]).then(() => resolve());
+			});
+	}
+	else {
+		return new Promise(function(resolve) {
+			$.post("/request/addToQueue", {emptyApi:'false', t:arrTerms, f:arrFields, apiHost:apiHost, apiPath:apiPath})
+				.then(() => {
+					largeAddProgressIncrement();
+					resolve();
+				});
+			});
+	}
+}
+function largeAddProgressSetUp(termsSize, fieldsSize, termsStride = 75, fieldsStride = 150) {
+	var denominator = Math.floor(termsSize / termsStride) + Math.floor(fieldsSize / fieldsStride) + 1;
+
+	var html = '<strong>This will take a moment... (<span id="progress-numerator">0</span>/'+denominator+')</strong>'+
+				'<progress id="progress-bar" value="0" max="1" data-numerator="0" data-denominator="'+denominator+'">0% done</progress>';
+	if ($(window).scrollTop() > 50) {
+		var requestIconPos = $('#request-queue').offset();
+		var left = requestIconPos.left - $('#request-popup').width() - 16;
+		$('#request-popup').addClass('fixed').css('left', left);
+	} else {
+		$('#request-popup').removeClass('fixed').css('left', 'auto');
+	}
+	$('#request-popup').html(html).slideDown('fast');
+}
+function largeAddProgressIncrement() {
+	var bar = $('#progress-bar');
+	var numerator = bar.data('numerator') + 1;
+	var denominator = bar.data('denominator');
+
+	$('#progress-numerator').html(numerator);
+	bar.data('numerator', numerator);
+	bar.val(numerator / denominator);
 }
 function toggleAllCheckboxes(elem) {
 	$(elem).closest('.resultItem').find('input').each(function(){
