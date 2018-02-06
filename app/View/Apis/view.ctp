@@ -7,9 +7,11 @@
 
 		$('input.fieldset').change(function() {
 			var thisElem = $(this);
+			var arrFieldsetPaths = [thisElem.data('name')];
 			thisElem.closest('tbody').find('input.chk').each(function() {
-				if ($(this).data('name').indexOf(thisElem.data('name')) != -1) {
+				if (arrFieldsetPaths.includes($(this).data('fieldset-path'))) {
 					$(this).prop('checked', thisElem.prop('checked'));
+					arrFieldsetPaths.push($(this).data('name'));
 				}
 			});
 		});
@@ -77,7 +79,12 @@
 										class="chk<?php if ($term->assetType == 'Fieldset') echo ' fieldset'; ?>"
 										id="chk<?= h($term->businessTerm[0]->termId) ?>"
 										checked="checked"
-										data-name="<?= $term->name ?>">
+										data-name="<?= $term->name ?>"
+										data-fieldset-path="<?php
+											$path = explode('.', $term->name);
+											array_pop($path);
+											echo implode('.', $path);
+										?>">
 									<?php else: ?>
 										<input
 										type="checkbox"
@@ -86,7 +93,12 @@
 										value=""
 										class="chk<?php if ($term->assetType == 'Fieldset') echo ' fieldset'; ?>"
 										checked="checked"
-										data-name="<?= $term->name ?>">
+										data-name="<?= $term->name ?>"
+										data-fieldset-path="<?php
+											$path = explode('.', $term->name);
+											array_pop($path);
+											echo implode('.', $path);
+										?>">
 									<?php endif ?>
 								</td>
 								<td><?php
