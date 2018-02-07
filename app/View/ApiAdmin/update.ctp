@@ -104,13 +104,10 @@
 							<tr>
 								<td><?php
 									$termPath = explode('.', $term->name);
-									foreach ($termPath as $pathStep) {
-										if ($pathStep != end($termPath)) {
-											echo str_repeat('&nbsp;', 6);
-										} else {
-											echo $pathStep;
-										}
+									for ($i = 0; $i < count($termPath) - 1; $i++) {
+										echo str_repeat('&nbsp;', 12);
 									}
+									echo end($termPath);
 								?></td>
 								<?php if (empty($term->businessTerm[0])): ?>
 									<td>
