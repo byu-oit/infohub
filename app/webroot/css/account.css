@@ -231,13 +231,13 @@
   border-color: #fc9898;
 }
 #accountMid .accountMain .requestItem .status-details-flex .status-wrapper.compressed {
-  width: 330px;
+  width: 440px;
 }
 #accountMid .accountMain .requestItem .status-details-flex .status-wrapper.compressed .status-cell {
   width: 93px;
   height: 33px;
 }
-#accountMid .accountMain .requestItem .status-details-flex .status-wrapper.compressed .right {
+#accountMid .accountMain .requestItem .status-details-flex .status-wrapper.compressed .one-line {
   line-height: 33px;
 }
 #accountMid .accountMain .requestItem .status-details-flex .status-wrapper.compressed .obsolete,

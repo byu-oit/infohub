@@ -214,13 +214,16 @@
 				switch ($req->statusReference->signifier) {
 					case 'In Progress':
 					case 'Request In Progress':
-						echo '<div class="status-cell green-border left active">Request In Progress</div><div class="status-cell light-green-border">Agreement Review</div><div class="status-cell light-green-border right">Completed</div>';
+						echo '<div class="status-cell green-border left active">Request In Progress</div><div class="status-cell light-green-border">Agreement Review</div><div class="status-cell light-green-border one-line">Provisioning</div><div class="status-cell light-green-border one-line right">Completed</div>';
 						break;
 					case 'Agreement Review':
-						echo '<div class="status-cell light-green-border left">Request In Progress</div><div class="status-cell green-border active">Agreement Review</div><div class="status-cell light-green-border right">Completed</div>';
+						echo '<div class="status-cell light-green-border left">Request In Progress</div><div class="status-cell green-border active">Agreement Review</div><div class="status-cell light-green-border one-line">Provisioning</div><div class="status-cell light-green-border one-line right">Completed</div>';
+						break;
+					case 'In Provisioning':
+						echo '<div class="status-cell light-green-border left">Request In Progress</div><div class="status-cell light-green-border">Agreement Review</div><div class="status-cell green-border one-line active">Provisioning</div><div class="status-cell light-green-border one-line right">Completed</div>';
 						break;
 					case 'Completed':
-						echo '<div class="status-cell light-green-border left">Request In Progress</div><div class="status-cell light-green-border">Agreement Review</div><div class="status-cell green-border right active">Completed</div>';
+						echo '<div class="status-cell light-green-border left">Request In Progress</div><div class="status-cell light-green-border">Agreement Review</div><div class="status-cell light-green-border one-line">Provisioning</div><div class="status-cell green-border one-line right active">Completed</div>';
 						break;
 					case 'Obsolete':
 						echo '<div class="status-cell obsolete">Obsolete</div>';
