@@ -100,46 +100,11 @@
 							<th>Glossary</th>
 							<th>Definition</th>
 						</tr>
-						<?php foreach ($terms as $index => $term): ?>
-							<tr>
-								<td><?php
-									$termPath = explode('.', $term->name);
-									for ($i = 0; $i < count($termPath) - 1; $i++) {
-										echo str_repeat('&nbsp;', 12);
-									}
-									echo end($termPath);
-								?></td>
-								<?php if (empty($term->businessTerm[0])): ?>
-									<td>
-										<input type="hidden" name="data[Api][elements][<?=$index?>][id]" value="<?=$term->id?>" id="ApiElements<?=$index?>Id">
-										<input type="hidden" name="data[Api][elements][<?=$index?>][name]" class="data-label" data-index="<?=$index?>" value="<?=$term->name?>" id="ApiElements<?=$index?>Name">
-										<input type="hidden" name="data[Api][elements][<?=$index?>][business_term]" class="bt" data-index="<?=$index?>" id="ApiElements<?=$index?>BusinessTerm">
-										<div class="term-wrapper display-loading" id="ApiElements<?=$index?>SearchCell">
-											<input type="text" class="bt-search" data-index="<?=$index?>" placeholder="Search for a term"></input>
-											<div class="selected-term"><span class="term-name"></span>  <span class="edit-opt" data-index="<?=$index?>" title="Select new term"></span></div>
-											<div class="loading">Loading...</div>
-										</div>
-									</td>
-									<td class="view-context<?= $index ?>" style="white-space: nowrap"></td>
-									<td id="view-definition<?= $index ?>" class="view-definition"></td>
-								<?php else: ?>
-									<td>
-										<input type="hidden" name="data[Api][elements][<?=$index?>][id]" value="<?=$term->id?>" id="ApiElements<?=$index?>Id">
-										<input type="hidden" name="data[Api][elements][<?=$index?>][name]" class="data-label" data-index="<?=$index?>" value="<?=$term->name?>" id="ApiElements<?=$index?>Name"	data-pre-linked="true" data-orig-context="<?=$term->businessTerm[0]->termCommunityName?>" data-orig-id="<?=$term->businessTerm[0]->termId?>" data-orig-name="<?=$term->businessTerm[0]->term?>" data-orig-def="<?=preg_replace('/"/', '&quot;', $term->businessTerm[0]->termDescription)?>">
-										<input type="hidden" name="data[Api][elements][<?=$index?>][previous_business_term]" value="<?=$term->businessTerm[0]->termId?>">
-										<input type="hidden" name="data[Api][elements][<?=$index?>][previous_business_term_relation]" value="<?=$term->businessTerm[0]->termRelationId?>">
-										<input type="hidden" name="data[Api][elements][<?=$index?>][business_term]" value="<?=$term->businessTerm[0]->termId?>" class="bt" data-index="<?=$index?>" id="ApiElements<?=$index?>BusinessTerm" data-orig-term="<?=$term->businessTerm[0]->termId?>">
-										<div class="term-wrapper" id="ApiElements<?=$index?>SearchCell">
-											<input type="text" class="bt-search" data-index="<?=$index?>" placeholder="Search for a term"></input>
-											<div class="selected-term"><span class="term-name"><?=$term->businessTerm[0]->term?></span>  <span class="edit-opt" data-index="<?=$index?>" title="Select new term"></span></div>
-											<div class="loading">Loading...</div>
-										</div>
-									</td>
-									<td class="view-context<?= $index ?>" style="white-space: nowrap"></td>
-									<td id="view-definition<?= $index ?>" class="view-definition"></td>
-								<?php endif ?>
-							</tr>
-						<?php endforeach ?>
+						<?php
+						$index = 0;
+						foreach ($terms as $term) {
+							$this->Fieldset->printApiAdminUpdate($term, $index);
+						} ?>
 					</table>
 					<input type="hidden" id="propose" name="propose" value="false">
 					<a class="lower-btn grow" href="javascript:proposeRedirect()">Propose New Business Terms</a>

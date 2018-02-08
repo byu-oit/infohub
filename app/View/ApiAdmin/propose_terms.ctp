@@ -109,28 +109,9 @@
 						<th></th>
 						<th>Proposed definition</th>
 					</tr>
-					<?php foreach ($terms as $index => $term):
-                            if (!empty($term->businessTerm)) continue; ?>
-						<tr field-id="<?=$term->id?>" field-name="<?=$term->name?>">
-                            <td><input type="checkbox"></td>
-							<td><?php
-								$termPath = explode('.', $term->name);
-								for ($i = 0; $i < count($termPath) - 1; $i++) {
-									echo str_repeat('&nbsp;', 12);
-								}
-								echo end($termPath);
-							?></td>
-							<td>
-								<?php $name = end($termPath);
-								$name = ucwords(str_replace("_", " ", $name)); ?>
-								<input type="text" class="proposed-name" value="<?=$name?>">
-							</td>
-							<td></td>
-							<td>
-								<input type="text" class="proposed-def" placeholder="">
-							</td>
-						</tr>
-					<?php endforeach ?>
+					<?php foreach ($terms as $term) {
+						$this->Fieldset->printApiAdminProposeTerms($term);
+					} ?>
 				</table>
 				<a class="lower-btn submit grow" href="javascript:submitProposedTerms()">Submit</a>
 				<a class="lower-btn grow" href="/apis/<?=$hostname.$basePath?>">Cancel</a>

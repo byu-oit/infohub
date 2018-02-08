@@ -2,6 +2,7 @@
 
 class ApisController extends AppController {
 	public $uses = ['CollibraAPI', 'BYUAPI'];
+	public $helpers = ['Fieldset'];
 
 	public function index() {
 		$hosts = $this->CollibraAPI->getApiHosts();
@@ -33,7 +34,7 @@ class ApisController extends AppController {
 		if (!isset($this->request->query['upper'])) {
 			$basePath = strtolower($basePath);
 		}
-		$terms = $this->CollibraAPI->getApiTerms($hostname, $basePath);
+		$terms = $this->CollibraAPI->getApiTerms($hostname, $basePath, true);
 		if (empty($terms) && !isset($this->request->query['upper'])) {
 			return $this->redirect($hostname.'/'.implode('/', $args).'?upper=1');
 		}

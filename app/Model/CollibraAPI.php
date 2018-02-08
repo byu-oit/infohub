@@ -462,7 +462,7 @@ class CollibraAPI extends Model {
 		return $result[0];
 	}
 
-	public function getApiTerms($host, $path) {
+	public function getApiTerms($host, $path, $treeStructure = false) {
 		$hostCommunity = $this->findTypeByName('community', $host);
 		if (empty($hostCommunity->resourceId)) {
 			return null;
@@ -536,6 +536,32 @@ class CollibraAPI extends Model {
 								'name' => 'name',
 								'order' => 'ASC']]]]]]];
 		$terms = $this->fullDataTable($termsQuery);
+
+		if ($treeStructure) {
+			$sortedTerms = [];
+			foreach ($terms as $term) {
+				$term->descendantFields = [];
+				$sortedTerms[$term->name] = $term;
+			}
+
+			$sortedTerms = array_reverse($sortedTerms);
+
+			foreach ($sortedTerms as $name => $term) {
+				$term->descendantFields = array_reverse($term->descendantFields);
+
+				$pathArray = explode('.', $name);
+				if (count($pathArray) > 1) {
+					array_pop($pathArray);
+					$fieldsetPath = implode('.', $pathArray);
+					array_push($sortedTerms[$fieldsetPath]->descendantFields, $term);
+
+					unset($sortedTerms[$name]);
+				}
+			}
+
+			return array_reverse($sortedTerms);
+		}
+
 		return $terms;
 	}
 

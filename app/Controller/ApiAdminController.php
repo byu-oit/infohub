@@ -2,6 +2,7 @@
 
 class ApiAdminController extends AppController {
 	public $uses = ['CollibraAPI'];
+	public $helpers = ['Fieldset'];
 
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -33,7 +34,7 @@ class ApiAdminController extends AppController {
 			return json_encode(['success' => '0']);
 		}
 
-		$terms = $this->CollibraAPI->getApiTerms($hostname, $basePath);
+		$terms = $this->CollibraAPI->getApiTerms($hostname, $basePath, true);
 		if (empty($terms)) {
 			return $this->redirect(['controller' => 'apis', 'action' => 'host', 'hostname' => $hostname]);
 		}
@@ -96,7 +97,7 @@ class ApiAdminController extends AppController {
 			return $this->redirect(['controller' => 'apis', 'action' => 'host', 'hostname' => $hostname]);
 		}
 
-		$terms = $this->CollibraAPI->getApiTerms($hostname, $basePath);
+		$terms = $this->CollibraAPI->getApiTerms($hostname, $basePath, true);
 		if (empty($terms)) {
 			return $this->redirect(['controller' => 'apis', 'action' => 'host', 'hostname' => $hostname]);
 		}
