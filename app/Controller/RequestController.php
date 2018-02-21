@@ -281,8 +281,11 @@ class RequestController extends AppController {
 				$newTermsAdded = 0;
 				$arrTerms = empty($this->request->data['t']) ? null : $this->request->data['t'];
 				$arrFields = empty($this->request->data['f']) ? null : $this->request->data['f'];
+				$arrColumns = empty($this->request->data['c']) ? null : $this->request->data['c'];
 				$apiHost = empty($this->request->data['apiHost']) ? null : $this->request->data['apiHost'];
 				$apiPath = empty($this->request->data['apiPath']) ? null : $this->request->data['apiPath'];
+				$schemaName = empty($this->request->data['schemaName']) ? null : $this->request->data['schemaName'];
+				$tableName = empty($this->request->data['tableName']) ? null : $this->request->data['tableName'];
 
 				$arrQueue = $this->Session->read('queue');
 
@@ -310,10 +313,10 @@ class RequestController extends AppController {
 
 							if($requestable && !$concept){
 								$newTermsAdded++;
-								$arrQueue['businessTerms'][$term['id']] = ['term' => $term['title'], 'communityId' => $term['vocabId'], 'apiHost' => $apiHost, 'apiPath' => $apiPath];
+								$arrQueue['businessTerms'][$term['id']] = ['term' => $term['title'], 'communityId' => $term['vocabId'], 'apiHost' => $apiHost, 'apiPath' => $apiPath, 'schemaName' => $schemaName, 'tableName' => $tableName];
 							} else if ($requestable && $concept) {
 								$newTermsAdded++;
-								$arrQueue['concepts'][$term['id']] = ['term' => $term['title'], 'communityId' => $term['vocabId'], 'apiHost' => $apiHost, 'apiPath' => $apiPath];
+								$arrQueue['concepts'][$term['id']] = ['term' => $term['title'], 'communityId' => $term['vocabId'], 'apiHost' => $apiHost, 'apiPath' => $apiPath, 'schemaName' => $schemaName, 'tableName' => $tableName];
 							}
 						}
 					}
@@ -324,6 +327,15 @@ class RequestController extends AppController {
 						if (empty($arrQueue['apiFields'][$field])) {
 							$newTermsAdded++;
 							$arrQueue['apiFields'][$field] = ['name' => end((explode(".", $field))), 'apiHost' => $apiHost, 'apiPath' => $apiPath];
+						}
+					}
+				}
+
+				if (isset($arrColumns)) {
+					foreach ($arrColumns as $column) {
+						if (empty($arrQueue['dbColumns'][$column])) {
+							$newTermsAdded++;
+							$arrQueue['dbColumns'][$column] = ['name' => end((explode(" > ", $column))), 'schemaName' => $schemaName, 'tableName' => $tableName];
 						}
 					}
 				}
@@ -346,6 +358,8 @@ class RequestController extends AppController {
 				unset($arrQueue['concepts'][$termID]);
 			} else if (array_key_exists($termID, $arrQueue['apiFields'])) {
 				unset($arrQueue['apiFields'][$termID]);
+			} else if (array_key_exists($termID, $arrQueue['dbColumns'])) {
+				unset($arrQueue['dbColumns'][$termID]);
 			} else if (array_key_exists($termID, $arrQueue['emptyApis'])) {
 				unset($arrQueue['emptyApis'][$termID]);
 			}
@@ -367,6 +381,7 @@ class RequestController extends AppController {
 		echo  count($arrQueue['businessTerms']) +
 			  count($arrQueue['concepts']) +
 			  count($arrQueue['apiFields']) +
+			  count($arrQueue['dbColumns']) +
 			  count($arrQueue['emptyApis']);
 	}
 
@@ -376,7 +391,7 @@ class RequestController extends AppController {
 		$this->loadModel('CollibraAPI');
 
 		$arrQueue = $this->Session->read('queue');
-		$responseHTML = '<h3>Requested Items: '.(count($arrQueue['businessTerms']) + count($arrQueue['concepts']) + count($arrQueue['apiFields']) + count($arrQueue['emptyApis'])).'</h3>'.
+		$responseHTML = '<h3>Requested Items: '.(count($arrQueue['businessTerms']) + count($arrQueue['concepts']) + count($arrQueue['apiFields']) + count($arrQueue['dbColumns']) + count($arrQueue['emptyApis'])).'</h3>'.
 			'<a class="close" href="javascript: hideRequestQueue()">X</a>'.
 			'<div class="arrow"></div>'.
 			'<a class="clearQueue" href="javascript: clearRequestQueue()">Empty cart</a>';
@@ -385,6 +400,7 @@ class RequestController extends AppController {
 			!empty($arrQueue['businessTerms']) ||
 			!empty($arrQueue['concepts']) ||
 			!empty($arrQueue['apiFields']) ||
+			!empty($arrQueue['dbColumns']) ||
 			!empty($arrQueue['emptyApis'])
 		){
 			$responseHTML .= '<a class="btn-orange" href="/request">View Request</a>';
@@ -585,6 +601,7 @@ class RequestController extends AppController {
 			$request->isNecessary = $this->CollibraAPI->getNecessaryAPIs($request->resourceId);
 
 			$addedApis = [];
+			$addedTables = [];
 			$additionString = "<br/><br/>Addition, ".date('Y-m-d').":";
 
 			$postData['source'] = $this->request->data['dsrId'];
@@ -610,8 +627,13 @@ class RequestController extends AppController {
 
 					foreach ($arrQueue['businessTerms'] as $queueId => $queueTerm) {
 						if ($queueId == $termid) {
-							$addedApis[$queueTerm['apiHost']][$queueTerm['apiPath']] = [];
-							$additionString .= "<br/>".$queueTerm['term']." (Business Term), from API: ".$queueTerm['apiPath'];
+							if (isset($queueTerm['apiHost']) && isset($queueTerm['apipath'])) {
+								$addedApis[$queueTerm['apiHost']][$queueTerm['apiPath']] = [];
+								$additionString .= "<br/>{$queueTerm['term']} (Business Term), from API: {$queueTerm['apiPath']}";
+							} else if (isset($queueTerm['tableName'])) {
+								$addedTables[$queueTerm['tableName']] = [];
+								$additionString .= "<br/>{$queueTerm['term']} (Business Term), from table: {$queueTerm['tableName']}";
+							}
 							unset($arrQueue['businessTerms'][$queueId]);
 							break;
 						}
@@ -619,16 +641,13 @@ class RequestController extends AppController {
 				}
 			}
 
-			if (isset($this->request->data['arrConcepts']) || isset($this->request->data['arrApiFields']) || isset($this->request->data['arrApis'])) {
+			if (isset($this->request->data['arrConcepts']) || isset($this->request->data['arrApiFields']) || isset($this->request->data['arrDbColumns']) || isset($this->request->data['arrApis'])) {
 				if (isset($this->request->data['arrConcepts'])) {
 					foreach ($this->request->data['arrConcepts'] as $concept) {
 						$addedApis[$concept['apiHost']][$concept['apiPath']] = [];
-						$additionString .= "<br/>".$concept['term']." (Concept), from API: ".$concept['apiPath'];
-						foreach ($arrQueue['concepts'] as $queueId => $queueConcept) {
-							if ($queueId == $concept['id']) {
-								unset($arrQueue['concepts'][$queueId]);
-								break;
-							}
+						$additionString .= "<br/>{$concept['term']} (Concept), from API: ".$concept['apiPath'];
+						if (array_key_exists($concept['id'], $arrQueue['concepts'])) {
+							unset($arrQueue['concepts'][$concept['id']]);
 						}
 					}
 				}
@@ -636,11 +655,17 @@ class RequestController extends AppController {
 					foreach ($this->request->data['arrApiFields'] as $field) {
 						$addedApis[$field['apiHost']][$field['apiPath']] = [];
 						$additionString .= "<br/>".$field['field'].", from API: ".$field['apiPath'];
-						foreach ($arrQueue['apiFields'] as $path => $_) {
-							if ($path == $field['field']) {
-								unset($arrQueue['apiFields'][$path]);
-								break;
-							}
+						if (array_key_exists($field['field'], $arrQueue['apiFields'])) {
+							unset($arrQueue['apiFields'][$field['field']]);
+						}
+					}
+				}
+				if (isset($this->request->data['arrDbColumns'])) {
+					foreach ($this->request->data['arrDbColumns'] as $column) {
+						$addedTables[$column['tableName']] = [];
+						$additionString .= "<br/>{$column['name']}";
+						if (array_key_exists($column['name'], $arrQueue['dbColumns'])) {
+							unset($arrQueue['dbColumns'][$column['name']]);
 						}
 					}
 				}
@@ -648,11 +673,8 @@ class RequestController extends AppController {
 					foreach ($this->request->data['arrApis'] as $api) {
 						$addedApis[$arrQueue['emptyApis'][$api]['apiHost']][$api] = [];
 						$additionString .= "<br/>".$api." [No specified output fields]";
-						foreach ($arrQueue['emptyApis'] as $path => $_) {
-							if ($path == $api) {
-								unset($arrQueue['emptyApis'][$path]);
-								break;
-							}
+						if (array_key_exists($api, $arrQueue['emptyApis'])) {
+							unset($arrQueue['emptyApis'][$api]);
 						}
 					}
 				}
@@ -665,7 +687,7 @@ class RequestController extends AppController {
 				}
 			}
 
-			$newApiBusinessTerms = [];
+			$newBusinessTerms = [];
 			$postData = [];
 			$postData['source'] = $this->request->data['dsrId'];
 			$postData['binaryFactType'] = Configure::read('Collibra.relationship.DSRtoNecessaryAPI');
@@ -697,7 +719,7 @@ class RequestController extends AppController {
 								$addedApis[$apiHost][$apiPath]['unmapped']['unrequested'][] = $term->name;
 							}
 						} else {
-							array_push($newApiBusinessTerms, $term->businessTerm[0]->termId);
+							array_push($newBusinessTerms, $term->businessTerm[0]->termId);
 							$requestedConcept = false;
 							if (isset($this->request->data['arrConcepts'])) {
 								foreach ($this->request->data['arrConcepts'] as $concept) {
@@ -724,6 +746,62 @@ class RequestController extends AppController {
 								} else {
 									$addedApis[$apiHost][$apiPath]['unrequested'][] = '('.$term->businessTerm[0]->termCommunityName.') '.$term->businessTerm[0]->term;
 								}
+							}
+						}
+					}
+				}
+			}
+			$postData['binaryFactType'] = Configure::read('Collibra.relationship.DSRtoNecessaryTable');
+			foreach ($addedTables as $tableName => $_) {
+				$table = $this->CollibraAPI->getTableObject($tableName);
+				$postData['target'] = $table->id;
+				$postString = http_build_query($postData);
+				$resp = $this->CollibraAPI->post('relation', $postString);
+
+				$columns = $this->CollibraAPI->getTableColumns($tableName);
+				foreach ($columns as $column) {
+					if (empty($column->businessTerm[0]->termId)) {
+						$requestedColumn = false;
+						if (isset($this->request->data['arrDbColumns'])) {
+							foreach ($this->request->data['arrDbColumns'] as $requested) {
+								if ($column->columnName == $requested['name']) {
+									$requestedColumn = true;
+									break;
+								}
+							}
+						}
+						if ($requestedColumn) {
+							$addedTables[$tableName]['unmapped']['requested'][] = $column->columnName;
+						} else {
+							$addedTables[$tableName]['unmapped']['unrequested'][] = $column->columnName;
+						}
+					} else {
+						array_push($newBusinessTerms, $column->businessTerm[0]->termId);
+						$requestedConcept = false;
+						if (isset($this->request->data['arrConcepts'])) {
+							foreach ($this->request->data['arrConcepts'] as $concept) {
+								if ($column->businessTerm[0]->termId == $concept['id']) {
+									$requestedConcept = true;
+									break;
+								}
+							}
+						}
+						if ($requestedConcept) {
+							$addedTables[$tableName]['requestedConcept'][] = '('.$column->businessTerm[0]->termCommunityName.') '.$column->businessTerm[0]->term;
+						} else {
+							$requestedTerm = false;
+							if (isset($this->request->data['arrBusinessTerms'])) {
+								foreach ($this->request->data['arrBusinessTerms'] as $termid) {
+									if ($column->businessTerm[0]->termId == $termid) {
+										$requestedTerm = true;
+										break;
+									}
+								}
+							}
+							if ($requestedTerm) {
+								$addedTables[$tableName]['requestedBusinessTerm'][] = '('.$column->businessTerm[0]->termCommunityName.') '.$column->businessTerm[0]->term;
+							} else {
+								$addedTables[$tableName]['unrequested'][] = '('.$column->businessTerm[0]->termCommunityName.') '.$column->businessTerm[0]->term;
 							}
 						}
 					}
@@ -764,6 +842,38 @@ class RequestController extends AppController {
 				}
 			}
 
+			if (!empty($addedTables)) {
+				$additionString .= "<br/><br/><b>Newly Requested Database Tables:</b><br/>";
+				foreach ($addedTables as $tableName => $table) {
+					$additionString .= ". . <u><b>{$tableName}</u></b><br/>";
+					if (!empty($table['requestedBusinessTerm'])) {
+						$table['requestedBusinessTerm'] = array_unique($table['requestedBusinessTerm']);
+						sort($table['requestedBusinessTerm']);
+						$additionString .= "<br/>. . . . <b>Requested business terms:</b><br/>. . . . . . " . implode("<br/>. . . . . . ", $table['requestedBusinessTerm']) . "<br/>";
+					}
+					if (!empty($table['requestedConcept'])) {
+						$table['requestedConcept'] = array_unique($table['requestedConcept']);
+						sort($table['requestedConcept']);
+						$additionString .= ". . . . Requested conceptual terms:<br/>. . . . . . " . implode("<br/>. . . . . . ", $table['requestedConcept']) . "<br/>";
+					}
+					if (!empty($table['unrequested'])) {
+						$table['unrequested'] = array_unique($table['unrequested']);
+						sort($table['unrequested']);
+						$additionString .= "<br/>. . . . <b>Unrequested terms:</b><br/>. . . . . . " . implode("<br/>. . . . . . ", $table['unrequested']) . "<br/>";
+					}
+					if (!empty($table['unmapped'])) {
+						$additionString .= "<br/>. . . . <b>*Columns with no Business Terms:</b><br/>";
+						if (!empty($table['unmapped']['requested'])) {
+							$additionString .= ". . . . . . Requested:<br/>. . . . . . . . " . implode("<br/>. . . . . . . . ", $table['unmapped']['requested']) . "<br/>";
+						}
+						if (!empty($table['unmapped']['unrequested'])) {
+							$additionString .= ". . . . . . Unrequested:<br/>. . . . . . . . " . implode("<br/>. . . . . . . . ", $table['unmapped']['unrequested']) . "<br/>";
+						}
+					}
+					$additionString .= "<br/>";
+				}
+			}
+
 			foreach ($request->attributeReferences->attributeReference as $attr) {
 				if ($attr->labelReference->signifier == 'Additional Information Requested') {
 					$postData = [];
@@ -782,7 +892,7 @@ class RequestController extends AppController {
 			}
 
 			$postData = $this->request->data;
-			$newApiBusinessTerms = array_filter($newApiBusinessTerms, function($termid) use($request, $postData) {
+			$newBusinessTerms = array_filter($newBusinessTerms, function($termid) use($request, $postData) {
 				foreach ($request->terms as $alreadyRequested) {
 					if ($alreadyRequested->termrid == $termid) {
 						return false;
@@ -804,7 +914,7 @@ class RequestController extends AppController {
 			$postData = [];
 			$postData['source'] = $this->request->data['dsrId'];
 			$postData['binaryFactType'] = Configure::read('Collibra.relationship.DSRtoAdditionallyIncludedAsset');
-			foreach ($newApiBusinessTerms as $termid) {
+			foreach ($newBusinessTerms as $termid) {
 				$postData['target'] = $termid;
 				$postString = http_build_query($postData);
 				$resp = $this->CollibraAPI->post('relation', $postString);
@@ -855,7 +965,7 @@ class RequestController extends AppController {
 		// Check whether $request is a DSR or DSA
 		$isaRequest = $request->conceptType->resourceId == Configure::read('Collibra.type.isaRequest');
 		if (!$isaRequest) {
-			$this->Flash->error('You cannot edit the terms on a DSA.');
+			$this->Flash->error('You cannot edit the terms on an individual DSA.');
 			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
 		}
 
@@ -1042,6 +1152,7 @@ class RequestController extends AppController {
 			empty($arrQueue['businessTerms']) &&
 			empty($arrQueue['concepts']) &&
 			empty($arrQueue['apiFields']) &&
+			empty($arrQueue['dbColumns']) &&
 			empty($arrQueue['emptyApis'])
 		) {
 			$this->redirect(['action' => 'index', '?' => ['err' => 1]]);
@@ -1050,10 +1161,14 @@ class RequestController extends AppController {
 
 		$businessTermIds = [];
 		$apis = [];
+		$tables = [];
 		foreach ($arrQueue['businessTerms'] as $id => $term) {
 			array_push($businessTermIds, $id);
 			if (!empty($term['apiPath']) && !empty($term['apiHost'])) {
 				$apis[$term['apiHost']][$term['apiPath']] = [];
+			}
+			if (!empty($term['tableName'])) {
+				$tables[$term['tableName']] = [];
 			}
 		}
 		foreach ($arrQueue['concepts'] as $id => $term) {
@@ -1064,6 +1179,11 @@ class RequestController extends AppController {
 		foreach ($arrQueue['apiFields'] as $fieldName => $field) {
 			if (!empty($field['apiPath']) && !empty($field['apiHost'])) {
 				$apis[$field['apiHost']][$field['apiPath']] = [];
+			}
+		}
+		foreach ($arrQueue['dbColumns'] as $columnName => $column) {
+			if (!empty($column['tableName'])) {
+				$tables[$column['tableName']] = [];
 			}
 		}
 
@@ -1112,6 +1232,7 @@ class RequestController extends AppController {
 		$additionalElementsString = Configure::read('Collibra.isaWorkflow.additionalElementsString');
 		$postData[$requiredElementsString] = !empty($businessTermIds) ? $businessTermIds : '';
 		$postData['api'] = [];
+		$postData['table'] = [];
 		if (!empty($additionalElementsString)) {
 			$postData[$additionalElementsString] = array();
 			foreach ($apis as $apiHost => $apiPaths) {
@@ -1132,6 +1253,19 @@ class RequestController extends AppController {
 					}
 				}
 			}
+			foreach ($tables as $tableName => $_) {
+				$tableObject = $this->CollibraAPI->getTableObject($tableName);
+				array_push($postData['table'], $tableObject->id);
+				$tableColumns = $this->CollibraAPI->getTableColumns($tableName);
+				foreach ($tableColumns as $column) {
+					if (empty($column->businessTerm[0]->termId)) {
+						continue;
+					}
+					if (!array_key_exists($column->businessTerm[0]->termId, $arrQueue['businessTerms'])) {
+						array_push($postData[$additionalElementsString], $column->businessTerm[0]->termId);
+					}
+				}
+			}
 			$postData[$additionalElementsString] = array_unique($postData[$additionalElementsString]);
 			if (empty($postData[$additionalElementsString])) {
 				//Collibra requires "additionalElements" field to exist, even if empty,
@@ -1142,9 +1276,12 @@ class RequestController extends AppController {
 			}
 		}
 
+		//See above comment regarding "additionalElements"
 		if (empty($postData['api'])) {
-			//See above comment regarding "additionalElements"
 			$postData['api'] = '';
+		}
+		if (empty($postData['table'])) {
+			$postData['table'] = '';
 		}
 
 		//For array data, PHP's http_build_query creates query/POST string in a format Collibra doesn't like,
@@ -1152,6 +1289,7 @@ class RequestController extends AppController {
 		$postString = http_build_query($postData);
 		$postString = preg_replace("/requesterNetId%5B[0-9]*%5D/", "requesterNetId", $postString);
 		$postString = preg_replace("/api%5B[0-9]*%5D/", "api", $postString);
+		$postString = preg_replace("/table%5B[0-9]*%5D/", "table", $postString);
 		$postString = preg_replace("/{$requiredElementsString}%5B[0-9]*%5D/", $requiredElementsString, $postString);
 		if (!empty($additionalElementsString)) {
 			$postString = preg_replace("/{$additionalElementsString}%5B[0-9]*%5D/", $additionalElementsString, $postString);
@@ -1200,7 +1338,7 @@ class RequestController extends AppController {
 
 		$dsr->roles = $this->CollibraAPI->getResponsibilities($dsr->vocabularyReference->resourceId);
 		$dsr->policies = $this->CollibraAPI->getAssetPolicies($dsrId);
-		if($parent) {
+		if ($parent) {
 			$dsr->dataUsages = $this->CollibraAPI->getDataUsages($dsr->resourceId);
 		} else {
 			$dsr->parent = $this->CollibraAPI->getDataUsageParent($dsr->resourceId);
@@ -1344,6 +1482,7 @@ class RequestController extends AppController {
 			empty($arrQueue['businessTerms']) &&
 			empty($arrQueue['concepts']) &&
 			empty($arrQueue['apiFields']) &&
+			empty($arrQueue['dbColumns']) &&
 			empty($arrQueue['emptyApis'])
 		) {
 			header('location: /search');
@@ -1351,14 +1490,23 @@ class RequestController extends AppController {
 		}
 
 		$apis = [];
+		$tables = [];
 		foreach ($arrQueue['businessTerms'] as $term) {
 			if (!empty($term['apiPath']) && !empty($term['apiHost'])) {
 				$apis[$term['apiHost']][$term['apiPath']] = [];
+			}
+			if (!empty($term['tableName'])) {
+				$tables[$term['tableName']] = [];
 			}
 		}
 		foreach ($arrQueue['apiFields'] as $fieldName => $field) {
 			if (!empty($field['apiPath']) && !empty($field['apiHost'])) {
 				$apis[$field['apiHost']][$field['apiPath']] = [];
+			}
+		}
+		foreach ($arrQueue['dbColumns'] as $column) {
+			if (!empty($column['tableName'])) {
+				$tables[$column['tableName']] = [];
 			}
 		}
 
@@ -1388,6 +1536,27 @@ class RequestController extends AppController {
 				}
 			}
 		}
+		foreach ($tables as $tableName => $_) {
+			$tableColumns = $this->CollibraAPI->getTableColumns($tableName);
+			foreach ($tableColumns as $column) {
+				if (empty($column->businessTerm[0]->termId)) {
+					if (array_key_exists($column->columnName, $arrQueue['dbColumns'])) {
+						$tables[$tableName]['unmapped']['requested'][] = $column->columnName;
+					} else {
+						$tables[$tableName]['unmapped']['unrequested'][] = $column->columnName;
+					}
+				} else {
+					if (array_key_exists($column->businessTerm[0]->termId, $arrQueue['concepts'])) {
+						$tables[$tableName]['requestedConcept'][] = '('.$column->businessTerm[0]->termCommunityName.') '.$column->businessTerm[0]->term;
+					} else if (array_key_exists($column->businessTerm[0]->termId, $arrQueue['businessTerms'])) {
+						$tables[$tableName]['requestedBusinessTerm'][] = '('.$column->businessTerm[0]->termCommunityName.') '.$column->businessTerm[0]->term;
+					} else {
+						$tables[$tableName]['unrequested'][] = '('.$column->businessTerm[0]->termCommunityName.') '.$column->businessTerm[0]->term;
+					}
+				}
+			}
+		}
+		$preFilled['descriptionOfInformation'] = '';
 		if (!empty($apis)) {
 			$apiList = "<b>Requested APIs:</b>\n";
 			foreach ($apis as $apiHost => $apiPaths) {
@@ -1417,10 +1586,42 @@ class RequestController extends AppController {
 							$apiList .= ". . . . . . Unrequested:\n. . . . . . . . " . implode("\n. . . . . . . . ", $term['unmapped']['unrequested']) . "\n";
 						}
 					}
-					$apiList .= "\n";
+					$apiList .= "\n\n";
 				}
 			}
-			$preFilled['descriptionOfInformation'] = $apiList;
+			$preFilled['descriptionOfInformation'] .= $apiList;
+		}
+		if (!empty($tables)) {
+			$tableList = "<b>Requested Tables:</b>\n";
+			foreach ($tables as $tableName => $term) {
+				$tableList .= ". . <u><b>{$tableName}</u></b>\n";
+				if (!empty($term['requestedBusinessTerm'])) {
+					$term['requestedBusinessTerm'] = array_unique($term['requestedBusinessTerm']);
+					sort($term['requestedBusinessTerm']);
+					$tableList .= "\n. . . . <b>Requested business terms:</b>\n. . . . . . " . implode("\n. . . . . . ", $term['requestedBusinessTerm']) . "\n";
+				}
+				if (!empty($term['requestedConcept'])) {
+					$term['requestedConcept'] = array_unique($term['requestedConcept']);
+					sort($term['requestedConcept']);
+					$tableList .= ". . . . Requested conceptual terms:\n. . . . . . " . implode("\n. . . . . . ", $term['requestedConcept']) . "\n";
+				}
+				if (!empty($term['unrequested'])) {
+					$term['unrequested'] = array_unique($term['unrequested']);
+					sort($term['unrequested']);
+					$tableList .= "\n. . . . <b>Unrequested terms:</b>\n. . . . . . " . implode("\n. . . . . . ", $term['unrequested']) . "\n";
+				}
+				if (!empty($term['unmapped'])) {
+					$tableList .= "\n. . . . <b>*Columns with no Business Terms:</b>\n";
+					if (!empty($term['unmapped']['requested'])) {
+						$tableList .= ". . . . . . Requested:\n. . . . . . . . " . implode("\n. . . . . . . . ", $term['unmapped']['requested']) . "\n";
+					}
+					if (!empty($term['unmapped']['unrequested'])) {
+						$tableList .= ". . . . . . Unrequested:\n. . . . . . . . " . implode("\n. . . . . . . . ", $term['unmapped']['unrequested']) . "\n";
+					}
+				}
+				$tableList .= "\n";
+			}
+			$preFilled['descriptionOfInformation'] .= $tableList;
 		}
 
 		// Retrieve the customer's work if they have a draft
@@ -1463,6 +1664,8 @@ class RequestController extends AppController {
 				$termNames[] = $term->termsignifier;
 				$term->apihost = $arrQueue['businessTerms'][$term->termrid]['apiHost'];
 				$term->apipath = $arrQueue['businessTerms'][$term->termrid]['apiPath'];
+				$term->schemaname = $arrQueue['businessTerms'][$term->termrid]['schemaName'];
+				$term->tablename = $arrQueue['businessTerms'][$term->termrid]['tableName'];
 			}
 			array_multisort($termNames, SORT_ASC, $termResp);
 		}

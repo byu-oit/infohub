@@ -16,6 +16,7 @@
 		var arrBusinessTerms = [];
 		var arrConcepts = [];
 		var arrApiFields = [];
+		var arrDbColumns = [];
 		var arrApis = [];
 		$(elem).parent().find('input').each(function() {
 			if ($(this).prop('checked')) {
@@ -37,6 +38,13 @@
 						apiHost:$(this).attr('apiHost')
 					});
 				}
+				else if ($(this).attr('name') == 'dbColumns[]') {
+					arrDbColumns.push({
+						name:$(this).val(),
+						tableName:$(this).attr('tableName'),
+						schemaName:$(this).attr('schemaName')
+					});
+				}
 				else if ($(this).attr('name') == 'apis[]') {
 					arrApis.push($(this).val());
 				}
@@ -47,13 +55,14 @@
 			arrBusinessTerms.length == 0 &&
 			arrConcepts.length == 0 &&
 			arrApiFields.length == 0 &&
+			arrDbColumns.length == 0 &&
 			arrApis.length == 0
 		) {
 			alert('No elements to add selected');
 			return;
 		}
 
-		$.post("/request/editTermsSubmit", {action:"add",dsrId:dsrId,arrBusinessTerms:arrBusinessTerms,arrConcepts:arrConcepts,arrApiFields:arrApiFields,arrApis:arrApis})
+		$.post("/request/editTermsSubmit", {action:"add",dsrId:dsrId,arrBusinessTerms:arrBusinessTerms,arrConcepts:arrConcepts,arrApiFields:arrApiFields,arrDbColumns:arrDbColumns,arrApis:arrApis})
 			.done(function(data) {
 				clearInterval(loadingTextInterval);
 				data = JSON.parse(data);
@@ -67,25 +76,25 @@
 	}
 
 	function removeTerms(elem) {
-                var dsrId = $(elem).closest('#requestForm').find('h2.headerTab').attr('id');
-                var arrIds = [];
-                $(elem).parent().find('input').each(function() {
-                        if ($(this).prop('checked')) {
-                                arrIds.push($(this).val());
-                        }
-                });
+        var dsrId = $(elem).closest('#requestForm').find('h2.headerTab').attr('id');
+        var arrIds = [];
+        $(elem).parent().find('input').each(function() {
+            if ($(this).prop('checked')) {
+                arrIds.push($(this).val());
+            }
+        });
 
-                $.post("/request/editTermsSubmit", {action:"remove",dsrId:dsrId,arrIds:arrIds})
-                        .done(function(data) {
-                                data = JSON.parse(data);
-                                if (data.success == 1) {
-                                        location.reload();
-                                } else {
-                                        alert('There was an error removing some of the requested terms.');
-                                        location.reload();
-                                }
-                        });
-        }
+        $.post("/request/editTermsSubmit", {action:"remove",dsrId:dsrId,arrIds:arrIds})
+            .done(function(data) {
+                data = JSON.parse(data);
+                if (data.success == 1) {
+                    location.reload();
+                } else {
+                    alert('There was an error removing some of the requested terms.');
+                    location.reload();
+                }
+            });
+    }
 
 	$(document).ready(function() {
 		$('.addTerms').click(function() {
@@ -111,7 +120,7 @@
 				<h3 class="headerTab">Add Information</h3>
 				<div class="clear"></div>
 				<div class="resultItem">
-					<?php if (!empty($arrQueue['businessTerms']) || !empty($arrQueue['concepts']) || !empty($arrQueue['emptyApis']) || !empty($arrQueue['apiFields'])): ?>
+					<?php if (!empty($arrQueue['businessTerms']) || !empty($arrQueue['concepts']) || !empty($arrQueue['emptyApis']) || !empty($arrQueue['apiFields']) || !empty($arrQueue['dbColumns'])): ?>
 					<div class="checkAll"><input type="checkbox" onclick="toggleAllCheckboxes(this)" checked="checked">Check/Uncheck all</div>
 					<div class="irLower"><ul class="cart">
 						<?php
@@ -137,6 +146,9 @@
 							}
 							foreach ($arrQueue['apiFields'] as $fieldPath => $field) {
 								echo '<li id="requestItem'.$fieldPath.'"><input type="checkbox" name="apiFields[]" value="'.$fieldPath.'" apiHost="'.$field['apiHost'].'" apiPath="'.$field['apiPath'].'" checked="checked">'.$field['name'].'</li>';
+							}
+							foreach ($arrQueue['dbColumns'] as $columnName => $column) {
+								echo '<li id="requestItem'.$columnName.'"><input type="checkbox" name="dbColumns[]" value="'.$columnName.'" schemaName="'.$column['schemaName'].'" tableName="'.$column['tableName'].'" checked="checked">'.$column['name'].'</li>';
 							}
 							echo '</ul><a class="addTerms grow">Add to this DSR</a>';
 						?>

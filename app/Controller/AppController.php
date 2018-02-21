@@ -65,6 +65,7 @@ class AppController extends Controller {
 				$cartEmpty = empty($arrQueue['businessTerms']) &&
 							 empty($arrQueue['concepts']) &&
 							 empty($arrQueue['apiFields']) &&
+							 empty($arrQueue['dbColumns']) &&
 							 empty($arrQueue['emptyApis']);
 			}
 			if (!$this->Session->check('cartLoaded') && $cartEmpty) {
@@ -91,6 +92,7 @@ class AppController extends Controller {
 			$arrQueue['businessTerms'] = [];
 			$arrQueue['concepts'] = [];
 			$arrQueue['apiFields'] = [];
+			$arrQueue['dbColumns'] = [];
 			$arrQueue['emptyApis'] = [];
 			$this->Session->write('queue', $arrQueue);
 		}
@@ -99,6 +101,7 @@ class AppController extends Controller {
 		$requestedTermCount = count($arrQueue['businessTerms']) +
 							  count($arrQueue['concepts']) +
 							  count($arrQueue['apiFields']) +
+							  count($arrQueue['dbColumns']) +
 							  count($arrQueue['emptyApis']);
 
 		$this->set('byuUsername', $byuUsername);

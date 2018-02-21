@@ -208,29 +208,65 @@ function removeFromRequestQueue(id){
 			if (id.indexOf('.') > -1) {
 				id = id.replace(/\./g, '');
 			}
-			if ($('#requestItem'+id).attr('api') == 'false') {
-				var title = $('#requestItem'+id).attr('data-title');
-				var rID = $('#requestItem'+id).attr('data-rid');
-				var vocabID = $('#requestItem'+id).attr('data-vocabID');
-				var apiHost = $('#requestItem'+id).attr('api-host');
-				var apiPath = $('#requestItem'+id).attr('api-path');
-			} else {
-				var title = $('#requestItem'+id).attr('data-title');
-				var apiHost = $('#requestItem'+id).attr('api-host');
+			// And for the ' > ' used in database columns' names
+			if (id.indexOf(' > ') > -1) {
+				id = id.replace(/ > /g, '');
+			}
+
+			var elem = $('#requestItem'+id);
+			var type = elem.data('type');
+			switch (type) {
+				case 'term':
+					var title = elem.data('title');
+					var dataId = elem.data('id');
+					var vocabId = elem.data('vocabID');
+					var apiHost = elem.attr('api-host');
+					var apiPath = elem.attr('api-path');
+					var schemaName = elem.attr('schema-name');
+					var tableName = elem.attr('table-name');
+
+					var undoData = {emptyApi:'false',t:[{title:title,id:dataId,vocabId:vocabId}],apiHost:apiHost,apiPath:apiPath,schemaName:schemaName,tableName:tableName};
+					break;
+				case 'concept':
+					var title = elem.data('title');
+					var dataId = elem.data('id');
+					var vocabId = elem.data('vocabID');
+					var apiHost = elem.attr('api-host');
+					var apiPath = elem.attr('api-path');
+
+					var undoData = {emptyApi:'false',t:[{title:title,dataId:id,vocabId:vocabId}],apiHost:apiHost,apiPath:apiPath};
+					break;
+				case 'api':
+					var title = elem.data('title');
+					var apiHost = elem.attr('api-host');
+
+					var undoData = {emptyApi:'true',t:[title],apiHost:apiHost};
+					break;
+				case 'field':
+					var title = elem.data('title');
+					var apiHost = elem.attr('api-host');
+					var apiPath = elem.attr('api-path');
+
+					var undoData = {emptyApi:'false',f:[title],apiHost:apiHost,apiPath:apiPath};
+					break;
+				case 'column':
+					var title = elem.data('title');
+					var schemaName = elem.attr('schema-name');
+					var tableName = elem.attr('table-name');
+
+					var undoData = {emptyApi:'false',c:[title],schemaName:schemaName,tableName:tableName};
+					break;
 			}
 
 			$('#request-undo').remove();
-			$('#requestItem'+id).fadeOut('fast',function(){
-				if ($('#requestItem'+id).attr('api') == 'false') {
-					var html = '<div id="request-undo" data-title="' + title + '" data-rid="' + rID + '" data-vocabID="' + vocabID + '" data-apiHost="' + apiHost + '" data-apiPath="' + apiPath + '" api="false">Item removed. Click to undo.</div>';
-				} else {
-					var html = '<div id="request-undo" data-apiHost="' + apiHost + '" data-apiPath="' + title + '" api="true">Item removed. Click to undo.</div>';
-				}
+			elem.fadeOut('fast', function() {
+				var html = '<div id="request-undo">Item removed. Click to undo.</div>';
+
 				$(html).insertBefore('.irLower ul');
 				$('#request-undo').click(function(){
-					addToQueue(this, false);
+					$.post("request/addToQueue", undoData);
 					$(this).remove();
-					$('#requestItem'+id).fadeIn('fast');
+					elem.fadeIn('fast');
 				});
 				updateQueueSize();
 			});
@@ -393,6 +429,104 @@ function largeAddProgressIncrement() {
 	$('#progress-numerator').html(numerator);
 	bar.data('numerator', numerator);
 	bar.val(numerator / denominator);
+}
+function addToQueueDBTable(elem, displayCart) {
+	var i = 0;
+	var loadingTexts = ['Working on it   ','Working on it.  ','Working on it.. ','Working on it...'];
+	var loadingTextInterval = setInterval(function() {
+		$(elem).parent().find('.requestAccess').attr('value', loadingTexts[i]);
+		i++;
+		if (i == loadingTexts.length) i = 0;
+	}, 250);
+
+	var arrTerms = [{
+		title: $(elem).data('title'),
+		id: $(elem).data('rid'),
+		vocabId: $(elem).data('vocabid')
+	}];
+	var arrColumns = [];
+	var schemaName = $(elem).data('schemaname');
+	var tableName = $(elem).data('tablename');
+
+	$(elem).parent().find('.checkBoxes').find('input').each(function(){
+		if($(this).prop("checked") && $(this).prop("name") != "toggleCheckboxes"){
+
+			if (!$(this).val()) {		// For a column with no Business Term:
+				arrColumns.push($(this).data('title'));
+			}
+
+			else {						// For a Business Term:
+				for (var i = 0; i < arrTerms.length; i++) {
+					if (arrTerms[i].id == $(this).val()) {
+						return;		// continue;
+					}
+				}
+
+				arrTerms.push({
+					title: $(this).data('title'),
+					id: $(this).val(),
+					vocabId: $(this).data('vocabid')
+				});
+			}
+		}
+	});
+	if ((arrTerms.length * 3) + arrColumns.length < 500) {
+		$.post("/request/addToQueue", {emptyApi:'false', t:arrTerms, c:arrColumns, schemaName:schemaName, tableName:tableName})
+			.done(function(data) {
+				clearInterval(loadingTextInterval);
+				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
+				$(elem).closest('.resultItem').find('input[type=checkbox]').prop('checked', false);
+				if (displayCart) {
+					showRequestQueue();
+				}
+				updateQueueSize();
+		});
+	} else {
+		largeAddProgressSetUp(arrTerms.length, arrColumns.length);
+		largeAddToQueueDBTable(arrTerms, arrColumns, schemaName, tableName)
+			.then(function(data) {
+				clearInterval(loadingTextInterval);
+				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
+				$(elem).closest('.resultItem').find('input[type=checkbox]').prop('checked', false);
+				if (displayCart) {
+					showRequestQueue();
+				}
+				updateQueueSize();
+			});
+	}
+}
+function largeAddToQueueDBTable(arrTerms, arrColumns, schemaName, tableName, termsStride = 75, columnsStride = 150) {
+	if (arrTerms.length > termsStride) {
+		return new Promise(function(resolve) {
+			var request = $.post("/request/addToQueue", {emptyApi:'false', t:arrTerms.slice(0, termsStride), c:[], schemaName:schemaName, tableName:tableName})
+				.then(() => {
+					largeAddProgressIncrement();
+				});
+			var recur = largeAddToQueueDBTable(arrTerms.slice(termsStride), arrColumns, schemaName, tableName, termsStride, columnsStride);
+
+			Promise.all([request, recur]).then(() => resolve());
+			});
+	}
+	else if (arrColumns.length > columnsStride) {
+		return new Promise(function(resolve) {
+			var request = $.post("/request/addToQueue", {emptyApi:'false', t:[], c:arrColumns.slice(0, columnsStride), schemaName:schemaName, tableName:tableName})
+				.then(() => {
+					largeAddProgressIncrement();
+				});
+			var recur = largeAddToQueueDBTable(arrTerms, arrColumns.slice(columnsStride), schemaName, tableName, termsStride, columnsStride);
+
+			Promise.all([request, recur]).then(() => resolve());
+			});
+	}
+	else {
+		return new Promise(function(resolve) {
+			$.post("/request/addToQueue", {emptyApi:'false', t:arrTerms, c:arrColumns, schemaName:schemaName, tableName:tableName})
+				.then(() => {
+					largeAddProgressIncrement();
+					resolve();
+				});
+			});
+	}
 }
 function toggleAllCheckboxes(elem) {
 	$(elem).closest('.resultItem').find('input').each(function(){

@@ -112,7 +112,7 @@ class SwaggerController extends AppController {
 			return ['error' => ['messages' => $this->Swagger->parseErrors]];
 		}
 
-		$termToFieldRelationshipId = Configure::read('Collibra.relationship.termToField');
+		$termToFieldRelationshipId = Configure::read('Collibra.relationship.termToDataAsset');
 		foreach ($swagger['elements'] as &$elem) {
 			$businessTerm = $this->CollibraAPI->searchStandardLabel($elem['name']);
 			if (!empty($businessTerm)) {

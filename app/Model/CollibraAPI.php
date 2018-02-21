@@ -496,7 +496,7 @@ class CollibraAPI extends Model {
 							'Signifier' => ['name' => 'assetType'],
 							'Id' => ['name' => 'assetTypeId']],
 						'Relation' => [[ /* Yes, intentional [[ there */
-							'typeId' => Configure::read('Collibra.relationship.termToField'),
+							'typeId' => Configure::read('Collibra.relationship.termToDataAsset'),
 							'type' => 'TARGET',
 							'Id' => ['name' => 'termRelationId'],
 							'Source' => [
@@ -563,6 +563,164 @@ class CollibraAPI extends Model {
 		}
 
 		return $terms;
+	}
+
+	public function getSchemaTables($schemaName) {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'schemaName']],
+				['Column' => ['fieldName' => 'schemaId']],
+				['Group' => [
+					'name' => 'tables',
+					'Columns' => [
+						['Column' => ['fieldName' => 'tableName']],
+						['Column' => ['fieldName' => 'tableId']],
+						['Column' => ['fieldName' => 'tableDescription']]]]]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'schemaId'],
+					'Signifier' => ['name' => 'schemaName'],
+					'Vocabulary' => [
+						'Community' => [
+							'Id' => ['name' => 'communityId']]],
+					'Relation' => [
+						'typeId' => Configure::read('Collibra.relationship.schemaToTable'),
+						'type' => 'SOURCE',
+						'Target' => [
+							'Id' => ['name' => 'tableId'],
+							'Signifier' => ['name' => 'tableName'],
+							'StringAttribute' => [[
+								'Value' => ['name' => 'tableDescription'],
+								'labelId' => Configure::read('Collibra.attribute.description')]]]],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+								'name' => 'schemaName',
+								'operator' => 'EQUALS',
+								'value' => $schemaName]],
+						[
+							'Field' => [
+								'name' => 'communityId',
+								'operator' => 'EQUALS',
+								'value' => Configure::read('Collibra.community.dwprd')]]]]]]]];
+
+		$results = $this->fullDataTable($tableConfig);
+		return $results[0];
+	}
+
+	public function getTableObject($tableName) {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'id']],
+				['Column' => ['fieldName' => 'name']],
+				['Column' => ['fieldName' => 'description']],
+				['Column' => ['fieldName' => 'schemaId']],
+				['Column' => ['fieldName' => 'schemaName']]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'id'],
+					'Signifier' => ['name' => 'name'],
+					'StringAttribute' => [[
+						'labelId' => Configure::read('Collibra.attribute.description'),
+						'Value' => ['name' => 'description']]],
+					'Relation' => [
+						'typeId' => Configure::read('Collibra.relationship.schemaToTable'),
+						'type' => 'TARGET',
+						'Source' => [
+							'Id' => ['name' => 'schemaId'],
+							'Signifier' => ['name' => 'schemaName']]],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+								'name' => 'name',
+								'operator' => 'EQUALS',
+								'value' => $tableName]]]]]]]];
+
+		$results = $this->fullDataTable($tableConfig);
+		return $results[0];
+	}
+
+	public function getTableColumns($tableName) {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'columnName']],
+				['Column' => ['fieldName' => 'columnId']],
+				['Column' => ['fieldName' => 'columnDescription']],
+				['Group' => [
+					'name' => 'businessTerm',
+					'Columns' => [
+						['Column' => ['fieldName' => 'termCommunityId']],
+						['Column' => ['fieldName' => 'termCommunityName']],
+						['Column' => ['fieldName' => 'termClassification']],
+						['Column' => ['fieldName' => 'approvalStatus']],
+						['Column' => ['fieldName' => 'termId']],
+						['Column' => ['fieldName' => 'termDescription']],
+						['Column' => ['fieldName' => 'termRelationId']],
+						['Column' => ['fieldName' => 'term']]]]]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'columnId'],
+					'Signifier' => ['name' => 'columnName'],
+					'StringAttribute' => [[
+						'Value' => ['name' => 'columnDescription'],
+						'labelId' => Configure::read('Collibra.attribute.description')]],
+					'Relation' => [[
+						'typeId' => Configure::read('Collibra.relationship.termToDataAsset'),
+						'type' => 'TARGET',
+						'Id' => ['name' => 'termRelationId'],
+						'Source' => [
+							'Id' => ['name' => 'termId'],
+							'Signifier' => ['name' => 'term'],
+							'Vocabulary' => [
+								'Community' => [
+									'Id' => ['name' => 'termCommunityId'],
+									'Name' => ['name' => 'termCommunityName']]],
+							'Status' => [
+								'signifier' => ['name' => 'approvalStatus']],
+							'StringAttribute' => [[
+								'Value' => ['name' => 'termDescription'],
+								'labelId' => Configure::read('Collibra.attribute.definition')]],
+							'SingleValueListAttribute' => [[
+								'Value' => ['name' => 'termClassification'],
+								'labelId' => Configure::read('Collibra.attribute.classification')]]]],
+					[
+						'typeId' => Configure::read('Collibra.relationship.columnToTable'),
+						'type' => 'SOURCE',
+						'Target' => [
+							'Signifier' => ['name' => 'tableName']]]],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+								'name' => 'tableName',
+								'operator' => 'EQUALS',
+								'value' => $tableName]]]]]]]];
+
+		$results = $this->fullDataTable($tableConfig);
+		return $results;
+	}
+
+	public function updateTableBusinessTermLinks($columns) {
+		$relationshipTypeId = Configure::read('Collibra.relationship.termToDataAsset');
+		foreach ($columns as $column) {
+			if (empty($column['id'])) {
+				continue;
+			}
+			if (isset($column['previous_business_term'])) {
+				if ($column['previous_business_term'] == $column['business_term']) {
+					continue;
+				}
+				$this->delete("relation/{$column['previous_business_term_relation']}");
+			}
+			if (empty($column['business_term'])) {
+				continue;
+			}
+			$this->post("term/{$column['id']}/relations", [
+				'type' => $relationshipTypeId,
+				'target' => $column['business_term'],
+				'inverse' => 'true'
+			]);
+		}
+		return true;
 	}
 
 	public function getBusinessTermDetails($arrQueuedBusinessTerms) {
@@ -787,7 +945,7 @@ class CollibraAPI extends Model {
 							"Id" => ["name" => "synonymid"],
 							"Signifier" => ["name" => "synonymname"]]],
 					[
-						"typeId" => Configure::read('Collibra.relationship.termToField'),
+						"typeId" => Configure::read('Collibra.relationship.termToDataAsset'),
 						"type" => "SOURCE",
 						"Target" => [
 							"Signifier" => ["name" => "apifield"],
@@ -920,7 +1078,7 @@ class CollibraAPI extends Model {
 		}
 
 		//Link created terms to selected Business Terms
-		$relationshipTypeId = Configure::read('Collibra.relationship.termToField');
+		$relationshipTypeId = Configure::read('Collibra.relationship.termToDataAsset');
 		foreach (['fieldsResult', 'fieldSetsResult'] as $result) {
 			if (empty(${$result})) {
 				continue;
@@ -971,7 +1129,7 @@ class CollibraAPI extends Model {
 	}
 
 	public function updateApiBusinessTermLinks($terms) {
-		$relationshipTypeId = Configure::read('Collibra.relationship.termToField');
+		$relationshipTypeId = Configure::read('Collibra.relationship.termToDataAsset');
 		foreach ($terms as $term) {
 			if (empty($term['id'])) {
 				continue;

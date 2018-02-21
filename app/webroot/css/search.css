@@ -611,7 +611,9 @@ img.resultBodyLoading {
 #apiBody #searchSuccess #srLower .resultItem .requestAccess,
 #searchBody #searchResults #srLower .resultItem .submit input,
 #apiBody #searchResults #srLower .resultItem #apiForm .submit input,
-#apiBody #searchResults #srLower .resultItem #apiForm .update-submit {
+#apiBody #searchResults #srLower .resultItem #tableForm .submit input,
+#apiBody #searchResults #srLower .resultItem #apiForm .update-submit,
+#apiBody #searchResults #srLower .resultItem #tableForm .update-submit {
   color: #fff;
   font-size: 12.5px;
   text-decoration: none;
@@ -1323,7 +1325,12 @@ img.resultBodyLoading {
   padding: 0 30px;
   text-decoration: none;
 }
-#apiBody .apiHelp {
+#apiBody .inputButton.dbTable {
+  position: relative;
+  top: -35px;
+}
+#apiBody .apiHelp,
+#apiBody .tableHelp {
   margin-top: 15px;
   color: rgba(14, 50, 100, 0.85);
   font-size: 18px;
@@ -1338,57 +1345,73 @@ img.resultBodyLoading {
   display: none;
   padding-bottom: 8px;
 }
-#apiBody .api-terms {
+#apiBody .api-terms,
+#apiBody .table-columns {
   margin-top: 30px;
   padding: 4px;
   font-size: 14px;
 }
-#apiBody .api-terms .fieldColumn {
+#apiBody .api-terms .fieldColumn,
+#apiBody .table-columns .fieldColumn {
   min-width: 250px;
 }
-#apiBody .api-terms .termColumn {
+#apiBody .api-terms .termColumn,
+#apiBody .table-columns .termColumn {
   min-width: 150px;
 }
-#apiBody .api-terms a {
+#apiBody .api-terms a,
+#apiBody .table-columns a {
   color: #234e77;
 }
-#apiBody .api-terms a:hover {
+#apiBody .api-terms a:hover,
+#apiBody .table-columns a:hover {
   color: #10375b;
 }
-#apiBody .api-terms tbody .header {
+#apiBody .api-terms tbody .header,
+#apiBody .table-columns tbody .header {
   text-align: left;
 }
 #apiBody .api-terms tbody .term-wrapper .bt-search,
+#apiBody .table-columns tbody .term-wrapper .bt-search,
 #apiBody .api-terms tbody .term-wrapper .loading,
+#apiBody .table-columns tbody .term-wrapper .loading,
 #apiForm .swagger tbody .term-wrapper .bt-search,
 #apiForm .swagger tbody .term-wrapper .loading {
   display: none;
 }
 #apiBody .api-terms tbody .term-wrapper .selected-term,
+#apiBody .table-columns tbody .term-wrapper .selected-term,
 #apiForm .swagger tbody .term-wrapper .selected-term {
   display: block;
 }
 #apiBody .api-terms tbody .term-wrapper.display-loading .loading,
+#apiBody .table-columns tbody .term-wrapper.display-loading .loading,
 #apiForm .swagger tbody .term-wrapper.display-loading .loading {
   display: block;
 }
 #apiBody .api-terms tbody .term-wrapper.display-loading .bt-search,
+#apiBody .table-columns tbody .term-wrapper.display-loading .bt-search,
 #apiBody .api-terms tbody .term-wrapper.display-loading .selected-term,
+#apiBody .table-columns tbody .term-wrapper.display-loading .selected-term,
 #apiForm .swagger tbody .term-wrapper.display-loading .bt-search,
 #apiForm .swagger tbody .term-wrapper.display-loading .selected-term {
   display: none;
 }
 #apiBody .api-terms tbody .term-wrapper.display-search .bt-search,
+#apiBody .table-columns tbody .term-wrapper.display-search .bt-search,
 #apiForm .swagger tbody .term-wrapper.display-search .bt-search {
   display: inline-block;
 }
 #apiBody .api-terms tbody .term-wrapper.display-search .selected-term,
+#apiBody .table-columns tbody .term-wrapper.display-search .selected-term,
 #apiBody .api-terms tbody .term-wrapper.display-search .loading,
+#apiBody .table-columns tbody .term-wrapper.display-search .loading,
 #apiForm .swagger tbody .term-wrapper.display-search .selected-term,
 #apiForm .swagger tbody .term-wrapper.display-search .loading {
   display: none;
 }
 #apiBody .api-terms tbody .term-wrapper span.edit-opt,
+#apiBody .table-columns tbody .term-wrapper span.edit-opt,
 #apiForm .swagger tbody .term-wrapper span.edit-opt {
   display: inline-block;
   height: 18px;
@@ -1406,16 +1429,20 @@ img.resultBodyLoading {
 .ui-autocomplete .ui-menu-item.new-tab {
   font-style: italic;
 }
-#apiBody .api-terms tbody .view-definition .truncated {
+#apiBody .api-terms tbody .view-definition .truncated,
+#apiBody .table-columns tbody .view-definition .truncated {
   display: inline;
 }
-#apiBody .api-terms tbody .view-definition .full {
+#apiBody .api-terms tbody .view-definition .full,
+#apiBody .table-columns tbody .view-definition .full {
   display: none;
 }
-#apiBody .api-terms tbody .view-definition.expanded .truncated {
+#apiBody .api-terms tbody .view-definition.expanded .truncated,
+#apiBody .table-columns tbody .view-definition.expanded .truncated {
   display: none;
 }
-#apiBody .api-terms tbody .view-definition.expanded .full {
+#apiBody .api-terms tbody .view-definition.expanded .full,
+#apiBody .table-columns tbody .view-definition.expanded .full {
   display: inline;
 }
 .classIcon {

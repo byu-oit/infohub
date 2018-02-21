@@ -32,7 +32,8 @@ if (!function_exists('denv')) {
 		'community' => [
 			'api' => 'd9f1c1bb-17cf-4fcb-9046-49d35f839623',
 			'byu' => 'c690b823-4341-4125-8a81-22d592c23773',
-			'academicRecords' => 'e467b5c3-c497-4fb6-a0d0-cf48815e9bec'
+			'academicRecords' => 'e467b5c3-c497-4fb6-a0d0-cf48815e9bec',
+			'dwprd' => 'f7e38d8a-e479-4848-9f1a-836ef4aa6fb9'
 		],
 		'vocabulary' => [
 			'dataSharingRequests' => '00000000-0000-0000-0000-000000006016',
@@ -54,13 +55,16 @@ if (!function_exists('denv')) {
 		'relationship' => [
 			'termToSynonym' => '00000000-0000-0000-0000-000000007001',
 			'isaRequestToTerm' => 'edc9e81b-98dc-4bde-8191-1ae75161ab67',
-			'termToField' => '00000000-0000-0000-0000-000000007038',
+			'termToDataAsset' => '00000000-0000-0000-0000-000000007038',
 			'dataUsageToDSA' => '00000000-0000-0000-0000-000000007055',
 			'DSAtoPolicy' => 'd22051bf-af3e-4771-862c-c2b3f10bce05',
 			'DSRtoPolicy' => '0cd17138-7610-48fc-8d11-616a376d44c5',
 			'termToPolicy' => '0b8404c5-b0f2-4109-89ab-374c5f775c14',
 			'DSRtoAdditionallyIncludedAsset' => '71be0418-dbb7-4ee0-ad9e-ef9d5eca13ab',
-			'DSRtoNecessaryAPI' => '5f4d65ab-ab89-4ed2-a2e7-a628ee7ba4ba'
+			'DSRtoNecessaryAPI' => '5f4d65ab-ab89-4ed2-a2e7-a628ee7ba4ba',
+			'DSRtoNecessaryTable' => 'ec73bc13-c215-42f2-911b-76a345ec9ed5',
+			'schemaToTable' => '00000000-0000-0000-0000-000000007043',
+			'columnToTable' => '00000000-0000-0000-0000-000000007042'
 		],
 		'type' => [
 			'isaRequest' => '00000000-0000-0000-0000-000000031231',

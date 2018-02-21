@@ -122,21 +122,25 @@
 				<div class="resultItem">
 					<div class="irLower"><ul class="cart">
 						<?php
-					if(!empty($termDetails) || !empty($arrQueue['concepts']) || !empty($arrQueue['emptyApis']) || !empty($arrQueue['apiFields'])) {
+					if(!empty($termDetails) || !empty($arrQueue['concepts']) || !empty($arrQueue['emptyApis']) || !empty($arrQueue['apiFields']) || !empty($arrQueue['dbColumns'])) {
 							foreach ($termDetails as $term){
-								echo '<li id="requestItem'.$term->termrid.'" data-title="'.$term->termsignifier.'" data-rid="'.$term->termrid.'" data-vocabID="'.$term->commrid.'" api-host="'.$term->apihost.'" api-path="'.$term->apipath.'" api="false"><a class="delete" href="javascript:removeFromRequestQueue(\''.$term->termrid.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$term->termsignifier.'</li>';
+								echo '<li id="requestItem'.$term->termrid.'" data-title="'.$term->termsignifier.'" data-id="'.$term->termrid.'" data-vocabID="'.$term->commrid.'" api-host="'.$term->apihost.'" api-path="'.$term->apipath.'" schema-name="'.$term->schemaname.'" table-name="'.$term->tablename.'" data-type="term"><a class="delete" href="javascript:removeFromRequestQueue(\''.$term->termrid.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$term->termsignifier.'</li>';
 							}
 							foreach ($arrQueue['concepts'] as $id => $term) {
-								echo '<li id="requestItem'.$id.'" data-title"'.$term['term'].'" data-rid="'.$id.'"data-vocabID="'.$term['communityId'].'" api-host="'.$term['apiHost'].'" api-path="'.$term['apiPath'].'" api="false"><a class="delete" href="javascript:removeFromRequestQueue(\''.$id.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$term['term'].'</li>';
+								echo '<li id="requestItem'.$id.'" data-title"'.$term['term'].'" data-id="'.$id.'"data-vocabID="'.$term['communityId'].'" api-host="'.$term['apiHost'].'" api-path="'.$term['apiPath'].'" data-type="concept"><a class="delete" href="javascript:removeFromRequestQueue(\''.$id.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$term['term'].'</li>';
 							}
 							foreach ($arrQueue['emptyApis'] as $path => $api){
 								$displayName = strlen($path) > 28 ? substr($path, 0, 28) . "..." : $path;
 								$id = preg_replace('/\//', '', $path);
-								echo '<li id="requestItem'.$id.'" data-title="'.$path.'" api-host="'.$api['apiHost'].'" api="true"><a class="delete" href="javascript:removeFromRequestQueue(\''.$path.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$displayName.'</li>';
+								echo '<li id="requestItem'.$id.'" data-title="'.$path.'" api-host="'.$api['apiHost'].'" data-type="api"><a class="delete" href="javascript:removeFromRequestQueue(\''.$path.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$displayName.'</li>';
 							}
 							foreach ($arrQueue['apiFields'] as $fieldPath => $field) {
 								$id = preg_replace('/\./', '', $fieldPath);
-								echo '<li id="requestItem'.$id.'" data-title="'.$fieldPath.'" api-host="'.$field['apiHost'].'" api-path="'.$field['apiPath'].'" api="false"><a class="delete" href="javascript:removeFromRequestQueue(\''.$fieldPath.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$field['name'].'</li>';
+								echo '<li id="requestItem'.$id.'" data-title="'.$fieldPath.'" api-host="'.$field['apiHost'].'" api-path="'.$field['apiPath'].'" data-type="field"><a class="delete" href="javascript:removeFromRequestQueue(\''.$fieldPath.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$field['name'].'</li>';
+							}
+							foreach ($arrQueue['dbColumns'] as $columnName => $column) {
+								$id = preg_replace('/ > /', '', $columnName);
+								echo '<li id="requestItem'.$id.'" data-title="'.$columnName.'" schema-name="'.$column['schemaName'].'" table-name="'.$column['tableName'].'" data-type="column"><a class="delete" href="javascript:removeFromRequestQueue(\''.$columnName.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$column['name'].'</li>';
 							}
 							echo '</ul><a class="clearQueue" href="javascript: clearRequestQueue()">Clear All Items</a>';
 						}else{
