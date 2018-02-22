@@ -696,6 +696,9 @@ class CollibraAPI extends Model {
 								'value' => $tableName]]]]]]]];
 
 		$results = $this->fullDataTable($tableConfig);
+		usort($results, function($a, $b) {
+			return strcmp($a->columnName, $b->columnName);
+		});
 		return $results;
 	}
 

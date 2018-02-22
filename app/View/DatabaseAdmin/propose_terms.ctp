@@ -129,7 +129,7 @@
 					<?php endforeach ?>
 				</table>
 				<a class="lower-btn submit grow" href="javascript:submitProposedTerms()">Submit</a>
-				<a class="lower-btn grow" href="/databases/<?=$schemaName?>/<?=$tableName?>">Cancel</a>
+				<a class="lower-btn grow" href="/databases/view/<?=$schemaName?>/<?=$tableName?>">Cancel</a>
 			</div>
 		</div>
 	</div>
