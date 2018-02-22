@@ -62,6 +62,10 @@ class AppController extends Controller {
 			$cartEmpty = true;
 			if ($this->Session->check('queue')) {
 				$arrQueue = $this->Session->read('queue');
+				// Temporary for transition to new queue structure
+				if (!isset($arrQueue['dbColumns'])) {
+					$arrQueue['dbColumns'] = [];
+				}
 				$cartEmpty = empty($arrQueue['businessTerms']) &&
 							 empty($arrQueue['concepts']) &&
 							 empty($arrQueue['apiFields']) &&
@@ -80,13 +84,6 @@ class AppController extends Controller {
 
 		//$this->disableCache();
 
-		if ($this->Session->check('queue')) {
-			$arrQueue = $this->Session->read('queue');
-			if (is_object($arrQueue)) {
-				$this->Session->delete('queue');
-			}
-		}
-
 		if (!$this->Session->check('queue')) {
 			$arrQueue = [];
 			$arrQueue['businessTerms'] = [];
@@ -98,6 +95,10 @@ class AppController extends Controller {
 		}
 
 		$arrQueue = $this->Session->read('queue');
+		// Temporary for transition to new queue structure
+		if (!isset($arrQueue['dbColumns'])) {
+			$arrQueue['dbColumns'] = [];
+		}
 		$requestedTermCount = count($arrQueue['businessTerms']) +
 							  count($arrQueue['concepts']) +
 							  count($arrQueue['apiFields']) +
@@ -147,6 +148,10 @@ class AppController extends Controller {
 		foreach ($draft->attributeReferences->attributeReference as $attr) {
 			if ($attr->labelReference->signifier == 'Additional Information Requested') {
 				$arrQueue = json_decode($attr->value, true);
+				// Temporary for transition to new queue structure
+				if (!isset($arrQueue['dbColumns'])) {
+					$arrQueue['dbColumns'] = [];
+				}
 				$this->Session->write('queue', $arrQueue);
 				continue;
 			}
