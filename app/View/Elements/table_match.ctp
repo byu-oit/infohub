@@ -68,7 +68,7 @@
 				$('.view-context' + index).html(context);
 
 				var def = $(this).data('orig-def');
-				insertDefinition(def, index);
+				insertDefinition(stripTags(def), index);
 			});
 		$('.data-label')
 			.filter(function() {
@@ -120,7 +120,7 @@
 			if (!selected.hasOwnProperty('definition')) {
 				$('#view-definition' + index).html('');
 			} else {
-				insertDefinition(selected.definition.val, index);
+				insertDefinition(stripTags(selected.definition.val), index);
 			}
 		}
 
@@ -146,5 +146,11 @@
 
 	function toggleDefinition(index) {
 		$('#view-definition'+index).toggleClass('expanded');
+	}
+	// Collibra puts html tags into business terms' definitions; that causes problems on this page
+	function stripTags(html) {
+		var tmp = document.createElement("div");
+		tmp.innerHTML = html;
+		return tmp.textContent || tmp.innerText || "";
 	}
 </script>
