@@ -7,12 +7,16 @@
 <script>
 
 	function chunkPostData() {
+		if (!validateForm()) {
+			alert('You must propose a name and definition for each business term selected.');
+			return;
+		}
 		var postData = $('form#apiForm').serializeObject();
 		var host = postData.data.Api.host;
 		var path = postData.data.Api.basePath;
 		var numElements = postData.data.Api.elements.length;
 
-		if (numElements < 150) {
+		if (numElements < 100) {
 
 			$.post('/api_admin/update/'+host+path, postData)
 				.done(function(data) {
@@ -20,20 +24,15 @@
 					if (!data.success) {
 						window.location.reload(true);
 					}
-
-					if (postData.propose == "true") {
-						window.location.href = '/api_admin/proposeTerms/'+host+path;
-					} else {
-						window.location.href = '/apis/'+host+path;
-					}
+					window.location.href = '/apis/'+host+path;
 				});
 
 		} else {
 
 			var chunkedElements = [];
 			var i;
-			for (i = 0; i < numElements - 149; i += 150) {
-				chunkedElements.push(postData.data.Api.elements.slice(i, i+150))
+			for (i = 0; i < numElements - 99; i += 100) {
+				chunkedElements.push(postData.data.Api.elements.slice(i, i+100))
 			}
 			if (i < numElements) {
 				chunkedElements.push(postData.data.Api.elements.slice(i, numElements));
@@ -54,17 +53,27 @@
 				window.location.reload(true);
 			}
 
-			if (postData.propose == "true") {
-				window.location.href = '/api_admin/proposeTerms/'+host+path;
-			} else {
-				window.location.href = '/apis/'+host+path;
-			}
+			window.location.href = '/apis/'+host+path;
 		}
 	}
 
-	function proposeRedirect() {
-		$('#apiForm').find('input[id=propose]').val('true');
-		$('#apiForm').find('.update-submit').click();
+	function validateForm() {
+		var valid = true;
+		$('tbody tr').each(function() {
+			var thisElem = $(this);
+			if (!thisElem.find('input:checkbox')) {
+				return;
+			}
+			if (!thisElem.find('input:checkbox').prop('checked')) {
+				return;
+			}
+
+			if (!thisElem.find('.bt-new-name').val() || !thisElem.find('.bt-new-definition').val()) {
+				valid = false;
+				return false;
+			}
+		});
+		return valid;
 	}
 
 </script>
@@ -87,7 +96,7 @@
 	<div id="searchResults">
 		<h1 class="headerTab"><?= $hostname . '/' . trim($basePath, '/') ?></h1>
 		<div class="clear"></div>
-		<div class="apiHelp" style="cursor:default;">Can't find a matching business term? Hit the button at the bottom to propose a new one.</div>
+		<div class="apiHelp" style="cursor:default;">Can't find a matching business term? Check the "New" box to propose a new one.</div>
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
 				<?= $this->Form->create('Api', ['id' => 'apiForm']) ?>
@@ -97,17 +106,16 @@
 						<tr class="header">
 							<th>Field</th>
 							<th>Business Term</th>
+							<th>New</th>
 							<th>Glossary</th>
 							<th>Definition</th>
 						</tr>
 						<?php
 						$index = 0;
 						foreach ($terms as $term) {
-							$this->Fieldset->printApiAdminUpdate($term, $index);
+							$this->Fieldset->printApiAdminUpdate($term, $index, $glossaries);
 						} ?>
 					</table>
-					<input type="hidden" id="propose" name="propose" value="false">
-					<a class="lower-btn grow" href="javascript:proposeRedirect()">Propose New Business Terms</a>
 					<a class="lower-btn grow" href="/apis/<?=$hostname.$basePath?>">Cancel</a>
 					<div class="update-submit grow" onclick="chunkPostData()">Save</div>
 				<?= $this->Form->end() ?>

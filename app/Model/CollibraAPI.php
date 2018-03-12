@@ -708,6 +708,24 @@ class CollibraAPI extends Model {
 			if (empty($column['id'])) {
 				continue;
 			}
+			if (isset($column['new'])) {
+				$glossary = !empty($column['propGlossary']) ? $column['propGlossary'] : Configure::read('Collibra.vocabulary.newBusinessTerms');
+				$resp = $this->post('term', [
+					'vocabulary' => $glossary,
+					'signifier' => $column['propName'],
+					'conceptType' => Configure::read('Collibra.type.term')
+				]);
+				$resp = json_decode($resp);
+
+				$columnId = $resp->resourceId;
+				$column['business_term'] = $columnId;
+
+				$postString = http_build_query([
+					'label' => Configure::read('Collibra.attribute.definition'),
+					'value' => $column['propDefinition']
+				]);
+				$resp = $this->post('term/'.$columnId.'/attributes', $postString);
+			}
 			if (isset($column['previous_business_term'])) {
 				if ($column['previous_business_term'] == $column['business_term']) {
 					continue;
@@ -1137,6 +1155,24 @@ class CollibraAPI extends Model {
 			if (empty($term['id'])) {
 				continue;
 			}
+			if (isset($term['new'])) {
+				$glossary = !empty($term['propGlossary']) ? $term['propGlossary'] : Configure::read('Collibra.vocabulary.newBusinessTerms');
+				$resp = $this->post('term', [
+					'vocabulary' => $glossary,
+					'signifier' => $term['propName'],
+					'conceptType' => Configure::read('Collibra.type.term')
+				]);
+				$resp = json_decode($resp);
+
+				$termId = $resp->resourceId;
+				$term['business_term'] = $termId;
+
+				$postString = http_build_query([
+					'label' => Configure::read('Collibra.attribute.definition'),
+					'value' => $term['propDefinition']
+				]);
+				$resp = $this->post('term/'.$termId.'/attributes', $postString);
+			}
 			if (isset($term['previous_business_term'])) {
 				if ($term['previous_business_term'] == $term['business_term']) {
 					continue;
@@ -1239,6 +1275,37 @@ class CollibraAPI extends Model {
 			);
 		$json = json_decode($resp);
 		return $json->aaData;
+	}
+
+	public function getAllGlossaries() {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'glossaryName']],
+				['Column' => ['fieldName' => 'glossaryId']]],
+			'Resources' => [
+				'Vocabulary' => [
+					'Name' => ['name' => 'glossaryName'],
+					'Id' => ['name' => 'glossaryId'],
+					'VocabularyType' => [
+						'Id' => ['name' => 'domainTypeId']
+					],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+								'name' => 'domainTypeId',
+								'operator' => 'EQUALS',
+								'value' => Configure::read('Collibra.glossaryTypeId')]]]]]]]];
+
+		$results = $this->fullDataTable($tableConfig);
+		foreach ($results as $result) {
+			if (strpos($result->glossaryName, ' Glossary') !== FALSE) {
+				$result->glossaryName = substr($result->glossaryName, 0, strpos($result->glossaryName, ' Glossary'));
+			}
+		}
+		usort($results, function($a, $b) {
+			return strcmp($a->glossaryName, $b->glossaryName);
+		});
+		return $results;
 	}
 
 	public function searchStandardLabel($term) {

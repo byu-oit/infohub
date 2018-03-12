@@ -58,6 +58,11 @@
 			$('#view-definition' + index).html('');
 		});
 
+		$('.new-check').change(function() {
+			var index = $(this).data('index');
+			$('#tr'+index).toggleClass('display-new-bt');
+		});
+
 		$('.data-label')
 			.filter(function() {
 				return $(this).data('preLinked');

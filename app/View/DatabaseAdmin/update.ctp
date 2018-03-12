@@ -7,12 +7,16 @@
 <script>
 
 	function chunkPostData() {
+		if (!validateForm()) {
+			alert('You must propose a name and definition for each business term selected.');
+			return;
+		}
 		var postData = $('form#tableForm').serializeObject();
 		var schema = postData.data.Table.schemaName;
 		var tableName = postData.data.Table.tableName;
 		var numElements = postData.data.Table.elements.length;
 
-		if (numElements < 150) {
+		if (numElements < 100) {
 
 			$.post('/database_admin/update/'+schema+'/'+tableName, postData)
 				.done(function(data) {
@@ -20,20 +24,15 @@
 					if (!data.success) {
 						window.location.reload(true);
 					}
-
-					if (postData.propose == "true") {
-						window.location.href = '/database_admin/proposeTerms/'+schema+'/'+tableName;
-					} else {
-						window.location.href = '/databases/view/'+schema+'/'+tableName;
-					}
+					window.location.href = '/databases/view/'+schema+'/'+tableName;
 				});
 
 		} else {
 
 			var chunkedElements = [];
 			var i;
-			for (i = 0; i < numElements - 149; i += 150) {
-				chunkedElements.push(postData.data.Table.elements.slice(i, i+150))
+			for (i = 0; i < numElements - 99; i += 100) {
+				chunkedElements.push(postData.data.Table.elements.slice(i, i+100))
 			}
 			if (i < numElements) {
 				chunkedElements.push(postData.data.Table.elements.slice(i, numElements));
@@ -54,17 +53,27 @@
 				window.location.reload(true);
 			}
 
-			if (postData.propose == "true") {
-				window.location.href = '/database_admin/proposeTerms/'+schema+'/'+tableName;
-			} else {
-				window.location.href = '/databases/view/'+schema+'/'+tableName;
-			}
+			window.location.href = '/databases/view/'+schema+'/'+tableName;
 		}
 	}
 
-	function proposeRedirect() {
-		$('#tableForm').find('input[id=propose]').val('true');
-		$('#tableForm').find('.update-submit').click();
+	function validateForm() {
+		var valid = true;
+		$('tbody tr').each(function() {
+			var thisElem = $(this);
+			if (!thisElem.find('input:checkbox')) {
+				return;
+			}
+			if (!thisElem.find('input:checkbox').prop('checked')) {
+				return;
+			}
+
+			if (!thisElem.find('.bt-new-name').val() || !thisElem.find('.bt-new-definition').val()) {
+				valid = false;
+				return false;
+			}
+		});
+		return valid;
 	}
 
 </script>
@@ -87,7 +96,7 @@
 	<div id="searchResults">
 		<h1 class="headerTab"><?= $tableName ?></h1>
 		<div class="clear"></div>
-		<div class="tableHelp" style="cursor:default;">Can't find a matching business term? Hit the button at the bottom to propose a new one.</div>
+		<div class="tableHelp" style="cursor:default;">Can't find a matching business term? Check the "New" box to propose a new one.</div>
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
 				<?= $this->Form->create('Table', ['id' => 'tableForm']) ?>
@@ -97,11 +106,12 @@
 						<tr class="header">
 							<th>Column</th>
 							<th>Business Term</th>
+							<th>New</th>
 							<th>Glossary</th>
 							<th>Definition</th>
 						</tr>
 						<?php foreach ($columns as $index => $column): ?>
-							<tr>
+							<tr id="tr<?=$index?>">
 								<td><?php
 									$columnPath = explode(' > ', $column->columnName);
 									echo end($columnPath);
@@ -116,9 +126,6 @@
 											<div class="selected-term"><span class="term-name"></span>  <span class="edit-opt" data-index="<?=$index?>" title="Select new term"></span></div>
 											<div class="loading">Loading...</div>
 										</div>
-									</td>
-									<td class="view-context<?= $index ?>" style="white-space: nowrap"></td>
-									<td id="view-definition<?= $index ?>" class="view-definition"></td>
 								<?php else: ?>
 									<td>
 										<input type="hidden" name="data[Table][elements][<?=$index?>][id]" value="<?=$column->columnId?>" id="TableElements<?=$index?>Id">
@@ -131,15 +138,29 @@
 											<div class="selected-term"><span class="term-name"><?=$column->businessTerm[0]->term?></span>  <span class="edit-opt" data-index="<?=$index?>" title="Select new term"></span></div>
 											<div class="loading">Loading...</div>
 										</div>
-									</td>
-									<td class="view-context<?= $index ?>" style="white-space: nowrap"></td>
-									<td id="view-definition<?= $index ?>" class="view-definition"></td>
 								<?php endif ?>
+									<input type="text" name="data[Table][elements][<?=$index?>][propName]" class="bt-new-name" id="TableElements<?=$index?>PropName" data-index="<?=$index?>" placeholder="Proposed name for the term"></input>
+								</td>
+								<td>
+									<input type="checkbox" name="data[Table][elements][<?=$index?>][new]" id="TableElements<?=$index?>New" class="new-check" data-index="<?=$index?>">
+								</td>
+								<td class="glossary-cell">
+									<div class="view-context<?=$index?>" style="white-space: nowrap"></div>
+									<select name="data[Table][elements][<?=$index?>][propGlossary]" class="bt-new-glossary" id="TableElements<?=$index?>PropGlossary">
+										<option value="">Select a glossary</option>
+										<option value="">I don't know</option>
+											<?php foreach ($glossaries as $glossary) {
+												echo '<option value="'.$glossary->glossaryId.'">'.$glossary->glossaryName.'</option>';
+											} ?>
+									</select>
+								</td>
+								<td>
+									<div id="view-definition<?=$index?>" class="view-definition"></div>
+									<textarea name="data[Table][elements][<?=$index?>][propDefinition]" class="bt-new-definition" id="TableElements<?=$index?>PropDefinition" placeholder="Propose a definition for the term" rows="1" style="width:100%;"></textarea>
+								</td>
 							</tr>
 						<?php endforeach ?>
 					</table>
-					<input type="hidden" id="propose" name="propose" value="false">
-					<a class="lower-btn grow" href="javascript:proposeRedirect()">Propose New Business Terms</a>
 					<a class="lower-btn grow" href="/databases/view/<?=$schemaName.'/'.$tableName?>">Cancel</a>
 					<div class="update-submit grow" onclick="chunkPostData()">Save</div>
 				<?= $this->Form->end() ?>

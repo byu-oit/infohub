@@ -1371,6 +1371,30 @@ img.resultBodyLoading {
 #apiBody .table-columns tbody .header {
   text-align: left;
 }
+#apiBody .api-terms td:last-child,
+#apiBody .table-columns td:last-child {
+  width: 100%;
+}
+#apiBody .api-terms tbody tr .bt-new-name,
+#apiBody .table-columns tbody tr .bt-new-name,
+#apiBody .api-terms tbody tr .bt-new-glossary,
+#apiBody .table-columns tbody tr .bt-new-glossary,
+#apiBody .api-terms tbody tr .bt-new-definition,
+#apiBody .table-columns tbody tr .bt-new-definition {
+  display: none;
+}
+#apiBody .api-terms tbody tr.display-new-bt .bt-new-name,
+#apiBody .table-columns tbody tr.display-new-bt .bt-new-name,
+#apiBody .api-terms tbody tr.display-new-bt .bt-new-glossary,
+#apiBody .table-columns tbody tr.display-new-bt .bt-new-glossary,
+#apiBody .api-terms tbody tr.display-new-bt .bt-new-definition,
+#apiBody .table-columns tbody tr.display-new-bt .bt-new-definition {
+  display: inline-block;
+}
+#apiBody .api-terms tbody tr.display-new-bt td div,
+#apiBody .table-columns tbody tr.display-new-bt td div {
+  display: none;
+}
 #apiBody .api-terms tbody .term-wrapper .bt-search,
 #apiBody .table-columns tbody .term-wrapper .bt-search,
 #apiBody .api-terms tbody .term-wrapper .loading,
@@ -1428,6 +1452,20 @@ img.resultBodyLoading {
 }
 .ui-autocomplete .ui-menu-item.new-tab {
   font-style: italic;
+}
+#apiBody .api-terms tbody .glossary-cell,
+#apiBody .table-columns tbody .glossary-cell {
+  min-width: 150px;
+}
+#apiBody .api-terms tbody .glossary-cell div,
+#apiBody .table-columns tbody .glossary-cell div {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#apiBody .api-terms tbody .bt-new-glossary,
+#apiBody .table-columns tbody .bt-new-glossary {
+  width: 100%;
 }
 #apiBody .api-terms tbody .view-definition .truncated,
 #apiBody .table-columns tbody .view-definition .truncated {

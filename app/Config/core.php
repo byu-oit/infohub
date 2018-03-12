@@ -49,6 +49,7 @@ if (!function_exists('denv')) {
 			'id' => '27028f8b-3d2b-4286-a567-b9658418be51'
 		],
 		'dataAssetDomainTypeId' => '00000000-0000-0000-0000-000000030011',
+		'glossaryTypeId' => '00000000-0000-0000-0000-000000010001',
 		'techAssetDomainTypeId' => '00000000-0000-0000-0000-000000030004',
 		'businessTermTypeId' => '00000000-0000-0000-0000-000000011001',
 		'standardFieldNameTypeId' => 'ea92faa8-685d-4cb0-8665-14808de08dd2',
@@ -73,7 +74,8 @@ if (!function_exists('denv')) {
 			'term' => '00000000-0000-0000-0000-000000011001',
 			'api' => '43efdd9e-8173-4f42-8055-9ae73d6134b1',
 			'field' => '00000000-0000-0000-0001-000400000008',
-			'fieldSet' => '73bae222-220d-4342-94ba-6a8369797eac'
+			'fieldSet' => '73bae222-220d-4342-94ba-6a8369797eac',
+			'glossary' => ''
 		],
 		'attribute' => [
 			'definition' => '00000000-0000-0000-0000-000000000202',

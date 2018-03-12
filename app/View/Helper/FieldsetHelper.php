@@ -95,16 +95,16 @@ class FieldsetHelper extends AppHelper {
         }
     }
 
-    public function printApiAdminUpdate($term, &$index) {
-        echo '<tr><td>';
+    public function printApiAdminUpdate($term, &$index, $glossaries) {
+        echo '<tr id="tr'.$index.'"><td>';
             $termPath = explode('.', $term->name);
             for ($i = 0; $i < count($termPath) - 1; $i++) {
                 echo str_repeat('&nbsp;', 12);
             }
             echo end($termPath);
         echo '</td>';
-        if (empty($term->businessTerm[0])) {
-            echo '<td>';
+        echo '<td>';
+            if (empty($term->businessTerm[0])) {
                 echo '<input type="hidden" name="data[Api][elements]['.$index.'][id]" value="'.$term->id.'" id="ApiElements'.$index.'Id">'.
                      '<input type="hidden" name="data[Api][elements]['.$index.'][name]" class="data-label" data-index="'.$index.'" value="'.$term->name.'" id="ApiElements'.$index.'Name">'.
                      '<input type="hidden" name="data[Api][elements]['.$index.'][business_term]" class="bt" data-index="'.$index.'" id="ApiElements'.$index.'BusinessTerm">'.
@@ -113,31 +113,40 @@ class FieldsetHelper extends AppHelper {
                         '<div class="selected-term"><span class="term-name"></span>  <span class="edit-opt" data-index="'.$index.'" title="Select new term"></span></div>'.
                         '<div class="loading">Loading...</div>'.
                      '</div>';
-            echo '</td>'.
-                 '<td class="view-context'.$index.'" style="white-space: nowrap"></td>'.
-                 '<td id="view-definition'.$index.'" class="view-definition"></td>';
-        } else {
-            echo '<td>'.
-                 '<input type="hidden" name="data[Api][elements]['.$index.'][id]" value="'.$term->id.'" id="ApiElements'.$index.'Id">'.
-                 '<input type="hidden" name="data[Api][elements]['.$index.'][name]" class="data-label" data-index="'.$index.'" value="'.$term->name.'" id="ApiElements'.$index.'Name"	data-pre-linked="true" data-orig-context="'.$term->businessTerm[0]->termCommunityName.'" data-orig-id="'.$term->businessTerm[0]->termId.'" data-orig-name="'.$term->businessTerm[0]->term.'" data-orig-def="'.preg_replace('/"/', '&quot;', $term->businessTerm[0]->termDescription).'">'.
-                 '<input type="hidden" name="data[Api][elements]['.$index.'][previous_business_term]" value="'.$term->businessTerm[0]->termId.'">'.
-                 '<input type="hidden" name="data[Api][elements]['.$index.'][previous_business_term_relation]" value="'.$term->businessTerm[0]->termRelationId.'">'.
-                 '<input type="hidden" name="data[Api][elements]['.$index.'][business_term]" value="'.$term->businessTerm[0]->termId.'" class="bt" data-index="'.$index.'" id="ApiElements'.$index.'BusinessTerm" data-orig-term="'.$term->businessTerm[0]->termId.'">'.
-                 '<div class="term-wrapper" id="ApiElements'.$index.'SearchCell">'.
-                    '<input type="text" class="bt-search" data-index="'.$index.'" placeholder="Search for a term"></input>'.
-                    '<div class="selected-term"><span class="term-name">'.$term->businessTerm[0]->term.'</span>  <span class="edit-opt" data-index="'.$index.'" title="Select new term"></span></div>'.
-                    '<div class="loading">Loading...</div>'.
-                 '</div>';
-            echo '</td>'.
-                 '<td class="view-context'.$index.'" style="white-space: nowrap"></td>'.
-                 '<td id="view-definition'.$index.'" class="view-definition"></td>';
-        }
+            } else {
+                echo '<input type="hidden" name="data[Api][elements]['.$index.'][id]" value="'.$term->id.'" id="ApiElements'.$index.'Id">'.
+                     '<input type="hidden" name="data[Api][elements]['.$index.'][name]" class="data-label" data-index="'.$index.'" value="'.$term->name.'" id="ApiElements'.$index.'Name"	data-pre-linked="true" data-orig-context="'.$term->businessTerm[0]->termCommunityName.'" data-orig-id="'.$term->businessTerm[0]->termId.'" data-orig-name="'.$term->businessTerm[0]->term.'" data-orig-def="'.preg_replace('/"/', '&quot;', $term->businessTerm[0]->termDescription).'">'.
+                     '<input type="hidden" name="data[Api][elements]['.$index.'][previous_business_term]" value="'.$term->businessTerm[0]->termId.'">'.
+                     '<input type="hidden" name="data[Api][elements]['.$index.'][previous_business_term_relation]" value="'.$term->businessTerm[0]->termRelationId.'">'.
+                     '<input type="hidden" name="data[Api][elements]['.$index.'][business_term]" value="'.$term->businessTerm[0]->termId.'" class="bt" data-index="'.$index.'" id="ApiElements'.$index.'BusinessTerm" data-orig-term="'.$term->businessTerm[0]->termId.'">'.
+                     '<div class="term-wrapper" id="ApiElements'.$index.'SearchCell">'.
+                        '<input type="text" class="bt-search" data-index="'.$index.'" placeholder="Search for a term"></input>'.
+                        '<div class="selected-term"><span class="term-name">'.$term->businessTerm[0]->term.'</span>  <span class="edit-opt" data-index="'.$index.'" title="Select new term"></span></div>'.
+                        '<div class="loading">Loading...</div>'.
+                     '</div>';
+            }
+            echo '<input type="text" name="data[Api][elements]['.$index.'][propName]" class="bt-new-name" id="ApiElements'.$index.'PropName" data-index="'.$index.'" placeholder="Proposed name for the term"></input>'.
+             '</td><td>'.
+                 '<input type="checkbox" name="data[Api][elements]['.$index.'][new]" id="ApiElements'.$index.'New" class="new-check" data-index="'.$index.'">'.
+             '</td><td class="glossary-cell">'.
+                 '<div class="view-context'.$index.'" style="white-space: nowrap"></div>'.
+                 '<select name="data[Api][elements]['.$index.'][propGlossary]" class="bt-new-glossary" id="ApiElements'.$index.'PropGlossary">'.
+                 '<option value="">Select a glossary</option>'.
+                 '<option value="">I don\'t know</option>';
+                     foreach ($glossaries as $glossary) {
+                         echo '<option value="'.$glossary->glossaryId.'">'.$glossary->glossaryName.'</option>';
+                     }
+            echo '</select>'.
+             '</td><td>'.
+                 '<div id="view-definition'.$index.'" class="view-definition"></div>'.
+                 '<textarea name="data[Api][elements]['.$index.'][propDefinition]" class="bt-new-definition" id="ApiElements'.$index.'PropDefinition" placeholder="Propose a definition for the term" rows="1" style="width:100%;"></textarea>'.
+             '</td>';
         echo '</tr>';
         $index++;
 
         if (!empty($term->descendantFields)) {
             foreach ($term->descendantFields as $field) {
-                $this->printApiAdminUpdate($field, $index);
+                $this->printApiAdminUpdate($field, $index, $glossaries);
             }
         }
     }
