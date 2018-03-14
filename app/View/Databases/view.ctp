@@ -37,7 +37,7 @@
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
 				<input type="button" data-schemaName="<?= h($schemaName) ?>" data-tableName="<?= h($tableName) ?>" api="false" onclick="addToQueueDBTable(this, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
-				<table class="table-columns checkBoxes">
+				<table class="table-columns checkBoxes view">
 					<tr class="header">
 						<th><input type="checkbox" onclick="toggleAllCheckboxes(this)" checked="checked" name="toggleCheckboxes"/></th>
 						<th class="fieldColumn">Column</th>
@@ -72,7 +72,7 @@
 								$columnPath = explode(' > ', $column->columnName);
 								echo end($columnPath);
 							?></td>
-							<td>
+							<td style="white-space:nowrap;">
 								<?php if (!empty($column->businessTerm[0])): ?>
 									<?php $termDef = nl2br(str_replace("\n\n\n", "\n\n", htmlentities(strip_tags(str_replace(['<div>', '<br>', '<br/>'], "\n", $column->businessTerm[0]->termDescription))))); ?>
 									<?= $this->Html->link($column->businessTerm[0]->term, ['controller' => 'search', 'action' => 'term', $column->businessTerm[0]->termId]) ?>

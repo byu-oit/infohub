@@ -39,7 +39,7 @@ class FieldsetHelper extends AppHelper {
             }
             echo end($termPath);
         echo '</td>';
-        echo '<td>';
+        echo '<td style="white-space:nowrap;">';
             if (!empty($term->businessTerm[0])) {
                 $termDef = nl2br(str_replace("\n\n\n", "\n\n", htmlentities(strip_tags(str_replace(['<div>', '<br>', '<br/>'], "\n", $term->businessTerm[0]->termDescription)))));
                 echo '<a href="/search/term/'.$term->businessTerm[0]->termId.'">'.$term->businessTerm[0]->term.'</a>';

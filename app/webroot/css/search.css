@@ -1371,6 +1371,10 @@ img.resultBodyLoading {
 #apiBody .table-columns tbody .header {
   text-align: left;
 }
+#apiBody .api-terms.view td:nth-child(2),
+#apiBody .table-columns.view td:nth-child(2) {
+  width: 100%;
+}
 #apiBody .api-terms td:last-child,
 #apiBody .table-columns td:last-child {
   width: 100%;
