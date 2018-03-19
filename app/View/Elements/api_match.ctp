@@ -31,7 +31,7 @@
 						}
 						var index = $(this).data('index');
 
-						updateTable(index, selected.item);
+						updateTable(index, selected.item, false);
 					}
 				})
 				.autocomplete("instance")._renderItem = function( ul, item ) {
@@ -107,13 +107,13 @@
 					}).each(function() {
 						$(this).closest('tr').find('.term-wrapper').removeClass('display-loading').addClass('display-search');
 						if (data.length != 0) {
-							updateTable($(this).data('index'), data[0]);
+							updateTable($(this).data('index'), data[0], true);
 						}
 					});
 			});
 		}
 
-		function updateTable(index, selected) {
+		function updateTable(index, selected, automatic) {
 			$('#ApiElements' + index + 'BusinessTerm').val(selected.name.id);
 
 			var $search = $('#ApiElements' + index + 'SearchCell');
@@ -126,6 +126,10 @@
 				$('#view-definition' + index).html('');
 			} else {
 				insertDefinition(stripTags(selected.definition.val), index);
+			}
+
+			if (automatic) {
+				$('#tr' + index).addClass('automatic-match');
 			}
 		}
 

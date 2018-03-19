@@ -96,7 +96,7 @@
 	<div id="searchResults">
 		<h1 class="headerTab"><?= $tableName ?></h1>
 		<div class="clear"></div>
-		<div class="tableHelp" style="cursor:default;">Can't find a matching business term? Check the "New" box to propose a new one.</div>
+		<div class="tableHelp" style="cursor:default;">Can't find a matching business term? Check the "New" box to propose a new one.<br>Highlighted rows are automatic suggestions. Be sure to review these before submitting.</div>
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
 				<?= $this->Form->create('Table', ['id' => 'tableForm']) ?>

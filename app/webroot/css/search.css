@@ -1334,7 +1334,7 @@ img.resultBodyLoading {
   margin-top: 15px;
   color: rgba(14, 50, 100, 0.85);
   font-size: 18px;
-  line-height: 16px;
+  line-height: 26px;
   width: auto;
   cursor: pointer;
   padding-bottom: 8px;
@@ -1370,6 +1370,10 @@ img.resultBodyLoading {
 #apiBody .api-terms tbody .header,
 #apiBody .table-columns tbody .header {
   text-align: left;
+}
+#apiBody .api-terms tr.automatic-match,
+#apiBody .table-columns tr.automatic-match {
+  background-color: #ffdd99;
 }
 #apiBody .api-terms.view td:nth-child(2),
 #apiBody .table-columns.view td:nth-child(2) {
