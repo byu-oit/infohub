@@ -50,6 +50,8 @@
 
 		$('.edit-opt').click(function() {
 			var index = $(this).data('index');
+			$('#tr' + index).removeClass('automatic-match');
+
 			$('#TableElements' + index + 'SearchCell').toggleClass('display-search');
 			$('#TableElements' + index + 'SearchCell').find('.bt-search').focus();
 

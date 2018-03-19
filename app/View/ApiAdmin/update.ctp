@@ -7,10 +7,19 @@
 <script>
 
 	function chunkPostData() {
+		var i = 0;
+		var loadingTexts = ['Working on it   ','Working on it.  ','Working on it.. ','Working on it...'];
+		var loadingTextInterval = setInterval(function() {
+			$('.update-submit').html(loadingTexts[i]);
+			i++;
+			if (i == loadingTexts.length) i = 0;
+		}, 250);
+
 		if (!validateForm()) {
 			alert('You must propose a name and definition for each business term selected.');
 			return;
 		}
+
 		var postData = $('form#apiForm').serializeObject();
 		var host = postData.data.Api.host;
 		var path = postData.data.Api.basePath;
