@@ -13,6 +13,10 @@ class ApisController extends AppController {
 	}
 
 	public function host($hostname) {
+		if ($this->Session->check('recentAPIs')) {
+			$this->set('recent', $this->Session->read('recentAPIs'));
+		}
+
 		$community = $this->CollibraAPI->findTypeByName('community', $hostname, ['full' => true]);
 		if (empty($community->resourceId)) {
 			$this->redirect(['action' => 'index']);
@@ -57,6 +61,11 @@ class ApisController extends AppController {
 		}
 		$isOITEmployee = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04');
 		$this->set(compact('hostname', 'basePath', 'terms', 'isOITEmployee'));
+
+		$arrRecent = $this->Session->check('recentAPIs') ? $this->Session->read('recentAPIs') : [];
+		array_unshift($arrRecent, $basePath);
+		$arrRecent = array_unique($arrRecent);
+		$this->Session->write('recentAPIs', array_slice($arrRecent, 0, 5));
 
 		if (array_key_exists('checkout', $this->request->query)) {
 			return $this->_autoCheckout($hostname, $basePath, $terms);

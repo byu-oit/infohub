@@ -61,7 +61,7 @@
 <!-- Request list -->
 <div id="resourceBody" class="innerLower">
 	<div id="resourceTop">
-		<h1 class="headerTab" >Resources</h1>
+		<h1 class="headerTab">Resources</h1>
 		<div class="clear"></div>
 		<div id="reLower" class="whiteBox">
 			<aside>

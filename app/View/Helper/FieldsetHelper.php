@@ -150,34 +150,4 @@ class FieldsetHelper extends AppHelper {
             }
         }
     }
-
-    public function printApiAdminProposeTerms($term) {
-        if (empty($term->businessTerm)) {
-            echo '<tr field-id="'.$term->id.'" field-name="'.$term->name.'">';
-                echo '<td><input type="checkbox"></td>'.
-                     '<td>';
-                        $termPath = explode('.', $term->name);
-                        for ($i = 0; $i < count($termPath) - 1; $i++) {
-                            echo str_repeat('&nbsp;', 12);
-                        }
-                        echo end($termPath);
-                echo '</td>';
-                echo '<td>';
-                    $name = end($termPath);
-                    $name = ucwords(str_replace("_", " ", $name));
-                    echo '<input type="text" class="proposed-name" value="'.$name.'">';
-                echo '</td>';
-                echo '<td></td>';
-                echo '<td>';
-                    echo '<input type="text" class="proposed-def" placeholder="">';
-                echo '</td>';
-            echo '</tr>';
-        }
-
-        if (!empty($term->descendantFields)) {
-            foreach ($term->descendantFields as $field) {
-                $this->printApiAdminProposeTerms($field);
-            }
-        }
-    }
 }

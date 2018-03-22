@@ -121,7 +121,7 @@
 	<div class="clear"></div>
 
 	<div id="searchResults">
-		<h2 class="headerTab" >Results</h2>
+		<h2 class="headerTab">Results</h2>
 		<div class="clear"></div>
 		<div id="srLower" class="whiteBox">
 <?php

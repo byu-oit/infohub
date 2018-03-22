@@ -82,7 +82,7 @@
 <!-- Request list -->
 <div id="searchBody" class="innerLower">
 	<div id="searchTop">
-		<h1 class="headerTab" >Search Information</h1>
+		<h1 class="headerTab">Search Information</h1>
 		<div class="clear"></div>
 		<div id="stLower" class="whiteBox">
 			<form action="#" onsubmit="document.location='/search/results/'+this.searchInput.value.replace('+','&'); return false;" method="post">
@@ -95,7 +95,7 @@
 	</div>
 
 	<div id="searchMain">
-		<h2 class="headerTab" >Full Catalog</h2>
+		<h2 class="headerTab">Full Catalog</h2>
 		<div class="clear"></div>
 		<div id="smLower" class="whiteBox">
 			<ul class="catalogParent" id="catalogList0" data-level="0">

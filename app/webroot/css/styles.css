@@ -726,7 +726,9 @@ textarea.error {
 .bumpRight:hover {
   transform: translate(10px);
 }
-.autoComplete {
+.autoComplete,
+.autoCompleteApis,
+.autoCompleteTables {
   display: none;
   position: absolute;
   top: 30px;
@@ -737,21 +739,31 @@ textarea.error {
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
-.autoComplete ul {
+.autoComplete ul,
+.autoCompleteApis ul,
+.autoCompleteTables ul {
   margin: 0;
   padding: 8px 0px 13px;
   list-style-type: none;
 }
-.autoComplete ul li {
+.autoComplete ul li,
+.autoCompleteApis ul li,
+.autoCompleteTables ul li {
   font-size: 12px;
   padding: 0 12px;
   cursor: pointer;
 }
 .autoComplete ul li:hover,
-.autoComplete ul li.active {
+.autoComplete ul li.active,
+.autoCompleteApis ul li:hover,
+.autoCompleteApis ul li.active,
+.autoCompleteTables ul li:hover,
+.autoCompleteTables ul li.active {
   background-color: #ebebeb;
 }
-.autoComplete span {
+.autoComplete span,
+.autoCompleteApis span,
+.autoCompleteTables span {
   font-size: 14px;
   width: 100%;
   padding: 5px 0;

@@ -4,6 +4,10 @@ class DatabasesController extends AppController {
 	public $uses = ['CollibraAPI', 'BYUAPI'];
 
 	public function index() {
+		if ($this->Session->check('recentTables')) {
+			$this->set('recent', $this->Session->read('recentTables'));
+		}
+
 		$schemasCommunity = json_decode($this->CollibraAPI->get('community/'.Configure::read('Collibra.community.dwprd')));
 		$schemas = [];
 		foreach ($schemasCommunity->vocabularyReferences->vocabularyReference as $schema) {
@@ -21,6 +25,10 @@ class DatabasesController extends AppController {
 	}
 
 	public function schema($schemaName) {
+		if ($this->Session->check('recentTables')) {
+			$this->set('recent', $this->Session->read('recentTables'));
+		}
+
 		$schema = $this->CollibraAPI->getSchemaTables($schemaName);
 		usort($schema->tables, function($a, $b) {
 			return strcmp($a->tableName, $b->tableName);
@@ -33,6 +41,11 @@ class DatabasesController extends AppController {
 
 		$isOITEmployee = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04');
 		$this->set(compact('schemaName', 'tableName', 'columns', 'isOITEmployee'));
+
+		$arrRecent = $this->Session->check('recentTables') ? $this->Session->read('recentTables') : [];
+		array_unshift($arrRecent, $tableName);
+		$arrRecent = array_unique($arrRecent);
+		$this->Session->write('recentTables', array_slice($arrRecent, 0, 5));
 
 		if (array_key_exists('checkout', $this->request->query)) {
 			return $this->_autoCheckout($schemaName, $tableName, $columns);

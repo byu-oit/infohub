@@ -152,7 +152,7 @@ $(document).ready(function(){
 			if(m){
 				$('.autoComplete li.active').removeClass('active');
 				$('.autoComplete li').eq(index).addClass('active');
-		   }
+			}
 		}
 	});
 });

@@ -9,7 +9,7 @@
 	<div id="searchBody" class="innerLower">
 
 		<div id="searchSuccess">
-			<h2 class="headerTab" >Thank You</h2>
+			<h2 class="headerTab">Thank You</h2>
 
 			<div id="successLower" class="whiteBox">
 				<p>Your request has been submited and you will be notified once it has been reviewed and approved.</p>
