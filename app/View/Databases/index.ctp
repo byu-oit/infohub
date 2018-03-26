@@ -7,7 +7,7 @@
 <div id="searchBg" class="searchBg">
 </div>
 
-<div id="searchBody" class="innerLower">
+<div id="searchBody" class="innerLower tables">
 
 	<?php if (isset($recent)): ?>
 		<div id="searchMain" style="padding-top: 35px;">

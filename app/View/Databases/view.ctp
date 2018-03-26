@@ -22,7 +22,7 @@
 </style>
 <div id="apiBody" class="innerLower">
 	<div id="searchResults">
-		<h1 class="headerTab"><?= $tableName ?></h1>
+		<h1 class="headerTab"><a href="/databases/schema/<?= $schemaName ?>"><?= $schemaName ?></a> > <?= $tableNameOnly ?></h1>
 		<div class="clear"></div>
 		<div class="btnLinks">
 			<?php if ($isOITEmployee): ?>

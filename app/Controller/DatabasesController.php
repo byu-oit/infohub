@@ -37,10 +37,11 @@ class DatabasesController extends AppController {
 	}
 
 	public function view($schemaName, $tableName) {
+		$tableNameOnly = substr($tableName, strpos($tableName, '>') + 2);
 		$columns = $this->CollibraAPI->getTableColumns($tableName);
 
 		$isOITEmployee = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04');
-		$this->set(compact('schemaName', 'tableName', 'columns', 'isOITEmployee'));
+		$this->set(compact('schemaName', 'tableName', 'tableNameOnly', 'columns', 'isOITEmployee'));
 
 		$arrRecent = $this->Session->check('recentTables') ? $this->Session->read('recentTables') : [];
 		array_unshift($arrRecent, $tableName);

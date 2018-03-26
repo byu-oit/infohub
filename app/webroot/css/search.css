@@ -6,6 +6,13 @@
   padding: 8px 30px;
   float: left;
 }
+.headerTab a {
+  text-decoration: none;
+  color: white;
+}
+.headerTab a:hover {
+  text-decoration: underline;
+}
 #searchBg {
   position: absolute;
   padding: 0;
@@ -110,6 +117,10 @@ img.resultBodyLoading {
   list-style-type: none;
   padding: 5px 0 0;
 }
+#searchBody.apis #searchMain #smLower ul li,
+#searchBody.tables #searchMain #smLower ul li {
+  padding: 2px 0 0;
+}
 #searchBody #searchMain #smLower ul li a,
 #searchBody #searchMain #smLower ul li div,
 #apiBody #searchMain #smLower ul li a {
@@ -121,6 +132,10 @@ img.resultBodyLoading {
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   text-decoration: none;
+}
+#searchBody.apis #searchMain #smLower ul li a,
+#searchBody.tables #searchMain #smLower ul li a {
+  padding: 4px 12px;
 }
 #searchBody #searchMain #smLower ul li div span.no-glossary {
   color: #888888;

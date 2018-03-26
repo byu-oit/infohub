@@ -96,7 +96,7 @@ $(document).on( 'click', function ( e ) {
 <div id="searchBg" class="searchBg">
 </div>
 
-<div id="searchBody" class="innerLower">
+<div id="searchBody" class="innerLower apis">
 
 	<div id="searchTop">
 		<h1 class="headerTab">Search APIs</h1>
@@ -114,7 +114,7 @@ $(document).on( 'click', function ( e ) {
 
 	<?php if (isset($recent)): ?>
 		<div id="searchMain" style="padding-bottom: 35px;">
-			<h2 class="headerTab">Recently Viewed</h2>
+			<h2 class="headerTab">Recently Viewed APIs</h2>
 			<div class="clear"></div>
 			<div id="smLower" class="whiteBox">
 				<ul class="catalogParent" id="catalogList0" data-level="0">
