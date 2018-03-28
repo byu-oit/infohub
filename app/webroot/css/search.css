@@ -135,7 +135,7 @@ img.resultBodyLoading {
 }
 #searchBody.apis #searchMain #smLower ul li a,
 #searchBody.tables #searchMain #smLower ul li a {
-  padding: 4px 12px;
+  padding: 2px 12px;
 }
 #searchBody #searchMain #smLower ul li div span.no-glossary {
   color: #888888;
