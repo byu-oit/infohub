@@ -76,7 +76,6 @@ class BYUAPI extends Model {
 	}
 
 	public function deepLinks($basePathRaw){
-		$config = $this->getDataSource()->config;
 		$basePath = urlencode($basePathRaw);
 		$response = $this->_get("domains/api-management/wso2/v1/apis?context={$basePath}");
 		if (!$response || !$response->isOk()) {
@@ -88,6 +87,23 @@ class BYUAPI extends Model {
 			'name' => empty($data->data[0]->Name) ? null : $data->data[0]->Name,
 			'link' => empty($data->data[0]->Links->Store) ? null : $data->data[0]->Links->Store
 		];
+	}
+
+	public function oracleColumns($schema = null, $table = null) {
+		$url = 'domains/infohub/infohub-utils/v1/columns';
+		if (!empty($schema)) {
+			$url .= "/{$schema}";
+		}
+		if (!empty($table)) {
+			$url .= "/{$table}";
+		}
+
+		$response = $this->_get($url);
+		if (!$response || !$response->isOk()) {
+			return false;
+		}
+
+		return json_decode($response->body(), true);
 	}
 
 	protected function _get($url) {
