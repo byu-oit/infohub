@@ -53,6 +53,14 @@
 		});
 	}
 
+	<?php if (count($terms) > 2): // Some APIs only have one or two root-level fieldsets, in which case we don't want it collapsed by default ?>
+		$(function() {
+			if ($('tr', '.api-terms').length > 50) {
+				toggleFieldsetCollapseAll(true);
+			}
+		});
+	<?php endif ?>
+
 	function displayPendingApproval(elem) {
 		$('#searchResults').append('<div id="pendingApprovalMessage">The classification of this element is pending approval.</div>');
 		$('#pendingApprovalMessage').offset({top:$(elem).offset().top - 45, left:$(elem).offset().left - 77});
