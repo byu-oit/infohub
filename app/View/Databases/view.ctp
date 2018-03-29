@@ -39,7 +39,7 @@
 				<input type="button" data-schemaName="<?= h($schemaName) ?>" data-tableName="<?= h($tableName) ?>" api="false" onclick="addToQueueDBTable(this, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
 				<table class="table-columns checkBoxes view">
 					<tr class="header">
-						<th><input type="checkbox" onclick="toggleAllCheckboxes(this)" checked="checked" name="toggleCheckboxes"/></th>
+						<th><input type="checkbox" onclick="toggleAllCheckboxes(this)" name="toggleCheckboxes"/></th>
 						<th class="fieldColumn">Column</th>
 						<th class="termColumn">Business Term</th>
 						<th>Classification</th>
@@ -55,7 +55,6 @@
 									value="<?= h($column->businessTerm[0]->termId) ?>"
 									class="chk"
 									id="chk<?= h($column->businessTerm[0]->termId) ?>"
-									checked="checked"
 									data-name="<?= $column->columnName ?>">
 								<?php else: ?>
 									<input
@@ -64,7 +63,6 @@
 									data-vocabID=""
 									value=""
 									class="chk"
-									checked="checked"
 									data-name="<?= $column->columnName ?>">
 								<?php endif ?>
 							</td>
