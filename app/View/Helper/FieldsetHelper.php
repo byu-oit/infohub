@@ -4,7 +4,15 @@ App::uses('AppHelper', 'View/Helper');
 
 class FieldsetHelper extends AppHelper {
     public function printApiView($term) {
-        echo '<tr><td>';
+        echo '<tr data-num-collapsed="0" data-name="'.$term->name.'" data-fieldset-path="';
+        $path = explode('.', $term->name);
+        array_pop($path);
+        echo implode('.', $path).'"><td>';
+            if (!empty($term->descendantFields)) {
+                echo '<a class="fieldset-collapse" onclick="toggleFieldsetCollapse(this)" data-collapsed="false"></a>';
+            }
+        echo '</td>';
+        echo '<td>';
             if (!empty($term->businessTerm[0])) {
                 echo '<input type="checkbox"'.
                      ' data-title="'.h($term->businessTerm[0]->term).'"'.
@@ -12,7 +20,6 @@ class FieldsetHelper extends AppHelper {
                      ' value="'.h($term->businessTerm[0]->termId).'"'.
                      ' class="chk'; if ($term->assetType == 'Fieldset') echo ' fieldset'; echo '"'.
                      ' id="chk'.h($term->businessTerm[0]->termId).'"'.
-                     ' checked="checked"'.
                      ' data-name="'.$term->name.'"'.
                      ' data-fieldset-path="';
                      $path = explode('.', $term->name);
@@ -24,7 +31,6 @@ class FieldsetHelper extends AppHelper {
                      ' data-vocabID=""'.
                      ' value=""'.
                      ' class="chk'; if ($term->assetType == 'Fieldset') echo ' fieldset'; echo '"'.
-                     ' checked="checked"'.
                      ' data-name="'.$term->name.'"'.
                      ' data-fieldset-path="';
                      $path = explode('.', $term->name);

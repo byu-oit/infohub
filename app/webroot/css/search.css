@@ -1360,6 +1360,20 @@ img.resultBodyLoading {
   display: none;
   padding-bottom: 8px;
 }
+#apiBody .fieldset-btn {
+  margin: 5px;
+  padding: 2px 10px;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  background-color: #114477;
+  cursor: pointer;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  text-decoration: none;
+}
 #apiBody .api-terms,
 #apiBody .table-columns {
   margin-top: 30px;
@@ -1390,13 +1404,22 @@ img.resultBodyLoading {
 #apiBody .table-columns tr.automatic-match {
   background-color: #ffdd99;
 }
-#apiBody .api-terms.view td:nth-child(2),
-#apiBody .table-columns.view td:nth-child(2) {
-  width: 100%;
-}
+#apiBody .api-terms.view td:nth-child(3),
+#apiBody .table-columns.view td:nth-child(2),
 #apiBody .api-terms td:last-child,
 #apiBody .table-columns td:last-child {
   width: 100%;
+}
+#apiBody .api-terms a.fieldset-collapse {
+  display: inline-block;
+  height: 14px;
+  width: 14px;
+  background-image: url(../img/iconDown.png);
+  background-size: 14px;
+  cursor: pointer;
+}
+#apiBody .api-terms a.fieldset-collapse.collapsed {
+  background-image: url(../img/iconRight.png);
 }
 #apiBody .api-terms tbody tr .bt-new-name,
 #apiBody .table-columns tbody tr .bt-new-name,

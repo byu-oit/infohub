@@ -256,7 +256,7 @@
 							  </div>';
 						echo '<div class="clear"></div>';
 						echo '<div id="policies" class="taBox">
-								<div class="info">In accordance with the business terms included in
+								<div class="info">Because of the business terms included in
 								your request, the following usage policies will be automatically
 								applied and must be complied to.</div>';
 						foreach ($policies as $policy) {

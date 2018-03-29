@@ -18,6 +18,41 @@
 
 	});
 
+	function toggleFieldsetCollapse(elem) {
+		var $elem = $(elem);
+		var collapsing = !$elem.data('collapsed');
+		var arrFieldsetPaths = [$elem.closest('tr').data('name')];
+		$elem.closest('tbody').find('tr').each(function() {
+				var $this = $(this);
+				if (arrFieldsetPaths.includes($this.data('fieldset-path'))) {
+					if (collapsing) {
+						$this.data('num-collapsed', $this.data('num-collapsed') + 1);
+					} else {
+						$this.data('num-collapsed', $this.data('num-collapsed') - 1);
+					}
+
+					if ($this.data('num-collapsed') == 0) {
+						$this.css('display', 'table-row');
+					} else {
+						$this.css('display', 'none');
+					}
+
+					arrFieldsetPaths.push($this.data('name'));
+				}
+		});
+
+		$elem.data('collapsed', collapsing);
+		$elem.toggleClass('collapsed');
+	}
+
+	function toggleFieldsetCollapseAll(collapsing) {
+		$('table.api-terms').find('a.fieldset-collapse').each(function() {
+			if ($(this).data('collapsed') != collapsing) {
+				$(this).click();
+			}
+		});
+	}
+
 	function displayPendingApproval(elem) {
 		$('#searchResults').append('<div id="pendingApprovalMessage">The classification of this element is pending approval.</div>');
 		$('#pendingApprovalMessage').offset({top:$(elem).offset().top - 45, left:$(elem).offset().left - 77});
@@ -58,10 +93,14 @@
 				<?php if (empty($terms)): ?>
 					<h3>Well, this is embarrassing. We haven't yet specified the output fields for this API, but it is functional, and you can still request access to it.</h3>
 				<?php else: ?>
+					<?php if ($containsFieldset): ?>
+						<a class="fieldset-btn grow" onclick="toggleFieldsetCollapseAll(true)">Collapse All</a><a class="fieldset-btn grow" onclick="toggleFieldsetCollapseAll(false)">Expand All</a>
+					<?php endif ?>
 					<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" api="<?= empty($terms) ? 'true' : 'false' ?>" onclick="addToQueue(this, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
 					<table class="api-terms checkBoxes view">
 						<tr class="header">
-							<th><input type="checkbox" onclick="toggleAllCheckboxes(this)" checked="checked" name="toggleCheckboxes"/></th>
+							<th></th>
+							<th><input type="checkbox" onclick="toggleAllCheckboxes(this)" name="toggleCheckboxes"/></th>
 							<th class="fieldColumn">Field</th>
 							<th class="termColumn">Business Term</th>
 							<th>Classification</th>

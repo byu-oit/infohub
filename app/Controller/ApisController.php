@@ -59,8 +59,15 @@ class ApisController extends AppController {
 				return $this->redirect(['action' => 'host', 'hostname' => $hostname]);
 			}
 		}
+		$containsFieldset = false;
+		foreach ($terms as $term) {
+			if (!empty($term->descendantFields)) {
+				$containsFieldset = true;
+				break;
+			}
+		}
 		$isOITEmployee = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04');
-		$this->set(compact('hostname', 'basePath', 'terms', 'isOITEmployee'));
+		$this->set(compact('hostname', 'basePath', 'terms', 'isOITEmployee', 'containsFieldset'));
 
 		$arrRecent = $this->Session->check('recentAPIs') ? $this->Session->read('recentAPIs') : [];
 		array_unshift($arrRecent, $basePath);
