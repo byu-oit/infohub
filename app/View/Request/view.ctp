@@ -175,7 +175,7 @@
 			'        <h4 class="riTitle">'.$request->signifier.'</h4>'.
 			'        <div class="riDate"';if(!$parent)echo'style="display:inline-block;"';echo'><span>Date Created:&nbsp;</span>'.date('n/j/Y', ($request->createdOn)/1000).'</div>';
 			if (!$parent) echo '<a class="parent-btn grow" href="/request/view/'.$request->parent[0]->id.'">View parent request</a>';
-		echo '<div class="status-details-flex">';//pr($request);exit();
+		echo '<div class="status-details-flex">';
 		echo '<div class="status-wrapper compressed">';
 		if ($parent) {
 			switch ($request->statusReference->signifier) {
@@ -229,7 +229,7 @@
 		}
 		echo '</div>';
 
-		echo '	<a class="details-btn grow" data-rid="'.$request->resourceId.'"><span class="detailsLess">Hide</span><span class="detailsMore">Show</span>&nbsp;Details</a>';
+		echo '	<a class="details-btn grow" style="display: flex;" data-rid="'.$request->resourceId.'"><span class="detailsLess">Hide</span><span class="detailsMore">Show</span>&nbsp;Details</a>';
 
 		echo '</div></div>';
 
@@ -462,7 +462,7 @@
 				echo '<div class="riBelow">';
 				$dsaName = $du->signifier;
 				$dsaStatus = strtolower($du->status);
-				echo '<div class="subrequestNameWrapper"><h6 class="riTitle subrequestName">'.$dsaName.'</h6></div>';
+				echo '<div class="subrequestNameWrapper"><a class="riTitle subrequestName" href="/request/view/'.$du->id.'">'.$dsaName.'</a></div>';
 				echo '<div class="approverPics">';
 				$oneApprover = (
 					$du->roles['Steward'][0]->firstName . " " . $du->roles['Steward'][0]->lastName
