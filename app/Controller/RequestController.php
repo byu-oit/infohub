@@ -1481,9 +1481,9 @@ class RequestController extends AppController {
 	public function downloadFile($fileId) {
 		$this->loadModel('CollibraAPI');
 
-		if (!file_exists('/cake/app/tmp/attachments/'.$fileId.'.pdf')) {
+		if (!file_exists(TMP.'/attachments/'.$fileId.'.pdf')) {
 			$file = $this->CollibraAPI->get('attachment/download/'.$fileId);
-			file_put_contents('/cake/app/tmp/attachments/'.$fileId.'.pdf', $file);
+			file_put_contents(TMP.'/attachments/'.$fileId.'.pdf', $file);
 		}
 
 		$this->response->file('tmp/attachments/'.$fileId.'.pdf');
