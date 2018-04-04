@@ -38,6 +38,10 @@
 		$('#helpText').remove();
 	}
 
+	function openFile(fileId) {
+		window.open('/request/downloadFile/'+fileId, '_blank');
+	}
+
 	$(document).ready(function() {
 		colSize();
 		loadCoordinatorPhones();
@@ -396,7 +400,18 @@
 							}
 						}
 					}
+				}
 
+				if (!empty($req->attachments)) {
+					echo '<h3 class="headerTab">Attached Files</h3><div class="clear"></div>'.
+						'<div class="attrValue"><ul>';
+						foreach ($req->attachments as $att) {
+							echo '<li><a href="javascript:openFile(\''.$att->fileRId.'\')" title="Open file">'.$att->fileName.'</a></li>';
+						}
+					echo '</ul></div>';
+				}
+
+				if (empty($req->dataUsages)) {
 					if (!empty($req->policies)) {
 						echo '<div class="policy-header-wrapper"><h3 class="headerTab">Data Usage Policies</h3><a class="policies-btn grow" data-rid="'.$req->resourceId.'"><span class="policiesHide">Hide</span><span class="policiesShow">Show</span>&nbsp;Policies</a></div>';
 						echo '<div class="clear"></div><div class="policies" id="'.$req->resourceId.'policies" style="display:none;">';
@@ -514,6 +529,15 @@
 								break;
 							}
 						}
+					}
+
+					if (!empty($du->attachments)) {
+						echo '<h3 class="headerTab">Attached Files</h3><div class="clear"></div>'.
+							'<div class="attrValue"><ul>';
+							foreach ($du->attachments as $att) {
+								echo '<li><a href="javascript:openFile(\''.$att->fileRId.'\')" title="Open file">'.$att->fileName.'</a></li>';
+							}
+						echo '</ul></div>';
 					}
 
 					if (!empty($du->policies)) {

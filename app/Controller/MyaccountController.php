@@ -68,6 +68,9 @@ class MyaccountController extends AppController {
 			$request->roles = $this->CollibraAPI->getResponsibilities($request->vocabularyReference->resourceId);
 			$request->dataUsages = $this->CollibraAPI->getDataUsages($r->name->id);
 			$request->policies = $this->CollibraAPI->getAssetPolicies($r->name->id);
+			$resp = $this->CollibraAPI->get('term/'.$r->name->id.'/attachments');
+			$resp = json_decode($resp);
+			$request->attachments = $resp->attachment;
 			//$createdDate = $request->createdOn/1000;
 			//$createdDate = date('m/d/Y', $request->createdOn);
 
@@ -166,6 +169,10 @@ class MyaccountController extends AppController {
 						$attr->value = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->value);
 					}
 				}
+
+				$resp = $this->CollibraAPI->get('term/'.$r->dataUsages[$i]->id.'/attachments');
+				$resp = json_decode($resp);
+				$r->dataUsages[$i]->attachments = $resp->attachment;
 			}
 
 			$pendingStatuses = ['In Progress', 'Request In Progress', 'Agreement Review', 'In Provisioning'];

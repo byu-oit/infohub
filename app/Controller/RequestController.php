@@ -1338,6 +1338,9 @@ class RequestController extends AppController {
 
 		$dsr->roles = $this->CollibraAPI->getResponsibilities($dsr->vocabularyReference->resourceId);
 		$dsr->policies = $this->CollibraAPI->getAssetPolicies($dsrId);
+		$resp = $this->CollibraAPI->get('term/'.$dsrId.'/attachments');
+		$resp = json_decode($resp);
+		$dsr->attachments = $resp->attachment;
 		if ($parent) {
 			$dsr->dataUsages = $this->CollibraAPI->getDataUsages($dsr->resourceId);
 		} else {
@@ -1389,6 +1392,10 @@ class RequestController extends AppController {
 				$resp = $this->CollibraAPI->get('term/'.$dsr->dataUsages[$i]->id);
 				$resp = json_decode($resp);
 				$dsr->dataUsages[$i]->attributeReferences = $resp->attributeReferences;
+
+				$resp = $this->CollibraAPI->get('term/'.$dsr->dataUsages[$i]->id.'/attachments');
+				$resp = json_decode($resp);
+				$dsr->dataUsages[$i]->attachments = $resp->attachment;
 			}
 		}
 
@@ -1469,6 +1476,18 @@ class RequestController extends AppController {
 
 		$this->set('request', $dsr);
 		$this->set('parent', $parent);
+	}
+
+	public function downloadFile($fileId) {
+		$this->loadModel('CollibraAPI');
+
+		if (!file_exists('/cake/app/tmp/attachments/'.$fileId.'.pdf')) {
+			$file = $this->CollibraAPI->get('attachment/download/'.$fileId);
+			file_put_contents('/cake/app/tmp/attachments/'.$fileId.'.pdf', $file);
+		}
+
+		$this->response->file('tmp/attachments/'.$fileId.'.pdf');
+		return $this->response;
 	}
 
 	public function index() {
