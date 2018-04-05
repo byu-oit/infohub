@@ -38,8 +38,8 @@
 		$('#helpText').remove();
 	}
 
-	function openFile(fileId) {
-		window.open('/request/downloadFile/'+fileId, '_blank');
+	function openFile(fileId, fileName) {
+		window.open('/request/downloadFile/'+fileId+'/'+fileName, '_blank');
 	}
 
 	$(document).ready(function() {
@@ -406,7 +406,7 @@
 					echo '<h3 class="headerTab">Attached Files</h3><div class="clear"></div>'.
 						'<div class="attrValue"><ul>';
 						foreach ($req->attachments as $att) {
-							echo '<li><a href="javascript:openFile(\''.$att->fileRId.'\')" title="Open file">'.$att->fileName.'</a></li>';
+							echo '<li><a href="javascript:openFile(\''.$att->fileRId.'\', \''.$att->fileName.'\')" title="Open file">'.$att->fileName.'</a></li>';
 						}
 					echo '</ul></div>';
 				}
@@ -535,7 +535,7 @@
 						echo '<h3 class="headerTab">Attached Files</h3><div class="clear"></div>'.
 							'<div class="attrValue"><ul>';
 							foreach ($du->attachments as $att) {
-								echo '<li><a href="javascript:openFile(\''.$att->fileRId.'\')" title="Open file">'.$att->fileName.'</a></li>';
+								echo '<li><a href="javascript:openFile(\''.$att->fileRId.'\', \''.$att->fileName.'\')" title="Open file">'.$att->fileName.'</a></li>';
 							}
 						echo '</ul></div>';
 					}

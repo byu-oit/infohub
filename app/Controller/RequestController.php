@@ -1478,15 +1478,15 @@ class RequestController extends AppController {
 		$this->set('parent', $parent);
 	}
 
-	public function downloadFile($fileId) {
+	public function downloadFile($fileId, $fileName) {
 		$this->loadModel('CollibraAPI');
 
-		if (!file_exists(TMP.'/attachments/'.$fileId.'.pdf')) {
+		if (!file_exists(TMP.'/attachments/'.$fileName)) {
 			$file = $this->CollibraAPI->get('attachment/download/'.$fileId);
-			file_put_contents(TMP.'/attachments/'.$fileId.'.pdf', $file);
+			file_put_contents(TMP.'/attachments/'.$fileName, $file);
 		}
 
-		$this->response->file('tmp/attachments/'.$fileId.'.pdf');
+		$this->response->file('tmp/attachments/'.$fileName);
 		return $this->response;
 	}
 
