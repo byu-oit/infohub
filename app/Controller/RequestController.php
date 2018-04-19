@@ -370,7 +370,13 @@ class RequestController extends AppController {
 
 	public function clearQueue() {
 		$this->autoRender = false;
-		$this->Session->delete('queue');
+		$arrQueue = [];
+		$arrQueue['businessTerms'] = [];
+		$arrQueue['concepts'] = [];
+		$arrQueue['apiFields'] = [];
+		$arrQueue['dbColumns'] = [];
+		$arrQueue['emptyApis'] = [];
+		$this->Session->write('queue', $arrQueue);
 		$this->updateDraftCart();
 	}
 
