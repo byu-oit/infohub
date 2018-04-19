@@ -8,7 +8,16 @@ class DatabasesController extends AppController {
 			$this->set('recent', $this->Session->read('recentTables'));
 		}
 
-		$schemasCommunity = json_decode($this->CollibraAPI->get('community/'.Configure::read('Collibra.community.dwprd')));
+		$databases = json_decode($this->CollibraAPI->get('community/'.Configure::read('Collibra.community.dataWarehouse')));
+		$this->set('databases', $databases);
+	}
+
+	public function database($dbId) {
+		if ($this->Session->check('recentTables')) {
+			$this->set('recent', $this->Session->read('recentTables'));
+		}
+
+		$schemasCommunity = json_decode($this->CollibraAPI->get('community/'.$dbId));
 		$schemas = [];
 		foreach ($schemasCommunity->vocabularyReferences->vocabularyReference as $schema) {
 			if ($schema->meta != '1') {
@@ -21,6 +30,7 @@ class DatabasesController extends AppController {
 		usort($schemas, function ($a, $b) {
 			return strcmp($a->name, $b->name);
 		});
+		$this->set('dbName', $schemasCommunity->name);
 		$this->set('schemas', $schemas);
 	}
 

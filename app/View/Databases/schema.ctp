@@ -78,7 +78,7 @@ $(document).ready(function() {
 	</div>
 
 	<div id="searchMain">
-		<h2 class="headerTab"><?=$schema->schemaName?></h2>
+		<h2 class="headerTab"><a href="/databases/database/<?=$schema->databaseId?>"><?=$schema->databaseName?></a> > <?=$schema->schemaName?></h2>
 		<div class="clear"></div>
 		<div id="smLower" class="whiteBox">
 			<ul class="catalogParent">

@@ -570,6 +570,8 @@ class CollibraAPI extends Model {
 			'Columns' => [
 				['Column' => ['fieldName' => 'schemaName']],
 				['Column' => ['fieldName' => 'schemaId']],
+				['Column' => ['fieldName' => 'databaseName']],
+				['Column' => ['fieldName' => 'databaseId']],
 				['Group' => [
 					'name' => 'tables',
 					'Columns' => [
@@ -582,7 +584,10 @@ class CollibraAPI extends Model {
 					'Signifier' => ['name' => 'schemaName'],
 					'Vocabulary' => [
 						'Community' => [
-							'Id' => ['name' => 'communityId']]],
+							'Id' => ['name' => 'databaseId'],
+							'Name' => ['name' => 'databaseName'],
+							'ParentCommunity' => [
+								'Id' => ['name' => 'dataWarehouseId']]]],
 					'Relation' => [
 						'typeId' => Configure::read('Collibra.relationship.schemaToTable'),
 						'type' => 'SOURCE',
@@ -600,9 +605,9 @@ class CollibraAPI extends Model {
 								'value' => $schemaName]],
 						[
 							'Field' => [
-								'name' => 'communityId',
+								'name' => 'dataWarehouseId',
 								'operator' => 'EQUALS',
-								'value' => Configure::read('Collibra.community.dwprd')]]]]]]]];
+								'value' => Configure::read('Collibra.community.dataWarehouse')]]]]]]]];
 
 		$results = $this->fullDataTable($tableConfig);
 		return $results[0];
@@ -615,7 +620,9 @@ class CollibraAPI extends Model {
 				['Column' => ['fieldName' => 'name']],
 				['Column' => ['fieldName' => 'description']],
 				['Column' => ['fieldName' => 'schemaId']],
-				['Column' => ['fieldName' => 'schemaName']]],
+				['Column' => ['fieldName' => 'schemaName']],
+				['Column' => ['fieldName' => 'databaseId']],
+				['Column' => ['fieldName' => 'databaseName']]],
 			'Resources' => [
 				'Term' => [
 					'Id' => ['name' => 'id'],
@@ -623,6 +630,10 @@ class CollibraAPI extends Model {
 					'StringAttribute' => [[
 						'labelId' => Configure::read('Collibra.attribute.description'),
 						'Value' => ['name' => 'description']]],
+					'Vocabulary' => [
+						'Community' => [
+							'Id' => ['name' => 'databaseId'],
+							'Name' => ['name' => 'databaseName']]],
 					'Relation' => [
 						'typeId' => Configure::read('Collibra.relationship.schemaToTable'),
 						'type' => 'TARGET',
@@ -637,7 +648,10 @@ class CollibraAPI extends Model {
 								'value' => $tableName]]]]]]]];
 
 		$results = $this->fullDataTable($tableConfig);
-		return $results[0];
+		if (isset($results[0])) {
+			return $results[0];
+		}
+		return [];
 	}
 
 	public function getTableColumns($tableName) {

@@ -27,12 +27,12 @@
 	<?php endif ?>
 
 	<div id="searchMain" style="padding-top: 35px;">
-		<h1 class="headerTab">Select Database</h1>
+		<h1 class="headerTab"><?=$dbName?></h1>
 		<div class="clear"></div>
 		<div id="smLower" class="whiteBox">
 			<ul class="catalogParent"><?php
-				foreach ($databases->subCommunityReferences->communityReference as $db) {
-					echo '<li class="catalogItem"><a href="/databases/database/'.$db->resourceId.'">'.$db->name.'</a></li>';
+				foreach ($schemas as $schema) {
+					echo '<li class="catalogItem"><a href="/databases/schema/'.$schema->name.'">'.$schema->name.'</a></li>';
 				}
 			?></ul></div>
 		</div>
