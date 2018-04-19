@@ -28,7 +28,7 @@ class DatabasesController extends AppController {
 				array_push($schemas, $schema);
 			}
 		}
-		if (count($schemas) == 1) {
+		if (count($schemas) == 1 && empty($this->request->query['noredirect'])) {
 			return $this->redirect(['action' => 'schema', $schemas[0]->name]);
 		}
 		usort($schemas, function ($a, $b) {
