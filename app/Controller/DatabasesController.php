@@ -9,6 +9,10 @@ class DatabasesController extends AppController {
 		}
 
 		$databases = json_decode($this->CollibraAPI->get('community/'.Configure::read('Collibra.community.dataWarehouse')));
+		if (count($databases->subCommunityReferences->communityReference) == 1) {
+			return $this->redirect(['action' => 'database', 'dbId' => $databases->subCommunityReferences->communityReference[0]->resourceId]);
+		}
+
 		$this->set('databases', $databases);
 	}
 
