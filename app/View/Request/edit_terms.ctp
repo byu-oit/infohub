@@ -114,7 +114,7 @@
 	<div id="searchBody" class="innerLower">
 
 		<div id="requestForm">
-			<h2 class="headerTab" id="<?= $request->resourceId ?>"><?= $request->signifier ?></h2>
+			<h2 class="headerTab" id="<?= $request->resourceId ?>"><a href="/request/view/<?=$request->resourceId?>"><?= $request->signifier ?></a></h2>
 
 			<div id="srLower" class="whiteBox">
 				<h3 class="headerTab">Add Information</h3>

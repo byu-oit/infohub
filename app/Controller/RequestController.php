@@ -633,7 +633,7 @@ class RequestController extends AppController {
 
 					foreach ($arrQueue['businessTerms'] as $queueId => $queueTerm) {
 						if ($queueId == $termid) {
-							if (isset($queueTerm['apiHost']) && isset($queueTerm['apipath'])) {
+							if (isset($queueTerm['apiHost']) && isset($queueTerm['apiPath'])) {
 								$addedApis[$queueTerm['apiHost']][$queueTerm['apiPath']] = [];
 								$additionString .= "<br/>{$queueTerm['term']} (Business Term), from API: {$queueTerm['apiPath']}";
 							} else if (isset($queueTerm['tableName'])) {
