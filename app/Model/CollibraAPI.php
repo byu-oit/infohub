@@ -77,6 +77,11 @@ class CollibraAPI extends Model {
 		return $this->client()->delete($this->settings['url'] . $url);
 	}
 
+	public function deleteJSON($url = NULL, $data = []) {
+		$options['header']['Accept'] = 'application/json';
+		return $this->client()->delete($this->settings['url'] . $url, $data, $options);
+	}
+
 	public function dataTable($config) {
 		$response = $this->postJSON("output/data_table", json_encode($config));
 		if (!($response && $response->isOk())) {
