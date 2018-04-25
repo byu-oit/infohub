@@ -611,7 +611,7 @@ class RequestController extends AppController {
 			$additionString = "<br/><br/>Addition, ".date('Y-m-d').":";
 
 			$postData['source'] = $this->request->data['dsrId'];
-			$postData['binaryFactType'] = Configure::read('Collibra.relationship.isaRequestToTerm');
+			$postData['binaryFactType'] = Configure::read('Collibra.relationship.DSRtoTerm');
 			if (isset($this->request->data['arrBusinessTerms'])) {
 				foreach ($this->request->data['arrBusinessTerms'] as $termid) {
 					$postData['target'] = $termid;

@@ -55,9 +55,9 @@ if (!function_exists('denv')) {
 		'standardFieldNameTypeId' => 'ea92faa8-685d-4cb0-8665-14808de08dd2',
 		'relationship' => [
 			'termToSynonym' => '00000000-0000-0000-0000-000000007001',
-			'isaRequestToTerm' => 'edc9e81b-98dc-4bde-8191-1ae75161ab67',
+			'DSRtoTerm' => 'edc9e81b-98dc-4bde-8191-1ae75161ab67',
 			'termToDataAsset' => '00000000-0000-0000-0000-000000007038',
-			'dataUsageToDSA' => '00000000-0000-0000-0000-000000007055',
+			'DSAtoDSR' => '00000000-0000-0000-0000-000000007055',
 			'DSAtoPolicy' => 'd22051bf-af3e-4771-862c-c2b3f10bce05',
 			'DSRtoPolicy' => '0cd17138-7610-48fc-8d11-616a376d44c5',
 			'termToPolicy' => '0b8404c5-b0f2-4109-89ab-374c5f775c14',

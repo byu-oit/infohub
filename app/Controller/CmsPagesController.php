@@ -53,8 +53,7 @@ class CmsPagesController extends AppController {
 
 			$this->loadModel('CmsPage');
 			$page = $this->CmsPage->findById($pgID);
-			//print_r($page['CmsPage']['body']);
-			//print_r($page);exit;
+
 			if (!$page) {
 				throw new NotFoundException(__('Invalid page'));
 			}else{

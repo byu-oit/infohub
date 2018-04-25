@@ -71,8 +71,6 @@ class MyaccountController extends AppController {
 			$resp = $this->CollibraAPI->get('term/'.$r->name->id.'/attachments');
 			$resp = json_decode($resp);
 			$request->attachments = $resp->attachment;
-			//$createdDate = $request->createdOn/1000;
-			//$createdDate = date('m/d/Y', $request->createdOn);
 
 			$requestedTerms = $this->CollibraAPI->getRequestedTerms($r->name->id);
 			$request->termGlossaries = array();

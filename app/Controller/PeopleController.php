@@ -317,8 +317,6 @@ class PeopleController extends AppController {
 			}
 			$communities[0]->Subcommunities = $tmpCommunities;
 
-			//print_r($communities);
-			//exit;
 			//=================================================================
 		}
 

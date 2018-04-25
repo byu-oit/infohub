@@ -1428,7 +1428,7 @@ class CollibraAPI extends Model {
 							'Id' => ['name' => 'communityId'],
 							'Name' => ['name' => 'communityName']]],
 					'Relation' => [[
-						'typeId' => Configure::read('Collibra.relationship.dataUsageToDSA'),
+						'typeId' => Configure::read('Collibra.relationship.DSAtoDSR'),
 						'type' => 'SOURCE',
 						'Target' => [
 							'Id' => ['name' => 'dsaId']],
@@ -1495,7 +1495,7 @@ class CollibraAPI extends Model {
 					'Vocabulary' => [
 						'Id' => ['name' => 'vocabularyId']],
 					'Relation' => [[
-						'typeId' => Configure::read('Collibra.relationship.dataUsageToDSA'),
+						'typeId' => Configure::read('Collibra.relationship.DSAtoDSR'),
 						'type' => 'TARGET',
 						'Source' => [
 							'Id' => ['name' => 'dsaId']],
@@ -1646,7 +1646,7 @@ class CollibraAPI extends Model {
 					'Id' => ['name' => 'termrid'],
 					'Signifier' => ['name' => 'termsignifier'],
 					'Relation' => [
-						'typeId' => Configure::read('Collibra.relationship.isaRequestToTerm'),
+						'typeId' => Configure::read('Collibra.relationship.DSRtoTerm'),
 						'Id' => ['name' => 'relationrid'],
 						'StartingDate' => ['name' => 'startDate'],
 						'EndingDate' => ['name' => 'endDate'],
