@@ -773,23 +773,7 @@ class CollibraAPI extends Model {
 				['Column' => ['fieldName' => 'createdOn']],
 				['Column' => ['fieldName' => 'termrid']],
 				['Column' => ['fieldName' => 'termsignifier']],
-				['Column' => ['fieldName' => 'Attr00000000000000000000000000000202']],
-				['Column' => ['fieldName' => 'Attr00000000000000000000000000000202longExpr']],
-				['Column' => ['fieldName' => 'Attr00000000000000000000000000000202rid']],
-				['Group' => [
-					'Columns' => [
-						['Column' => ['label' => 'Steward User ID','fieldName' => 'userRole00000000000000000000000000005016rid']],
-						['Column' => ['label' => 'Steward Gender','fieldName' => 'userRole00000000000000000000000000005016gender']],
-						['Column' => ['label' => 'Steward First Name','fieldName' => 'userRole00000000000000000000000000005016fn']],
-						['Column' => ['label' => 'Steward Last Name','fieldName' => 'userRole00000000000000000000000000005016ln']]
-					],
-					'name' => 'Role00000000000000000000000000005016']],
-				['Group' => [
-					'Columns' => [
-						['Column' => ['label' => 'Steward Group ID','fieldName' => 'groupRole00000000000000000000000000005016grid']],
-						['Column' => ['label' => 'Steward Group Name','fieldName' => 'groupRole00000000000000000000000000005016ggn']]
-					],
-					'name' => 'Role00000000000000000000000000005016g']],
+				['Column' => ['fieldName' => 'concept']],
 				['Column' => ['fieldName' => 'statusname']],
 				['Column' => ['fieldName' => 'statusrid']],
 				['Column' => ['fieldName' => 'communityname']],
@@ -803,30 +787,9 @@ class CollibraAPI extends Model {
 					'CreatedOn' => ['name' => 'createdOn'],
 					'Id' => ['name' => 'termrid'],
 					'Signifier' => ['name' => 'termsignifier'],
-					'StringAttribute' => [[
-						'Value' => ['name' => 'Attr00000000000000000000000000000202'],
-						'LongExpression' => ['name' => 'Attr00000000000000000000000000000202longExpr'],
-						'Id' => ['name' => 'Attr00000000000000000000000000000202rid'],
-						'labelId' => Configure::read('Collibra.attribute.definition')]],
-					'Member' => [[
-						'User' => [
-							'Gender' => ['name' => 'userRole00000000000000000000000000005016gender'],
-							'FirstName' => ['name' => 'userRole00000000000000000000000000005016fn'],
-							'Id' => ['name' => 'userRole00000000000000000000000000005016rid'],
-							'LastName' => ['name' => 'userRole00000000000000000000000000005016ln']],
-						'Role' => [
-							'Signifier' => ['hidden' => 'true','name' => 'Role00000000000000000000000000005016sig'],
-							'name' => 'Role00000000000000000000000000005016',
-							'Id' => ['hidden' => 'true','name' => 'roleRole00000000000000000000000000005016rid']],
-						'roleId' => '00000000-0000-0000-0000-000000005016'],
-					[
-						'Role' => [
-							'Signifier' => ['hidden' => 'true','name' => 'Role00000000000000000000000000005016g'],
-							'Id' => ['hidden' => 'true','name' => 'roleRole00000000000000000000000000005016grid']],
-						'Group' => [
-							'GroupName' => ['name' => 'groupRole00000000000000000000000000005016ggn'],
-							'Id' => ['name' => 'groupRole00000000000000000000000000005016grid']],
-						'roleId' => '00000000-0000-0000-0000-000000005016']],
+					'BooleanAttribute' => [[
+						'Value' => ['name' => 'concept'],
+						'labelId' => Configure::read('Collibra.attribute.concept')]],
 					'Status' => [
 						'Signifier' => ['name' => 'statusname'],
 						'Id' => ['name' => 'statusrid']],
