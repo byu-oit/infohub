@@ -290,33 +290,31 @@ class RequestController extends AppController {
 				$arrQueue = $this->Session->read('queue');
 
 				if (isset($arrTerms)) {
+					$arrTermIds = [];
 					foreach ($arrTerms as $term) {
-						if (empty($arrQueue['businessTerms'][$term['id']]) && empty($arrQueue['concepts'][$term['id']])) {
-							$requestable = true;
-							$concept = false;
-							$termResp = $this->CollibraAPI->get('term/'.$term['id']);
-							$termResp = json_decode($termResp);
+						$arrTermIds[$term['id']] = 'ignore';
+					}
+					$arrTermDetails = $this->CollibraAPI->getBusinessTermDetails($arrTermIds);
 
+					foreach ($arrTermDetails as $term) {
+						if (empty($arrQueue['businessTerms'][$term->termrid]) && empty($arrQueue['concepts'][$term->termrid])) {
 							// verify that the term is requestable
-							if(!Configure::read('allowUnrequestableTerms')){
-								foreach($termResp->attributeReferences->attributeReference as $attr){
-									if($attr->labelReference->resourceId == Configure::read('Collibra.attribute.concept')){
-										$concept = $attr->value == 'true';
-									}
-								}
+							$concept = false;
+							if (!Configure::read('allowUnrequestableTerms')) {
+								$concept = $term->concept == 'true';
 							}
 
-							// verify that the term is approved
-							if(!Configure::read('allowUnapprovedTerms')){
-								$requestable = $termResp->statusReference->signifier == 'Accepted';
+							$requestable = true;
+							if (!Configure::read('allowUnapprovedTerms')) {
+								$requestable = $term->statusname == 'Accepted';
 							}
 
-							if($requestable && !$concept){
+							if ($requestable && !$concept) {
 								$newTermsAdded++;
-								$arrQueue['businessTerms'][$term['id']] = ['term' => $term['title'], 'communityId' => $term['vocabId'], 'apiHost' => $apiHost, 'apiPath' => $apiPath, 'schemaName' => $schemaName, 'tableName' => $tableName];
+								$arrQueue['businessTerms'][$term->termrid] = ['term' => $term->termsignifier, 'communityId' => $term->commrid, 'apiHost' => $apiHost, 'apiPath' => $apiPath, 'schemaName' => $schemaName, 'tableName' => $tableName];
 							} else if ($requestable && $concept) {
 								$newTermsAdded++;
-								$arrQueue['concepts'][$term['id']] = ['term' => $term['title'], 'communityId' => $term['vocabId'], 'apiHost' => $apiHost, 'apiPath' => $apiPath, 'schemaName' => $schemaName, 'tableName' => $tableName];
+								$arrQueue['concepts'][$term->termrid] = ['term' => $term->termsignifier, 'communityId' => $term->commrid, 'apiHost' => $apiHost, 'apiPath' => $apiPath, 'schemaName' => $schemaName, 'tableName' => $tableName];
 							}
 						}
 					}
@@ -394,7 +392,6 @@ class RequestController extends AppController {
 	public function cartDropdown() {
 		$this->autoRender = false;
 		$responseHTML = '';
-		$this->loadModel('CollibraAPI');
 
 		$arrQueue = $this->Session->read('queue');
 		$responseHTML = '<h3>Requested Items: '.(count($arrQueue['businessTerms']) + count($arrQueue['concepts']) + count($arrQueue['apiFields']) + count($arrQueue['dbColumns']) + count($arrQueue['emptyApis'])).'</h3>'.
@@ -485,12 +482,13 @@ class RequestController extends AppController {
 
 		$request->dataUsages = $this->CollibraAPI->getDataUsages($dsrId);
 
+		$toDeleteIds = [];
 		foreach ($request->dataUsages as $du) {
 			$resp = $this->CollibraAPI->get('term/'.$du->id);
 			$dataUsage = json_decode($resp);
 			foreach ($dataUsage->attributeReferences->attributeReference as $attr) {
 				if ($attr->labelReference->signifier == 'Requester Net Id' && $attr->value == $netId) {
-					$this->CollibraAPI->delete('attribute/'.$attr->resourceId);
+					array_push($toDeleteIds, $attr->resourceId);
 					break;
 				}
 			}
@@ -498,12 +496,21 @@ class RequestController extends AppController {
 
 		foreach ($request->attributeReferences->attributeReference as $attr) {
 			if ($attr->labelReference->signifier == 'Requester Net Id' && $attr->value == $netId) {
-				$this->CollibraAPI->delete('attribute/'.$attr->resourceId);
+				array_push($toDeleteIds, $attr->resourceId);
 				break;
 			}
 		}
 
-		return json_encode(['success' => 1, 'message' => "This person is no longer a collaborator on \"{$request->signifier}\"."]);
+		$postString = http_build_query(['resource' => $toDeleteIds]);
+		$postString = preg_replace("/resource%5B[0-9]*%5D/", "resource", $postString);
+		$resp = $this->CollibraAPI->deleteJSON('attribute', $postString);
+
+		if ($resp->code != '200') {
+			$resp = json_decode($resp);
+			return json_encode(['success' => 0, 'message' => $resp->message]);
+		} else {
+			return json_encode(['success' => 1, 'message' => "This person is no longer a collaborator on \"{$request->signifier}\"."]);
+		}
 	}
 
 	public function saveDraft() {
@@ -930,14 +937,20 @@ class RequestController extends AppController {
 			return $success ? json_encode(['success' => 1]) : json_encode(['success' => 0]);
 		}
 		else if ($this->request->data['action'] == 'remove') {
-			$success = true;
+			$toDeleteIds = [];
 			foreach ($this->request->data['arrIds'] as $relationrid) {
-				$resp = $this->CollibraAPI->delete('relation/'.$relationrid);
-				if ($resp->code != '200') {
-					$success = false;
-				}
+				array_push($toDeleteIds, $relationrid);
 			}
-			return $success ? json_encode(['success' => 1]) : json_encode(['success' => 0]);
+			$postString = http_build_query(['resource' => $toDeleteIds]);
+			$postString = preg_replace("/resource%5B[0-9]*%5D/", "resource", $postString);
+			$resp = $this->CollibraAPI->deleteJSON('relation', $postString);
+
+			if ($resp->code != '200') {
+				$resp = json_decode($resp);
+				return json_encode(['success' => 0, 'message' => $resp->message]);
+			} else {
+				return json_encode(['success' => 1]);
+			}
 		}
 		return json_encode(['success' => 0]);
 	}
@@ -1207,16 +1220,6 @@ class RequestController extends AppController {
 		$email = $this->request->data['email'];
 		$phone = $this->request->data['phone'];
 		$role = $this->request->data['role'];
-
-		// create guest user to use for submitting request
-		/*
-		$guestUserResp = $this->CollibraAPI->post(
-				'user/guest',
-				['firstName' => $firstName, 'lastName' => $lastName, 'email' => $this->request->data['email']]
-		);
-		$guestUserResp = json_decode($guestUserResp);
-		$guestID = $guestUserResp->resourceId;
-		*/
 
 		$netID = $this->Auth->user('username');
 		$byuUser = $this->BYUAPI->personalSummary($netID);
