@@ -1101,7 +1101,7 @@ class RequestController extends AppController {
 		$isaRequest = $request->conceptType->resourceId == Configure::read('Collibra.type.isaRequest');
 
 		// load form fields for ISA workflow
-		$formResp = $this->CollibraAPI->get('workflow/'.Configure::read('Collibra.isaWorkflow.id').'/form/start');
+		$formResp = $this->CollibraAPI->get('workflow/'.Configure::read('Collibra.workflow.intakeDSR').'/form/start');
 		$formResp = json_decode($formResp);
 
 		$arrNewAttr = array();
@@ -1237,8 +1237,8 @@ class RequestController extends AppController {
 		$postData['requesterPhone'] = $phone;
 		$postData['requesterRole'] = $role;
 
-		$requiredElementsString = Configure::read('Collibra.isaWorkflow.requiredElementsString');
-		$additionalElementsString = Configure::read('Collibra.isaWorkflow.additionalElementsString');
+		$requiredElementsString = Configure::read('Collibra.requiredElementsString');
+		$additionalElementsString = Configure::read('Collibra.additionalElementsString');
 		$postData[$requiredElementsString] = !empty($businessTermIds) ? $businessTermIds : '';
 		$postData['api'] = [];
 		$postData['table'] = [];
@@ -1306,7 +1306,7 @@ class RequestController extends AppController {
 		$postString = preg_replace('/%0D%0A/','<br/>',$postString);
 
 		$formResp = $this->CollibraAPI->post(
-			'workflow/'.Configure::read('Collibra.isaWorkflow.id').'/start',
+			'workflow/'.Configure::read('Collibra.workflow.intakeDSR').'/start',
 			$postString
 		);
 		$formResp = json_decode($formResp);
@@ -1461,7 +1461,7 @@ class RequestController extends AppController {
 		}
 
 		// sort request attribute data based on workflow form field order
-		$workflowResp = $this->CollibraAPI->get('workflow/'.Configure::read('Collibra.isaWorkflow.id').'/form/start');
+		$workflowResp = $this->CollibraAPI->get('workflow/'.Configure::read('Collibra.workflow.intakeDSR').'/form/start');
 		$workflowResp = json_decode($workflowResp);
 
 		$arrNewAttr = [];
@@ -1724,7 +1724,7 @@ class RequestController extends AppController {
 		}
 
 		// load form fields for ISA workflow
-		$formResp = $this->CollibraAPI->get('workflow/'.Configure::read('Collibra.isaWorkflow.id').'/form/start');
+		$formResp = $this->CollibraAPI->get('workflow/'.Configure::read('Collibra.workflow.intakeDSR').'/form/start');
 		$formResp = json_decode($formResp);
 
 		$this->set('formFields', $formResp);

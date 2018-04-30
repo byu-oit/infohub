@@ -40,14 +40,12 @@ if (!function_exists('denv')) {
 			'newBusinessTerms' => '00000000-0000-0000-0000-000000006013',
 			'infoGovPolicies' => '2a1eaea2-62b0-45c0-b499-177f3ddf0551'
 		],
-		'isaWorkflow' => [
-			'id' => '8bfbed57-c387-4717-8f5d-c3cfebb485de',
-			'requiredElementsString' => 'requiredElements',
-			'additionalElementsString' => 'additionalElements'
+		'workflow' => [
+			'intakeDSR' => '8bfbed57-c387-4717-8f5d-c3cfebb485de',
+			'newBusinessTerms' => '27028f8b-3d2b-4286-a567-b9658418be51'
 		],
-		'newBusinessTermWorkflow' => [
-			'id' => '27028f8b-3d2b-4286-a567-b9658418be51'
-		],
+		'requiredElementsString' => 'requiredElements',
+		'additionalElementsString' => 'additionalElements',
 		'dataAssetDomainTypeId' => '00000000-0000-0000-0000-000000030011',
 		'glossaryTypeId' => '00000000-0000-0000-0000-000000010001',
 		'techAssetDomainTypeId' => '00000000-0000-0000-0000-000000030004',
@@ -99,9 +97,10 @@ if (!function_exists('denv')) {
 			'steward' => 'c43795f0-5450-41ec-90fb-55d1d84a0efe'
 		],
 		'role' => [
-			'trustee' => 'f55b47bc-973a-462d-9a37-35395f20e52d',
+			'requestCoordinator' => 'b79020f5-ff56-400f-8882-35f968e1712d',
 			'steward' => '00000000-0000-0000-0000-000000005016',
-			'custodian' => '00000000-0000-0000-0000-000000005041'
+			'custodian' => '00000000-0000-0000-0000-000000005041',
+			'trustee' => 'f55b47bc-973a-462d-9a37-35395f20e52d'
 		],
 		'formFields' => [
 			'name' => 'f7ebce1f-c0b5-48c8-bc62-bddd976994fc',

@@ -215,8 +215,8 @@
 						"sponsorEmail",
 						"sponsorPhone",
 						"api",
-						Configure::read('Collibra.isaWorkflow.requiredElementsString'),
-						Configure::read('Collibra.isaWorkflow.additionalElementsString')
+						Configure::read('Collibra.requiredElementsString'),
+						Configure::read('Collibra.additionalElementsString')
 					);
 					foreach($formFields->formProperties as $field){
 						if(in_array($field->id, $arrNonDisplay)){
