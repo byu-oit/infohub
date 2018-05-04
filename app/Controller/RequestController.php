@@ -32,7 +32,7 @@ class RequestController extends AppController {
 		}
 
 		$dsaId = $this->request->data['id'];
-		$dsa = json_decode($this->CollibraAPI->get('term/'.$dsaId));
+		$dsa = $this->CollibraAPI->getRequestDetails($dsaId, false);
 		if (empty($dsa)) {
 			return json_encode(['success' => '0', 'message' => 'Invalid DSA ID given.']);
 		}
@@ -43,31 +43,23 @@ class RequestController extends AppController {
 			}
 		}
 
-		$dsa->roles = $this->CollibraAPI->getResponsibilities($dsa->vocabularyReference->resourceId);
-		$dsa->parent = $this->CollibraAPI->getDataUsageParent($dsaId);
-		$dsa->policies = $this->CollibraAPI->getAssetPolicies($dsaId);
-
-		$requestedTerms = $this->CollibraAPI->getRequestedTerms($dsa->parent[0]->id);
-		$dsa->termGlossaries = array();
-		foreach ($requestedTerms as $term) {
-			if (array_key_exists($term->domainname, $dsa->termGlossaries)) {
-				array_push($dsa->termGlossaries[$term->domainname], $term);
+		$dsa->roles = $this->CollibraAPI->getResponsibilities($dsa->vocabularyId);
+		$dsa->reqTermGlossaries = array();
+		foreach ($dsa->requestedTerms as $term) {
+			if (array_key_exists($term->reqTermVocabName, $dsa->reqTermGlossaries)) {
+				array_push($dsa->reqTermGlossaries[$term->reqTermVocabName], $term);
 			} else {
-				$dsa->termGlossaries[$term->domainname] = array($term);
+				$dsa->reqTermGlossaries[$term->reqTermVocabName] = array($term);
 			}
 		}
 
-		// load additionally included terms
-		////////////////////////////////////////////
-		$resp = $this->CollibraAPI->getAdditionallyIncludedTerms($dsa->parent[0]->id);
-		if (!empty($resp)) {
-			$dsa->additionallyIncluded = new stdClass();
-			$dsa->additionallyIncluded->termGlossaries = [];
-			foreach ($resp as $term) {
-				if (array_key_exists($term->domainname, $dsa->additionallyIncluded->termGlossaries)) {
-					array_push($dsa->additionallyIncluded->termGlossaries[$term->domainname], $term);
+		if (!empty($dsa->additionallyIncludedTerms)) {
+			$dsa->addTermGlossaries = [];
+			foreach ($dsa->additionallyIncludedTerms as $term) {
+				if (array_key_exists($term->addTermVocabName, $dsa->addTermGlossaries)) {
+					array_push($dsa->addTermGlossaries[$term->addTermVocabName], $term);
 				} else {
-					$dsa->additionallyIncluded->termGlossaries[$term->domainname] = array($term);
+					$dsa->addTermGlossaries[$term->addTermVocabName] = array($term);
 				}
 			}
 		}
@@ -79,13 +71,13 @@ class RequestController extends AppController {
 		$pdf->AddFont('Helvetica','','helvetica.php');
 		$pdf->SetFont('Helvetica','',16);
 		$pdf->SetTextColor(17,68,119);
-		$pdf->Cell(0,20,$dsa->signifier,0,1,'C');
+		$pdf->Cell(0,20,$dsa->assetName,0,1,'C');
 
 		$pdf->SetFont('','B',10);
 		$pdf->SetTextColor(0);
 
-		foreach ($dsa->termGlossaries as $glossaryName => $terms) {
-			if ($terms[0]->commrid != $dsa->vocabularyReference->communityReference->resourceId) {
+		foreach ($dsa->reqTermGlossaries as $glossaryName => $terms) {
+			if ($terms[0]->reqTermCommId != $dsa->communityId) {
 				continue;
 			}
 
@@ -97,7 +89,7 @@ class RequestController extends AppController {
 			$pdf->SetFont('','');
 			$termCount = 0;
 			foreach ($terms as $term) {
-				$pdf->Write(5,$term->termsignifier);
+				$pdf->Write(5,$term->reqTermSignifier);
 				$termCount++;
 				if ($termCount < sizeof($terms)) {
 					$pdf->Write(5,',  ');
@@ -106,9 +98,9 @@ class RequestController extends AppController {
 			$pdf->Ln(10);
 		}
 
-		if (!empty($dsa->additionallyIncluded->termGlossaries)) {
-			foreach ($dsa->additionallyIncluded->termGlossaries as $glossaryName => $terms) {
-				if ($terms[0]->commrid != $dsa->vocabularyReference->communityReference->resourceId) {
+		if (!empty($dsa->addTermGlossaries)) {
+			foreach ($dsa->addTermGlossaries as $glossaryName => $terms) {
+				if ($terms[0]->addTermCommId != $dsa->communityId) {
 					continue;
 				}
 
@@ -121,7 +113,7 @@ class RequestController extends AppController {
 				$pdf->SetFont('','');
 				$termCount = 0;
 				foreach ($terms as $term) {
-					$pdf->Write(5,$term->termsignifier);
+					$pdf->Write(5,$term->addTermSignifier);
 					$termCount++;
 					if ($termCount < sizeof($terms)) {
 						$pdf->Write(5,',  ');
@@ -131,9 +123,9 @@ class RequestController extends AppController {
 			}
 		}
 
-		foreach ($dsa->attributeReferences->attributeReference as $attr) {
-			if (isset($attr->date)) {
-				$effectiveDate = date('n/j/Y', $attr->date/1000);
+		foreach ($dsa->attributes as $attr) {
+			if ($attr->attrSignifier == 'Effective Start Date') {
+				$effectiveDate = date('n/j/Y', $attr->attrValue/1000);
 				break;
 			}
 		}
@@ -159,14 +151,14 @@ class RequestController extends AppController {
 			"Additional Information Requested"
 		];
 		foreach ($arrOrderedFormFields as $field) {
-			foreach ($dsa->attributeReferences->attributeReference as $attr) {
-				if ($attr->labelReference->signifier == $field && !empty($attr->value)) {
+			foreach ($dsa->attributes as $attr) {
+				if ($attr->attrSignifier == $field && !empty($attr->attrValue)) {
 					$pdf->SetFont('','B',12);
 					$pdf->Cell(0,10,$field,'B',1);
 					$pdf->Ln(2);
 					$pdf->SetFont('','',9);
 
-					$attrText = $attr->value;
+					$attrText = $attr->attrValue;
 					$attrText = preg_replace('/<br[^\/,>]*\/?>/',"\n",$attrText);
 					$attrText = preg_replace(['/<li[^>]*>/','/<\/li>/'],[" ".chr(127)." ",""],$attrText);
 					$attrText = preg_replace(['/<ul[^>]*>/','/<\/ul>/'],["\n",""],$attrText);
@@ -192,9 +184,9 @@ class RequestController extends AppController {
 			'Sponsor Email' => '',
 			'Sponsor Phone' => ''
 		];
-		foreach ($dsa->attributeReferences->attributeReference as $attr) {
-			if (array_key_exists($attr->labelReference->signifier, $arrPersonInfo)) {
-				$arrPersonInfo[$attr->labelReference->signifier] = html_entity_decode($attr->value);
+		foreach ($dsa->attributes as $attr) {
+			if (array_key_exists($attr->attrSignifier, $arrPersonInfo)) {
+				$arrPersonInfo[$attr->attrSignifier] = html_entity_decode($attr->attrValue);
 			}
 		}
 
@@ -417,6 +409,12 @@ class RequestController extends AppController {
 	public function addCollaborator($dsrId, $personId) {
 		$this->autoRender = false;
 
+		if (isset($this->request->data['dsa'])) {
+			unset($this->request->data['dsa']);
+			$dsa = $this->CollibraAPI->getRequestDetails($dsrId, false);
+			return $this->addCollaborator($dsa->parentId, $personId);
+		}
+
 		if (empty($dsrId) || empty($personId)) {
 			return json_encode(['success' => 0, 'message' => 'Bad request']);
 		}
@@ -426,23 +424,17 @@ class RequestController extends AppController {
 			return json_encode(['success' => 0, 'message' => 'Person\'s information could not be loaded']);
 		}
 
-		$resp = $this->CollibraAPI->get('term/'.$dsrId);
-		$request = json_decode($resp);
+		$request = $this->CollibraAPI->getRequestDetails($dsrId);
 
-		foreach($request->attributeReferences->attributeReference as $attr) {
-			if ($attr->labelReference->signifier == 'Requester Net Id' && $attr->value == $person->identifiers->net_id) {
+		foreach($request->attributes as $attr) {
+			if ($attr->attrSignifier == 'Requester Net Id' && $attr->attrValue == $person->identifiers->net_id) {
 				return json_encode(['success' => 0, 'message' => 'This person is already a collaborator on this request.']);
 			}
 		}
 
-		if ($request->conceptType->resourceId != Configure::read('Collibra.type.isaRequest')) {
-			$parent = $this->CollibraAPI->getDataUsageParent($dsrId);
-			return $this->addCollaborator($parent[0]->id, $personId);
-		}
-
 		$postData['value'] = $person->identifiers->net_id;
 		$postData['representation'] = $dsrId;
-		$postData['label'] = Configure::read('Collibra.attribute.isaRequestNetId');
+		$postData['label'] = Configure::read('Collibra.attribute.requesterNetId');
 		$postString = http_build_query($postData);
 		$formResp = $this->CollibraAPI->post('term/'.$dsrId.'/attributes', $postString);
 		$formResp = json_decode($formResp);
@@ -451,11 +443,10 @@ class RequestController extends AppController {
 		}
 
 		// Add to DSAs as well
-		$request->dataUsages = $this->CollibraAPI->getDataUsages($dsrId);
-		foreach($request->dataUsages as $du) {
-			$postData['representation'] = $du->id;
+		foreach($request->dsas as $dsa) {
+			$postData['representation'] = $dsa->dsaId;
 			$postString = http_build_query($postData);
-			$formResp = $this->CollibraAPI->post('term/'.$du->id.'/attributes', $postString);
+			$formResp = $this->CollibraAPI->post('term/'.$dsa->dsaId.'/attributes', $postString);
 			$formResp = json_decode($formResp);
 			if (!isset($formResp)) {
 				return json_encode(['success' => 0, 'message' => 'We had a problem getting to Collibra']);
@@ -468,35 +459,32 @@ class RequestController extends AppController {
 	public function removeCollaborator($dsrId, $netId) {
 		$this->autoRender = false;
 
+		if (isset($this->request->data['dsa'])) {
+			unset($this->request->data['dsa']);
+			$dsa = $this->CollibraAPI->getRequestDetails($dsrId, false);
+			return $this->removeCollaborator($dsa->parentId, $netId);
+		}
+
 		if (empty($dsrId) || empty($netId)) {
 			return json_encode(['success' => 0, 'message' => 'DSR ID or Net ID missing.']);
 		}
 
-		$resp = $this->CollibraAPI->get('term/'.$dsrId);
-		$request = json_decode($resp);
-
-		if ($request->conceptType->resourceId != Configure::read('Collibra.type.isaRequest')) {
-			$parent = $this->CollibraAPI->getDataUsageParent($dsrId);
-			return $this->removeCollaborator($parent[0]->id, $netId);
-		}
-
-		$request->dataUsages = $this->CollibraAPI->getDataUsages($dsrId);
+		$request = $this->CollibraAPI->getRequestDetails($dsrId);
 
 		$toDeleteIds = [];
-		foreach ($request->dataUsages as $du) {
-			$resp = $this->CollibraAPI->get('term/'.$du->id);
-			$dataUsage = json_decode($resp);
-			foreach ($dataUsage->attributeReferences->attributeReference as $attr) {
-				if ($attr->labelReference->signifier == 'Requester Net Id' && $attr->value == $netId) {
-					array_push($toDeleteIds, $attr->resourceId);
+		foreach ($request->dsas as $dsa) {
+			$dsa->attributes = $this->CollibraAPI->getAttributes($dsa->dsaId);
+			foreach ($dsa->attributes as $attr) {
+				if ($attr->attrSignifier == 'Requester Net Id' && $attr->attrValue == $netId) {
+					array_push($toDeleteIds, $attr->attrResourceId);
 					break;
 				}
 			}
 		}
 
-		foreach ($request->attributeReferences->attributeReference as $attr) {
-			if ($attr->labelReference->signifier == 'Requester Net Id' && $attr->value == $netId) {
-				array_push($toDeleteIds, $attr->resourceId);
+		foreach ($request->attributes as $attr) {
+			if ($attr->attrSignifier == 'Requester Net Id' && $attr->attrValue == $netId) {
+				array_push($toDeleteIds, $attr->attrResourceId);
 				break;
 			}
 		}
@@ -509,7 +497,7 @@ class RequestController extends AppController {
 			$resp = json_decode($resp);
 			return json_encode(['success' => 0, 'message' => $resp->message]);
 		} else {
-			return json_encode(['success' => 1, 'message' => "This person is no longer a collaborator on \"{$request->signifier}\"."]);
+			return json_encode(['success' => 1, 'message' => "This person is no longer a collaborator on \"{$request->assetName}\"."]);
 		}
 	}
 
@@ -517,37 +505,32 @@ class RequestController extends AppController {
 		$this->autoRender = false;
 		$netId = $this->Auth->user('username');
 
-		//First check if there already is a draft for this user; if so, delete it
-		$this->loadModel('CollibraAPI');
+		$postData = [];
+		$postData['netId'] = $netId;
 		$draft = $this->CollibraAPI->checkForDSRDraft($netId);
 		if (!empty($draft)) {
 			$this->CollibraAPI->delete('term/'.$draft[0]->id);
 		}
 
-		$resp = $this->CollibraAPI->post('term', [
-			'vocabulary' => Configure::read('Collibra.vocabulary.dataSharingRequests'),
-			'signifier' => "DRAFT-{$netId}",
-			'conceptType' => Configure::read('Collibra.type.dataSharingRequestDraft')
-		]);
-		$resp = json_decode($resp);
-		$draftId = $resp->resourceId;
-
+		$postData['attributeIds'] = [];
+		$postData['values'] = [];
 		$arrQueue = $this->Session->read('queue');
-		$this->request->data['descriptionOfInformation'] = json_encode($arrQueue);
+		array_push($postData['attributeIds'], Configure::read('Collibra.formFields.descriptionOfInformation'));
+		array_push($postData['values'], json_encode($arrQueue).'  ');
 
 		foreach ($this->request->data as $label => $value) {
-			if (empty($value)) continue;
-			$postData['label'] = Configure::read("Collibra.formFields.{$label}");
-			$postData['value'] = $value;
-			$postString = http_build_query($postData);
-			$resp = $this->CollibraAPI->post('term/'.$draftId.'/attributes', $postString);
-			if ($resp->code != '201') {
-				$error = true;
-			}
+			if (empty($value) || $label == 'descriptionOfInformation') continue;
+			array_push($postData['attributeIds'], Configure::read("Collibra.formFields.{$label}"));
+			array_push($postData['values'], $value.'  ');
 		}
 
-		if (isset($error)) {
-			return json_encode(['success' => 0, 'message' => 'Could not save draft']);
+		$postString = http_build_query($postData);
+		$postString = preg_replace("/attributeIds%5B[0-9]*%5D/", "attributeIds", $postString);
+		$postString = preg_replace("/values%5B[0-9]*%5D/", "values", $postString);
+		$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.createDSRDraft').'/start', $postString);
+
+		if ($resp->code != '200') {
+			return json_encode(['success' => 0, 'message' => $resp->message]);
 		}
 		return json_encode(['success' => 1, 'message' => 'Saved successfully']);
 	}
@@ -558,17 +541,14 @@ class RequestController extends AppController {
 			return;
 		}
 
-		$this->loadModel('CollibraAPI');
 		$draftId = $this->CollibraAPI->checkForDSRDraft($netId);
 		if (empty($draftId)) {
 			return;
 		}
-		$draft = $this->CollibraAPI->get('term/'.$draftId[0]->id);
-		$draft = json_decode($draft);
-
-		foreach ($draft->attributeReferences->attributeReference as $attr) {
-			if ($attr->labelReference->signifier == 'Additional Information Requested') {
-				$attrId = $attr->resourceId;
+		$draft = $this->CollibraAPI->getRequestDetails($draftId[0]->id);
+		foreach ($draft->attributes as $attr) {
+			if ($attr->attrSignifier == 'Additional Information Requested') {
+				$attrId = $attr->attrResourceId;
 			}
 		}
 
@@ -584,7 +564,6 @@ class RequestController extends AppController {
 			return json_encode(['success' => '0', 'message' => 'User not logged in']);
 		}
 
-		$this->loadModel('CollibraAPI');
 		$draftId = $this->CollibraAPI->checkForDSRDraft($netId);
 		if (empty($draftId)) {
 			return json_encode(['success' => '0', 'message' => 'User doesn\'t have a draft saved']);
@@ -607,35 +586,28 @@ class RequestController extends AppController {
 			$success = true;
 			$arrQueue = $this->Session->read('queue');
 
-			$resp = $this->CollibraAPI->get('term/'.$this->request->data['dsrId']);
-			$request = json_decode($resp);
-			$request->terms = $this->CollibraAPI->getRequestedTerms($request->resourceId);
-			$request->additionallyIncluded = $this->CollibraAPI->getAdditionallyIncludedTerms($request->resourceId);
-			$request->isNecessary = $this->CollibraAPI->getNecessaryAPIs($request->resourceId);
+			$request = $this->CollibraAPI->getRequestDetails($this->request->data['dsrId']);
 
 			$addedApis = [];
 			$addedTables = [];
 			$additionString = "<br/><br/>Addition, ".date('Y-m-d').":";
 
-			$postData['source'] = $this->request->data['dsrId'];
-			$postData['binaryFactType'] = Configure::read('Collibra.relationship.DSRtoTerm');
+			$relationsPostData['dsrId'] = $this->request->data['dsrId'];
+			$relationsPostData['requestedTerms'] = [];
+			$relationsPostData['additionalTerms'] = [];
+			$relationsPostData['apis'] = [];
+			$relationsPostData['tables'] = [];
 			if (isset($this->request->data['arrBusinessTerms'])) {
+				$toDeleteIds = [];
 				foreach ($this->request->data['arrBusinessTerms'] as $termid) {
-					$postData['target'] = $termid;
-					$postString = http_build_query($postData);
-					$resp = $this->CollibraAPI->post('relation', $postString);
+					array_push($relationsPostData['requestedTerms'], $termid);
 
-					foreach ($request->additionallyIncluded as $inclTerm) {
-						if ($inclTerm->termid == $termid) {
+					foreach ($request->additionallyIncludedTerms as $inclTerm) {
+						if ($inclTerm->addTermId == $termid) {
 							// remove term from DSR's "Additionally Included" list if it's now requested
-							$this->CollibraAPI->delete('relation/'.$inclTerm->relationid);
+							array_push($toDeleteIds, $inclTerm->addTermRelationId);
 							break;
 						}
-					}
-
-					if ($resp->code != '201') {
-						$success = false;
-						continue;
 					}
 
 					foreach ($arrQueue['businessTerms'] as $queueId => $queueTerm) {
@@ -652,6 +624,9 @@ class RequestController extends AppController {
 						}
 					}
 				}
+				$postString = http_build_query(['resource' => $toDeleteIds]);
+				$postString = preg_replace("/resource%5B[0-9]*%5D/", "resource", $postString);
+				$resp = $this->CollibraAPI->deleteJSON('relation', $postString);
 			}
 
 			if (isset($this->request->data['arrConcepts']) || isset($this->request->data['arrApiFields']) || isset($this->request->data['arrDbColumns']) || isset($this->request->data['arrApis'])) {
@@ -693,23 +668,18 @@ class RequestController extends AppController {
 				}
 			}
 
-			foreach ($request->isNecessary as $alreadyListed) {
-				unset($addedApis[$alreadyListed->communityname][substr($alreadyListed->apiname, 1)]);
-				if (empty($addedApis[$alreadyListed->communityname])) {
-					unset($addedApis[$alreadyListed->communityname]);
+			foreach ($request->necessaryApis as $alreadyListed) {
+				unset($addedApis[$alreadyListed->apiCommName][substr($alreadyListed->apiName, 1)]);
+				if (empty($addedApis[$alreadyListed->apiCommName])) {
+					unset($addedApis[$alreadyListed->apiCommName]);
 				}
 			}
 
 			$newBusinessTerms = [];
-			$postData = [];
-			$postData['source'] = $this->request->data['dsrId'];
-			$postData['binaryFactType'] = Configure::read('Collibra.relationship.DSRtoNecessaryAPI');
 			foreach ($addedApis as $apiHost => $apiPaths) {
 				foreach ($apiPaths as $apiPath => $_) {
 					$apiObject = $this->CollibraAPI->getApiObject($apiHost, $apiPath);
-					$postData['target'] = $apiObject->id;
-					$postString = http_build_query($postData);
-					$resp = $this->CollibraAPI->post('relation', $postString);
+					array_push($relationsPostData['apis'], $apiObject->id);
 
 					$apiTerms = $this->CollibraAPI->getApiTerms($apiHost, $apiPath);
 					foreach ($apiTerms as $term) {
@@ -764,12 +734,9 @@ class RequestController extends AppController {
 					}
 				}
 			}
-			$postData['binaryFactType'] = Configure::read('Collibra.relationship.DSRtoNecessaryTable');
 			foreach ($addedTables as $tableName => $_) {
 				$table = $this->CollibraAPI->getTableObject($tableName);
-				$postData['target'] = $table->id;
-				$postString = http_build_query($postData);
-				$resp = $this->CollibraAPI->post('relation', $postString);
+				array_push($relationsPostData['tables'], $table->id);
 
 				$columns = $this->CollibraAPI->getTableColumns($tableName);
 				foreach ($columns as $column) {
@@ -887,14 +854,14 @@ class RequestController extends AppController {
 				}
 			}
 
-			foreach ($request->attributeReferences->attributeReference as $attr) {
-				if ($attr->labelReference->signifier == 'Additional Information Requested') {
+			foreach ($request->attributes as $attr) {
+				if ($attr->attrSignifier == 'Additional Information Requested') {
 					$postData = [];
-					$postData['value'] = $attr->value . $additionString;
-					$postData['rid'] = $attr->resourceId;
+					$postData['value'] = $attr->attrValue . $additionString;
+					$postData['rid'] = $attr->attrResourceId;
 					$postString = http_build_query($postData);
 					$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
-					$formResp = $this->CollibraAPI->post('attribute/'.$attr->resourceId, $postString);
+					$formResp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $postString);
 					$formResp = json_decode($formResp);
 
 					if (!isset($formResp)) {
@@ -906,13 +873,13 @@ class RequestController extends AppController {
 
 			$postData = $this->request->data;
 			$newBusinessTerms = array_filter($newBusinessTerms, function($termid) use($request, $postData) {
-				foreach ($request->terms as $alreadyRequested) {
-					if ($alreadyRequested->termrid == $termid) {
+				foreach ($request->requestedTerms as $alreadyRequested) {
+					if ($alreadyRequested->reqTermId == $termid) {
 						return false;
 					}
 				}
-				foreach ($request->additionallyIncluded as $alreadyIncluded) {
-					if ($alreadyIncluded->termid == $termid) {
+				foreach ($request->additionallyIncludedTerms as $alreadyIncluded) {
+					if ($alreadyIncluded->addTermId == $termid) {
 						return false;
 					}
 				}
@@ -923,15 +890,28 @@ class RequestController extends AppController {
 				}
 				return true;
 			});
+			$newBusinessTerms = array_unique($newBusinessTerms);
 
-			$postData = [];
-			$postData['source'] = $this->request->data['dsrId'];
-			$postData['binaryFactType'] = Configure::read('Collibra.relationship.DSRtoAdditionallyIncludedAsset');
 			foreach ($newBusinessTerms as $termid) {
-				$postData['target'] = $termid;
-				$postString = http_build_query($postData);
-				$resp = $this->CollibraAPI->post('relation', $postString);
+				array_push($relationsPostData['additionalTerms'], $termid);
 			}
+
+			while (count($relationsPostData['requestedTerms']) + count($relationsPostData['additionalTerms']) > 100) {
+				if (count($relationsPostData['requestedTerms']) > count($relationsPostData['additionalTerms'])) {
+					$longerArrayKey = 'requestedTerms';
+				} else {
+					$longerArrayKey = 'additionalTerms';
+				}
+				$postString = http_build_query(['dsrId' => $relationsPostData['dsrId'], $longerArrayKey => array_slice($relationsPostData[$longerArrayKey], 0, 100)]);
+				$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
+				$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.changeDSRRelations').'/start', $postString);
+
+				$relationsPostData[$longerArrayKey] = array_slice($relationsPostData[$longerArrayKey], 100);
+			}
+
+			$postString = http_build_query($relationsPostData);
+			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
+			$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.changeDSRRelations').'/start', $postString);
 
 			$this->Session->write('queue', $arrQueue);
 			return $success ? json_encode(['success' => 1]) : json_encode(['success' => 0]);
@@ -960,91 +940,67 @@ class RequestController extends AppController {
 			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
 		}
 
-		$resp = $this->CollibraAPI->get('term/'.$dsrId);
-		$request = json_decode($resp);
-
+		$request = $this->CollibraAPI->getRequestDetails($dsrId);
 		$netID = $this->Auth->user('username');
 
-		$guest = true;
-		foreach($request->attributeReferences->attributeReference as $attr) {
-			if ($attr->labelReference->signifier == 'Requester Net Id') {
-				if ($attr->value == $netID) {
-					$guest = false;
-					break;
-				}
-			}
-		}
-
 		$pendingStatuses = ['In Progress', 'Request In Progress', 'Agreement Review'];
-		if (!in_array($request->statusReference->signifier, $pendingStatuses)) {
+		if (!in_array($request->statusName, $pendingStatuses)) {
 			$this->Flash->error('You cannot edit a Request that isn\'t currently in progress.');
 			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
 		}
 
 		// Check whether $request is a DSR or DSA
-		$isaRequest = $request->conceptType->resourceId == Configure::read('Collibra.type.isaRequest');
-		if (!$isaRequest) {
+		$parent = $request->conceptTypeId == Configure::read('Collibra.type.dataSharingRequest');
+		if (!$parent) {
 			$this->Flash->error('You cannot edit the terms on an individual DSA.');
 			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
 		}
 
-		$request->dataUsages = $this->CollibraAPI->getDataUsages($dsrId);
-		if (!empty($request->dataUsages)) {
+		if (!empty($request->dsas)) {
 			$this->Flash->error('You cannot edit a DSR with any associated DSAs.');
 			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
 		}
 
-		$request->terms = $this->CollibraAPI->getRequestedTerms($request->resourceId);
-
 		$arrQueue = $this->Session->read('queue');
-		$this->set(compact('request', 'guest', 'arrQueue'));
+		$this->set(compact('request', 'arrQueue'));
 		$this->set('submitErr', isset($this->request->query['err']));
 	}
 
-	public function editSubmit($dsrId) {
+	public function editSubmit($assetId, $dsr = 'true') {
 		$this->autoRender = false;
-
-		if (!$this->request->is('post')){
+		if (!$this->request->is('post')) {
 			header('location: /search');
 			exit;
 		}
+		$parent = $dsr == 'true';
 
-		$resp = $this->CollibraAPI->get('term/'.$dsrId);
-		$dsr = json_decode($resp);
-
+		$asset = $this->CollibraAPI->getRequestDetails($assetId, $parent);
 		$err = false;
 
+		$wfPostData = ['attributes' => [], 'values' => []];
 		foreach ($this->request->data as $id => $val) {
 			if ($id == 'requestSubmit') {
 				continue;
 			}
 			$matchFound = false;
-			foreach ($dsr->attributeReferences->attributeReference as $original) {
-				if ($id == $original->labelReference->resourceId) {
+			foreach ($asset->attributes as $original) {
+				if ($id == $original->attrTypeId) {
 					$matchFound = true;
-					if ($val != $original->value) {
+					if ($val != $original->attrValue) {
 						//Update values in Collibra database
-						$postData['value'] = $val;
-						$postData['rid'] = $original->resourceId;
-						$postString = http_build_query($postData);
-						$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
-						$formResp = $this->CollibraAPI->post('attribute/'.$original->resourceId, $postString);
-						$formResp = json_decode($formResp);
-
-						if (!isset($formResp)) {
-							$err = true;
-						}
+						array_push($wfPostData['attributes'], $original->attrResourceId);
+						array_push($wfPostData['values'], $val);
 					}
 					break;
 				}
 			}
-			if (!$matchFound && !empty($val)) {		//i.e., if the value has been left blank/empty until now
+			if (!$matchFound && !empty($val)) {		// i.e., if the value has been left blank/empty until now
 				$postData['value'] = $val;
-				$postData['representation'] = $dsr->resourceId;
+				$postData['representation'] = $asset->id;
 				$postData['label'] = $id;
 				$postString = http_build_query($postData);
 				$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
-				$formResp = $this->CollibraAPI->post('term/'.$dsr->resourceId.'/attributes', $postString);
+				$formResp = $this->CollibraAPI->post('term/'.$asset->id.'/attributes', $postString);
 				$formResp = json_decode($formResp);
 
 				if (!isset($formResp)) {
@@ -1053,32 +1009,45 @@ class RequestController extends AppController {
 			}
 		}
 
+		if (!empty($wfPostData['attributes'])) {
+			$postString = http_build_query($wfPostData);
+			$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
+			$postString = preg_replace("/attributes%5B[0-9]*%5D/", "attributes", $postString);
+			$postString = preg_replace("/values%5B[0-9]*%5D/", "values", $postString);
+			$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.changeAttributes').'/start', $postString);
+			if ($resp->code != '200') {
+				$err = true;
+			}
+		}
+
 		if (!$err) {
 			if ($this->request->query['g'] == '0') {
-				$this->redirect(['controller' => 'myaccount', 'action' => 'index', '?' => ['expand' => $dsrId]]);
+				$this->redirect(['controller' => 'myaccount', 'action' => 'index', '?' => ['expand' => $assetId]]);
+			} else if (!$parent) {
+				$this->redirect(['controller' => 'request', 'action' => 'view/'.$assetId.'/false', '?' => ['expand' => 'true']]);
 			} else {
-				$this->redirect(['controller' => 'request', 'action' => 'view/'.$dsrId, '?' => ['expand' => 'true']]);
+				$this->redirect(['controller' => 'request', 'action' => 'view/'.$assetId, '?' => ['expand' => 'true']]);
 			}
+		} else if (!$parent) {
+			$this->redirect(['action' => 'edit/'.$assetId.'/false', '?' => ['err' => 1]]);
 		} else {
-			$this->redirect(['action' => 'edit/'.$dsrId, '?' => ['err' => 1]]);
+			$this->redirect(['action' => 'edit/'.$assetId, '?' => ['err' => 1]]);
 		}
 	}
 
-	public function edit($dsrId) {
-		if (empty($dsrId)) {
+	public function edit($assetId, $dsr = 'true') {
+		if (empty($assetId)) {
 			$this->redirect(['action' => 'index']);
 		}
+		$parent = $dsr == 'true';
 
-		// Load DSR's current state
-		$resp = $this->CollibraAPI->get('term/'.$dsrId);
-		$request = json_decode($resp);
-
+		$asset = $this->CollibraAPI->getRequestDetails($assetId, $parent);
 		$netID = $this->Auth->user('username');
 
 		$guest = true;
-		foreach($request->attributeReferences->attributeReference as $attr) {
-			if ($attr->labelReference->signifier == 'Requester Net Id') {
-				if ($attr->value == $netID) {
+		foreach($asset->attributes as $attr) {
+			if ($attr->attrSignifier == 'Requester Net Id') {
+				if ($attr->attrValue == $netID) {
 					$guest = false;
 					break;
 				}
@@ -1086,19 +1055,15 @@ class RequestController extends AppController {
 		}
 
 		$completedStatuses = ['Completed', 'Approved', 'Obsolete'];
-		if (in_array($request->statusReference->signifier, $completedStatuses)) {
+		if (in_array($asset->statusName, $completedStatuses)) {
 			$this->Flash->error('You cannot edit a completed Request.');
 			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
 		}
 
-		$request->dataUsages = $this->CollibraAPI->getDataUsages($dsrId);
-		if (!empty($request->dataUsages)) {
+		if ($parent && !empty($asset->dsas)) {
 			$this->Flash->error('You cannot edit a DSR with any associated DSAs.');
 			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
 		}
-
-		// Check whether $request is a DSR or DSA
-		$isaRequest = $request->conceptType->resourceId == Configure::read('Collibra.type.isaRequest');
 
 		// load form fields for ISA workflow
 		$formResp = $this->CollibraAPI->get('workflow/'.Configure::read('Collibra.workflow.intakeDSR').'/form/start');
@@ -1106,19 +1071,19 @@ class RequestController extends AppController {
 
 		$arrNewAttr = array();
 		foreach($formResp->formProperties as $wf){
-			foreach($request->attributeReferences->attributeReference as $attr){
-				if($attr->labelReference->signifier == $wf->name){
-					$arrNewAttr[$attr->labelReference->signifier] = $attr;
+			foreach($asset->attributes as $attr){
+				if($attr->attrSignifier == $wf->name){
+					$arrNewAttr[$attr->attrSignifier] = $attr;
 					break;
 				}
 			}
 		}
-		$request->attributeReferences->attributeReference = $arrNewAttr;
+		$asset->attributes = $arrNewAttr;
 
 		$this->set('guest', $guest);
 		$this->set('formFields', $formResp);
-		$this->set('request', $request);
-		$this->set('isaRequest', $isaRequest);
+		$this->set('asset', $asset);
+		$this->set('parent', $parent);
 		$this->set('submitErr', isset($this->request->query['err']));
 	}
 
@@ -1130,29 +1095,26 @@ class RequestController extends AppController {
 		}
 
 		//Load DSR to check that the request isn't completed
-		$resp = $this->CollibraAPI->get('term/'.$dsrId);
-		$request = json_decode($resp);
+		$request = $this->CollibraAPI->getRequestDetails($dsrId);
 
 		$completedStatuses = ['Completed', 'Approved', 'Obsolete'];
-		if (in_array($request->statusReference->signifier, $completedStatuses)) {
+		if (in_array($request->statusName, $completedStatuses)) {
 			$this->Flash->error('You cannot delete a completed Request.');
 			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
 		}
 
-		$request->dataUsages = $this->CollibraAPI->getDataUsages($dsrId);
-		foreach ($request->dataUsages as $du) {
-			if (in_array($du->status, $completedStatuses)) {
+		foreach ($request->dsas as $dsa) {
+			if (in_array($dsa->dsaStatus, $completedStatuses)) {
 				$this->Flash->error('You cannot delete a Request if any associated DSAs are completed.');
 				$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
 			}
 		}
 
-		foreach ($request->dataUsages as $du) {
-			$this->delete($du->id);
-		}
-
 		$postData['status'] = Configure::read('Collibra.status.deleted');
 		$postString = http_build_query($postData);
+		foreach ($request->dsas as $dsa) {
+			$this->CollibraAPI->post("term/{$dsa->dsaId}/status", $postString);
+		}
 		$this->CollibraAPI->post("term/{$dsrId}/status", $postString);
 		$this->Flash->success('Request deleted.');
 		$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
@@ -1241,7 +1203,7 @@ class RequestController extends AppController {
 		$additionalElementsString = Configure::read('Collibra.additionalElementsString');
 		$postData[$requiredElementsString] = !empty($businessTermIds) ? $businessTermIds : '';
 		$postData['api'] = [];
-		$postData['table'] = [];
+		$postData['tables'] = [];
 		if (!empty($additionalElementsString)) {
 			$postData[$additionalElementsString] = array();
 			foreach ($apis as $apiHost => $apiPaths) {
@@ -1264,7 +1226,7 @@ class RequestController extends AppController {
 			}
 			foreach ($tables as $tableName => $_) {
 				$tableObject = $this->CollibraAPI->getTableObject($tableName);
-				array_push($postData['table'], $tableObject->id);
+				array_push($postData['tables'], $tableObject->id);
 				$tableColumns = $this->CollibraAPI->getTableColumns($tableName);
 				foreach ($tableColumns as $column) {
 					if (empty($column->businessTerm[0]->termId)) {
@@ -1289,8 +1251,8 @@ class RequestController extends AppController {
 		if (empty($postData['api'])) {
 			$postData['api'] = '';
 		}
-		if (empty($postData['table'])) {
-			$postData['table'] = '';
+		if (empty($postData['tables'])) {
+			$postData['tables'] = '';
 		}
 
 		//For array data, PHP's http_build_query creates query/POST string in a format Collibra doesn't like,
@@ -1298,7 +1260,7 @@ class RequestController extends AppController {
 		$postString = http_build_query($postData);
 		$postString = preg_replace("/requesterNetId%5B[0-9]*%5D/", "requesterNetId", $postString);
 		$postString = preg_replace("/api%5B[0-9]*%5D/", "api", $postString);
-		$postString = preg_replace("/table%5B[0-9]*%5D/", "table", $postString);
+		$postString = preg_replace("/tables%5B[0-9]*%5D/", "tables", $postString);
 		$postString = preg_replace("/{$requiredElementsString}%5B[0-9]*%5D/", $requiredElementsString, $postString);
 		if (!empty($additionalElementsString)) {
 			$postString = preg_replace("/{$additionalElementsString}%5B[0-9]*%5D/", $additionalElementsString, $postString);
@@ -1328,134 +1290,100 @@ class RequestController extends AppController {
 		}
 	}
 
-	public function view($dsrId) {
-		if (empty($dsrId)) {
+	public function view($assetId, $dsr = 'true') {
+		if (empty($assetId)) {
 			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
 		}
+		$parent = $dsr == 'true';
 		$expand = '';
 		if (isset($this->request->query['expand'])) {
-			$expand = $dsrId;
+			$expand = $assetId;
 		}
 
 		$netID = $this->Auth->user('username');
-
-		$this->loadModel('CollibraAPI');
-		$resp = $this->CollibraAPI->get('term/'.$dsrId);
-		$dsr = json_decode($resp);
-
-		$parent = $dsr->conceptType->resourceId == Configure::read('Collibra.type.isaRequest');
-
-		$dsr->roles = $this->CollibraAPI->getResponsibilities($dsr->vocabularyReference->resourceId);
-		$dsr->policies = $this->CollibraAPI->getAssetPolicies($dsrId);
-		$resp = $this->CollibraAPI->get('term/'.$dsrId.'/attachments');
+		$asset = $this->CollibraAPI->getRequestDetails($assetId, $parent);
+		$asset->roles = $this->CollibraAPI->getResponsibilities($asset->vocabularyId);
+		$resp = $this->CollibraAPI->get('term/'.$assetId.'/attachments');
 		$resp = json_decode($resp);
-		$dsr->attachments = $resp->attachment;
-		if ($parent) {
-			$dsr->dataUsages = $this->CollibraAPI->getDataUsages($dsr->resourceId);
-		} else {
-			$dsr->parent = $this->CollibraAPI->getDataUsageParent($dsr->resourceId);
-		}
+		$asset->attachments = $resp->attachment;
 
-		$termRequestId = $parent ? $dsr->resourceId : $dsr->parent[0]->id;
-		$requestedTerms = $this->CollibraAPI->getRequestedTerms($termRequestId);
-		$dsr->termGlossaries = array();
-		foreach ($requestedTerms as $term) {
-			if (array_key_exists($term->domainname, $dsr->termGlossaries)) {
-				array_push($dsr->termGlossaries[$term->domainname], $term);
+		$asset->termGlossaries = array();
+		foreach ($asset->requestedTerms as $term) {
+			if (array_key_exists($term->reqTermVocabName, $asset->termGlossaries)) {
+				array_push($asset->termGlossaries[$term->reqTermVocabName], $term);
 			} else {
-				$dsr->termGlossaries[$term->domainname] = array($term);
+				$asset->termGlossaries[$term->reqTermVocabName] = array($term);
 			}
 		}
 
-		// load additionally included terms
-		////////////////////////////////////////////
-		$resp = $this->CollibraAPI->getAdditionallyIncludedTerms($termRequestId);
-		if (!empty($resp)) {
-			$dsr->additionallyIncluded = new stdClass();
-			$dsr->additionallyIncluded->termGlossaries = [];
-			foreach ($resp as $term) {
-				if (array_key_exists($term->domainname, $dsr->additionallyIncluded->termGlossaries)) {
-					array_push($dsr->additionallyIncluded->termGlossaries[$term->domainname], $term);
+		if (!empty($asset->additionallyIncludedTerms)) {
+			$asset->addTermGlossaries = array();
+			foreach ($asset->additionallyIncludedTerms as $term) {
+				if (array_key_exists($term->addTermVocabName, $asset->addTermGlossaries)) {
+					array_push($asset->addTermGlossaries[$term->addTermVocabName], $term);
 				} else {
-					$dsr->additionallyIncluded->termGlossaries[$term->domainname] = array($term);
+					$asset->addTermGlossaries[$term->addTermVocabName] = array($term);
 				}
 			}
 		}
 
 		$arrNewAttr = [];
 		$arrCollaborators = array();
-			foreach($dsr->attributeReferences->attributeReference as $attr){
-				if ($attr->labelReference->signifier == 'Requester Net Id') {
-					$person = $this->BYUAPI->personalSummary($attr->value);
-					unset($person->person_summary_line, $person->personal_information, $person->student_information, $person->relationships);
-					array_push($arrCollaborators, $person);
-					continue;
-				}
-				$arrNewAttr[$attr->labelReference->signifier] = $attr;
+		foreach($asset->attributes as $attr){
+			if ($attr->attrSignifier == 'Requester Net Id') {
+				$person = $this->BYUAPI->personalSummary($attr->attrValue);
+				unset($person->person_summary_line, $person->personal_information, $person->student_information, $person->relationships);
+				array_push($arrCollaborators, $person);
+				continue;
 			}
-			$arrNewAttr['Collaborators'] = $arrCollaborators;
-		$dsr->attributeReferences->attributeReference = $arrNewAttr;
+			$arrNewAttr[$attr->attrSignifier] = $attr;
+		}
+		$arrNewAttr['Collaborators'] = $arrCollaborators;
+		$asset->attributes = $arrNewAttr;
 
 		if ($parent) {
-			for ($i = 0; $i < sizeof($dsr->dataUsages); $i++) {
-				$resp = $this->CollibraAPI->get('term/'.$dsr->dataUsages[$i]->id);
-				$resp = json_decode($resp);
-				$dsr->dataUsages[$i]->attributeReferences = $resp->attributeReferences;
+			for ($i = 0; $i < sizeof($asset->dsas); $i++) {
+				$asset->dsas[$i]->attributes = $this->CollibraAPI->getAttributes($asset->dsas[$i]->dsaId);
+				$asset->dsas[$i]->roles = $this->CollibraAPI->getResponsibilities($asset->dsas[$i]->dsaVocabularyId);
 
-				$resp = $this->CollibraAPI->get('term/'.$dsr->dataUsages[$i]->id.'/attachments');
+				$resp = $this->CollibraAPI->get('term/'.$asset->dsas[$i]->dsaId.'/attachments');
 				$resp = json_decode($resp);
-				$dsr->dataUsages[$i]->attachments = $resp->attachment;
+				$asset->dsas[$i]->attachments = $resp->attachment;
 			}
 		}
 
 		$this->set('netID', $netID);
-		$this->set('request', $dsr);
+		$this->set('asset', $asset);
 		$this->set('parent', $parent);
 		$this->set('expand', $expand);
 	}
 
-	public function printView($dsrId) {
-		if (empty($dsrId)) {
+	public function printView($assetId, $dsr = 'true') {
+		if (empty($assetId)) {
 			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
 		}
 		$this->autoLayout = false;
+		$parent = $dsr == 'true';
 
-		$this->loadModel('CollibraAPI');
-		$resp = $this->CollibraAPI->get('term/'.$dsrId);
-		$dsr = json_decode($resp);
+		$asset = $this->CollibraAPI->getRequestDetails($assetId, $parent);
+		$asset->roles = $this->CollibraAPI->getResponsibilities($asset->vocabularyId);
 
-		$parent = $dsr->conceptType->resourceId == Configure::read('Collibra.type.isaRequest');
-
-		$dsr->roles = $this->CollibraAPI->getResponsibilities($dsr->vocabularyReference->resourceId);
-		$dsr->policies = $this->CollibraAPI->getAssetPolicies($dsrId);
-		if($parent) {
-			$dsr->dataUsages = $this->CollibraAPI->getDataUsages($dsr->resourceId);
-		} else {
-			$dsr->parent = $this->CollibraAPI->getDataUsageParent($dsr->resourceId);
-		}
-
-		$termRequestId = $parent ? $dsr->resourceId : $dsr->parent[0]->id;
-		$requestedTerms = $this->CollibraAPI->getRequestedTerms($termRequestId);
-		$dsr->termGlossaries = array();
-		foreach ($requestedTerms as $term) {
-			if (array_key_exists($term->domainname, $dsr->termGlossaries)) {
-				array_push($dsr->termGlossaries[$term->domainname], $term);
+		$asset->termGlossaries = array();
+		foreach ($asset->requestedTerms as $term) {
+			if (array_key_exists($term->reqTermVocabName, $asset->termGlossaries)) {
+				array_push($asset->termGlossaries[$term->reqTermVocabName], $term);
 			} else {
-				$dsr->termGlossaries[$term->domainname] = array($term);
+				$asset->termGlossaries[$term->reqTermVocabName] = array($term);
 			}
 		}
 
-		// load additionally included terms
-		////////////////////////////////////////////
-		$resp = $this->CollibraAPI->getAdditionallyIncludedTerms($termRequestId);
-		if (!empty($resp)) {
-			$dsr->additionallyIncluded = new stdClass();
-			$dsr->additionallyIncluded->termGlossaries = [];
-			foreach ($resp as $term) {
-				if (array_key_exists($term->domainname, $dsr->additionallyIncluded->termGlossaries)) {
-					array_push($dsr->additionallyIncluded->termGlossaries[$term->domainname], $term);
+		if (!empty($asset->additionallyIncludedTerms)) {
+			$asset->addTermGlossaries = [];
+			foreach ($asset->additionallyIncludedTerms as $term) {
+				if (array_key_exists($term->addTermVocabName, $asset->addTermGlossaries)) {
+					array_push($asset->addTermGlossaries[$term->addTermVocabName], $term);
 				} else {
-					$dsr->additionallyIncluded->termGlossaries[$term->domainname] = array($term);
+					$asset->addTermGlossaries[$term->addTermVocabName] = array($term);
 				}
 			}
 		}
@@ -1465,25 +1393,24 @@ class RequestController extends AppController {
 		$workflowResp = json_decode($workflowResp);
 
 		$arrNewAttr = [];
-		foreach($workflowResp->formProperties as $wf){
-			foreach($dsr->attributeReferences->attributeReference as $attr){
-				if($attr->labelReference->signifier == $wf->name){
-					$arrNewAttr[$attr->labelReference->signifier] = $attr;
+		foreach ($workflowResp->formProperties as $wf) {
+			foreach ($asset->attributes as $attr) {
+				if ($attr->attrSignifier == $wf->name) {
+					$arrNewAttr[$attr->attrSignifier] = $attr;
 					break;
 				}
 			}
 		}
-		$dsr->attributeReferences->attributeReference = $arrNewAttr;
+		$asset->attributes = $arrNewAttr;
 
 		if ($parent) {
-			for ($i = 0; $i < sizeof($dsr->dataUsages); $i++) {
-				$resp = $this->CollibraAPI->get('term/'.$dsr->dataUsages[$i]->id);
-				$resp = json_decode($resp);
-				$dsr->dataUsages[$i]->attributeReferences = $resp->attributeReferences;
+			for ($i = 0; $i < sizeof($asset->dsas); $i++) {
+				$asset->dsas[$i]->attributes = $this->CollibraAPI->getAttributes($asset->dsas[$i]->dsaId);
+				$asset->dsas[$i]->roles = $this->CollibraAPI->getResponsibilities($asset->dsas[$i]->dsaVocabularyId);
 			}
 		}
 
-		$this->set('request', $dsr);
+		$this->set('asset', $asset);
 		$this->set('parent', $parent);
 	}
 
@@ -1656,8 +1583,7 @@ class RequestController extends AppController {
 		$draftId = $this->CollibraAPI->checkForDSRDraft($this->Auth->user('username'));
 		if (!empty($draftId)) {
 
-			$draft = $this->CollibraAPI->get('term/'.$draftId[0]->id);
-			$draft = json_decode($draft);
+			$draft = $this->CollibraAPI->getRequestDetails($draftId[0]->id);
 
 			$arrLabelMatch = [
 				'Requester Name' => 'name',
@@ -1677,12 +1603,12 @@ class RequestController extends AppController {
 				'Impact on System' => 'impactOnSystem'
 			];
 			$arrFormFields = [];
-			foreach ($draft->attributeReferences->attributeReference as $attr) {
-				if ($attr->labelReference->signifier == 'Additional Information Requested') {
+			foreach ($draft->attributes as $attr) {
+				if ($attr->attrSignifier == 'Additional Information Requested') {
 					continue;
 				}
-				$label = $arrLabelMatch[$attr->labelReference->signifier];
-				$preFilled[$label] = $attr->value;
+				$label = $arrLabelMatch[$attr->attrSignifier];
+				$preFilled[$label] = $attr->attrValue;
 			}
 		}
 

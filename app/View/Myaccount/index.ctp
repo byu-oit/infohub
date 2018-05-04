@@ -70,10 +70,12 @@
 			window.location.href = '/request/view/' + $(this).attr('data-rid');
 		});
 		$('.print').click(function() {
-			window.open('/request/printView/' + $(this).attr('data-rid'), '_blank').focus();
+			var dsaString = $(this).data('dsa') ? '/false' : '';
+			window.open('/request/printView/' + $(this).attr('data-rid') + dsaString, '_blank').focus();
 		});
 		$('.edit').click(function() {
-			window.location.href = '/request/edit/' + $(this).attr('data-rid');
+			var dsaString = $(this).data('dsa') ? '/false' : '';
+			window.location.href = '/request/edit/' + $(this).attr('data-rid') + dsaString;
 		});
 		$('.delete').click(function() {
 			if (confirm("Are you sure you would like to delete this request?")) {
@@ -84,7 +86,7 @@
 		$('.detailsBody').on('click', '.remove', function() {
 			var thisElem = $(this);
 			if (confirm("Are you sure you'd like to remove this person? (They can still be re-added to the list at any time.)")) {
-				$.post('/request/removeCollaborator/' + $(this).attr('data-dsrid') + '/' + $(this).attr('data-netid'))
+				$.post('/request/removeCollaborator/' + $(this).attr('data-assetid') + '/' + $(this).attr('data-netid'))
 					.done(function(data) {
 						var data = JSON.parse(data);
 						alert(data.message);
@@ -162,7 +164,7 @@
 					var html = '<strong>'+data.person.names.preferred_name+':</strong> '
 								+data.person.employee_information.job_title+', '
 								+data.person.contact_information.email_address+'&nbsp;&nbsp;&nbsp;&nbsp;'
-								+'<div class="remove" data-dsrid="'+thisElem.parent().attr('id')+'" data-netid="'+data.person.identifiers.net_id+'">X</div><br>';
+								+'<div class="remove" data-assetid="'+thisElem.parent().attr('id')+'" data-netid="'+data.person.identifiers.net_id+'">X</div><br>';
 					thisElem.parent().find('.collaborators-view').append(html);
 				});
 		});
@@ -212,10 +214,10 @@
 			foreach($requests as $req){
 				echo '<div class="requestItem">'.
 					'    <div class="riLeft">'.
-					'        <a class="riTitle" href="/request/view/'.$req->resourceId.'">'.$req->signifier.'</a>'.
+					'        <a class="riTitle" href="/request/view/'.$req->id.'">'.$req->assetName.'</a>'.
 					'        <p class="riDate"><span>Date Created:&nbsp;</span>'.date('n/j/Y', ($req->createdOn)/1000).'</p>';
 				echo '<div class="status-details-flex"><div class="status-wrapper compressed">';
-				switch ($req->statusReference->signifier) {
+				switch ($req->statusName) {
 					case 'In Progress':
 					case 'Request In Progress':
 						echo '<div class="status-cell green-border left active">Request In Progress</div><div class="status-cell light-green-border">Agreement Review</div><div class="status-cell light-green-border one-line">Provisioning</div><div class="status-cell light-green-border one-line right">Completed</div>';
@@ -238,7 +240,7 @@
 				}
 				echo '</div>';
 
-				echo '	<a class="details-btn grow" data-rid="'.$req->resourceId.'"><span class="detailsLess">Hide</span><span class="detailsMore">Show</span>&nbsp;Details</a>';
+				echo '	<a class="details-btn grow" data-rid="'.$req->id.'"><span class="detailsLess">Hide</span><span class="detailsMore">Show</span>&nbsp;Details</a>';
 
 				echo '</div></div>';
 
@@ -262,53 +264,53 @@
 					}
 				}
 				echo '</div></div>';
-				echo '	<div class="detailsBody" id="'.$req->resourceId.'">';
+				echo '	<div class="detailsBody" id="'.$req->id.'">';
 	?>
 				<h3 class="headerTab">Requested Data</h3>
 				<?php
 				$pendingStatuses = ['Pending Custodian', 'Pending Steward', 'In Progress', 'Request In Progress', 'Agreement Review'];
-				if (in_array($req->statusReference->signifier, $pendingStatuses)): ?>
-					<a class="edit-btn grow" href="/request/editTerms/<?=$req->resourceId?>" title="Add/Remove Terms"></a>
+				if (in_array($req->statusName, $pendingStatuses) && empty($req->dsas)): ?>
+					<a class="edit-btn grow" href="/request/editTerms/<?=$req->id?>" title="Add/Remove Terms"></a>
 				<?php endif ?>
 				<div class="clear"></div>
 				<div class="attrValue">
-					<?php if (empty($req->termGlossaries)) echo '[No requested business terms]';
+					<?php if (empty($req->reqTermGlossaries)) echo '[No requested business terms]';
 
 					$glossaryCount = 0;
-					foreach ($req->termGlossaries as $glossaryName => $terms) {
+					foreach ($req->reqTermGlossaries as $glossaryName => $terms) {
 						echo '<em>'.$glossaryName.'&nbsp;-&nbsp;</em>';
 						$glossaryCount++;
 						$termCount = 0;
 						foreach ($terms as $term) {
-							echo $term->termsignifier;
+							echo $term->reqTermSignifier;
 							$termCount++;
 							if ($termCount < sizeof($terms)) {
 								echo ',&nbsp;&nbsp;';
 							}
 						}
-						if ($glossaryCount < sizeof($req->termGlossaries)) {
+						if ($glossaryCount < sizeof($req->reqTermGlossaries)) {
 							echo '<br>';
 						}
 					} ?>
 				</div>
-				<?php if (isset($req->additionallyIncluded)): ?>
+				<?php if (isset($req->addTermGlossaries)): ?>
 					<h3 class="headerTab">Additionally Included Data</h3><img class="infoIcon" src="/img/icon-question.png" onmouseover="displayHelpText(this)" onmouseout="hideHelpText()" helpText="These are data elements that you didn't request but are included in the APIs to which you requested access.">
 					<div class="clear"></div>
 					<div class="attrValue">
 						<?php $glossaryCount = 0;
 						$termCount = 0;
-						foreach ($req->additionallyIncluded->termGlossaries as $glossaryName => $terms) {
+						foreach ($req->addTermGlossaries as $glossaryName => $terms) {
 							echo '<em>'.$glossaryName.'&nbsp;-&nbsp;</em>';
 							$glossaryCount++;
 							$termCount = 0;
 							foreach ($terms as $term) {
-								echo $term->termsignifier;
+								echo $term->addTermSignifier;
 								$termCount++;
 								if ($termCount < sizeof($terms)) {
 									echo ',&nbsp;&nbsp;';
 								}
 							}
-							if ($glossaryCount < sizeof($req->additionallyIncluded->termGlossaries)) {
+							if ($glossaryCount < sizeof($req->addTermGlossaries)) {
 								echo '<br>';
 							}
 						} ?>
@@ -318,23 +320,23 @@
 				<div class="clear"></div>
 				<div class="data-col">
 					<h5>Name:</h5>
-					<div class="attrValue"><?php echo $req->attributeReferences->attributeReference['Requester Name']->value ?></div>
+					<div class="attrValue"><?php echo $req->attributes['Requester Name']->attrValue ?></div>
 				</div>
 				<div class="data-col">
 					<h5>Phone Number:</h5>
-					<div class="attrValue"><?php echo $req->attributeReferences->attributeReference['Requester Phone']->value ?></div>
+					<div class="attrValue"><?php echo $req->attributes['Requester Phone']->attrValue ?></div>
 				</div>
 				<div class="data-col">
 					<h5>Email:</h5>
-					<div class="attrValue"><?php echo $req->attributeReferences->attributeReference['Requester Email']->value ?></div>
+					<div class="attrValue"><?php echo $req->attributes['Requester Email']->attrValue ?></div>
 				</div>
 				<div class="data-col">
 					<h5>Role:</h5>
-					<div class="attrValue"><?php echo $req->attributeReferences->attributeReference['Requester Role']->value ?></div>
+					<div class="attrValue"><?php echo $req->attributes['Requester Role']->attrValue ?></div>
 				</div>
 				<div class="data-col">
 					<h5>Requesting Organization:</h5>
-					<div class="attrValue"><?php echo $req->attributeReferences->attributeReference['Requesting Organization']->value ?></div>
+					<div class="attrValue"><?php echo $req->attributes['Requesting Organization']->attrValue ?></div>
 				</div>
 				<div class="clear"></div>
 
@@ -342,31 +344,31 @@
 				<div class="clear"></div>
 				<div class="data-col">
 					<h5>Sponsor Name:</h5>
-					<div class="attrValue"><?php echo $req->attributeReferences->attributeReference['Sponsor Name']->value ?></div>
+					<div class="attrValue"><?php echo $req->attributes['Sponsor Name']->attrValue ?></div>
 				</div>
 				<div class="data-col">
 					<h5>Sponsor Role:</h5>
-					<div class="attrValue"><?php echo $req->attributeReferences->attributeReference['Sponsor Role']->value ?></div>
+					<div class="attrValue"><?php echo $req->attributes['Sponsor Role']->attrValue ?></div>
 				</div>
 				<div class="data-col">
 					<h5>Sponsor Email:</h5>
-					<div class="attrValue"><?php echo $req->attributeReferences->attributeReference['Sponsor Email']->value ?></div>
+					<div class="attrValue"><?php echo $req->attributes['Sponsor Email']->attrValue ?></div>
 				</div>
 				<div class="data-col">
 					<h5>Sponsor Phone:</h5>
-					<div class="attrValue"><?php echo $req->attributeReferences->attributeReference['Sponsor Phone']->value ?></div>
+					<div class="attrValue"><?php echo $req->attributes['Sponsor Phone']->attrValue ?></div>
 				</div>
 				<div class="clear"></div>
 
 				<h3 class="headerTab">Collaborators</h3><div class="edit-btn grow collaborators" title="Add Collaborators"></div><img class="infoIcon" src="/img/icon-question.png" onmouseover="displayHelpText(this)" onmouseout="hideHelpText()" helpText="People on the collaborators list will see this request listed on their 'My Requests' page.">
 				<div class="clear"></div>
 				<div class="attrValue collaborators-view">
-					<?php foreach ($req->attributeReferences->attributeReference['Collaborators'] as $col) {
+					<?php foreach ($req->attributes['Collaborators'] as $col) {
 						echo '<strong>'.$col->names->preferred_name.':</strong> '.
 							$col->employee_information->job_title.', '.
 							$col->contact_information->email_address;
 						echo str_repeat("&nbsp;", 4);
-						echo '<div class="remove hidden" data-dsrid="'.$req->resourceId.'" data-netid="'.$col->identifiers->net_id.'">X</div><br>';
+						echo '<div class="remove hidden" data-assetid="'.$req->id.'" data-netid="'.$col->identifiers->net_id.'">X</div><br>';
 					}
 					?>
 				</div>
@@ -378,7 +380,7 @@
 
 				<h3 class="headerTab">Application Name</h3>
 				<div class="clear"></div>
-				<div class="attrValue"><?= $req->attributeReferences->attributeReference['Application Name']->value ?></div>
+				<div class="attrValue"><?= $req->attributes['Application Name']->attrValue ?></div>
 
 	<?php
 				$arrOrderedFormFields = [
@@ -390,12 +392,12 @@
 					"Additional Information Requested"
 				];
 
-				if (empty($req->dataUsages)) {
+				if (empty($req->dsas)) {
 					foreach ($arrOrderedFormFields as $field) {
-						foreach ($req->attributeReferences->attributeReference as $attrRef) {
-							if (!empty($attrRef->value) && $attrRef->labelReference->signifier == $field) {
-								echo '<h3 class="headerTab">'.$attrRef->labelReference->signifier.'</h3><div class="clear"></div>'.
-									'<div class="attrValue">'.$attrRef->value.'</div>';
+						foreach ($req->attributes as $attr) {
+							if (!empty($attr->attrValue) && $attr->attrSignifier == $field) {
+								echo '<h3 class="headerTab">'.$attr->attrSignifier.'</h3><div class="clear"></div>'.
+									'<div class="attrValue">'.$attr->attrValue.'</div>';
 								break;
 							}
 						}
@@ -411,10 +413,10 @@
 					echo '</ul></div>';
 				}
 
-				if (empty($req->dataUsages)) {
+				if (empty($req->dsas)) {
 					if (!empty($req->policies)) {
-						echo '<div class="policy-header-wrapper"><h3 class="headerTab">Data Usage Policies</h3><a class="policies-btn grow" data-rid="'.$req->resourceId.'"><span class="policiesHide">Hide</span><span class="policiesShow">Show</span>&nbsp;Policies</a></div>';
-						echo '<div class="clear"></div><div class="policies" id="'.$req->resourceId.'policies" style="display:none;">';
+						echo '<div class="policy-header-wrapper"><h3 class="headerTab">Data Usage Policies</h3><a class="policies-btn grow" data-rid="'.$req->id.'"><span class="policiesHide">Hide</span><span class="policiesShow">Show</span>&nbsp;Policies</a></div>';
+						echo '<div class="clear"></div><div class="policies" id="'.$req->id.'policies" style="display:none;">';
 						foreach ($req->policies as $policy) {
 							echo '<h5>'.$policy->policyName.'</h5>';
 							echo '<div class=attrValue>'.$policy->policyDescription.'</div><div class="clear"></div>';
@@ -422,30 +424,32 @@
 						echo '</div>';
 					}
 
-					if (in_array($req->statusReference->signifier, $pendingStatuses)) {
-						echo '<div class="lower-btn delete grow" data-rid="'.$req->resourceId.'">Delete</div>';
-						echo '<div class="lower-btn edit grow" data-rid="'.$req->resourceId.'">Edit</div>';
+					if (in_array($req->statusName, $pendingStatuses)) {
+						echo '<div class="lower-btn edit grow" data-rid="'.$req->id.'">Edit</div>';
 					}
 				}
-				echo '<div class="lower-btn print grow" data-rid="'.$req->resourceId.'">Print</div>';
-				echo '<div class="lower-btn share grow" data-rid="'.$req->resourceId.'">Share</div>';
+				echo '<div class="lower-btn print grow" data-rid="'.$req->id.'">Print</div>';
+				echo '<div class="lower-btn share grow" data-rid="'.$req->id.'">Share</div>';
+				if (in_array($req->statusName, $pendingStatuses)) {
+					echo '<div class="lower-btn delete grow" data-rid="'.$req->id.'">Delete</div>';
+				}
 				echo '</div>';
 
-				foreach($req->dataUsages as $du) {
+				foreach($req->dsas as $dsa) {
 					echo '<div class="riBelow">';
-					$dsaName = $du->signifier;
-					$dsaStatus = strtolower($du->status);
-					echo '<div class="subrequestNameWrapper"><a class="riTitle subrequestName" href="/request/view/'.$du->id.'">'.$dsaName.'</a></div>';
+					$dsaName = $dsa->dsaSignifier;
+					$dsaStatus = strtolower($dsa->dsaStatus);
+					echo '<div class="subrequestNameWrapper"><a class="riTitle subrequestName" href="/request/view/'.$dsa->dsaId.'/false">'.$dsaName.'</a></div>';
 					echo '<div class="approverPics">';
 					$oneApprover = (
-						$du->roles['Steward'][0]->firstName . " " . $du->roles['Steward'][0]->lastName
-						== $du->roles['Custodian'][0]->firstName . " " . $du->roles['Custodian'][0]->lastName
+						$dsa->roles['Steward'][0]->firstName . " " . $dsa->roles['Steward'][0]->lastName
+						== $dsa->roles['Custodian'][0]->firstName . " " . $dsa->roles['Custodian'][0]->lastName
 					);
-					$approverName = $du->roles['Steward'][0]->firstName . " " . $du->roles['Steward'][0]->lastName;
+					$approverName = $dsa->roles['Steward'][0]->firstName . " " . $dsa->roles['Steward'][0]->lastName;
 					if($approverName != ''){
-						$approverImage = '../photos/collibraview/'.$du->roles['Steward'][0]->resourceId;
-						$approverEmail = $du->roles['Steward'][0]->emailAddress;
-						echo '<div class="approver steward" user-id="'.$du->roles['Steward'][0]->resourceId.'">'.
+						$approverImage = '../photos/collibraview/'.$dsa->roles['Steward'][0]->resourceId;
+						$approverEmail = $dsa->roles['Steward'][0]->emailAddress;
+						echo '<div class="approver steward" user-id="'.$dsa->roles['Steward'][0]->resourceId.'">'.
 							'	<div class="user-icon" style="background-image: url('.$approverImage.');"></div>'.
 							'	<div class="info">'.
 							'		<div class="contactName">'.$approverName.'</div>';
@@ -460,11 +464,11 @@
 							'</div>';
 					}
 					if(!$oneApprover){
-						$approverName = $du->roles['Custodian'][0]->firstName . " " . $du->roles['Custodian'][0]->lastName;
+						$approverName = $dsa->roles['Custodian'][0]->firstName . " " . $dsa->roles['Custodian'][0]->lastName;
 						if($approverName != ''){
-							$approverImage = '../photos/collibraview/'.$du->roles['Custodian'][0]->resourceId;
-							$approverEmail = $du->roles['Custodian'][0]->emailAddress;
-							echo '<div class="approver custodian" user-id="'.$du->roles['Custodian'][0]->resourceId.'">'.
+							$approverImage = '../photos/collibraview/'.$dsa->roles['Custodian'][0]->resourceId;
+							$approverEmail = $dsa->roles['Custodian'][0]->emailAddress;
+							echo '<div class="approver custodian" user-id="'.$dsa->roles['Custodian'][0]->resourceId.'">'.
 								'	<div class="user-icon" style="background-image: url('.$approverImage.');"></div>'.
 								'	<div class="info">'.
 								'		<div class="contactName">'.$approverName.'</div>'.
@@ -501,18 +505,18 @@
 							break;
 					}
 					echo '</div>';
-					echo '	<a class="details-btn grow" data-rid="'.$du->id.'"><span class="detailsLess">Hide</span><span class="detailsMore">Show</span>&nbsp;Details</a></div></div>';
+					echo '	<a class="details-btn grow" data-rid="'.$dsa->dsaId.'"><span class="detailsLess">Hide</span><span class="detailsMore">Show</span>&nbsp;Details</a></div></div>';
 
-					echo '<div class="detailsBody" id="'.$du->id.'">';
+					echo '<div class="detailsBody" id="'.$dsa->dsaId.'">';
 					echo '<p class="riDate"><strong>Requested Data:</strong>';
-					foreach ($req->termGlossaries as $glossaryName => $terms) {
-						if ($terms[0]->commrid != $du->communityId) {
+					foreach ($req->reqTermGlossaries as $glossaryName => $terms) {
+						if ($terms[0]->reqTermCommId != $dsa->dsaCommunityId) {
 							continue;
 						}
 						echo '<br><em>'.$glossaryName.'&nbsp;-&nbsp;</em>';
 						$termCount = 0;
 						foreach ($terms as $term) {
-							echo $term->termsignifier;
+							echo $term->reqTermSignifier;
 							$termCount++;
 							if ($termCount < sizeof($terms)) {
 								echo ',&nbsp;&nbsp;';
@@ -522,40 +526,39 @@
 					}
 					echo '</p>';
 					foreach ($arrOrderedFormFields as $field) {
-						foreach ($du->attributeReferences->attributeReference as $attrRef) {
-							if (!empty($attrRef->value) && $attrRef->labelReference->signifier == $field) {
-								echo '<h3 class="headerTab">'.$attrRef->labelReference->signifier.'</h3><div class="clear"></div>'.
-									'<div class="attrValue">'.$attrRef->value.'</div>';
+						foreach ($dsa->attributes as $attr) {
+							if (!empty($attr->attrValue) && $attr->attrSignifier == $field) {
+								echo '<h3 class="headerTab">'.$attr->attrSignifier.'</h3><div class="clear"></div>'.
+									'<div class="attrValue">'.$attr->attrValue.'</div>';
 								break;
 							}
 						}
 					}
 
-					if (!empty($du->attachments)) {
+					if (!empty($dsa->attachments)) {
 						echo '<h3 class="headerTab">Attached Files</h3><div class="clear"></div>'.
 							'<div class="attrValue"><ul>';
-							foreach ($du->attachments as $att) {
+							foreach ($dsa->attachments as $att) {
 								echo '<li><a href="javascript:openFile(\''.$att->fileRId.'\', \''.$att->fileName.'\')" title="Open file">'.$att->fileName.'</a></li>';
 							}
 						echo '</ul></div>';
 					}
 
-					if (!empty($du->policies)) {
-						echo '<div class="policy-header-wrapper"><h3 class="headerTab">Data Usage Policies</h3><a class="policies-btn grow" data-rid="'.$du->id.'"><span class="policiesHide">Hide</span><span class="policiesShow">Show</span>&nbsp;Policies</a></div>';
-						echo '<div class="clear"></div><div class="policies" id="'.$du->id.'policies" style="display:none;">';
-						foreach ($du->policies as $policy) {
+					if (!empty($req->policies)) {
+						echo '<div class="policy-header-wrapper"><h3 class="headerTab">Data Usage Policies</h3><a class="policies-btn grow" data-rid="'.$dsa->dsaId.'"><span class="policiesHide">Hide</span><span class="policiesShow">Show</span>&nbsp;Policies</a></div>';
+						echo '<div class="clear"></div><div class="policies" id="'.$dsa->dsaId.'policies" style="display:none;">';
+						foreach ($req->policies as $policy) {
 							echo '<h5>'.$policy->policyName.'</h5>';
 							echo '<div class=attrValue>'.$policy->policyDescription.'</div><div class="clear"></div>';
 						}
 						echo '</div>';
 					}
 
-					if (in_array($du->status, $pendingStatuses)) {
-						echo '<div class="lower-btn delete grow" data-rid="'.$du->id.'">Delete</div>';
-						echo '<div class="lower-btn edit grow" data-rid="'.$du->id.'">Edit</div>';
+					if (in_array($dsa->dsaStatus, $pendingStatuses)) {
+						echo '<div class="lower-btn edit grow" data-rid="'.$dsa->dsaId.'" data-dsa="true">Edit</div>';
 					}
-					echo '<div class="lower-btn print grow" data-rid="'.$du->id.'">Print</div>';
-					echo '<div class="lower-btn share grow" data-rid="'.$du->id.'">Share</div>';
+					echo '<div class="lower-btn print grow" data-rid="'.$dsa->dsaId.'" data-dsa="true">Print</div>';
+					echo '<div class="lower-btn share grow" data-rid="'.$dsa->dsaId.'">Share</div>';
 					echo '</div>';
 				}
 

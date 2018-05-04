@@ -114,7 +114,7 @@
 	<div id="searchBody" class="innerLower">
 
 		<div id="requestForm">
-			<h2 class="headerTab" id="<?= $request->resourceId ?>"><a href="/request/view/<?=$request->resourceId?>"><?= $request->signifier ?></a></h2>
+			<h2 class="headerTab" id="<?= $request->id ?>"><a href="/request/view/<?=$request->id?>"><?= $request->assetName ?></a></h2>
 
 			<div id="srLower" class="whiteBox">
 				<h3 class="headerTab">Add Information</h3>
@@ -127,8 +127,8 @@
 							foreach ($arrQueue['businessTerms'] as $id => $term){
 								// Don't allow adding a term that's already requested
 								$alreadyRequested = false;
-								foreach ($request->terms as $requestedTerm) {
-									if ($requestedTerm->termrid == $id) {
+								foreach ($request->requestedTerms as $requestedTerm) {
+									if ($requestedTerm->reqTermId == $id) {
 										$alreadyRequested = true;
 										break;
 									}
@@ -164,14 +164,14 @@
                 <h3 class="headerTab">Remove Business Terms</h3>
                 <div class="clear"></div>
                 <div class="resultItem">
-					<?php if (!empty($request->terms)): ?>
+					<?php if (!empty($request->requestedTerms)): ?>
 					<div class="checkAll"><input type="checkbox" onclick="toggleAllCheckboxes(this)">Check/Uncheck all</div>
 					<?php endif; ?>
 					<div class="irLower"><ul>
 						<?php
-							if (!empty($request->terms)) {
-								foreach($request->terms as $term) {
-									echo '<li id="requestItem'.$term->termrid.'"><input type="checkbox" name="requestedTerms" value="'.$term->relationrid.'">'.$term->termsignifier.'</li>';
+							if (!empty($request->requestedTerms)) {
+								foreach($request->requestedTerms as $term) {
+									echo '<li id="requestItem'.$term->reqTermId.'"><input type="checkbox" name="requestedTerms" value="'.$term->reqTermRelationId.'">'.$term->reqTermSignifier.'</li>';
 								}
 								echo '</ul><a class="removeTerms grow">Remove from this DSR</a>';
 							}else{

@@ -1366,16 +1366,73 @@ class CollibraAPI extends Model {
 		return $results;
 	}
 
-	public function getDataUsages($dsaId) {
+	public function getRequestDetails($assetId, $dsr = true) {
+		$policyRelTypeId = $dsr ? Configure::read('Collibra.relationship.DSRtoPolicy') : Configure::read('Collibra.relationship.DSAtoPolicy');
+
 		$tableConfig = ['TableViewConfig' => [
 			'Columns' => [
 				['Column' => ['fieldName' => 'id']],
+				['Column' => ['fieldName' => 'assetName']],
+				['Column' => ['fieldName' => 'statusName']],
+				['Column' => ['fieldName' => 'statusId']],
 				['Column' => ['fieldName' => 'vocabularyId']],
-				['Column' => ['fieldName' => 'vocabularyName']],
 				['Column' => ['fieldName' => 'communityId']],
-				['Column' => ['fieldName' => 'communityName']],
-				['Column' => ['fieldName' => 'signifier']],
-				['Column' => ['fieldName' => 'status']],
+				['Column' => ['fieldName' => 'conceptTypeId']],
+				['Column' => ['fieldName' => 'createdOn']],
+				['Group' => [
+					'name' => 'attributes',
+					'Columns' => [
+						['Column' => ['fieldName' => 'attrSignifier']],
+						['Column' => ['fieldName' => 'attrValue']],
+						['Column' => ['fieldName' => 'attrResourceId']],
+						['Column' => ['fieldName' => 'attrTypeId']]]]],
+
+				['Group' => [
+					'name' => 'requestedTerms',
+					'Columns' => [
+						['Column' => ['fieldName' => 'reqTermId']],
+						['Column' => ['fieldName' => 'reqTermSignifier']],
+						['Column' => ['fieldName' => 'reqTermRelationId']],
+						['Column' => ['fieldName' => 'reqTermVocabId']],
+						['Column' => ['fieldName' => 'reqTermVocabName']],
+						['Column' => ['fieldName' => 'reqTermCommId']],
+						['Column' => ['fieldName' => 'reqTermCommName']],
+						['Column' => ['fieldName' => 'reqTermConceptTypeId']],
+						['Column' => ['fieldName' => 'reqTermConceptTypeName']]]]],
+
+				['Group' => [
+					'name' => 'additionallyIncludedTerms',
+					'Columns' => [
+						['Column' => ['fieldName' => 'addTermId']],
+						['Column' => ['fieldName' => 'addTermSignifier']],
+						['Column' => ['fieldName' => 'addTermRelationId']],
+						['Column' => ['fieldName' => 'addTermVocabId']],
+						['Column' => ['fieldName' => 'addTermVocabName']],
+						['Column' => ['fieldName' => 'addTermCommId']],
+						['Column' => ['fieldName' => 'addTermCommName']],
+						['Column' => ['fieldName' => 'addTermConceptTypeId']],
+						['Column' => ['fieldName' => 'addTermConceptTypeName']]]]],
+
+				['Group' => [
+					'name' => 'necessaryApis',
+					'Columns' => [
+						['Column' => ['fieldName' => 'apiId']],
+						['Column' => ['fieldName' => 'apiName']],
+						['Column' => ['fieldName' => 'apiVocabId']],
+						['Column' => ['fieldName' => 'apiVocabName']],
+						['Column' => ['fieldName' => 'apiCommId']],
+						['Column' => ['fieldName' => 'apiCommName']]]]],
+
+				['Group' => [
+					'name' => 'necessaryTables',
+					'Columns' => [
+						['Column' => ['fieldName' => 'tableId']],
+						['Column' => ['fieldName' => 'tableName']],
+						['Column' => ['fieldName' => 'tableVocabId']],
+						['Column' => ['fieldName' => 'tableVocabName']],
+						['Column' => ['fieldName' => 'tableCommId']],
+						['Column' => ['fieldName' => 'tableCommName']]]]],
+
 				['Group' => [
 					'name' => 'policies',
 					'Columns' => [
@@ -1383,31 +1440,25 @@ class CollibraAPI extends Model {
 						['Column' => ['fieldName' => 'policyName']],
 						['Column' => ['fieldName' => 'policyDescription']],
 						['Column' => ['fieldName' => 'policyDescriptionId']]]]]],
+
 			'Resources' => [
 				'Term' => [
 					'Id' => ['name' => 'id'],
-					'Signifier' => ['name' => 'signifier'],
+					'Signifier' => ['name' => 'assetName'],
+					'CreatedOn' => ['name' => 'createdOn'],
 					'Status' => [
-						'Signifier' => ['name' => 'status']],
-					'Vocabulary' => [
-						'Id' => ['name' => 'vocabularyId'],
-						'Name' => ['name' => 'vocabularyName'],
-						'Community' => [
-							'Id' => ['name' => 'communityId'],
-							'Name' => ['name' => 'communityName']]],
+						'Signifier' => ['name' => 'statusName'],
+						'Id' => ['name' => 'statusId']],
+					'Attribute' => [
+						'Value' => ['name' => 'attrValue'],
+						'Id' => ['name' => 'attrResourceId'],
+						'AttributeType' => [
+							'Signifier' => ['name' => 'attrSignifier'],
+							'Id' => ['name' => 'attrTypeId']]],
+					'ConceptType' => [
+						'Id' => ['name' => 'conceptTypeId']],
 					'Relation' => [[
-						'typeId' => Configure::read('Collibra.relationship.DSAtoDSR'),
-						'type' => 'SOURCE',
-						'Target' => [
-							'Id' => ['name' => 'dsaId']],
-						'Filter' => [
-							'AND' => [[
-								'Field' => [
-										'name' => 'dsaId',
-										'operator' => 'EQUALS',
-										'value' => $dsaId]]]]],
-					[
-						'typeId' => Configure::read('Collibra.relationship.DSAtoPolicy'),
+						'typeId' => $policyRelTypeId,
 						'type' => 'SOURCE',
 						'Target' => [
 							'Id' => ['name' => 'policyId'],
@@ -1416,149 +1467,227 @@ class CollibraAPI extends Model {
 								'Id' => ['name' => 'policyDescriptionId'],
 								'Value' => ['name' => 'policyDescription'],
 								'labelId' => Configure::read('Collibra.attribute.description')]]]]],
+					'Vocabulary' => [
+						'Id' => ['name' => 'vocabularyId'],
+						'Community' => [
+							'Id' => ['name' => 'communityId']]],
 					'Filter' => [
-						'AND' => [[
-							'Field' => [
-									'name' => 'dsaId',
-									'operator' => 'EQUALS',
-									'value' => $dsaId]]]],
-					'Order' => [
-						['Field' => [
-							'name' => 'signifier',
-							'order' => 'ASC']]]]],
+						'AND' => [
+							['Field' => [
+								'name' => 'id',
+								'operator' => 'EQUALS',
+								'value' => $assetId]]]]]],
 			'displayStart' => 0,
 			'displayLength' => -1]];
-		$usages = $this->fullDataTable($tableConfig);
-		foreach ($usages as &$usage) {
-			$usage->roles = $this->getResponsibilities($usage->vocabularyId);
-			foreach($usage->policies as $policy) {
-				// Collibra can insert weird HTML into text attributes; cleaning it up here
-				if (preg_match('/<div>/', $policy->policyDescription)) {
-					$postData['value'] = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/', '/<\/?span[^>]*>/'], ['<br/>', '', '<br/>', ''], $policy->policyDescription);
-					$postData['rid'] = $policy->policyDescriptionId;
-					$postString = http_build_query($postData);
-					$this->post('attribute/'.$policy->policyDescriptionId, $postString);
 
-					// After updating the value in Collibra, just replace the value for this page load
-					$policy->policyDescription = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/', '/<\/?span[^>]*/'], ['<br/>', '', '<br/>', ''], $policy->policyDescription);
-				}
-			}
+		if ($dsr) {
+			array_push($tableConfig['TableViewConfig']['Columns'],
+				['Group' => [
+					'name' => 'dsas',
+					'Columns' => [
+						['Column' => ['fieldName' => 'dsaId']],
+						['Column' => ['fieldName' => 'dsaSignifier']],
+						['Column' => ['fieldName' => 'dsaStatus']],
+						['Column' => ['fieldName' => 'dsaVocabularyId']],
+						['Column' => ['fieldName' => 'dsaVocabularyName']],
+						['Column' => ['fieldName' => 'dsaCommunityId']],
+						['Column' => ['fieldName' => 'dsaCommunityName']]]]]);
+
+			array_push($tableConfig['TableViewConfig']['Resources']['Term']['Relation'],
+				[
+					'typeId' => Configure::read('Collibra.relationship.DSAtoDSR'),
+					'type' => 'TARGET',
+					'Source' => [
+						'Id' => ['name' => 'dsaId'],
+						'Signifier' => ['name' => 'dsaSignifier'],
+						'Status' => [
+							'Signifier' => ['name' => 'dsaStatus']],
+						'Vocabulary' => [
+							'Id' => ['name' => 'dsaVocabularyId'],
+							'Name' => ['name' => 'dsaVocabularyName'],
+							'Community' => [
+								'Id' => ['name' => 'dsaCommunityId'],
+								'Name' => ['name' => 'dsaCommunityName']]]]],
+
+				[
+					'typeId' => Configure::read('Collibra.relationship.DSRtoTerm'),
+					'Id' => ['name' => 'reqTermRelationId'],
+					'type' => 'SOURCE',
+					'Target' => [
+						'Id' => ['name' => 'reqTermId'],
+						'Signifier' => ['name' => 'reqTermSignifier'],
+						'Vocabulary' => [
+							'Id' => ['name' => 'reqTermVocabId'],
+							'Name' => ['name' => 'reqTermVocabName'],
+							'Community' => [
+								'Id' => ['name' => 'reqTermCommId'],
+								'Name' => ['name' => 'reqTermCommName']]],
+						'ConceptType' => [
+							'Id' => ['name' => 'reqTermConceptTypeId'],
+							'Signifier' => ['name' => 'reqTermConceptTypeName']]]],
+
+				[
+					'typeId' => Configure::read('Collibra.relationship.DSRtoAdditionallyIncludedAsset'),
+					'Id' => ['name' => 'addTermRelationId'],
+					'type' => 'SOURCE',
+					'Target' => [
+						'Id' => ['name' => 'addTermId'],
+						'Signifier' => ['name' => 'addTermSignifier'],
+						'Vocabulary' => [
+							'Id' => ['name' => 'addTermVocabId'],
+							'Name' => ['name' => 'addTermVocabName'],
+							'Community' => [
+								'Id' => ['name' => 'addTermCommId'],
+								'Name' => ['name' => 'addTermCommName']]],
+						'ConceptType' => [
+							'Id' => ['name' => 'addTermConceptTypeId'],
+							'Signifier' => ['name' => 'addTermConceptTypeName']]]],
+
+				[
+					'typeId' => Configure::read('Collibra.relationship.DSRtoNecessaryAPI'),
+					'type' => 'SOURCE',
+					'Target' => [
+						'Id' => ['name' => 'apiId'],
+						'Signifier' => ['name' => 'apiName'],
+						'Vocabulary' => [
+							'Id' => ['name' => 'apiVocabId'],
+							'Name' => ['name' => 'apiVocabName'],
+							'Community' => [
+								'Id' => ['name' => 'apiCommId'],
+								'Name' => ['name' => 'apiCommName']]]]],
+
+					[
+						'typeId' => Configure::read('Collibra.relationship.DSRtoNecessaryTable'),
+						'type' => 'SOURCE',
+						'Target' => [
+							'Id' => ['name' => 'tableId'],
+							'Signifier' => ['name' => 'tableName'],
+							'Vocabulary' => [
+								'Id' => ['name' => 'tableVocabId'],
+								'Name' => ['name' => 'tableVocabName'],
+								'Community' => [
+									'Id' => ['name' => 'tableCommId'],
+									'Name' => ['name' => 'tableCommName']]]]]);
+		} else {
+			array_push($tableConfig['TableViewConfig']['Columns'],
+				['Column' => ['fieldName' => 'parentId']],
+				['Column' => ['fieldName' => 'parentName']],
+				['Column' => ['fieldName' => 'parentVocabularyId']],
+				['Column' => ['fieldName' => 'parentStatus']]);
+
+			array_push($tableConfig['TableViewConfig']['Resources']['Term']['Relation'],
+				[
+					'typeId' => Configure::read('Collibra.relationship.DSAtoDSR'),
+					'type' => 'SOURCE',
+					'Target' => [
+						'Id' => ['name' => 'parentId'],
+						'Signifier' => ['name' => 'parentName'],
+						'Vocabulary' => [
+							'Id' => ['name' => 'parentVocabularyId']],
+						'Status' => [
+							'Signifier' => ['name' => 'parentStatus']],
+
+						'Relation' => [[
+							'typeId' => Configure::read('Collibra.relationship.DSRtoTerm'),
+							'Id' => ['name' => 'reqTermRelationId'],
+							'type' => 'SOURCE',
+							'Target' => [
+								'Id' => ['name' => 'reqTermId'],
+								'Signifier' => ['name' => 'reqTermSignifier'],
+								'Vocabulary' => [
+									'Id' => ['name' => 'reqTermVocabId'],
+									'Name' => ['name' => 'reqTermVocabName'],
+									'Community' => [
+										'Id' => ['name' => 'reqTermCommId'],
+										'Name' => ['name' => 'reqTermCommName']]],
+								'ConceptType' => [
+									'Id' => ['name' => 'reqTermConceptTypeId'],
+									'Signifier' => ['name' => 'reqTermConceptTypeName']]]],
+
+						[
+							'typeId' => Configure::read('Collibra.relationship.DSRtoAdditionallyIncludedAsset'),
+							'Id' => ['name' => 'addTermRelationId'],
+							'type' => 'SOURCE',
+							'Target' => [
+								'Id' => ['name' => 'addTermId'],
+								'Signifier' => ['name' => 'addTermSignifier'],
+								'Vocabulary' => [
+									'Id' => ['name' => 'addTermVocabId'],
+									'Name' => ['name' => 'addTermVocabName'],
+									'Community' => [
+										'Id' => ['name' => 'addTermCommId'],
+										'Name' => ['name' => 'addTermCommName']]],
+								'ConceptType' => [
+									'Id' => ['name' => 'addTermConceptTypeId'],
+									'Signifier' => ['name' => 'addTermConceptTypeName']]]],
+
+						[
+							'typeId' => Configure::read('Collibra.relationship.DSRtoNecessaryAPI'),
+							'type' => 'SOURCE',
+							'Target' => [
+								'Id' => ['name' => 'apiId'],
+								'Signifier' => ['name' => 'apiName'],
+								'Vocabulary' => [
+									'Id' => ['name' => 'apiVocabId'],
+									'Name' => ['name' => 'apiVocabName'],
+									'Community' => [
+										'Id' => ['name' => 'apiCommId'],
+										'Name' => ['name' => 'apiCommName']]]]],
+
+							[
+								'typeId' => Configure::read('Collibra.relationship.DSRtoNecessaryTable'),
+								'type' => 'SOURCE',
+								'Target' => [
+									'Id' => ['name' => 'tableId'],
+									'Signifier' => ['name' => 'tableName'],
+									'Vocabulary' => [
+										'Id' => ['name' => 'tableVocabId'],
+										'Name' => ['name' => 'tableVocabName'],
+										'Community' => [
+											'Id' => ['name' => 'tableCommId'],
+											'Name' => ['name' => 'tableCommName']]]]]]]]);
 		}
-		return $usages;
+
+		$results = $this->fullDataTable($tableConfig);
+		if (!empty($results)) {
+			return $results[0];
+		}
+		return [];
 	}
 
-	public function getDataUsageParent($dsaId) {
+	public function getAttributes($assetId) {
 		$tableConfig = ['TableViewConfig' => [
 			'Columns' => [
-				['Column' => ['fieldName' => 'id']],
-				['Column' => ['fieldName' => 'vocabularyId']],
-				['Column' => ['fieldName' => 'signifier']],
-				['Column' => ['fieldName' => 'status']]],
+				['Group' => [
+					'name' => 'attributes',
+					'Columns' => [
+						['Column' => ['fieldName' => 'attrSignifier']],
+						['Column' => ['fieldName' => 'attrValue']],
+						['Column' => ['fieldName' => 'attrResourceId']],
+						['Column' => ['fieldName' => 'attrTypeId']]]]]],
 			'Resources' => [
 				'Term' => [
-					'Id' => ['name' => 'id'],
-					'Signifier' => ['name' => 'signifier'],
-					'Status' => [
-						'Signifier' => ['name' => 'status']],
-					'Vocabulary' => [
-						'Id' => ['name' => 'vocabularyId']],
-					'Relation' => [[
-						'typeId' => Configure::read('Collibra.relationship.DSAtoDSR'),
-						'type' => 'TARGET',
-						'Source' => [
-							'Id' => ['name' => 'dsaId']],
-						'Filter' => [
-							'AND' => [[
-								'Field' => [
-										'name' => 'dsaId',
-										'operator' => 'EQUALS',
-										'value' => $dsaId]]]]]],
+					'Id' => ['name' => 'assetId'],
+					'Attribute' => [
+						'Value' => ['name' => 'attrValue'],
+						'Id' => ['name' => 'attrResourceId'],
+						'AttributeType' => [
+							'Signifier' => ['name' => 'attrSignifier'],
+							'Id' => ['name' => 'attrTypeId']]],
 					'Filter' => [
-						'AND' => [[
-							'Field' => [
-									'name' => 'dsaId',
-									'operator' => 'EQUALS',
-									'value' => $dsaId]]]],
-					'Order' => [
-						['Field' => [
-							'name' => 'signifier',
-							'order' => 'ASC']]]]],
+						'AND' => [
+							['Field' => [
+								'name' => 'assetId',
+								'operator' => 'EQUALS',
+								'value' => $assetId]]]]]],
 			'displayStart' => 0,
 			'displayLength' => -1]];
-		$usages = $this->fullDataTable($tableConfig);
-		foreach ($usages as &$usage) {
-			$usage->roles = $this->getResponsibilities($usage->vocabularyId);
+
+		$results = $this->fullDataTable($tableConfig);
+		if (!empty($results)) {
+			return $results[0]->attributes;
 		}
-		return $usages;
-	}
-
-	public function getAssetPolicies($assetId) {
-		$relTypeIds = [
-			Configure::read('Collibra.relationship.DSAtoPolicy'),
-			Configure::read('Collibra.relationship.DSRtoPolicy')
-		];
-		$policies = [];
-
-		foreach ($relTypeIds as $typeId) {
-			$tableConfig = ['TableViewConfig' => [
-				'Columns' => [
-					['Group' => [
-						'name' => 'arrPolicies',
-						'Columns' => [
-							['Column' => ['fieldName' => 'policyId']],
-							['Column' => ['fieldName' => 'policyName']],
-							['Column' => ['fieldName' => 'policyDescription']],
-							['Column' => ['fieldName' => 'policyDescriptionId']]]]]],
-				'Resources' => [
-					'Term' => [
-						'Relation' => [[
-							'typeId' => $typeId,
-							'type' => 'SOURCE',
-							'Source' => [
-								'Id' => ['name' => 'dsaId']],
-							'Target' => [
-								'Id' => ['name' => 'policyId'],
-								'Signifier' => ['name' => 'policyName'],
-								'StringAttribute' => [[
-									'Id' => ['name' => 'policyDescriptionId'],
-									'Value' => ['name' => 'policyDescription'],
-									'labelId' => Configure::read('Collibra.attribute.description')]],
-								'Filter' => [
-									'AND' => [[
-										'Field' => [
-												'name' => 'dsaId',
-												'operator' => 'NOT_NULL']]]]]]],
-						'Filter' => [
-							'AND' => [
-								['Field' => [
-										'name' => 'dsaId',
-										'operator' => 'EQUALS',
-										'value' => $assetId]]]]]],
-				'displayStart' => 0,
-				'displayLength' => -1]];
-
-			$results = $this->fullDataTable($tableConfig);
-			if (!empty($results)) {
-				$policies = array_merge($policies, $results[0]->arrPolicies);
-			}
-		}
-
-		if (!empty($policies)) {
-			foreach($policies as &$policy) {
-				// Collibra can insert weird HTML into text attributes; cleaning it up here
-				if (preg_match('/<div>/', $policy->policyDescription)) {
-					$postData['value'] = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/', '/<\/?span[^>]*>/'], ['<br/>', '', '<br/>', ''], $policy->policyDescription);
-					$postData['rid'] = $policy->policyDescriptionId;
-					$postString = http_build_query($postData);
-					$this->post('attribute/'.$policy->policyDescriptionId, $postString);
-
-					// After updating the value in Collibra, just replace the value for this page load
-					$policy->policyDescription = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/', '/<\/?span[^>]*/'], ['<br/>', '', '<br/>', ''], $policy->policyDescription);
-				}
-			}
-			return $policies;
-		}
-		return $policies;
+		return [];
 	}
 
 	public function getPolicies() {
@@ -1591,161 +1720,6 @@ class CollibraAPI extends Model {
 
 		$policies = $this->fullDataTable($tableConfig);
 		return $policies;
-	}
-
-	public function getRequestedTerms($dsrId) {
-		$tableConfig = ['TableViewConfig' => [
-			'Columns' => [
-				['Column' => ['fieldName' => 'termrid']],
-				['Column' => ['fieldName' => 'termsignifier']],
-				['Column' => ['fieldName' => 'relationrid']],
-				['Column' => ['fieldName' => 'startDate']],
-				['Column' => ['fieldName' => 'endDate']],
-				['Column' => ['fieldName' => 'relstatusrid']],
-				['Column' => ['fieldName' => 'relstatusname']],
-				['Column' => ['fieldName' => 'communityname']],
-				['Column' => ['fieldName' => 'commrid']],
-				['Column' => ['fieldName' => 'domainname']],
-				['Column' => ['fieldName' => 'domainrid']],
-				['Column' => ['fieldName' => 'concepttypename']],
-				['Column' => ['fieldName' => 'concepttyperid']]],
-			'Resources' => [
-				'Term' => [
-					'Id' => ['name' => 'termrid'],
-					'Signifier' => ['name' => 'termsignifier'],
-					'Relation' => [
-						'typeId' => Configure::read('Collibra.relationship.DSRtoTerm'),
-						'Id' => ['name' => 'relationrid'],
-						'StartingDate' => ['name' => 'startDate'],
-						'EndingDate' => ['name' => 'endDate'],
-						'Status' => [
-							'Id' => ['name' => 'relstatusrid'],
-							'Signifier' => ['name' => 'relstatusname']],
-						'Filter' => [
-							'AND' => [[
-								'Field' => [
-									'name' => 'reltermrid',
-									'operator' => 'EQUALS',
-									'value' => $dsrId]]]],
-						'type' => 'TARGET',
-						'Source' => [
-							'Id' => ['name' => 'reltermrid']]],
-					'Vocabulary' => [
-						'Community' => [
-							'Name' => ['name' => 'communityname'],
-							'Id' => ['name' => 'commrid']],
-						'Name' => ['name' => 'domainname'],
-						'Id' => ['name' => 'domainrid']],
-					'ConceptType' => [[
-						'Signifier' => ['name' => 'concepttypename'],
-						'Id' => ['name' => 'concepttyperid']]],
-					'Filter' => [
-						'AND' => [[
-							'AND' => [[
-								'Field' => [
-									'name' => 'reltermrid',
-									'operator' => 'EQUALS',
-									'value' => $dsrId]]]]]],
-					'Order' => [[
-						'Field' => [
-							'name' => 'termsignifier',
-							'order' => 'ASC']]]]],
-			'displayStart' => 0,
-			'displayLength' => 100]];
-
-			$requestedTerms = $this->fullDataTable($tableConfig);
-			return $requestedTerms;
-	}
-
-	public function getAdditionallyIncludedTerms($dsrId) {
-		$tableConfig = ['TableViewConfig' => [
-			'Columns' => [
-				['Column' => ['fieldName' => 'termid']],
-				['Column' => ['fieldName' => 'termsignifier']],
-				['Column' => ['fieldName' => 'relationid']],
-				['Column' => ['fieldName' => 'domainrid']],
-				['Column' => ['fieldName' => 'domainname']],
-				['Column' => ['fieldName' => 'concept']],
-				['Column' => ['fieldName' => 'classification']],
-				['Column' => ['fieldName' => 'commrid']],
-				['Column' => ['fieldName' => 'communityname']],
-				['Column' => ['fieldName' => 'statusname']]],
-			'Resources' => [
-				'Term' => [
-					'Id' => ['name' => 'termid'],
-					'Signifier' => ['name' => 'termsignifier'],
-					'BooleanAttribute' => [[
-						'Value' => ['name' => 'concept'],
-						'labelId' => Configure::read('Collibra.attribute.concept')]],
-					'SingleValueListAttribute' => [[
-						'Value' => ['name' => 'classification'],
-						'labelId' => Configure::read('Collibra.attribute.classification')]],
-					'Status' => [
-						'Signifier' => ['name' => 'statusname']],
-					'Vocabulary' => [
-						'Community' => [
-							'Name' => ['name' => 'communityname'],
-							'Id' => ['name' => 'commrid']],
-						'Id' => ['name' => 'domainrid'],
-						'Name' => ['name' => 'domainname']],
-					'Relation' => [[
-						'typeId' => Configure::read('Collibra.relationship.DSRtoAdditionallyIncludedAsset'),
-						'Id' => ['name' => 'relationid'],
-						'type' => 'TARGET',
-						'Source' => [
-							'Id' => ['name' => 'dsaId']],
-						'Filter' => [
-							'AND' => [[
-								'Field' => [
-										'name' => 'dsaId',
-										'operator' => 'EQUALS',
-										'value' => $dsrId]]]]]],
-					'Filter' => [
-						'AND' => [[
-							'Field' => [
-								'name' => 'dsaId',
-								'operator' => 'EQUALS',
-								'value' => $dsrId]]]]]]]];
-
-		$terms = $this->fullDataTable($tableConfig);
-		return $terms;
-	}
-
-	public function getNecessaryAPIs($dsrId) {
-		$tableConfig = ['TableViewConfig' => [
-			'Columns' => [
-				['Column' => ['fieldName' => 'apirid']],
-				['Column' => ['fieldName' => 'apiname']],
-				['Column' => ['fieldName' => 'domainrid']],
-				['Column' => ['fieldName' => 'domainname']],
-				['Column' => ['fieldName' => 'communityid']],
-				['Column' => ['fieldName' => 'communityname']]],
-			'Resources' => [
-				'Term' => [
-					'typeId' => Configure::read('Collibra.type.api'),
-					'Id' => ['name' => 'apirid'],
-					'Signifier' => ['name' => 'apiname'],
-					'Vocabulary' => [
-						'Id' => ['name' => 'domainrid'],
-						'Name' => ['name' => 'domainname'],
-						'Community' => [
-							'Id' => ['name' => 'communityid'],
-							'Name' => ['name' => 'communityname']]],
-					'Relation' => [
-						'relationTypeId' => Configure::read('Collibra.relationship.DSRtoNecessaryAPI'),
-						'type' => 'TARGET',
-						'Source' => [
-							'typeId' => Configure::read('Collibra.type.isaRequest'),
-							'Id' => ['name' => 'dsrid']]],
-					'Filter' => [
-						'AND' => [[
-							'Field' => [
-								'name' => 'dsrid',
-								'operator' => 'EQUALS',
-								'value' => $dsrId]]]]]]]];
-
-		$apis = $this->fullDataTable($tableConfig);
-		return $apis;
 	}
 
 	protected function _updateSessionCookies() {

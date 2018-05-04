@@ -142,12 +142,10 @@ class AppController extends Controller {
 			return;
 		}
 
-		$draft = $this->CollibraAPI->get('term/'.$draftId[0]->id);
-		$draft = json_decode($draft);
-
-		foreach ($draft->attributeReferences->attributeReference as $attr) {
-			if ($attr->labelReference->signifier == 'Additional Information Requested') {
-				$arrQueue = json_decode($attr->value, true);
+		$draft = $this->CollibraAPI->getRequestDetails($draftId[0]->id);
+		foreach ($draft->attributes as $attr) {
+			if ($attr->attrSignifier == 'Additional Information Requested') {
+				$arrQueue = json_decode($attr->attrValue, true);
 				// Temporary for transition to new queue structure
 				if (!isset($arrQueue['dbColumns'])) {
 					$arrQueue['dbColumns'] = [];

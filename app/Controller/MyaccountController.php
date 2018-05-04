@@ -53,46 +53,41 @@ class MyaccountController extends AppController {
 		$this->loadModel('CollibraAPI');
 		$resp = $this->CollibraAPI->postJSON(
 				'search',
-				'{"query":"'.$netID.'", "filter": {"category": ["TE"], "type": {"asset": ["' . Configure::read('Collibra.type.isaRequest') . '"] }}, "fields": ["' . Configure::read('Collibra.attribute.isaRequestNetId') . '"] }'
+				'{"query":"'.$netID.'", "filter": {"category": ["TE"], "type": {"asset": ["' . Configure::read('Collibra.type.dataSharingRequest') . '"] }}, "fields": ["' . Configure::read('Collibra.attribute.requesterNetId') . '"] }'
 		);
-		$isaRequests = json_decode($resp);
+		$requests = json_decode($resp);
 
 		$arrRequests = [];
-		foreach($isaRequests->results as $r){
+		foreach($requests->results as $r){
 			if ($r->status == 'Deleted') {
 				continue;
 			}
-			// load terms details
-			$resp = $this->CollibraAPI->get('term/'.$r->name->id);
-			$request = json_decode($resp);
-			$request->roles = $this->CollibraAPI->getResponsibilities($request->vocabularyReference->resourceId);
-			$request->dataUsages = $this->CollibraAPI->getDataUsages($r->name->id);
-			$request->policies = $this->CollibraAPI->getAssetPolicies($r->name->id);
+
+			$request = $this->CollibraAPI->getRequestDetails($r->name->id);
+			$request->roles = $this->CollibraAPI->getResponsibilities($request->vocabularyId);
+			for ($i = 0; $i < sizeof($request->dsas); $i++) {
+				$request->dsas[$i]->roles = $this->CollibraAPI->getResponsibilities($request->dsas[$i]->dsaId);
+			}
 			$resp = $this->CollibraAPI->get('term/'.$r->name->id.'/attachments');
 			$resp = json_decode($resp);
 			$request->attachments = $resp->attachment;
 
-			$requestedTerms = $this->CollibraAPI->getRequestedTerms($r->name->id);
-			$request->termGlossaries = array();
-			foreach ($requestedTerms as $term) {
-				if (array_key_exists($term->domainname, $request->termGlossaries)) {
-					array_push($request->termGlossaries[$term->domainname], $term);
+			$request->reqTermGlossaries = array();
+			foreach ($request->requestedTerms as $term) {
+				if (array_key_exists($term->reqTermVocabName, $request->reqTermGlossaries)) {
+					array_push($request->reqTermGlossaries[$term->reqTermVocabName], $term);
 				} else {
-					$request->termGlossaries[$term->domainname] = array($term);
+					$request->reqTermGlossaries[$term->reqTermVocabName] = array($term);
 				}
 			}
 
-			//load additionally included terms
-			////////////////////////////////////////////
-			$resp = $this->CollibraAPI->getAdditionallyIncludedTerms($r->name->id);
-			if (!empty($resp)) {
-				$request->additionallyIncluded = new stdClass();
-				$request->additionallyIncluded->termGlossaries = [];
-				foreach ($resp as $term) {
-					if (array_key_exists($term->domainname, $request->additionallyIncluded->termGlossaries)) {
-						array_push($request->additionallyIncluded->termGlossaries[$term->domainname], $term);
+			if (!empty($request->additionallyIncludedTerms)) {
+				$request->addTermGlossaries = array();
+				foreach ($request->additionallyIncludedTerms as $term) {
+					if (array_key_exists($term->addTermVocabName, $request->addTermGlossaries)) {
+						array_push($request->addTermGlossaries[$term->addTermVocabName], $term);
 					} else {
-						$request->additionallyIncluded->termGlossaries[$term->domainname] = array($term);
+						$request->addTermGlossaries[$term->addTermVocabName] = array($term);
 					}
 				}
 			}
@@ -105,7 +100,7 @@ class MyaccountController extends AppController {
 		// Temporary fix for a mysterious bug in Collibra that sometimes
 		// returns two copies of the most recently created DSR
 		$numRequests = count($arrRequests);
-		if ($numRequests > 1 && $arrRequests[$numRequests - 1]->resourceId == $arrRequests[$numRequests - 2]->resourceId) {
+		if ($numRequests > 1 && $arrRequests[$numRequests - 1]->id == $arrRequests[$numRequests - 2]->id) {
 			array_pop($arrRequests);
 		}
 
@@ -115,72 +110,77 @@ class MyaccountController extends AppController {
 			'canceled' => []
 		];
 
+		$arrChangedAttrIds = [];
+		$arrChangedAttrValues = [];
 		foreach($arrRequests as $r){
 			$arrNewAttr = array();
 			$arrCollaborators = array();
-			foreach($r->attributeReferences->attributeReference as $attr){
-				if ($attr->labelReference->signifier == 'Requester Net Id') {
-					if ($attr->value == $netID) {
+			foreach($r->attributes as $attr){
+				if ($attr->attrSignifier == 'Requester Net Id') {
+					if ($attr->attrValue == $netID) {
 						$person = $byuUser;
 					} else {
-						$person = $this->BYUAPI->personalSummary($attr->value);
+						$person = $this->BYUAPI->personalSummary($attr->attrValue);
 					}
 					unset($person->person_summary_line, $person->personal_information, $person->student_information, $person->relationships);
 					array_push($arrCollaborators, $person);
 					continue;
 				}
-				$arrNewAttr[$attr->labelReference->signifier] = $attr;
+				$arrNewAttr[$attr->attrSignifier] = $attr;
 			}
 			$arrNewAttr['Collaborators'] = $arrCollaborators;
-			$r->attributeReferences->attributeReference = $arrNewAttr;
+			$r->attributes = $arrNewAttr;
 
 			// Making edits in Collibra inserts weird html into the attributes; if an
 			// edit was made in Collibra, we replace their html with some more cooperative tags
-			foreach($r->attributeReferences->attributeReference as $label => $attr) {
+			foreach($r->attributes as $label => $attr) {
 				if ($label == 'Collaborators' || $label == 'Request Date') continue;
-				if (preg_match('/<div>/', $attr->value)) {
-					$postData['value'] = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->value);
-					$postData['rid'] = $attr->resourceId;
-					$postString = http_build_query($postData);
-					$this->CollibraAPI->post('attribute/'.$attr->resourceId, $postString);
+				if (preg_match('/<div>/', $attr->attrValue)) {
+					array_push($arrChangedAttrIds, $attr->attrResourceId);
+					$newValue = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->attrValue);
+					array_push($arrChangedAttrValues, $newValue);
 
 					// After updating the value in Collibra, just replace the value for this page load
-					$attr->value = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->value);
+					$attr->attrValue = $newValue;
 				}
 			}
 
-			for ($i = 0; $i < sizeof($r->dataUsages); $i++) {
-				$resp = $this->CollibraAPI->get('term/'.$r->dataUsages[$i]->id);
-				$resp = json_decode($resp);
-				$r->dataUsages[$i]->attributeReferences = $resp->attributeReferences;
-				foreach($r->dataUsages[$i]->attributeReferences->attributeReference as $attr) {
-					if (isset($attr->date)) {
-						continue;
-					}
-					if (preg_match('/<div>/', $attr->value)) {
-						$postData['value'] = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->value);
-						$postData['rid'] = $attr->resourceId;
-						$postString = http_build_query($postData);
-						$this->CollibraAPI->post('attribute/'.$attr->resourceId, $postString);
+			for ($i = 0; $i < sizeof($r->dsas); $i++) {
+				$r->dsas[$i]->attributes = $this->CollibraAPI->getAttributes($r->dsas[$i]->dsaId);
+				foreach($r->dsas[$i]->attributes as $attr) {
+					if (preg_match('/<div>/', $attr->attrValue)) {
+						array_push($arrChangedAttrIds, $attr->attrResourceId);
+						$newValue = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->attrValue);
+						array_push($arrChangedAttrValues, $newValue);
 
 						// After updating the value in Collibra, just replace the value for this page load
-						$attr->value = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->value);
+						$attr->attrValue = $newValue;
 					}
 				}
 
-				$resp = $this->CollibraAPI->get('term/'.$r->dataUsages[$i]->id.'/attachments');
+				$resp = $this->CollibraAPI->get('term/'.$r->dsas[$i]->dsaId.'/attachments');
 				$resp = json_decode($resp);
-				$r->dataUsages[$i]->attachments = $resp->attachment;
+				$r->dsas[$i]->attachments = $resp->attachment;
 			}
 
 			$pendingStatuses = ['In Progress', 'Request In Progress', 'Agreement Review', 'In Provisioning'];
-			if (in_array($r->statusReference->signifier, $pendingStatuses)) {
+			if (in_array($r->statusName, $pendingStatuses)) {
 				array_push($sortedRequests['inProgress'], $r);
-			} else if ($r->statusReference->signifier == 'Completed' || $r->statusReference->signifier == 'Obsolete') {
+			} else if ($r->statusName == 'Completed' || $r->statusName == 'Obsolete') {
 				array_push($sortedRequests['completed'], $r);
-			} else if ($r->statusReference->signifier == 'Canceled') {
+			} else if ($r->statusName == 'Canceled') {
 				array_push($sortedRequests['canceled'], $r);
 			}
+		}
+
+		if (!empty($arrChangedAttrIds)) {
+			// Here update all the attributes Collibra inserted HTML tags into
+			$postData['attributes'] = $arrChangedAttrIds;
+			$postData['values'] = $arrChangedAttrValues;
+			$postString = http_build_query($postData);
+			$postString = preg_replace("/attributes%5B[0-9]*%5D/", "attributes", $postString);
+			$postString = preg_replace("/values%5B[0-9]*%5D/", "values", $postString);
+			$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.changeAttributes').'/start', $postString);
 		}
 
 		$psName = '';

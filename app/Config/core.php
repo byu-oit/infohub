@@ -42,7 +42,10 @@ if (!function_exists('denv')) {
 		],
 		'workflow' => [
 			'intakeDSR' => '8bfbed57-c387-4717-8f5d-c3cfebb485de',
-			'newBusinessTerms' => '27028f8b-3d2b-4286-a567-b9658418be51'
+			'newBusinessTerms' => '27028f8b-3d2b-4286-a567-b9658418be51',
+			'changeDSRRelations' => '987d74a5-1968-4177-90ce-41d9ebac3548',
+			'changeAttributes' => '7ee55a00-a355-4066-a65c-f4df27184646',
+			'createDSRDraft' => 'ecdb22aa-f091-42b8-9b63-4303e82ee7cf'
 		],
 		'requiredElementsString' => 'requiredElements',
 		'additionalElementsString' => 'additionalElements',
@@ -66,7 +69,7 @@ if (!function_exists('denv')) {
 			'columnToTable' => '00000000-0000-0000-0000-000000007042'
 		],
 		'type' => [
-			'isaRequest' => '00000000-0000-0000-0000-000000031231',
+			'dataSharingRequest' => '00000000-0000-0000-0000-000000031231',
 			'dataSharingRequestDraft' => '6bee7c91-3f51-4db6-b2d1-f1a3411fad49',
 			'synonym' => '2c2d6491-a41c-4e9e-af52-759b43948951',
 			'term' => '00000000-0000-0000-0000-000000011001',
@@ -82,7 +85,7 @@ if (!function_exists('denv')) {
 			'standardFieldName' => 'ea92faa8-685d-4cb0-8665-14808de08dd2',
 			'classification' => '80cae8d4-856f-4b9a-971a-164514e79744',
 			'concept' => '00fd4187-ffbd-4419-acd0-74fd9f16598a',
-			'isaRequestNetId' => 'a368134f-ab44-4ce6-ac1d-1b69bfa37d6e',
+			'requesterNetId' => 'a368134f-ab44-4ce6-ac1d-1b69bfa37d6e',
 			'stewardPhone' => '9a18e247-c090-40c3-896e-ab97335ae759',
 			'stewardEmail' => '0cbbfd32-fc97-47ce-bef1-a89ae4e77ee8',
 			'stewardName' => '4331ec09-88a2-48e6-b096-9ece6648aff3',
