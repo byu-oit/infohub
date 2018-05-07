@@ -985,10 +985,10 @@ class RequestController extends AppController {
 			foreach ($asset->attributes as $original) {
 				if ($id == $original->attrTypeId) {
 					$matchFound = true;
-					if ($val != $original->attrValue) {
+					if (preg_replace('/\R/', '<br/>', $val) != preg_replace('/&gt;/', '>', $original->attrValue)) {
 						//Update values in Collibra database
 						array_push($wfPostData['attributes'], $original->attrResourceId);
-						array_push($wfPostData['values'], $val);
+						array_push($wfPostData['values'], $val.'  ');
 					}
 					break;
 				}

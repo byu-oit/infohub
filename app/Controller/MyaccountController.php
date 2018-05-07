@@ -138,7 +138,7 @@ class MyaccountController extends AppController {
 				if (preg_match('/<div>/', $attr->attrValue)) {
 					array_push($arrChangedAttrIds, $attr->attrResourceId);
 					$newValue = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->attrValue);
-					array_push($arrChangedAttrValues, $newValue);
+					array_push($arrChangedAttrValues, $newValue.'  ');
 
 					// After updating the value in Collibra, just replace the value for this page load
 					$attr->attrValue = $newValue;
@@ -151,7 +151,7 @@ class MyaccountController extends AppController {
 					if (preg_match('/<div>/', $attr->attrValue)) {
 						array_push($arrChangedAttrIds, $attr->attrResourceId);
 						$newValue = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->attrValue);
-						array_push($arrChangedAttrValues, $newValue);
+						array_push($arrChangedAttrValues, $newValue.'  ');
 
 						// After updating the value in Collibra, just replace the value for this page load
 						$attr->attrValue = $newValue;
