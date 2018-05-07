@@ -169,7 +169,7 @@
 						</div>
 						<div class="field-container">
 							<label for="email">Requester Email*</label>
-							<input type="text" id="email" name="email" class="inputShade noPlaceHolder" value="<?= empty($preFilled['email']) ? h($psEmail) : h($preFilled['email']) ?>">
+							<input type="text" id="email" name="email" class="inputShade noPlaceHolder" value="<?= (Configure::read('debug') == 0) ? ( empty($preFilled['email']) ? h($psEmail) : h($preFilled['email']) ) : h('null@example.com') ?>">
 						</div>
 						<div class="field-container">
 							<label for="requestingOrganization">Requester Organization*</label>
@@ -195,7 +195,7 @@
 					</div>
 					<div class="field-container">
 						<label for="sponsorEmail">Sponsor Email*</label>
-						<input type="text" id="sponsorEmail" name="sponsorEmail" class="inputShade noPlaceHolder" value="<?= empty($preFilled['sponsorEmail']) ? ( empty($supervisorInfo->email) ? '' : h($supervisorInfo->email) ) : $preFilled['sponsorEmail'] ?>">
+						<input type="text" id="sponsorEmail" name="sponsorEmail" class="inputShade noPlaceHolder" value="<?= (Configure::read('debug') == 0) ? ( empty($preFilled['sponsorEmail']) ? ( empty($supervisorInfo->email) ? '' : h($supervisorInfo->email) ) : $preFilled['sponsorEmail'] ) : h('null@example.com') ?>">
 					</div>
 
 				</div>
