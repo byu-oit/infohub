@@ -31,7 +31,7 @@ App::uses('Controller', 'Controller');
  * @link		http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
  */
 class AppController extends Controller {
-	public $components = array('Session', 'Cookie', 'Auth' => array('authorize' => 'Controller'), 'Flash');
+	public $components = ['Session', 'Cookie', 'Auth' => ['authorize' => 'Controller'], 'Flash'];
 
 	public function initBeforeFilter(){
 		$byuUsername = '';
@@ -116,7 +116,7 @@ class AppController extends Controller {
 		parent::beforeFilter();
 
 		$this->Cookie->name = 'Infohub';
-		$this->Auth->authenticate = array('Cas' => array('hostname' => 'cas.byu.edu', 'uri' => 'cas'));
+		$this->Auth->authenticate = ['Cas' => ['hostname' => 'cas.byu.edu', 'uri' => 'cas']];
 		$this->Auth->allow();
 		if($this->name != 'CakeError'){
 			$this->initBeforeFilter();
@@ -169,8 +169,8 @@ class AppController extends Controller {
 	public function afterCASAuthentication($event) {
 		if (!array_key_exists('infohubUserId', $event->data)) {
 			$this->loadModel('CmsUsers');
-			$cmsUser = $this->CmsUsers->find('first', array(
-				'conditions' => array('username' => $event->data['username'], 'active' => '1')));
+			$cmsUser = $this->CmsUsers->find('first', [
+				'conditions' => ['username' => $event->data['username'], 'active' => '1']]);
 			if (empty($cmsUser)) {
 				$event->data['infohubUserId'] = null;
 			} else {

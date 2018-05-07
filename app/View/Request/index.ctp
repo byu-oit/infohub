@@ -1,6 +1,6 @@
 <?php
-	$this->Html->css('secondary', null, array('inline' => false));
-	$this->Html->css('search', null, array('inline' => false));
+	$this->Html->css('secondary', null, ['inline' => false]);
+	$this->Html->css('search', null, ['inline' => false]);
 ?>
 <script>
 	$(document).ready(function() {
@@ -202,7 +202,7 @@
 
 
 				<?php
-					$arrNonDisplay = array(
+					$arrNonDisplay = [
 						"requesterName",
 						"requesterEmail",
 						"requesterPhone",
@@ -217,7 +217,7 @@
 						"api",
 						Configure::read('Collibra.requiredElementsString'),
 						Configure::read('Collibra.additionalElementsString')
-					);
+					];
 					foreach($formFields->formProperties as $field){
 						if(in_array($field->id, $arrNonDisplay)){
 							continue;

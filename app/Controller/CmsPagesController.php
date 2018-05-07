@@ -1,7 +1,7 @@
 <?php
 
 class CmsPagesController extends AppController {
-	//public $helpers = array('Html', 'Form');
+	//public $helpers = ['Html', 'Form'];
 
 	public function index() {
 		$urlSize = sizeof($this->request->params['pass']);
@@ -12,10 +12,10 @@ class CmsPagesController extends AppController {
 		}
 
 		// load page based on slug
-		$page = $this->CmsPage->find('all', array(
-			'conditions'=>array('slug'=>$pageSlug),
+		$page = $this->CmsPage->find('all', [
+			'conditions'=>['slug'=>$pageSlug],
 			'limit'=>1
-		));
+		]);
 
 		if(sizeof($page[0])==0){
 			// redirect user to home page if page is not found
@@ -32,10 +32,10 @@ class CmsPagesController extends AppController {
 
 		// load template file
 		$this->loadModel('CmsTemplate');
-		$templateResults = $this->CmsTemplate->find('all', array(
-			'conditions'=>array('id'=>$page['templateID']),
+		$templateResults = $this->CmsTemplate->find('all', [
+			'conditions'=>['id'=>$page['templateID']],
 			'fields'=>'file'
-		));
+		]);
 		$templateFile = str_replace('.ctp', '', $templateResults[0]['CmsTemplate']['file']);
 
 		$pageNav = $this->CmsPage->listPages(0,1);

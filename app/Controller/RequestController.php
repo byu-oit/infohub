@@ -3,8 +3,8 @@
 require 'fpdf' . DIRECTORY_SEPARATOR . 'fpdf.php';
 
 class RequestController extends AppController {
-	public $helpers = array('Html', 'Form');
-	public $uses = array('CollibraAPI', 'BYUAPI');
+	public $helpers = ['Html', 'Form'];
+	public $uses = ['CollibraAPI', 'BYUAPI'];
 
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -44,12 +44,12 @@ class RequestController extends AppController {
 		}
 
 		$dsa->roles = $this->CollibraAPI->getResponsibilities($dsa->vocabularyId);
-		$dsa->reqTermGlossaries = array();
+		$dsa->reqTermGlossaries = [];
 		foreach ($dsa->requestedTerms as $term) {
 			if (array_key_exists($term->reqTermVocabName, $dsa->reqTermGlossaries)) {
 				array_push($dsa->reqTermGlossaries[$term->reqTermVocabName], $term);
 			} else {
-				$dsa->reqTermGlossaries[$term->reqTermVocabName] = array($term);
+				$dsa->reqTermGlossaries[$term->reqTermVocabName] = [$term];
 			}
 		}
 
@@ -59,7 +59,7 @@ class RequestController extends AppController {
 				if (array_key_exists($term->addTermVocabName, $dsa->addTermGlossaries)) {
 					array_push($dsa->addTermGlossaries[$term->addTermVocabName], $term);
 				} else {
-					$dsa->addTermGlossaries[$term->addTermVocabName] = array($term);
+					$dsa->addTermGlossaries[$term->addTermVocabName] = [$term];
 				}
 			}
 		}
@@ -1069,7 +1069,7 @@ class RequestController extends AppController {
 		$formResp = $this->CollibraAPI->get('workflow/'.Configure::read('Collibra.workflow.intakeDSR').'/form/start');
 		$formResp = json_decode($formResp);
 
-		$arrNewAttr = array();
+		$arrNewAttr = [];
 		foreach($formResp->formProperties as $wf){
 			foreach($asset->attributes as $attr){
 				if($attr->attrSignifier == $wf->name){
@@ -1205,7 +1205,7 @@ class RequestController extends AppController {
 		$postData['api'] = [];
 		$postData['tables'] = [];
 		if (!empty($additionalElementsString)) {
-			$postData[$additionalElementsString] = array();
+			$postData[$additionalElementsString] = [];
 			foreach ($apis as $apiHost => $apiPaths) {
 				foreach ($apiPaths as $apiPath => $ignore) {
 					$apiObject = $this->CollibraAPI->getApiObject($apiHost, $apiPath);
@@ -1307,28 +1307,28 @@ class RequestController extends AppController {
 		$resp = json_decode($resp);
 		$asset->attachments = $resp->attachment;
 
-		$asset->termGlossaries = array();
+		$asset->termGlossaries = [];
 		foreach ($asset->requestedTerms as $term) {
 			if (array_key_exists($term->reqTermVocabName, $asset->termGlossaries)) {
 				array_push($asset->termGlossaries[$term->reqTermVocabName], $term);
 			} else {
-				$asset->termGlossaries[$term->reqTermVocabName] = array($term);
+				$asset->termGlossaries[$term->reqTermVocabName] = [$term];
 			}
 		}
 
 		if (!empty($asset->additionallyIncludedTerms)) {
-			$asset->addTermGlossaries = array();
+			$asset->addTermGlossaries = [];
 			foreach ($asset->additionallyIncludedTerms as $term) {
 				if (array_key_exists($term->addTermVocabName, $asset->addTermGlossaries)) {
 					array_push($asset->addTermGlossaries[$term->addTermVocabName], $term);
 				} else {
-					$asset->addTermGlossaries[$term->addTermVocabName] = array($term);
+					$asset->addTermGlossaries[$term->addTermVocabName] = [$term];
 				}
 			}
 		}
 
 		$arrNewAttr = [];
-		$arrCollaborators = array();
+		$arrCollaborators = [];
 		foreach($asset->attributes as $attr){
 			if ($attr->attrSignifier == 'Requester Net Id') {
 				$person = $this->BYUAPI->personalSummary($attr->attrValue);
@@ -1368,12 +1368,12 @@ class RequestController extends AppController {
 		$asset = $this->CollibraAPI->getRequestDetails($assetId, $parent);
 		$asset->roles = $this->CollibraAPI->getResponsibilities($asset->vocabularyId);
 
-		$asset->termGlossaries = array();
+		$asset->termGlossaries = [];
 		foreach ($asset->requestedTerms as $term) {
 			if (array_key_exists($term->reqTermVocabName, $asset->termGlossaries)) {
 				array_push($asset->termGlossaries[$term->reqTermVocabName], $term);
 			} else {
-				$asset->termGlossaries[$term->reqTermVocabName] = array($term);
+				$asset->termGlossaries[$term->reqTermVocabName] = [$term];
 			}
 		}
 
@@ -1383,7 +1383,7 @@ class RequestController extends AppController {
 				if (array_key_exists($term->addTermVocabName, $asset->addTermGlossaries)) {
 					array_push($asset->addTermGlossaries[$term->addTermVocabName], $term);
 				} else {
-					$asset->addTermGlossaries[$term->addTermVocabName] = array($term);
+					$asset->addTermGlossaries[$term->addTermVocabName] = [$term];
 				}
 			}
 		}

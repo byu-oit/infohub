@@ -1,6 +1,6 @@
 <?php
-	$this->Html->css('secondary', null, array('inline' => false));
-	$this->Html->css('search', null, array('inline' => false));
+	$this->Html->css('secondary', null, ['inline' => false]);
+	$this->Html->css('search', null, ['inline' => false]);
 ?>
 
 <!-- Background image div -->
@@ -17,8 +17,8 @@
 			</div>
 			<div class="clear"></div>
 		</div>
-		
+
 	</div>
-	
+
 </div>
 <div class="clear"></div>

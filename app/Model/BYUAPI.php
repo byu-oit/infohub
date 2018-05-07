@@ -16,12 +16,12 @@ class BYUAPI extends Model {
 
 		$response = $this->_get("domains/legacy/identity/person/PRO/personsummary/v1/{$netid}");
 		if (!$response || !$response->isOk()) {
-			return array();
+			return [];
 		}
 
 		$data = json_decode($response->body());
 		if (empty($data->PersonSummaryService->response->identifiers->net_id)) {
-			return array();
+			return [];
 		}
 
 		Cache::write($cacheKey, $data->PersonSummaryService->response);
@@ -48,7 +48,7 @@ class BYUAPI extends Model {
 		$data = json_decode($response);
 
         if (!$data || isset($data->PersonLookupService->errors)) {
-            return array();
+            return [];
         }
 
 		$arrResults = array_filter($data->PersonLookupService->response->information, function ($person) {
@@ -62,7 +62,7 @@ class BYUAPI extends Model {
 	public function supervisorLookup($netidRaw){
 		$selfInfo = $this->personalSummary($netidRaw);
 		if (empty($selfInfo) || empty($selfInfo->employee_information->reportsToId)) {
-			return array();
+			return [];
 		}
 
 		$data = $this->personalSummary($selfInfo->employee_information->reportsToId);

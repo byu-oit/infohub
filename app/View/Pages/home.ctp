@@ -1,5 +1,5 @@
 <?php
-    $this->Html->css('home', null, array('inline' => false));
+    $this->Html->css('home', null, ['inline' => false]);
 ?>
 <script>
 	$(window).resize(boxWidth);

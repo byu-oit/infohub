@@ -1,6 +1,6 @@
 <?php
-	$this->Html->css('secondary', null, array('inline' => false));
-	$this->Html->css('people', null, array('inline' => false));
+	$this->Html->css('secondary', null, ['inline' => false]);
+	$this->Html->css('people', null, ['inline' => false]);
 ?>
 <script>
 	$(document).ready(menuSize);

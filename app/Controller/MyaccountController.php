@@ -29,7 +29,7 @@ class MyaccountController extends AppController {
 	}
 
 	function sortArrayByArray(Array $array, Array $orderArray) {
-		$ordered = array();
+		$ordered = [];
 		foreach($orderArray as $key) {
 			if(array_key_exists($key,$array)) {
 				$ordered[$key] = $array[$key];
@@ -72,22 +72,22 @@ class MyaccountController extends AppController {
 			$resp = json_decode($resp);
 			$request->attachments = $resp->attachment;
 
-			$request->reqTermGlossaries = array();
+			$request->reqTermGlossaries = [];
 			foreach ($request->requestedTerms as $term) {
 				if (array_key_exists($term->reqTermVocabName, $request->reqTermGlossaries)) {
 					array_push($request->reqTermGlossaries[$term->reqTermVocabName], $term);
 				} else {
-					$request->reqTermGlossaries[$term->reqTermVocabName] = array($term);
+					$request->reqTermGlossaries[$term->reqTermVocabName] = [$term];
 				}
 			}
 
 			if (!empty($request->additionallyIncludedTerms)) {
-				$request->addTermGlossaries = array();
+				$request->addTermGlossaries = [];
 				foreach ($request->additionallyIncludedTerms as $term) {
 					if (array_key_exists($term->addTermVocabName, $request->addTermGlossaries)) {
 						array_push($request->addTermGlossaries[$term->addTermVocabName], $term);
 					} else {
-						$request->addTermGlossaries[$term->addTermVocabName] = array($term);
+						$request->addTermGlossaries[$term->addTermVocabName] = [$term];
 					}
 				}
 			}
@@ -113,8 +113,8 @@ class MyaccountController extends AppController {
 		$arrChangedAttrIds = [];
 		$arrChangedAttrValues = [];
 		foreach($arrRequests as $r){
-			$arrNewAttr = array();
-			$arrCollaborators = array();
+			$arrNewAttr = [];
+			$arrCollaborators = [];
 			foreach($r->attributes as $attr){
 				if ($attr->attrSignifier == 'Requester Net Id') {
 					if ($attr->attrValue == $netID) {

@@ -1,7 +1,7 @@
 <?php
 
 class SearchController extends AppController {
-	public $uses = array('CollibraAPI', 'CmsPage');
+	public $uses = ['CollibraAPI', 'CmsPage'];
 
 	public function beforeFilter() {
 		parent::beforeFilter();
@@ -33,17 +33,17 @@ class SearchController extends AppController {
 	}
 
 	private function convert_smart_quotes($string){
-		$search = array(chr(145),
+		$search = [chr(145),
 			chr(146),
 			chr(147),
 			chr(148),
-			chr(151));
+			chr(151)];
 
-		$replace = array("'",
+		$replace = ["'",
 			"'",
 			'"',
 			'"',
-			'-');
+			'-'];
 
 		return str_replace($search, $replace, $string);
 	}
@@ -399,7 +399,7 @@ class SearchController extends AppController {
 	}
 
 	public function getCommonSearches(){
-		$commonSearches = array();
+		$commonSearches = [];
 		$this->loadModel('CommonSearch');
 		$results = $this->CommonSearch->find('all', [
 			'fields' => 'query',
@@ -491,7 +491,7 @@ class SearchController extends AppController {
 
 		//order results based on first search
 		if($sortField == 'score' && sizeof($resp->aaData)>0){
-			$arrTmpTerms = array();
+			$arrTmpTerms = [];
 			foreach($searchResp->results as $result){
 				foreach($resp->aaData as $term){
 					if($term->termrid == $result->name->id){

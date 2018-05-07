@@ -1,7 +1,7 @@
 <?php
-	$this->Html->css('secondary', null, array('inline' => false));
-	$this->Html->css('search', null, array('inline' => false));
-	$this->Html->css('account', null, array('inline' => false));
+	$this->Html->css('secondary', null, ['inline' => false]);
+	$this->Html->css('search', null, ['inline' => false]);
+	$this->Html->css('account', null, ['inline' => false]);
 ?>
 <script type="text/javascript" src="/js/jquery.serialize-object.min.js"></script>
 <script>

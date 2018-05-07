@@ -11,7 +11,7 @@ class PeopleController extends AppController {
 
 	private function getParentCommunities($communityData, $parentID, $objCommunity, $level=0){
 		if($parentID != Configure::read('Collibra.community.byu')){
-			if($level==0) $objCommunity->parents = array();
+			if($level==0) $objCommunity->parents = [];
 			foreach($communityData[0]->Subcommunities as $co){
 				if($parentID == $co->subcommunityid){
 					array_unshift($objCommunity->parents, $co);
@@ -25,11 +25,11 @@ class PeopleController extends AppController {
 	private function getSubCommunities($json, $cid, $arrData=null, $level=0){
 		// returns array with first item being the sub community
 		// and the second item being an array with sub-sub communities
-		if(!$arrData) $arrData = array();
+		if(!$arrData) $arrData = [];
 		foreach($json[0]->Subcommunities as $sc){
 			if($sc->parentCommunityId === $cid){
 				if($sc->hasNonMetaChildren){
-					array_push($arrData, array($sc, array()));
+					array_push($arrData, [$sc, []]);
 					$arr = $arrData[sizeof($arrData)-1];
 					$arr = $this->getSubCommunities($json, $sc->subcommunityid, null, $level+1);
 					if(sizeof($arr)>0){
@@ -77,12 +77,12 @@ class PeopleController extends AppController {
 		usort($users, 'self::sortUsers');
 		$communities = $this->CollibraAPI->getAllCommunities();
 
-		$arrUserData = array();
+		$arrUserData = [];
 		$letterGroup = '0';
 		foreach($users as $r){
 			$group = substr($r->userlastname,0,1);
 			if(!isset($arrUserData[$group])){
-				$arrUserData[$group] = array();
+				$arrUserData[$group] = [];
 			}
 
 			if(!isset($arrUserData[$group][$r->userrid])){
@@ -96,8 +96,8 @@ class PeopleController extends AppController {
 				}
 
 				// add communities in which user has a role
-				$arrUserData[$group][$r->userrid]['stewardRoles'] = array();
-				$arrUserData[$group][$r->userrid]['custodianRoles'] = array();
+				$arrUserData[$group][$r->userrid]['stewardRoles'] = [];
+				$arrUserData[$group][$r->userrid]['custodianRoles'] = [];
 				foreach($communities[0]->Subcommunities as $c){
 					foreach($c->Role8a0a6c89106c4adb9936f09f29b747ac as $role){
 						if($role->userRole8a0a6c89106c4adb9936f09f29b747acrid == $r->userrid){
@@ -182,8 +182,8 @@ class PeopleController extends AppController {
 			//=================================================================
 
 			// build array to hold users and communities found
-			$arrUserResults = array();
-			$arrCommunityResults = array();
+			$arrUserResults = [];
+			$arrCommunityResults = [];
 			foreach($searchResp->results as $r){
 				if($r->name->type == 'UR'){
 					array_push($arrUserResults, $r->name->id);
@@ -200,12 +200,12 @@ class PeopleController extends AppController {
 			$communities = $this->CollibraAPI->getAllCommunities();
 			$users = $this->CollibraAPI->getUserData();
 
-			$arrUserData = array();
+			$arrUserData = [];
 			foreach($users as $r){
 				if(in_array($r->userrid, $arrUserResults)){
 					$group = substr($r->userlastname,0,1);
 					if(!isset($arrUserData[$group])){
-						$arrUserData[$group] = array();
+						$arrUserData[$group] = [];
 					}
 
 					if(!isset($arrUserData[$group][$r->userrid])){
@@ -219,8 +219,8 @@ class PeopleController extends AppController {
 						}
 
 						// add communities in which user has a role
-						$arrUserData[$group][$r->userrid]['stewardRoles'] = array();
-						$arrUserData[$group][$r->userrid]['custodianRoles'] = array();
+						$arrUserData[$group][$r->userrid]['stewardRoles'] = [];
+						$arrUserData[$group][$r->userrid]['custodianRoles'] = [];
 						foreach($communities[0]->Subcommunities as $c){
 							foreach($c->Role8a0a6c89106c4adb9936f09f29b747ac as $role){
 								if($role->userRole8a0a6c89106c4adb9936f09f29b747acrid == $r->userrid){
@@ -272,7 +272,7 @@ class PeopleController extends AppController {
 			// loop through all communities from above and filter out those not found
 			// in our first search results
 			//=================================================================
-			$tmpCommunities = array();
+			$tmpCommunities = [];
 			foreach($communities[0]->Subcommunities as $c){
 				$include = false;
 				if($c->parentCommunityId != Configure::read('Collibra.community.byu')){
@@ -352,10 +352,10 @@ class PeopleController extends AppController {
 		$arrCommunities = $this->getSubCommunities($communities, $community);
 
 		// build data array for navigation
-		$arrNavDomainData = array();
+		$arrNavDomainData = [];
 		for($i=0; $i<sizeof($arrCommunities); $i++){
 			$communityName = $arrCommunities[$i][0]->subcommunity;
-			$arr = array();
+			$arr = [];
 			$arr['name'] = $communityName;
 			$arr['id'] = $arrCommunities[$i][0]->subcommunityid;
 
@@ -367,14 +367,14 @@ class PeopleController extends AppController {
 		}
 
 		// build data array for directory/role listing
-		$arrDomainData = array(array());
+		$arrDomainData = [[]];
 		for($i=0; $i<sizeof($arrCommunities); $i++){
 			$communityName = $arrCommunities[$i][0]->subcommunity;
 			if(sizeof($arrCommunities[$i])>1){
 				for($j=1; $j<sizeof($arrCommunities[$i]); $j++){
 					$sc = $arrCommunities[$i][$j];
 					for($k=0; $k<sizeof($sc); $k++){
-						$arr = array();
+						$arr = [];
 						$arr['name'] = $communityName.' <span class="arrow-separator">&gt;</span> '.$ssc = $arrCommunities[$i][$j][$k][0]->subcommunity;
 						$arr['id'] = $arrCommunities[$i][$j][$k][0]->subcommunityid;
 						$arr['description'] = $arrCommunities[$i][$j][$k][0]->description;
@@ -385,7 +385,7 @@ class PeopleController extends AppController {
 					}
 				}
 			}else{
-				$arr = array();
+				$arr = [];
 				$arr['name'] = $communityName;
 				$arr['id'] = $arrCommunities[$i][0]->subcommunityid;
 				$arr['description'] = $arrCommunities[$i][0]->description;
@@ -399,7 +399,7 @@ class PeopleController extends AppController {
 		$users = $this->CollibraAPI->getUserData();
 
 		// load additional information for users
-		$arrUserDetails = array();
+		$arrUserDetails = [];
 		array_shift($arrDomainData);
 		for($i=0; $i<sizeof($arrDomainData); $i++){
 			foreach($users as $u){

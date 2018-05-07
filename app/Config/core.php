@@ -176,11 +176,11 @@ if (!function_exists('denv')) {
  *
  * @see ErrorHandler for more information on error handling and configuration.
  */
-	Configure::write('Error', array(
+	Configure::write('Error', [
 		'handler' => 'ErrorHandler::handleError',
 		'level' => E_ALL & ~E_DEPRECATED,
 		'trace' => true
-	));
+	]);
 
 /**
  * Configure the Exception handler used for uncaught exceptions. By default,
@@ -202,11 +202,11 @@ if (!function_exists('denv')) {
  *
  * @see ErrorHandler for more information on exception handling and configuration.
  */
-	Configure::write('Exception', array(
+	Configure::write('Exception', [
 		'handler' => 'ErrorHandler::handleException',
 		'renderer' => 'ExceptionRenderer',
 		'log' => true
-	));
+	]);
 
 /**
  * Application wide charset encoding
@@ -343,9 +343,9 @@ if (!function_exists('denv')) {
  * the cake shell command: cake schema create Sessions
  *
  */
-	Configure::write('Session', array(
+	Configure::write('Session', [
 		'defaults' => 'php'
-	));
+	]);
 
 /**
  * A random string used in security hashing methods.

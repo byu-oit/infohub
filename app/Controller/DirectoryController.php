@@ -1,7 +1,7 @@
 <?php
 
 class DirectoryController extends AppController {
-	public $uses = array('BYUAPI');
+	public $uses = ['BYUAPI'];
 
     public function lookup() {
         $this->autoRender = false;

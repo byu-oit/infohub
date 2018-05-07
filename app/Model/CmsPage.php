@@ -3,31 +3,31 @@
 class CmsPage extends AppModel {
 	public $listPageHtml = '';
 
-	public $validate = array(
-		'title' => array(
+	public $validate = [
+		'title' => [
 			'rule' => 'notBlank'
-		),
-		'slug' => array(
+		],
+		'slug' => [
 			'rule' => 'notBlank'
-		),
-		'body' => array(
+		],
+		'body' => [
 			'rule' => 'notBlank'
-		)
-	);
+		]
+	];
 
 	public function loadPage($pageID=0){
 		$pageID = intval($pageID);
 		$cmsPage = '';
 		if($pageID==0){
-			$cmsPage = $this->find('first', array(
-				'conditions'=>array('parentID'=>'0'),
-				'order'=>array('rank'=>'DESC')
-			));
+			$cmsPage = $this->find('first', [
+				'conditions'=>['parentID'=>'0'],
+				'order'=>['rank'=>'DESC']
+			]);
 		}else{
-			$cmsPage = $this->find('first', array(
-				'conditions'=>array('id'=>$pageID),
-				'order'=>array('rank'=>'DESC')
-			));
+			$cmsPage = $this->find('first', [
+				'conditions'=>['id'=>$pageID],
+				'order'=>['rank'=>'DESC']
+			]);
 		}
 		return $cmsPage;
 	}

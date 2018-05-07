@@ -1,5 +1,5 @@
 <?php
-	$this->Html->css('search', null, array('inline' => false));
+	$this->Html->css('search', null, ['inline' => false]);
 ?>
 <style type="text/css">
 	table.swagger {

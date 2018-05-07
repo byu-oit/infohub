@@ -1017,7 +1017,7 @@ class CollibraAPI extends Model {
 		}
 
 		$vocabulary = $this->get("vocabulary/name/full?name={$swagger['basePath']}/{$swagger['version']}", ['json' => true])->vocabulary;
-		$existentTerms = array();
+		$existentTerms = [];
 		if (!empty($vocabulary)) {
 			$vocabularyId = $vocabulary[0]->resourceId;
 			foreach ($vocabulary[0]->termReferences->termReference as $term) {
@@ -1731,7 +1731,7 @@ class CollibraAPI extends Model {
 		}
 	}
 
-	public function request($options=array()){
+	public function request($options=[]){
 		$ch = curl_init();
 		$url = $this->settings['url'].$options['url'];
 		$params = isset($options['params'])?$options['params']:'';
@@ -1744,9 +1744,9 @@ class CollibraAPI extends Model {
 		}
 
 		if(isset($options['json'])){
-			curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+			curl_setopt($ch, CURLOPT_HTTPHEADER, [
 				'Content-Type: application/json',
-				'Content-Length: ' . strlen($params))
+				'Content-Length: ' . strlen($params)]
 			);
 		}
 

@@ -1,11 +1,11 @@
 <?php
 
 class CmsTemplate extends AppModel {
-    
-    public $validate = array(
-        'title' => array(
+
+    public $validate = [
+        'title' => [
             'rule' => 'notBlank'
-        )
-    );
+        ]
+    ];
 
 }
