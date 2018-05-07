@@ -178,8 +178,7 @@ class MyaccountController extends AppController {
 			$postData['attributes'] = $arrChangedAttrIds;
 			$postData['values'] = $arrChangedAttrValues;
 			$postString = http_build_query($postData);
-			$postString = preg_replace("/attributes%5B[0-9]*%5D/", "attributes", $postString);
-			$postString = preg_replace("/values%5B[0-9]*%5D/", "values", $postString);
+			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
 			$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.changeAttributes').'/start', $postString);
 		}
 

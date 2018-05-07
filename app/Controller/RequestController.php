@@ -490,7 +490,7 @@ class RequestController extends AppController {
 		}
 
 		$postString = http_build_query(['resource' => $toDeleteIds]);
-		$postString = preg_replace("/resource%5B[0-9]*%5D/", "resource", $postString);
+		$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
 		$resp = $this->CollibraAPI->deleteJSON('attribute', $postString);
 
 		if ($resp->code != '200') {
@@ -525,8 +525,7 @@ class RequestController extends AppController {
 		}
 
 		$postString = http_build_query($postData);
-		$postString = preg_replace("/attributeIds%5B[0-9]*%5D/", "attributeIds", $postString);
-		$postString = preg_replace("/values%5B[0-9]*%5D/", "values", $postString);
+		$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
 		$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.createDSRDraft').'/start', $postString);
 
 		if ($resp->code != '200') {
@@ -625,7 +624,7 @@ class RequestController extends AppController {
 					}
 				}
 				$postString = http_build_query(['resource' => $toDeleteIds]);
-				$postString = preg_replace("/resource%5B[0-9]*%5D/", "resource", $postString);
+				$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
 				$resp = $this->CollibraAPI->deleteJSON('relation', $postString);
 			}
 
@@ -922,7 +921,7 @@ class RequestController extends AppController {
 				array_push($toDeleteIds, $relationrid);
 			}
 			$postString = http_build_query(['resource' => $toDeleteIds]);
-			$postString = preg_replace("/resource%5B[0-9]*%5D/", "resource", $postString);
+			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
 			$resp = $this->CollibraAPI->deleteJSON('relation', $postString);
 
 			if ($resp->code != '200') {
@@ -1012,8 +1011,7 @@ class RequestController extends AppController {
 		if (!empty($wfPostData['attributes'])) {
 			$postString = http_build_query($wfPostData);
 			$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
-			$postString = preg_replace("/attributes%5B[0-9]*%5D/", "attributes", $postString);
-			$postString = preg_replace("/values%5B[0-9]*%5D/", "values", $postString);
+			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
 			$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.changeAttributes').'/start', $postString);
 			if ($resp->code != '200') {
 				$err = true;
@@ -1258,13 +1256,7 @@ class RequestController extends AppController {
 		//For array data, PHP's http_build_query creates query/POST string in a format Collibra doesn't like,
 		//so we have to tweak the output a bit
 		$postString = http_build_query($postData);
-		$postString = preg_replace("/requesterNetId%5B[0-9]*%5D/", "requesterNetId", $postString);
-		$postString = preg_replace("/api%5B[0-9]*%5D/", "api", $postString);
-		$postString = preg_replace("/tables%5B[0-9]*%5D/", "tables", $postString);
-		$postString = preg_replace("/{$requiredElementsString}%5B[0-9]*%5D/", $requiredElementsString, $postString);
-		if (!empty($additionalElementsString)) {
-			$postString = preg_replace("/{$additionalElementsString}%5B[0-9]*%5D/", $additionalElementsString, $postString);
-		}
+		$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
 		$postString = preg_replace('/%0D%0A/','<br/>',$postString);
 
 		$formResp = $this->CollibraAPI->post(
