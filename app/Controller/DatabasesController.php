@@ -13,6 +13,8 @@ class DatabasesController extends AppController {
 			return $this->redirect(['action' => 'database', 'dbId' => $databases->subCommunityReferences->communityReference[0]->resourceId]);
 		}
 
+		$isOITEmployee = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04');
+		$this->set('isOITEmployee', $isOITEmployee);
 		$this->set('databases', $databases);
 	}
 
@@ -34,6 +36,8 @@ class DatabasesController extends AppController {
 		usort($schemas, function ($a, $b) {
 			return strcmp($a->name, $b->name);
 		});
+		$isOITEmployee = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04');
+		$this->set('isOITEmployee', $isOITEmployee);
 		$this->set('dbName', $schemasCommunity->name);
 		$this->set('schemas', $schemas);
 	}

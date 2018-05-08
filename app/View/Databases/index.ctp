@@ -34,8 +34,19 @@
 				foreach ($databases->subCommunityReferences->communityReference as $db) {
 					echo '<li class="catalogItem"><a href="/databases/database/'.$db->resourceId.'">'.$db->name.'</a></li>';
 				}
-			?></ul></div>
+			?></ul>
 		</div>
 	</div>
+
+	<?php if ($isOITEmployee): ?>
+		<div style="padding-top: 35px;">
+			<div style="float: right">
+				<?= $this->Html->link(
+					'Update a Table',
+					array_merge(['controller' => 'databaseAdmin', 'action' => 'syncDatabase']),
+					['class' => 'btn-db-sync grow', 'id' => 'admin']) ?>
+			</div>
+		</div>
+	<?php endif ?>
 
 </div>
