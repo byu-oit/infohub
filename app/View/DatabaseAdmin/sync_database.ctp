@@ -22,14 +22,16 @@
 
             var requiredErrorString = 'Schema and table names are both required.';
             if (!schema) {
-                alert(requiredErrorString);
-                $('#schemaName').focus();
-                return;
+				alert(requiredErrorString);
+				clearInterval(loadingTextInterval);
+				$('#schemaName').focus();
+				return;
             }
             if (!table) {
-                alert(requiredErrorString);
-                $('#tableName').focus();
-                return;
+				alert(requiredErrorString);
+				clearInterval(loadingTextInterval);
+				$('#tableName').focus();
+				return;
             }
 
             schema = schema.toUpperCase();
