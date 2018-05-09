@@ -45,7 +45,8 @@ class ByuApiAuthentication {
 		}
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, 'https://api.byu.edu/token');
-		curl_setopt($ch, CURLOPT_USERPWD, "{$authInfo['key']}:{$authInfo['secret']}");
+		curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Basic '.base64_encode($authInfo['key'].':'.$authInfo['secret']), 'Content-Type: application/x-www-form-urlencoded']);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_POST, true);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, 'grant_type=client_credentials');
