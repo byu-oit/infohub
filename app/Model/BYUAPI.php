@@ -103,7 +103,14 @@ class BYUAPI extends Model {
 			return false;
 		}
 
-		return json_decode($response->body(), true);
+		$resp = json_decode($response->body(), true);
+		if (!isset($resp[$schema][$table])) {
+			return [];
+		}
+		$columns = array_filter($resp[$schema][$table], function($column) {
+			return !(substr($column, 0, 4) === "SYS_");
+		});
+		return array_values($columns);
 	}
 
 	protected function _get($url) {

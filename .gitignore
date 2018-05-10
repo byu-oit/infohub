@@ -13,6 +13,7 @@
 *.mo
 /composer.phar
 /docker-compose.yml
+/data-warehouse-tables.json
 # INTENTIONALLY adding /vendor to version control
 # Technically recreatable via composer, but actual
 # number of libraries in this case is extremely
