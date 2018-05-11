@@ -1,5 +1,7 @@
 <?php
 
+session_save_path(TMP.'/sessions');
+
 App::uses('DataWarehouseComponent', 'Controller/Component');
 App::uses('ComponentCollection', 'Controller');
 
