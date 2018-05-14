@@ -46,7 +46,8 @@ if (!function_exists('denv')) {
 			'updateDataWarehouse' => 'c5063f9b-47f4-4c59-92fd-947878d7b5d2',
 			'changeDSRRelations' => '987d74a5-1968-4177-90ce-41d9ebac3548',
 			'changeAttributes' => '7ee55a00-a355-4066-a65c-f4df27184646',
-			'createDSRDraft' => 'ecdb22aa-f091-42b8-9b63-4303e82ee7cf'
+			'createDSRDraft' => 'ecdb22aa-f091-42b8-9b63-4303e82ee7cf',
+			'createRelationsAsync' => 'c1934dda-c1c8-4ad2-8e53-18303fb06545'
 		],
 		'requiredElementsString' => 'requiredElements',
 		'additionalElementsString' => 'additionalElements',

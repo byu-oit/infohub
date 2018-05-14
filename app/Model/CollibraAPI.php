@@ -722,7 +722,11 @@ class CollibraAPI extends Model {
 	}
 
 	public function updateTableBusinessTermLinks($columns) {
-		$relationshipTypeId = Configure::read('Collibra.relationship.termToDataAsset');
+		$wfPostData = [
+			'relationTypeId' => Configure::read('Collibra.relationship.termToDataAsset'),
+			'source' => [],
+			'target' => []
+		];
 		foreach ($columns as $column) {
 			if (empty($column['id'])) {
 				continue;
@@ -754,12 +758,27 @@ class CollibraAPI extends Model {
 			if (empty($column['business_term'])) {
 				continue;
 			}
-			$this->post("term/{$column['id']}/relations", [
-				'type' => $relationshipTypeId,
-				'target' => $column['business_term'],
-				'inverse' => 'true'
-			]);
+			array_push($wfPostData['source'], $column['business_term']);
+			array_push($wfPostData['target'], $column['id']);
 		}
+
+		while (count($wfPostData['source']) + count($wfPostData['target']) > 100) {
+			$postString = http_build_query([
+				'relationTypeId' => $wfPostData['relationTypeId'],
+				'source' => array_slice($wfPostData['source'], 0, 50),
+				'target' => array_slice($wfPostData['target'], 0, 50)
+			]);
+			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
+			$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', $postString);
+
+			$wfPostData['source'] = array_slice($wfPostData['source'], 50);
+			$wfPostData['target'] = array_slice($wfPostData['target'], 50);
+		}
+
+		$postString = http_build_query($wfPostData);
+		$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
+		$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', $postString);
+
 		return true;
 	}
 
@@ -1081,7 +1100,11 @@ class CollibraAPI extends Model {
 		}
 
 		//Link created terms to selected Business Terms
-		$relationshipTypeId = Configure::read('Collibra.relationship.termToDataAsset');
+		$wfPostData = [
+			'relationTypeId' => Configure::read('Collibra.relationship.termToDataAsset'),
+			'source' => [],
+			'target' => []
+		];
 		foreach (['fieldsResult', 'fieldSetsResult'] as $result) {
 			if (empty(${$result})) {
 				continue;
@@ -1094,11 +1117,8 @@ class CollibraAPI extends Model {
 				if (empty($term->signifier) || empty($term->resourceId) || empty($elements[$term->signifier]['business_term'])) {
 					continue;
 				}
-				$this->post("term/{$term->resourceId}/relations", [
-					'type' => $relationshipTypeId,
-					'target' => $elements[$term->signifier]['business_term'],
-					'inverse' => 'true'
-				]);
+				array_push($wfPostData['source'], $elements[$term->signifier]['business_term']);
+				array_push($wfPostData['target'], $term->resourceId);
 			}
 		}
 		//Link already existent terms to Business Terms, if selected
@@ -1106,12 +1126,27 @@ class CollibraAPI extends Model {
 			if (empty($elements[$signifier]['business_term'])) {
 				continue;
 			}
-			$this->post("term/{$id}/relations", [
-				'type' => $relationshipTypeId,
-				'target' => $elements[$signifier]['business_term'],
-				'inverse' => 'true'
-			]);
+			array_push($wfPostData['source'], $elements[$signifier]['business_term']);
+			array_push($wfPostData['target'], $id);
 		}
+
+		while (count($wfPostData['source']) + count($wfPostData['target']) > 100) {
+			$postString = http_build_query([
+				'relationTypeId' => $wfPostData['relationTypeId'],
+				'source' => array_slice($wfPostData['source'], 0, 50),
+				'target' => array_slice($wfPostData['target'], 0, 50)
+			]);
+			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
+			$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', $postString);
+
+			$wfPostData['source'] = array_slice($wfPostData['source'], 50);
+			$wfPostData['target'] = array_slice($wfPostData['target'], 50);
+		}
+
+		$postString = http_build_query($wfPostData);
+		$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
+		$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', $postString);
+
 		return true;
 	}
 
@@ -1132,7 +1167,11 @@ class CollibraAPI extends Model {
 	}
 
 	public function updateApiBusinessTermLinks($terms) {
-		$relationshipTypeId = Configure::read('Collibra.relationship.termToDataAsset');
+		$wfPostData = [
+			'relationTypeId' => Configure::read('Collibra.relationship.termToDataAsset'),
+			'source' => [],
+			'target' => []
+		];
 		foreach ($terms as $term) {
 			if (empty($term['id'])) {
 				continue;
@@ -1164,12 +1203,27 @@ class CollibraAPI extends Model {
 			if (empty($term['business_term'])) {
 				continue;
 			}
-			$this->post("term/{$term['id']}/relations", [
-				'type' => $relationshipTypeId,
-				'target' => $term['business_term'],
-				'inverse' => 'true'
-			]);
+			array_push($wfPostData['source'], $term['business_term']);
+			array_push($wfPostData['target'], $term['id']);
 		}
+
+		while (count($wfPostData['source']) + count($wfPostData['target']) > 100) {
+			$postString = http_build_query([
+				'relationTypeId' => $wfPostData['relationTypeId'],
+				'source' => array_slice($wfPostData['source'], 0, 50),
+				'target' => array_slice($wfPostData['target'], 0, 50)
+			]);
+			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
+			$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', $postString);
+
+			$wfPostData['source'] = array_slice($wfPostData['source'], 50);
+			$wfPostData['target'] = array_slice($wfPostData['target'], 50);
+		}
+
+		$postString = http_build_query($wfPostData);
+		$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
+		$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', $postString);
+
 		return true;
 	}
 
