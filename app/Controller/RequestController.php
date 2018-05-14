@@ -1333,15 +1333,51 @@ class RequestController extends AppController {
 		$arrNewAttr['Collaborators'] = $arrCollaborators;
 		$asset->attributes = $arrNewAttr;
 
+		// Making edits in Collibra inserts weird html into the attributes; if an
+		// edit was made in Collibra, we replace their html with some more cooperative tags
+		$arrChangedAttrIds = [];
+		$arrChangedAttrValues = [];
+		foreach($asset->attributes as $label => $attr) {
+			if ($label == 'Collaborators' || $label == 'Request Date') continue;
+			if (preg_match('/<div>/', $attr->attrValue)) {
+				array_push($arrChangedAttrIds, $attr->attrResourceId);
+				$newValue = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->attrValue);
+				array_push($arrChangedAttrValues, $newValue.'  ');
+
+				// After updating the value in Collibra, just replace the value for this page load
+				$attr->attrValue = $newValue;
+			}
+		}
+
 		if ($parent) {
 			for ($i = 0; $i < sizeof($asset->dsas); $i++) {
 				$asset->dsas[$i]->attributes = $this->CollibraAPI->getAttributes($asset->dsas[$i]->dsaId);
-				$asset->dsas[$i]->roles = $this->CollibraAPI->getResponsibilities($asset->dsas[$i]->dsaVocabularyId);
 
+				foreach($asset->dsas[$i]->attributes as $attr) {
+					if (preg_match('/<div>/', $attr->attrValue)) {
+						array_push($arrChangedAttrIds, $attr->attrResourceId);
+						$newValue = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->attrValue);
+						array_push($arrChangedAttrValues, $newValue.'  ');
+
+						// After updating the value in Collibra, just replace the value for this page load
+						$attr->attrValue = $newValue;
+					}
+				}
+
+				$asset->dsas[$i]->roles = $this->CollibraAPI->getResponsibilities($asset->dsas[$i]->dsaVocabularyId);
 				$resp = $this->CollibraAPI->get('term/'.$asset->dsas[$i]->dsaId.'/attachments');
 				$resp = json_decode($resp);
 				$asset->dsas[$i]->attachments = $resp->attachment;
 			}
+		}
+
+		if (!empty($arrChangedAttrIds)) {
+			// Here update all the attributes Collibra inserted HTML tags into
+			$postData['attributes'] = $arrChangedAttrIds;
+			$postData['values'] = $arrChangedAttrValues;
+			$postString = http_build_query($postData);
+			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
+			$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.changeAttributes').'/start', $postString);
 		}
 
 		$this->set('netID', $netID);
