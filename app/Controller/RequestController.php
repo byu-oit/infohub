@@ -674,6 +674,10 @@ class RequestController extends AppController {
 				}
 			}
 
+			foreach ($request->necessaryTables as $alreadyListed) {
+				unset($addedTables[$alreadyListed->tableName]);
+			}
+
 			$newBusinessTerms = [];
 			foreach ($addedApis as $apiHost => $apiPaths) {
 				foreach ($apiPaths as $apiPath => $_) {
