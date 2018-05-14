@@ -141,10 +141,12 @@
 		$dsaName = $dsa->dsaSignifier;
 		echo '<div class="subrequestNameWrapper"><h6 class="subrequestName">'.$dsaName.'</h6></div>';
 		echo '<p class="riData"><strong>Requested Data:</strong>';
+		$dsaGlossaryFoundRequired = false;
 		foreach ($asset->termGlossaries as $glossaryName => $terms) {
 			if ($terms[0]->reqTermCommId != $dsa->dsaCommunityId) {
 				continue;
 			}
+			$dsaGlossaryFoundRequired = true;
 			echo '<br><em>'.$glossaryName.'&nbsp;-&nbsp;</em>';
 			$termCount = 0;
 			foreach ($terms as $term) {
@@ -156,6 +158,7 @@
 			}
 			break;
 		}
+		if (!$dsaGlossaryFoundRequired) echo ' No business terms requested from '.$dsa->dsaCommunityName.' Glossary';
 		echo '</p>';
 ?>
         <div class="two-col-row">
