@@ -581,8 +581,8 @@ class RequestController extends AppController {
 			return json_encode(['success' => 0]);
 		}
 
+		$success = true;
 		if ($this->request->data['action'] == 'add') {
-			$success = true;
 			$arrQueue = $this->Session->read('queue');
 
 			$request = $this->CollibraAPI->getRequestDetails($this->request->data['dsrId']);
@@ -626,6 +626,7 @@ class RequestController extends AppController {
 				$postString = http_build_query(['resource' => $toDeleteIds]);
 				$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
 				$resp = $this->CollibraAPI->deleteJSON('relation', $postString);
+				if ($resp->code != '200') $success = false;
 			}
 
 			if (isset($this->request->data['arrConcepts']) || isset($this->request->data['arrApiFields']) || isset($this->request->data['arrDbColumns']) || isset($this->request->data['arrApis'])) {
@@ -866,10 +867,7 @@ class RequestController extends AppController {
 					$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
 					$formResp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $postString);
 					$formResp = json_decode($formResp);
-
-					if (!isset($formResp)) {
-						$success = false;
-					}
+					if (!isset($formResp)) $success = false;
 					break;
 				}
 			}
@@ -908,6 +906,7 @@ class RequestController extends AppController {
 				$postString = http_build_query(['dsrId' => $relationsPostData['dsrId'], $longerArrayKey => array_slice($relationsPostData[$longerArrayKey], 0, 100)]);
 				$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
 				$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.changeDSRRelations').'/start', $postString);
+				if ($resp->code != '200') $success = false;
 
 				$relationsPostData[$longerArrayKey] = array_slice($relationsPostData[$longerArrayKey], 100);
 			}
@@ -915,25 +914,66 @@ class RequestController extends AppController {
 			$postString = http_build_query($relationsPostData);
 			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
 			$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.changeDSRRelations').'/start', $postString);
+			if ($resp->code != '200') $success = false;
 
 			$this->Session->write('queue', $arrQueue);
 			return $success ? json_encode(['success' => 1]) : json_encode(['success' => 0]);
 		}
 		else if ($this->request->data['action'] == 'remove') {
 			$toDeleteIds = [];
-			foreach ($this->request->data['arrIds'] as $relationrid) {
+			foreach ($this->request->data['arrRelIds'] as $relationrid) {
 				array_push($toDeleteIds, $relationrid);
 			}
 			$postString = http_build_query(['resource' => $toDeleteIds]);
 			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
 			$resp = $this->CollibraAPI->deleteJSON('relation', $postString);
+			if ($resp->code != '200') $success = false;
 
-			if ($resp->code != '200') {
-				$resp = json_decode($resp);
-				return json_encode(['success' => 0, 'message' => $resp->message]);
-			} else {
-				return json_encode(['success' => 1]);
+			$deletionString = "<br/><br/>Removal, ".date('Y-m-d').":";
+			foreach ($this->request->data['arrNames'] as $termName) {
+				$deletionString .= "<br/>{$termName}";
 			}
+
+			$request = $this->CollibraAPI->getRequestDetails($this->request->data['dsrId']);
+			foreach ($request->attributes as $attr) {
+				if ($attr->attrSignifier == 'Additional Information Requested') {
+					$postString = http_build_query(['value' => $attr->attrValue . $deletionString]);
+					$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
+					$resp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $postString);
+					$resp = json_decode($resp);
+					if (!isset($resp)) $success = false;
+					break;
+				}
+			}
+
+			$nowAdditionallyIncluded = [];
+			foreach ($request->necessaryApis as $api) {
+				$fields = $this->CollibraAPI->getApiTerms($api->apiCommName, $api->apiName);
+				foreach ($fields as $field) {
+					if (!empty($field->businessTerm) && in_array($field->businessTerm[0]->termId, $this->request->data['arrIds'])) {
+						array_push($nowAdditionallyIncluded, $field->businessTerm[0]->termId);
+					}
+				}
+			}
+			foreach ($request->necessaryTables as $table) {
+				$columns = $this->CollibraAPI->getTableColumns($table->tableName);
+				foreach ($columns as $column) {
+					if (!empty($column->businessTerm) && in_array($column->businessTerm[0]->termId, $this->request->data['arrIds'])) {
+						array_push($nowAdditionallyIncluded, $column->businessTerm[0]->termId);
+					}
+				}
+			}
+			$nowAdditionallyIncluded = array_unique($nowAdditionallyIncluded);
+
+			$postString = http_build_query([
+				'dsrId' => $this->request->data['dsrId'],
+				'additionalTerms' => $nowAdditionallyIncluded
+			]);
+			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
+			$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.changeDSRRelations').'/start', $postString);
+			if ($resp->code != '200') $success = false;
+
+			return $success ? json_encode(['success' => 1]) : json_encode(['success' => 0]);
 		}
 		return json_encode(['success' => 0]);
 	}

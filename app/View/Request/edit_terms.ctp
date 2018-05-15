@@ -78,13 +78,17 @@
 	function removeTerms(elem) {
         var dsrId = $(elem).closest('#requestForm').find('h2.headerTab').attr('id');
         var arrIds = [];
+		var arrNames = [];
+		var arrRelIds = [];
         $(elem).parent().find('input').each(function() {
             if ($(this).prop('checked')) {
                 arrIds.push($(this).val());
+				arrNames.push($(this).data('signifier'));
+				arrRelIds.push($(this).data('relationId'));
             }
         });
 
-        $.post("/request/editTermsSubmit", {action:"remove",dsrId:dsrId,arrIds:arrIds})
+        $.post("/request/editTermsSubmit", {action:"remove",dsrId:dsrId,arrIds:arrIds,arrNames:arrNames,arrRelIds:arrRelIds})
             .done(function(data) {
                 data = JSON.parse(data);
                 if (data.success == 1) {
@@ -171,7 +175,7 @@
 						<?php
 							if (!empty($request->requestedTerms)) {
 								foreach($request->requestedTerms as $term) {
-									echo '<li id="requestItem'.$term->reqTermId.'"><input type="checkbox" name="requestedTerms" value="'.$term->reqTermRelationId.'">'.$term->reqTermSignifier.'</li>';
+									echo '<li id="requestItem'.$term->reqTermId.'"><input type="checkbox" name="requestedTerms" value="'.$term->reqTermId.'" data-signifier="'.$term->reqTermSignifier.'" data-relation-id="'.$term->reqTermRelationId.'">'.$term->reqTermSignifier.'</li>';
 								}
 								echo '</ul><a class="removeTerms grow">Remove from this DSR</a>';
 							}else{
