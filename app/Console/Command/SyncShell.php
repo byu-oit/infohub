@@ -43,10 +43,25 @@ class SyncShell extends AppShell {
             if ($hash === $previousHash) {
                 $this->out(date('H:i:s').' - No change detected in the database.', 2);
                 return;
+            } else {
+                $this->out(date('H:i:s').' - New hash didn\'t match the saved one. Double-checking the result.');
+                $arrDoubleCheckColumns = [];
+                foreach ($tables as $table) {
+                    $arrDoubleCheckColumns[$table['schema']][$table['table']] =
+                        $this->BYUAPI->oracleColumns($table['schema'], $table['table']);
+                }
+                $doubleCheckHash = hash('sha256', json_encode($arrDoubleCheckColumns));
+                if ($doubleCheckHash !== $hash) {
+                    $this->out(date('H:i:s').' - Inconsistent results. Aborting.', 2);
+                    return;
+                } else {
+                    $this->out(date('H:i:s').' - Change in database asserted.', 2);
+                }
             }
+        } else {
+            $this->out(date('H:i:s').' - No saved hash found.', 2);
         }
         file_put_contents(TMP.'/cache/databaseColumnsHash', $hash);
-        $this->out(date('H:i:s').' - Change found in database.', 2);
 
         $collection = new ComponentCollection();
         $this->DataWarehouse = $collection->load('DataWarehouse');
