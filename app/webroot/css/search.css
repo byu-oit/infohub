@@ -1374,43 +1374,43 @@ img.resultBodyLoading {
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   text-decoration: none;
 }
-#apiBody .api-terms,
+#apiBody .api-fields,
 #apiBody .table-columns {
   margin-top: 30px;
   padding: 4px;
   font-size: 14px;
 }
-#apiBody .api-terms .fieldColumn,
+#apiBody .api-fields .fieldColumn,
 #apiBody .table-columns .fieldColumn {
   min-width: 250px;
 }
-#apiBody .api-terms .termColumn,
+#apiBody .api-fields .termColumn,
 #apiBody .table-columns .termColumn {
   min-width: 150px;
 }
-#apiBody .api-terms a,
+#apiBody .api-fields a,
 #apiBody .table-columns a {
   color: #234e77;
 }
-#apiBody .api-terms a:hover,
+#apiBody .api-fields a:hover,
 #apiBody .table-columns a:hover {
   color: #10375b;
 }
-#apiBody .api-terms tbody .header,
+#apiBody .api-fields tbody .header,
 #apiBody .table-columns tbody .header {
   text-align: left;
 }
-#apiBody .api-terms tr.automatic-match,
+#apiBody .api-fields tr.automatic-match,
 #apiBody .table-columns tr.automatic-match {
   background-color: #ffdd99;
 }
-#apiBody .api-terms.view td:nth-child(3),
+#apiBody .api-fields.view td:nth-child(3),
 #apiBody .table-columns.view td:nth-child(2),
-#apiBody .api-terms td:last-child,
+#apiBody .api-fields td:last-child,
 #apiBody .table-columns td:last-child {
   width: 100%;
 }
-#apiBody .api-terms a.fieldset-collapse {
+#apiBody .api-fields a.fieldset-collapse {
   display: inline-block;
   height: 14px;
   width: 14px;
@@ -1418,69 +1418,69 @@ img.resultBodyLoading {
   background-size: 14px;
   cursor: pointer;
 }
-#apiBody .api-terms a.fieldset-collapse.collapsed {
+#apiBody .api-fields a.fieldset-collapse.collapsed {
   background-image: url(../img/iconRight.png);
 }
-#apiBody .api-terms tbody tr .bt-new-name,
+#apiBody .api-fields tbody tr .bt-new-name,
 #apiBody .table-columns tbody tr .bt-new-name,
-#apiBody .api-terms tbody tr .bt-new-glossary,
+#apiBody .api-fields tbody tr .bt-new-glossary,
 #apiBody .table-columns tbody tr .bt-new-glossary,
-#apiBody .api-terms tbody tr .bt-new-definition,
+#apiBody .api-fields tbody tr .bt-new-definition,
 #apiBody .table-columns tbody tr .bt-new-definition {
   display: none;
 }
-#apiBody .api-terms tbody tr.display-new-bt .bt-new-name,
+#apiBody .api-fields tbody tr.display-new-bt .bt-new-name,
 #apiBody .table-columns tbody tr.display-new-bt .bt-new-name,
-#apiBody .api-terms tbody tr.display-new-bt .bt-new-glossary,
+#apiBody .api-fields tbody tr.display-new-bt .bt-new-glossary,
 #apiBody .table-columns tbody tr.display-new-bt .bt-new-glossary,
-#apiBody .api-terms tbody tr.display-new-bt .bt-new-definition,
+#apiBody .api-fields tbody tr.display-new-bt .bt-new-definition,
 #apiBody .table-columns tbody tr.display-new-bt .bt-new-definition {
   display: inline-block;
 }
-#apiBody .api-terms tbody tr.display-new-bt td div,
+#apiBody .api-fields tbody tr.display-new-bt td div,
 #apiBody .table-columns tbody tr.display-new-bt td div {
   display: none;
 }
-#apiBody .api-terms tbody .term-wrapper .bt-search,
+#apiBody .api-fields tbody .term-wrapper .bt-search,
 #apiBody .table-columns tbody .term-wrapper .bt-search,
-#apiBody .api-terms tbody .term-wrapper .loading,
+#apiBody .api-fields tbody .term-wrapper .loading,
 #apiBody .table-columns tbody .term-wrapper .loading,
 #apiForm .swagger tbody .term-wrapper .bt-search,
 #apiForm .swagger tbody .term-wrapper .loading {
   display: none;
 }
-#apiBody .api-terms tbody .term-wrapper .selected-term,
+#apiBody .api-fields tbody .term-wrapper .selected-term,
 #apiBody .table-columns tbody .term-wrapper .selected-term,
 #apiForm .swagger tbody .term-wrapper .selected-term {
   display: block;
 }
-#apiBody .api-terms tbody .term-wrapper.display-loading .loading,
+#apiBody .api-fields tbody .term-wrapper.display-loading .loading,
 #apiBody .table-columns tbody .term-wrapper.display-loading .loading,
 #apiForm .swagger tbody .term-wrapper.display-loading .loading {
   display: block;
 }
-#apiBody .api-terms tbody .term-wrapper.display-loading .bt-search,
+#apiBody .api-fields tbody .term-wrapper.display-loading .bt-search,
 #apiBody .table-columns tbody .term-wrapper.display-loading .bt-search,
-#apiBody .api-terms tbody .term-wrapper.display-loading .selected-term,
+#apiBody .api-fields tbody .term-wrapper.display-loading .selected-term,
 #apiBody .table-columns tbody .term-wrapper.display-loading .selected-term,
 #apiForm .swagger tbody .term-wrapper.display-loading .bt-search,
 #apiForm .swagger tbody .term-wrapper.display-loading .selected-term {
   display: none;
 }
-#apiBody .api-terms tbody .term-wrapper.display-search .bt-search,
+#apiBody .api-fields tbody .term-wrapper.display-search .bt-search,
 #apiBody .table-columns tbody .term-wrapper.display-search .bt-search,
 #apiForm .swagger tbody .term-wrapper.display-search .bt-search {
   display: inline-block;
 }
-#apiBody .api-terms tbody .term-wrapper.display-search .selected-term,
+#apiBody .api-fields tbody .term-wrapper.display-search .selected-term,
 #apiBody .table-columns tbody .term-wrapper.display-search .selected-term,
-#apiBody .api-terms tbody .term-wrapper.display-search .loading,
+#apiBody .api-fields tbody .term-wrapper.display-search .loading,
 #apiBody .table-columns tbody .term-wrapper.display-search .loading,
 #apiForm .swagger tbody .term-wrapper.display-search .selected-term,
 #apiForm .swagger tbody .term-wrapper.display-search .loading {
   display: none;
 }
-#apiBody .api-terms tbody .term-wrapper span.edit-opt,
+#apiBody .api-fields tbody .term-wrapper span.edit-opt,
 #apiBody .table-columns tbody .term-wrapper span.edit-opt,
 #apiForm .swagger tbody .term-wrapper span.edit-opt {
   display: inline-block;
@@ -1499,33 +1499,33 @@ img.resultBodyLoading {
 .ui-autocomplete .ui-menu-item.new-tab {
   font-style: italic;
 }
-#apiBody .api-terms tbody .glossary-cell,
+#apiBody .api-fields tbody .glossary-cell,
 #apiBody .table-columns tbody .glossary-cell {
   min-width: 150px;
 }
-#apiBody .api-terms tbody .glossary-cell div,
+#apiBody .api-fields tbody .glossary-cell div,
 #apiBody .table-columns tbody .glossary-cell div {
   max-width: 150px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-#apiBody .api-terms tbody .bt-new-glossary,
+#apiBody .api-fields tbody .bt-new-glossary,
 #apiBody .table-columns tbody .bt-new-glossary {
   width: 100%;
 }
-#apiBody .api-terms tbody .view-definition .truncated,
+#apiBody .api-fields tbody .view-definition .truncated,
 #apiBody .table-columns tbody .view-definition .truncated {
   display: inline;
 }
-#apiBody .api-terms tbody .view-definition .full,
+#apiBody .api-fields tbody .view-definition .full,
 #apiBody .table-columns tbody .view-definition .full {
   display: none;
 }
-#apiBody .api-terms tbody .view-definition.expanded .truncated,
+#apiBody .api-fields tbody .view-definition.expanded .truncated,
 #apiBody .table-columns tbody .view-definition.expanded .truncated {
   display: none;
 }
-#apiBody .api-terms tbody .view-definition.expanded .full,
+#apiBody .api-fields tbody .view-definition.expanded .full,
 #apiBody .table-columns tbody .view-definition.expanded .full {
   display: inline;
 }

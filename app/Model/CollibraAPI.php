@@ -467,7 +467,7 @@ class CollibraAPI extends Model {
 		return $result[0];
 	}
 
-	public function getApiTerms($host, $path, $treeStructure = false) {
+	public function getApiFields($host, $path, $treeStructure = false) {
 		$hostCommunity = $this->findTypeByName('community', $host);
 		if (empty($hostCommunity->resourceId)) {
 			return null;

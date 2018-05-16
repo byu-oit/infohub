@@ -46,16 +46,16 @@
 	}
 
 	function toggleFieldsetCollapseAll(collapsing) {
-		$('table.api-terms').find('a.fieldset-collapse').each(function() {
+		$('table.api-fields').find('a.fieldset-collapse').each(function() {
 			if ($(this).data('collapsed') != collapsing) {
 				$(this).click();
 			}
 		});
 	}
 
-	<?php if (count($terms) > 2): // Some APIs only have one or two root-level fieldsets, in which case we don't want it collapsed by default ?>
+	<?php if (count($fields) > 2): // Some APIs only have one or two root-level fieldsets, in which case we don't want it collapsed by default ?>
 		$(function() {
-			if ($('tr', '.api-terms').length > 50) {
+			if ($('tr', '.api-fields').length > 50) {
 				toggleFieldsetCollapseAll(true);
 			}
 		});
@@ -71,10 +71,10 @@
 	}
 </script>
 <style type="text/css">
-	table.api-terms tr:hover {
+	table.api-fields tr:hover {
 		background-color: #eee
 	}
-	table.api-terms tr.header:hover {
+	table.api-fields tr.header:hover {
 		background-color: inherit;
 	}
 </style>
@@ -88,7 +88,7 @@
 			<?php if ($isOITEmployee): ?>
 				<div style="float: right">
 					<?= $this->Html->link(
-						'Update Unlinked Terms',
+						'Update Unlinked Fields',
 						array_merge(['controller' => 'api_admin', 'action' => 'update', $hostname], explode('/', $basePath)),
 						['class' => 'inputButton', 'id' => 'admin']) ?>
 				</div>
@@ -98,14 +98,14 @@
 		<div id="api_help" class="apiHelpSml">There are potentially two steps you'll need to complete.<br><br>1. Subscribe to the API in the API store (WSO2). This gives you the ability to call the API with your own credentials for self-service. You'll need to create an "application" in WSO2 and subscribe to the each API you are interested in. You must complete this step in the API store. An overview of the process is available in the <a href="https://developer.byu.edu/docs/consume-api/5-minute-quickstart">Developer Portal.<br>https://developer.byu.edu/docs/consume-api/5-minute-quickstart</a><br><br>2. Request elevated access to the API. Many APIs can return more data if you have elevated permissions. Select the elements of the API that you need for your application and click the "Add to request" button. Once you've added all the elements you want access to, submit your request from the shopping cart icon at the top of the page. This will initiate the process of securing approvals (if needed) from the appropriate data stewards. More <a href="https://developer.byu.edu/docs/consume-api/get-elevated-access">detailed instructions</a> for this step are available.<br><a href="https://developer.byu.edu/docs/consume-api/get-elevated-access">https://developer.byu.edu/docs/consume-api/get-elevated-access</a></div>
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
-				<?php if (empty($terms)): ?>
+				<?php if (empty($fields)): ?>
 					<h3>Well, this is embarrassing. We haven't yet specified the output fields for this API, but it is functional, and you can still request access to it.</h3>
 				<?php else: ?>
 					<?php if ($containsFieldset): ?>
 						<a class="fieldset-btn grow" onclick="toggleFieldsetCollapseAll(true)">Collapse All</a><a class="fieldset-btn grow" onclick="toggleFieldsetCollapseAll(false)">Expand All</a>
 					<?php endif ?>
-					<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" api="<?= empty($terms) ? 'true' : 'false' ?>" onclick="addToQueue(this, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
-					<table class="api-terms checkBoxes view">
+					<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" api="<?= empty($fields) ? 'true' : 'false' ?>" onclick="addToQueue(this, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
+					<table class="api-fields checkBoxes view">
 						<tr class="header">
 							<th></th>
 							<th><input type="checkbox" onclick="toggleAllCheckboxes(this)" name="toggleCheckboxes"/></th>
@@ -113,12 +113,12 @@
 							<th class="termColumn">Business Term</th>
 							<th>Classification</th>
 						</tr>
-						<?php foreach ($terms as $term) {
-							$this->Fieldset->printApiView($term);
+						<?php foreach ($fields as $field) {
+							$this->Fieldset->printApiView($field);
 						} ?>
 					</table>
 				<?php endif ?>
-				<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" api="<?= empty($terms) ? 'true' : 'false' ?>" onclick="addToQueue(this, true)" class="requestAccess grow mainRequestBtn" value="Add To Request">
+				<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" api="<?= empty($fields) ? 'true' : 'false' ?>" onclick="addToQueue(this, true)" class="requestAccess grow mainRequestBtn" value="Add To Request">
 			</div>
 		</div>
 	</div>

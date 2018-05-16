@@ -3,58 +3,58 @@
 App::uses('AppHelper', 'View/Helper');
 
 class FieldsetHelper extends AppHelper {
-    public function printApiView($term) {
-        echo '<tr data-num-collapsed="0" data-name="'.$term->name.'" data-fieldset-path="';
-        $path = explode('.', $term->name);
+    public function printApiView($field) {
+        echo '<tr data-num-collapsed="0" data-name="'.$field->name.'" data-fieldset-path="';
+        $path = explode('.', $field->name);
         array_pop($path);
         echo implode('.', $path).'"><td>';
-            if (!empty($term->descendantFields)) {
+            if (!empty($field->descendantFields)) {
                 echo '<a class="fieldset-collapse" onclick="toggleFieldsetCollapse(this)" data-collapsed="false"></a>';
             }
         echo '</td>';
         echo '<td>';
-            if (!empty($term->businessTerm[0])) {
+            if (!empty($field->businessTerm[0])) {
                 echo '<input type="checkbox"'.
-                     ' data-title="'.h($term->businessTerm[0]->term).'"'.
-                     ' data-vocabID="'.h($term->businessTerm[0]->termCommunityId).'"'.
-                     ' value="'.h($term->businessTerm[0]->termId).'"'.
-                     ' class="chk'; if ($term->assetType == 'Fieldset') echo ' fieldset'; echo '"'.
-                     ' id="chk'.h($term->businessTerm[0]->termId).'"'.
-                     ' data-name="'.$term->name.'"'.
+                     ' data-title="'.h($field->businessTerm[0]->term).'"'.
+                     ' data-vocabID="'.h($field->businessTerm[0]->termCommunityId).'"'.
+                     ' value="'.h($field->businessTerm[0]->termId).'"'.
+                     ' class="chk'; if ($field->assetType == 'Fieldset') echo ' fieldset'; echo '"'.
+                     ' id="chk'.h($field->businessTerm[0]->termId).'"'.
+                     ' data-name="'.$field->name.'"'.
                      ' data-fieldset-path="';
-                     $path = explode('.', $term->name);
+                     $path = explode('.', $field->name);
                      array_pop($path);
                      echo implode('.', $path).'">';
             } else {
                 echo '<input type="checkbox"'.
-                     ' data-title="'.$term->name.'"'.
+                     ' data-title="'.$field->name.'"'.
                      ' data-vocabID=""'.
                      ' value=""'.
-                     ' class="chk'; if ($term->assetType == 'Fieldset') echo ' fieldset'; echo '"'.
-                     ' data-name="'.$term->name.'"'.
+                     ' class="chk'; if ($field->assetType == 'Fieldset') echo ' fieldset'; echo '"'.
+                     ' data-name="'.$field->name.'"'.
                      ' data-fieldset-path="';
-                     $path = explode('.', $term->name);
+                     $path = explode('.', $field->name);
                      array_pop($path);
                      echo implode('.', $path).'">';
             }
         echo '</td>';
         echo '<td>';
-            $termPath = explode('.', $term->name);
-            for ($i = 0; $i < count($termPath) - 1; $i++) {
+            $fieldPath = explode('.', $field->name);
+            for ($i = 0; $i < count($fieldPath) - 1; $i++) {
                 echo str_repeat('&nbsp;', 12);
             }
-            echo end($termPath);
+            echo end($fieldPath);
         echo '</td>';
         echo '<td style="white-space:nowrap;">';
-            if (!empty($term->businessTerm[0])) {
-                $termDef = nl2br(str_replace("\n\n\n", "\n\n", htmlentities(strip_tags(str_replace(['<div>', '<br>', '<br/>'], "\n", $term->businessTerm[0]->termDescription)))));
-                echo '<a href="/search/term/'.$term->businessTerm[0]->termId.'">'.$term->businessTerm[0]->term.'</a>';
-                echo '<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$termDef.'" class="info"><img src="/img/iconInfo.png"></div>';
+            if (!empty($field->businessTerm[0])) {
+                $fieldDef = nl2br(str_replace("\n\n\n", "\n\n", htmlentities(strip_tags(str_replace(['<div>', '<br>', '<br/>'], "\n", $field->businessTerm[0]->termDescription)))));
+                echo '<a href="/search/term/'.$field->businessTerm[0]->termId.'">'.$field->businessTerm[0]->term.'</a>';
+                echo '<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$fieldDef.'" class="info"><img src="/img/iconInfo.png"></div>';
             }
         echo '</td>';
         echo '<td style="white-space:nowrap;">';
-            if (!empty($term->businessTerm[0])) {
-                $classification = $term->businessTerm[0]->termClassification;
+            if (!empty($field->businessTerm[0])) {
+                $classification = $field->businessTerm[0]->termClassification;
                 switch($classification) {
                     case 'Public':
                     case '1 - Public':
@@ -88,31 +88,31 @@ class FieldsetHelper extends AppHelper {
                 }
                 echo '<img class="classIcon" src="/img/icon'.$classification.'.png">&nbsp;'.$classificationTitle;
 
-                if ($term->businessTerm[0]->approvalStatus != 'Approved') {
+                if ($field->businessTerm[0]->approvalStatus != 'Approved') {
                     echo '&nbsp;&nbsp;<img class="pendingApprovalIcon" src="/img/alert.png" onmouseover="displayPendingApproval(this)" onmouseout="hidePendingAproval()">';
                 }
             }
         echo '</td></tr>';
 
-        if (!empty($term->descendantFields)) {
-            foreach ($term->descendantFields as $field) {
+        if (!empty($field->descendantFields)) {
+            foreach ($field->descendantFields as $field) {
                 $this->printApiView($field);
             }
         }
     }
 
-    public function printApiAdminUpdate($term, &$index, $glossaries) {
+    public function printApiAdminUpdate($field, &$index, $glossaries) {
         echo '<tr id="tr'.$index.'"><td>';
-            $termPath = explode('.', $term->name);
-            for ($i = 0; $i < count($termPath) - 1; $i++) {
+            $fieldPath = explode('.', $field->name);
+            for ($i = 0; $i < count($fieldPath) - 1; $i++) {
                 echo str_repeat('&nbsp;', 12);
             }
-            echo end($termPath);
+            echo end($fieldPath);
         echo '</td>';
         echo '<td>';
-            if (empty($term->businessTerm[0])) {
-                echo '<input type="hidden" name="data[Api][elements]['.$index.'][id]" value="'.$term->id.'" id="ApiElements'.$index.'Id">'.
-                     '<input type="hidden" name="data[Api][elements]['.$index.'][name]" class="data-label" data-index="'.$index.'" value="'.$term->name.'" id="ApiElements'.$index.'Name">'.
+            if (empty($field->businessTerm[0])) {
+                echo '<input type="hidden" name="data[Api][elements]['.$index.'][id]" value="'.$field->id.'" id="ApiElements'.$index.'Id">'.
+                     '<input type="hidden" name="data[Api][elements]['.$index.'][name]" class="data-label" data-index="'.$index.'" value="'.$field->name.'" id="ApiElements'.$index.'Name">'.
                      '<input type="hidden" name="data[Api][elements]['.$index.'][business_term]" class="bt" data-index="'.$index.'" id="ApiElements'.$index.'BusinessTerm">'.
                      '<div class="term-wrapper display-loading" id="ApiElements'.$index.'SearchCell">'.
                         '<input type="text" class="bt-search" data-index="'.$index.'" placeholder="Search for a term"></input>'.
@@ -120,14 +120,14 @@ class FieldsetHelper extends AppHelper {
                         '<div class="loading">Loading...</div>'.
                      '</div>';
             } else {
-                echo '<input type="hidden" name="data[Api][elements]['.$index.'][id]" value="'.$term->id.'" id="ApiElements'.$index.'Id">'.
-                     '<input type="hidden" name="data[Api][elements]['.$index.'][name]" class="data-label" data-index="'.$index.'" value="'.$term->name.'" id="ApiElements'.$index.'Name"	data-pre-linked="true" data-orig-context="'.$term->businessTerm[0]->termCommunityName.'" data-orig-id="'.$term->businessTerm[0]->termId.'" data-orig-name="'.$term->businessTerm[0]->term.'" data-orig-def="'.preg_replace('/"/', '&quot;', $term->businessTerm[0]->termDescription).'">'.
-                     '<input type="hidden" name="data[Api][elements]['.$index.'][previous_business_term]" value="'.$term->businessTerm[0]->termId.'">'.
-                     '<input type="hidden" name="data[Api][elements]['.$index.'][previous_business_term_relation]" value="'.$term->businessTerm[0]->termRelationId.'">'.
-                     '<input type="hidden" name="data[Api][elements]['.$index.'][business_term]" value="'.$term->businessTerm[0]->termId.'" class="bt" data-index="'.$index.'" id="ApiElements'.$index.'BusinessTerm" data-orig-term="'.$term->businessTerm[0]->termId.'">'.
+                echo '<input type="hidden" name="data[Api][elements]['.$index.'][id]" value="'.$field->id.'" id="ApiElements'.$index.'Id">'.
+                     '<input type="hidden" name="data[Api][elements]['.$index.'][name]" class="data-label" data-index="'.$index.'" value="'.$field->name.'" id="ApiElements'.$index.'Name"	data-pre-linked="true" data-orig-context="'.$field->businessTerm[0]->termCommunityName.'" data-orig-id="'.$field->businessTerm[0]->termId.'" data-orig-name="'.$field->businessTerm[0]->term.'" data-orig-def="'.preg_replace('/"/', '&quot;', $field->businessTerm[0]->termDescription).'">'.
+                     '<input type="hidden" name="data[Api][elements]['.$index.'][previous_business_term]" value="'.$field->businessTerm[0]->termId.'">'.
+                     '<input type="hidden" name="data[Api][elements]['.$index.'][previous_business_term_relation]" value="'.$field->businessTerm[0]->termRelationId.'">'.
+                     '<input type="hidden" name="data[Api][elements]['.$index.'][business_term]" value="'.$field->businessTerm[0]->termId.'" class="bt" data-index="'.$index.'" id="ApiElements'.$index.'BusinessTerm" data-orig-term="'.$field->businessTerm[0]->termId.'">'.
                      '<div class="term-wrapper" id="ApiElements'.$index.'SearchCell">'.
                         '<input type="text" class="bt-search" data-index="'.$index.'" placeholder="Search for a term"></input>'.
-                        '<div class="selected-term"><span class="term-name">'.$term->businessTerm[0]->term.'</span>  <span class="edit-opt" data-index="'.$index.'" title="Select new term"></span></div>'.
+                        '<div class="selected-term"><span class="term-name">'.$field->businessTerm[0]->term.'</span>  <span class="edit-opt" data-index="'.$index.'" title="Select new term"></span></div>'.
                         '<div class="loading">Loading...</div>'.
                      '</div>';
             }
@@ -150,8 +150,8 @@ class FieldsetHelper extends AppHelper {
         echo '</tr>';
         $index++;
 
-        if (!empty($term->descendantFields)) {
-            foreach ($term->descendantFields as $field) {
+        if (!empty($field->descendantFields)) {
+            foreach ($field->descendantFields as $field) {
                 $this->printApiAdminUpdate($field, $index, $glossaries);
             }
         }

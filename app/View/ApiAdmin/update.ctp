@@ -87,13 +87,13 @@
 
 </script>
 <style type="text/css">
-	table.api-terms td {
+	table.api-fields td {
 		padding-bottom: 0.5em;
 	}
-	table.api-terms tr:hover {
+	table.api-fields tr:hover {
 		background-color: #eee
 	}
-	table.api-terms tr.header:hover {
+	table.api-fields tr.header:hover {
 		background-color: inherit;
 	}
 	.resultItem #apiForm .lower-btn {
@@ -111,7 +111,7 @@
 				<?= $this->Form->create('Api', ['id' => 'apiForm']) ?>
 					<?= $this->Form->input('host', ['type' => 'hidden']) ?>
 					<?= $this->Form->input('basePath', ['type' => 'hidden']) ?>
-					<table class="api-terms">
+					<table class="api-fields">
 						<tr class="header">
 							<th>Field</th>
 							<th>Business Term</th>
@@ -121,8 +121,8 @@
 						</tr>
 						<?php
 						$index = 0;
-						foreach ($terms as $term) {
-							$this->Fieldset->printApiAdminUpdate($term, $index, $glossaries);
+						foreach ($fields as $field) {
+							$this->Fieldset->printApiAdminUpdate($field, $index, $glossaries);
 						} ?>
 					</table>
 					<a class="lower-btn grow" href="/apis/<?=$hostname.$basePath?>">Cancel</a>

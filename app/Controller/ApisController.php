@@ -38,11 +38,11 @@ class ApisController extends AppController {
 		if (!isset($this->request->query['upper'])) {
 			$basePath = strtolower($basePath);
 		}
-		$terms = $this->CollibraAPI->getApiTerms($hostname, $basePath, true);
-		if (empty($terms) && !isset($this->request->query['upper'])) {
+		$fields = $this->CollibraAPI->getApiFields($hostname, $basePath, true);
+		if (empty($fields) && !isset($this->request->query['upper'])) {
 			return $this->redirect($hostname.'/'.implode('/', $args).'?upper=1');
 		}
-		if (empty($terms)) {
+		if (empty($fields)) {
 			//Check if non-existent API, or simply empty API
 			$community = $this->CollibraAPI->findTypeByName('community', $hostname, ['full' => true]);
 			if (empty($community->vocabularyReferences->vocabularyReference)) {
@@ -60,14 +60,14 @@ class ApisController extends AppController {
 			}
 		}
 		$containsFieldset = false;
-		foreach ($terms as $term) {
-			if (!empty($term->descendantFields)) {
+		foreach ($fields as $field) {
+			if (!empty($field->descendantFields)) {
 				$containsFieldset = true;
 				break;
 			}
 		}
 		$isOITEmployee = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04');
-		$this->set(compact('hostname', 'basePath', 'terms', 'isOITEmployee', 'containsFieldset'));
+		$this->set(compact('hostname', 'basePath', 'fields', 'isOITEmployee', 'containsFieldset'));
 
 		$arrRecent = $this->Session->check('recentAPIs') ? $this->Session->read('recentAPIs') : [];
 		array_unshift($arrRecent, $basePath);
@@ -75,19 +75,19 @@ class ApisController extends AppController {
 		$this->Session->write('recentAPIs', array_slice($arrRecent, 0, 5));
 
 		if (array_key_exists('checkout', $this->request->query)) {
-			return $this->_autoCheckout($hostname, $basePath, $terms);
+			return $this->_autoCheckout($hostname, $basePath, $fields);
 		}
 	}
 
-	protected function _autoCheckout($hostname, $basePath, $terms) {
+	protected function _autoCheckout($hostname, $basePath, $fields) {
 		$queue = $this->Session->read('queue');
-		foreach ($terms as $term) {
-			if (empty($term->businessTerm[0])) {
+		foreach ($fields as $field) {
+			if (empty($field->businessTerm[0])) {
 				continue;
 			}
-			$queue->businessTerms[$term->businessTerm[0]->termId] = [
-				'term' => $term->businessTerm[0]->term,
-				'communityId' => $term->businessTerm[0]->termCommunityId,
+			$queue['businessTerms'][$field->businessTerm[0]->termId] = [
+				'term' => $field->businessTerm[0]->term,
+				'communityId' => $field->businessTerm[0]->termCommunityId,
 				'apiHost' => $hostname,
 				'apiPath' => $basePath];
 		}

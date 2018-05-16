@@ -32,23 +32,23 @@ class ApiAdminController extends AppController {
 			return json_encode(['success' => '0']);
 		}
 
-		$terms = $this->CollibraAPI->getApiTerms($hostname, $basePath, true);
-		if (empty($terms)) {
+		$fields = $this->CollibraAPI->getApiFields($hostname, $basePath, true);
+		if (empty($fields)) {
 			return $this->redirect(['controller' => 'apis', 'action' => 'host', 'hostname' => $hostname]);
 		}
 		$glossaries = $this->CollibraAPI->getAllGlossaries();
-		$this->set(compact('terms', 'glossaries'));
+		$this->set(compact('fields', 'glossaries'));
 
 		$this->request->data = [
 			'Api' => [
 				'host' => $hostname,
 				'basePath' => $basePath,
 				'elements' => []]];
-		foreach ($terms as $term) {
+		foreach ($fields as $field) {
 			$this->request->data['Api']['elements'][] = [
-				'id' => $term->id,
-				'name' => $term->name,
-				'business_term' => empty($term->businessTerm[0]) ? null : $term->businessTerm[0]->termId];
+				'id' => $field->id,
+				'name' => $field->name,
+				'business_term' => empty($field->businessTerm[0]) ? null : $field->businessTerm[0]->termId];
 		}
 
 		$this->render();
