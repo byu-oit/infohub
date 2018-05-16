@@ -876,18 +876,26 @@ class RequestController extends AppController {
 				}
 			}
 
+			$additionalInfoFound = false;
 			foreach ($request->attributes as $attr) {
 				if ($attr->attrSignifier == 'Additional Information Requested') {
-					$postData = [];
-					$postData['value'] = $attr->attrValue . $additionString;
-					$postData['rid'] = $attr->attrResourceId;
-					$postString = http_build_query($postData);
+					$additionalInfoFound = true;
+					$postString = http_build_query(['value' => $attr->attrValue . $additionString]);
 					$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
 					$formResp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $postString);
 					$formResp = json_decode($formResp);
 					if (!isset($formResp)) $success = false;
 					break;
 				}
+			}
+			if (!$additionalInfoFound) {
+				$postString = http_build_query([
+					'label' => Configure::read('Collibra.formFields.descriptionOfInformation'),
+					'value' => $additionString
+				]);
+				$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
+				$resp = $this->CollibraAPI->post('term/'.$this->request->data['dsrId'].'/attributes', $postString);
+				if ($resp->code != '201') $success = false;
 			}
 
 			$requestData = $this->request->data;
@@ -953,8 +961,10 @@ class RequestController extends AppController {
 			}
 
 			$request = $this->CollibraAPI->getRequestDetails($this->request->data['dsrId']);
+			$additionalInfoFound = false;
 			foreach ($request->attributes as $attr) {
 				if ($attr->attrSignifier == 'Additional Information Requested') {
+					$additionalInfoFound = true;
 					$postString = http_build_query(['value' => $attr->attrValue . $deletionString]);
 					$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
 					$resp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $postString);
@@ -962,6 +972,15 @@ class RequestController extends AppController {
 					if (!isset($resp)) $success = false;
 					break;
 				}
+			}
+			if (!$additionalInfoFound) {
+				$postString = http_build_query([
+					'label' => Configure::read('Collibra.formFields.descriptionOfInformation'),
+					'value' => $deletionString
+				]);
+				$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
+				$resp = $this->CollibraAPI->post('term/'.$this->request->data['dsrId'].'/attributes', $postString);
+				if ($resp->code != '201') $success = false;
 			}
 
 			$nowAdditionallyIncluded = [];
