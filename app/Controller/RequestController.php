@@ -639,10 +639,12 @@ class RequestController extends AppController {
 						}
 					}
 				}
-				$postString = http_build_query(['resource' => $toDeleteIds]);
-				$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
-				$resp = $this->CollibraAPI->deleteJSON('relation', $postString);
-				if ($resp->code != '200') $success = false;
+				if (!empty($toDeleteIds)) {
+					$postString = http_build_query(['resource' => $toDeleteIds]);
+					$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
+					$resp = $this->CollibraAPI->deleteJSON('relation', $postString);
+					if ($resp->code != '200') $success = false;
+				}
 			}
 
 			if (isset($this->request->data['arrConcepts']) || isset($this->request->data['arrApiFields']) || isset($this->request->data['arrDbColumns']) || isset($this->request->data['arrApis'])) {
