@@ -596,6 +596,22 @@ class RequestController extends AppController {
 			$relationsPostData['additionalTerms'] = [];
 			$relationsPostData['apis'] = [];
 			$relationsPostData['tables'] = [];
+			$relationsPostData['policies'] = [];
+
+			$allPolicies = $this->CollibraAPI->getPolicies();
+			foreach ($allPolicies as $policy) {
+				if ($policy->policyName === 'Trusted Partner Security Standards') {
+					foreach ($arrQueue['businessTerms'] as $termId => $term) {
+						if (in_array($termId, $this->request->data['arrBusinessTerms'])) {
+							if ($term['communityId'] == Configure::read('Collibra.community.academicRecords')) {
+								array_push($relationsPostData['policies'], $policy->id);
+								break;
+							}
+						}
+					}
+				}
+			}
+
 			if (isset($this->request->data['arrBusinessTerms'])) {
 				$toDeleteIds = [];
 				foreach ($this->request->data['arrBusinessTerms'] as $termid) {
@@ -872,8 +888,8 @@ class RequestController extends AppController {
 				}
 			}
 
-			$postData = $this->request->data;
-			$newBusinessTerms = array_filter($newBusinessTerms, function($termid) use($request, $postData) {
+			$requestData = $this->request->data;
+			$newBusinessTerms = array_filter($newBusinessTerms, function($termid) use($request, $requestData) {
 				foreach ($request->requestedTerms as $alreadyRequested) {
 					if ($alreadyRequested->reqTermId == $termid) {
 						return false;
@@ -884,7 +900,7 @@ class RequestController extends AppController {
 						return false;
 					}
 				}
-				foreach ($postData['arrBusinessTerms'] as $newAdditionId) {
+				foreach ($requestData['arrBusinessTerms'] as $newAdditionId) {
 					if ($newAdditionId == $termid) {
 						return false;
 					}
