@@ -628,6 +628,8 @@ class RequestController extends AppController {
 							} else if (isset($queueTerm['tableName'])) {
 								$addedTables[$queueTerm['tableName']] = [];
 								$additionString .= "<br/>{$queueTerm['term']} (Business Term), from table: {$queueTerm['tableName']}";
+							} else {
+								$additionString .= "<br/>{$queueTerm['term']} (Business Term)";
 							}
 							unset($arrQueue['businessTerms'][$queueId]);
 							break;
