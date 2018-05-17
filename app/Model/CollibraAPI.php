@@ -1493,7 +1493,8 @@ class CollibraAPI extends Model {
 						['Column' => ['fieldName' => 'policyId']],
 						['Column' => ['fieldName' => 'policyName']],
 						['Column' => ['fieldName' => 'policyDescription']],
-						['Column' => ['fieldName' => 'policyDescriptionId']]]]]],
+						['Column' => ['fieldName' => 'policyDescriptionId']],
+						['Column' => ['fieldName' => 'policyRelationId']]]]]],
 
 			'Resources' => [
 				'Term' => [
@@ -1513,6 +1514,7 @@ class CollibraAPI extends Model {
 						'Id' => ['name' => 'conceptTypeId']],
 					'Relation' => [[
 						'typeId' => $policyRelTypeId,
+						'Id' => ['name' => 'policyRelationId'],
 						'type' => 'SOURCE',
 						'Target' => [
 							'Id' => ['name' => 'policyId'],

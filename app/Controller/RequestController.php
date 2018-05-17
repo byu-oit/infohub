@@ -598,10 +598,11 @@ class RequestController extends AppController {
 			$relationsPostData['tables'] = [];
 			$relationsPostData['policies'] = [];
 
+			$addPolicy = false;
 			foreach ($arrQueue['businessTerms'] as $termId => $term) {
 				if (in_array($termId, $this->request->data['arrBusinessTerms'])) {
 					if ($term['communityId'] == Configure::read('Collibra.community.academicRecords')) {
-						array_push($relationsPostData['policies'], Configure::read('Collibra.policy.trustedPartnerSecurityStandards'));
+						$addPolicy = true;
 						break;
 					}
 				}
@@ -694,7 +695,7 @@ class RequestController extends AppController {
 				unset($addedTables[$alreadyListed->tableName]);
 			}
 
-			$newBusinessTerms = [];
+			$additionalTerms = [];
 			foreach ($addedApis as $apiHost => $apiPaths) {
 				foreach ($apiPaths as $apiPath => $_) {
 					$apiObject = $this->CollibraAPI->getApiObject($apiHost, $apiPath);
@@ -721,7 +722,7 @@ class RequestController extends AppController {
 								$addedApis[$apiHost][$apiPath]['unmapped']['unrequested'][] = $apiField->name;
 							}
 						} else {
-							array_push($newBusinessTerms, $apiField->businessTerm[0]->termId);
+							array_push($additionalTerms, $apiField->businessTerm[0]);
 							$requestedConcept = false;
 							if (isset($this->request->data['arrConcepts'])) {
 								foreach ($this->request->data['arrConcepts'] as $concept) {
@@ -775,7 +776,7 @@ class RequestController extends AppController {
 							$addedTables[$tableName]['unmapped']['unrequested'][] = $column->columnName;
 						}
 					} else {
-						array_push($newBusinessTerms, $column->businessTerm[0]->termId);
+						array_push($additionalTerms, $column->businessTerm[0]);
 						$requestedConcept = false;
 						if (isset($this->request->data['arrConcepts'])) {
 							foreach ($this->request->data['arrConcepts'] as $concept) {
@@ -896,28 +897,46 @@ class RequestController extends AppController {
 			}
 
 			$requestData = $this->request->data;
-			$newBusinessTerms = array_filter($newBusinessTerms, function($termid) use($request, $requestData) {
+			$additionalTerms = array_filter($additionalTerms, function($term) use($request, $requestData) {
 				foreach ($request->requestedTerms as $alreadyRequested) {
-					if ($alreadyRequested->reqTermId == $termid) {
+					if ($alreadyRequested->reqTermId == $term->termId) {
 						return false;
 					}
 				}
 				foreach ($request->additionallyIncludedTerms as $alreadyIncluded) {
-					if ($alreadyIncluded->addTermId == $termid) {
+					if ($alreadyIncluded->addTermId == $term->termId) {
 						return false;
 					}
 				}
 				foreach ($requestData['arrBusinessTerms'] as $newAdditionId) {
-					if ($newAdditionId == $termid) {
+					if ($newAdditionId == $term->termId) {
 						return false;
 					}
 				}
 				return true;
 			});
-			$newBusinessTerms = array_unique($newBusinessTerms);
+			$_tmp = [];
+			foreach ($additionalTerms as $term) {
+			    if (!array_key_exists($term->termId, $_tmp)) {
+			        $_tmp[$term->termId] = $term;
+			    }
+			}
+			$additionalTerms = array_values($_tmp);
 
-			foreach ($newBusinessTerms as $termid) {
-				array_push($relationsPostData['additionalTerms'], $termid);
+			if (!$addPolicy) {
+				foreach ($additionalTerms as $term) {
+					if ($term->termCommunityId == Configure::read('Collibra.community.academicRecords')) {
+						$addPolicy = true;
+						break;
+					}
+				}
+			}
+			if ($addPolicy) {
+				array_push($relationsPostData['policies'], Configure::read('Collibra.policy.trustedPartnerSecurityStandards'));
+			}
+
+			foreach ($additionalTerms as $term) {
+				array_push($relationsPostData['additionalTerms'], $term->termId);
 			}
 
 			while (count($relationsPostData['requestedTerms']) + count($relationsPostData['additionalTerms']) > 100) {
@@ -943,11 +962,7 @@ class RequestController extends AppController {
 			return $success ? json_encode(['success' => 1]) : json_encode(['success' => 0]);
 		}
 		else if ($this->request->data['action'] == 'remove') {
-			$toDeleteIds = [];
-			foreach ($this->request->data['arrRelIds'] as $relationrid) {
-				array_push($toDeleteIds, $relationrid);
-			}
-			$postString = http_build_query(['resource' => $toDeleteIds]);
+			$postString = http_build_query(['resource' => $this->request->data['arrRelIds']]);
 			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
 			$resp = $this->CollibraAPI->deleteJSON('relation', $postString);
 			if ($resp->code != '200') $success = false;
@@ -1006,6 +1021,36 @@ class RequestController extends AppController {
 			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
 			$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.changeDSRRelations').'/start', $postString);
 			if ($resp->code != '200') $success = false;
+
+			// If the request no longer contains terms from the Academic Records glossary, remove the corresponding policy
+			$trustedPartnerPolicyRelation = '';
+			foreach ($request->policies as $policy) {
+				if ($policy->policyId == Configure::read('Collibra.policy.trustedPartnerSecurityStandards')) {
+					$trustedPartnerPolicyRelation = $policy->policyRelationId;
+					break;
+				}
+			}
+			if (!empty($trustedPartnerPolicyRelation)) {
+				$keepPolicy = false;
+				foreach ($request->requestedTerms as $reqTerm) {
+					if ($reqTerm->reqTermCommId == Configure::read('Collibra.community.academicRecords')) {
+						$keepPolicy = true;
+						break;
+					}
+				}
+				if (!$keepPolicy) {
+					foreach ($request->additionallyIncludedTerms as $addTerm) {
+						if ($addTerm->addTermCommId == Configure::read('Collibra.community.academicRecords')) {
+							$keepPolicy = true;
+							break;
+						}
+					}
+				}
+				if (!$keepPolicy) {
+					$resp = $this->CollibraAPI->delete('relation/'.$trustedPartnerPolicyRelation);
+					if ($resp->code != '200') $success = false;
+				}
+			}
 
 			return $success ? json_encode(['success' => 1]) : json_encode(['success' => 0]);
 		}
