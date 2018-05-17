@@ -123,6 +123,10 @@ if (!function_exists('denv')) {
 			'accessRights' => '8d12adef-0584-4bb6-97b5-5f9e1e3ec4ad',
 			'accessMethod' => '42fc793b-70e1-4860-9846-8c67c1c49d50',
 			'impactOnSystem' => '3931e9bf-b904-4232-930e-af70b0895611'
+		],
+		'policy' => [
+			'standardDataUsagePolicies' => '76c92ba2-6930-4946-809b-e559bb247587',
+			'trustedPartnerSecurityStandards' => '712bd956-0c58-4724-bc12-69b1ee12bddf'
 		]
 	]);
 

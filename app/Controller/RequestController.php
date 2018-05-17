@@ -598,16 +598,11 @@ class RequestController extends AppController {
 			$relationsPostData['tables'] = [];
 			$relationsPostData['policies'] = [];
 
-			$allPolicies = $this->CollibraAPI->getPolicies();
-			foreach ($allPolicies as $policy) {
-				if ($policy->policyName === 'Trusted Partner Security Standards') {
-					foreach ($arrQueue['businessTerms'] as $termId => $term) {
-						if (in_array($termId, $this->request->data['arrBusinessTerms'])) {
-							if ($term['communityId'] == Configure::read('Collibra.community.academicRecords')) {
-								array_push($relationsPostData['policies'], $policy->id);
-								break;
-							}
-						}
+			foreach ($arrQueue['businessTerms'] as $termId => $term) {
+				if (in_array($termId, $this->request->data['arrBusinessTerms'])) {
+					if ($term['communityId'] == Configure::read('Collibra.community.academicRecords')) {
+						array_push($relationsPostData['policies'], Configure::read('Collibra.policy.trustedPartnerSecurityStandards'));
+						break;
 					}
 				}
 			}
@@ -1743,17 +1738,19 @@ class RequestController extends AppController {
 		$policies = [];
 		$allPolicies = $this->CollibraAPI->getPolicies();
 		foreach ($allPolicies as $policy) {
-			switch($policy->policyName) {
-				case 'Standard Data Usage Policies':
+			switch($policy->id) {
+				case Configure::read('Collibra.policy.standardDataUsagePolicies'):
 					array_push($policies, $policy);
 					break;
-				case 'Trusted Partner Security Standards':
+				case Configure::read('Collibra.policy.trustedPartnerSecurityStandards'):
 					foreach ($arrQueue['businessTerms'] as $term) {
 						if ($term['communityId'] == Configure::read('Collibra.community.academicRecords')) {
 							array_push($policies, $policy);
 							break;
 						}
 					}
+					break;
+				default:
 					break;
 			}
 		}
