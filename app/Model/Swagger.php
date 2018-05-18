@@ -48,6 +48,13 @@ class Swagger extends AppModel {
 			$host = substr($host, 0, strlen($host) - 4);
 		}
 		$basePath = $this->_getRef('/basePath');
+		if (substr($basePath[1], -1) === '/') {
+			$basePath[1] = substr($basePath[1], 0, -1);
+		}
+		$versionMatches = [];
+		if (preg_match_all('/\/v[0-9]+(\.[0-9]+)*/', $basePath[1], $versionMatches)) {
+			$basePath[1] = substr($basePath[1], 0, -strlen(end($versionMatches[0])));
+		}
 		$version = $this->_getRef('/info/version')[1];
 
 		if (empty($this->elements)) {
