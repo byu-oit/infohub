@@ -32,9 +32,16 @@ class SyncShell extends AppShell {
         $tables = json_decode($tablesJSON, true);
 
         $arrAllColumns = [];
+        $columnsCount = 0;
         foreach ($tables as $table) {
-            $arrAllColumns[$table['schema']][$table['table']] =
-                $this->BYUAPI->oracleColumns($table['schema'], $table['table']);
+            $cols = $this->BYUAPI->oracleColumns($table['schema'], $table['table']);
+            $arrAllColumns[$table['schema']][$table['table']] = $cols;
+            $columnsCount += count($cols);
+        }
+
+        if ($columnsCount == 0) {
+            $this->out(date('H:i:s').' - Failed to read any Oracle database columns.', 2);
+            return;
         }
 
         $hash = hash('sha256', json_encode($arrAllColumns));
