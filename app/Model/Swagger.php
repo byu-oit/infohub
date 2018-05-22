@@ -28,13 +28,11 @@ class Swagger extends AppModel {
 		$this->elements = [];
 		foreach ($paths as $pathName => $path) {
 			foreach ($path as $method => $operation) {
-				if (!empty($operation['responses'][200]['schema'])) {
-					$schema = $operation['responses'][200]['schema'];
-				} else if (!empty($operation['responses'][200]['$ref'])) {
-					$schema = $this->_getRef($operation['responses'][200]['$ref']);
-				} else {
+				$response = empty($operation['responses'][200]['$ref']) ? $operation['responses'][200] : $this->_getRef($operation['responses'][200]['$ref'])[1];
+				if (empty($response['schema'])) {
 					continue;
 				}
+				$schema = $response['schema'];
 
 				if (!empty($schema['$ref'])) {
 					list($name, $refProperties) = $this->_getRef($schema['$ref']);
