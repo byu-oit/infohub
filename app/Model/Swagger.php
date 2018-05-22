@@ -28,10 +28,14 @@ class Swagger extends AppModel {
 		$this->elements = [];
 		foreach ($paths as $pathName => $path) {
 			foreach ($path as $method => $operation) {
-				if (empty($operation['responses'][200]['schema'])) {
+				if (!empty($operation['responses'][200]['schema'])) {
+					$schema = $operation['responses'][200]['schema'];
+				} else if (!empty($operation['responses'][200]['$ref'])) {
+					$schema = $this->_getRef($operation['responses'][200]['$ref']);
+				} else {
 					continue;
 				}
-				$schema = $operation['responses'][200]['schema'];
+
 				if (!empty($schema['$ref'])) {
 					list($name, $refProperties) = $this->_getRef($schema['$ref']);
 					$properties = [$name => $refProperties];
@@ -131,8 +135,7 @@ class Swagger extends AppModel {
 			}
 
 			$parents = $mainParents;
-			if (substr($propertyName, -5) != 'basic' && $propertyName != 'identity' && $propertyName != 'result') {
-				//conditionalize this
+			if (substr($propertyName, -5) != 'basic' && $propertyName != 'identity' && $propertyName != 'result' && $propertyName != 'response') {
 				$parents[] = $propertyName;
 			}
 
