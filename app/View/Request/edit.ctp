@@ -134,6 +134,7 @@
 						"sponsorEmail",
 						"sponsorPhone",
 						"api",
+						"tables",
 						Configure::read('Collibra.requiredElementsString'),
 						Configure::read('Collibra.additionalElementsString')
                     ];
