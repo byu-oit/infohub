@@ -38,6 +38,7 @@ class CollibraAPI extends Model {
 			}
 			$this->_client = new HttpSocket($config);
 			$this->_client->configAuth('Basic', $this->settings['username'], $this->settings['password']);
+			$this->_client->configProxy(Configure::read('proxy'));
 		}
 		return $this->_client;
 	}
