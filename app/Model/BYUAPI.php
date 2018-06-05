@@ -100,7 +100,7 @@ class BYUAPI extends Model {
 
 		$response = $this->_get($url);
 		if (!$response || !$response->isOk()) {
-			return false;
+			return [];
 		}
 
 		$resp = json_decode($response->body(), true);
