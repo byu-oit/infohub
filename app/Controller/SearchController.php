@@ -373,25 +373,15 @@ class SearchController extends AppController {
 		// create JSON request string
 		$jsonResp = $this->CollibraAPI->searchTerms($query);
 		for($i=0; $i<sizeof($jsonResp->results); $i++){
-			$requestable = true;
-			// don't show non-requestable items
-			foreach($jsonResp->results[$i]->attributes as $attr){
-				if($attr->type == 'Concept' && $attr->val == 'true'){
-					$requestable = false;
-					break;
-				}
-			}
-			if($requestable){
-				$result = $jsonResp->results[$i];
-				if (empty($result->definition) && !empty($result->attributes)) {
-					foreach ($result->attributes as $attribute) {
-						if ($attribute->typeId == $definitionAttributeTypeId) {
-							$result->definition = $attribute;
-						}
+			$result = $jsonResp->results[$i];
+			if (empty($result->definition) && !empty($result->attributes)) {
+				foreach ($result->attributes as $attribute) {
+					if ($attribute->typeId == $definitionAttributeTypeId) {
+						$result->definition = $attribute;
 					}
 				}
-				$results[] = $result;
 			}
+			$results[] = $result;
 		}
 		return new CakeResponse(['type' => 'application/javascript', 'body' => json_encode($results)]);
 	}
