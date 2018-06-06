@@ -17,6 +17,7 @@
 					var thisElem = $(this);
 					var rid = $(this).attr('data-rid');
 					var vocabRid = $(this).attr('data-vocabRid');
+					var glossaryName = $(this).attr('data-glossaryName');
 
 					$.get("/search/getTermRoles", {resource:vocabRid})
 						.done(function(data) {
@@ -30,7 +31,7 @@
 					// load term sibling checkboxes
 					$.get( "/search/getFullVocab",{rid:rid, termid:vocabRid})
 						.done(function( data ) {
-							thisElem.parent().find('.checkBoxesHeader').html('<h5>Check other terms to include in request.</h5>');
+							thisElem.parent().find('.checkBoxesHeader').html('<h5>Check other terms to include in request. Showing '+glossaryName+'.</h5>');
 							thisElem.parent().find('.resultBodyLoading').hide();
 							thisElem.parent().find('ul').show();
 							thisElem.parent().find('.checkBoxes').html(data);
@@ -278,7 +279,7 @@
 					}
 				?>
 				<input type="button" onclick="addToQueue(this, true)" api="false" class="requestAccess grow detailsRequestBtn" value="Add To Request" />
-				<a class="detailsTab" data-rid="<?php echo $term->domainrid; ?>" data-vocabRid="<?php echo $termRequestID ?>"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a>
+				<a class="detailsTab" data-rid="<?php echo $term->domainrid; ?>" data-vocabRid="<?php echo $termRequestID ?>" data-glossaryName="<?php echo $term->domainname ?>"><span class="detailsLess">Fewer</span><span class="detailsMore">More</span>&nbsp;Details</a>
 			</form>
 		</div>
 <?php

@@ -160,7 +160,6 @@ class SearchController extends AppController {
 
 		// get all terms matching query
 		$terms = $this->searchTerms(html_entity_decode($query), $page-1, 10, $sortField, $sortOrder, $filter);
-		//print_r($terms);exit;
 
 		if(!empty($terms->aaData)){
 			// save search and delete anything over 300 entries
@@ -293,56 +292,55 @@ class SearchController extends AppController {
 			}else{
 				$disabled = $term->concept == 'true'?'disabled':'';
 			}
-			if(!$disabled){
-				if(sizeof($term->synonym_for)!=0){
-					$termDef = 'Synonym for '.$term->synonym_for[0]->synonymname;
-				}
 
-				$random = uniqid(rand(111111,999999));
-				$classification = $term->classification;
-				switch($classification){
-					case 'Public':
-					case '1 - Public':
-						$classificationIcon = '<img src="/img/iconPublic.png" title="Public" alt="Public" width="9" />';
-						break;
-					case 'Internal':
-					case '2 - Internal':
-						$classificationIcon = '<img src="/img/iconInternal.png" title="Internal" alt="Internal" width="9" />';
-						break;
-					case 'Confidential':
-					case '3 - Confidential':
-						$classificationIcon = '<img src="/img/iconClassified.png" title="Confidential" alt="Confidential" width="9" />';
-						break;
-					case 'Highly Confidential':
-					case '4 - Highly Confidential':
-						$classificationIcon = '<img src="/img/iconHighClassified.png" title="Highly Confidential" alt="Highly Confidential" width="9" />';
-						break;
-					case 'Not Applicable':
-					case '0 - N/A':
-						$classificationIcon = '<img src="/img/iconNotApplicable.png" title="Not Applicable" alt="Not Applicable" width="9" />';
-						break;
-					default:
-						$classificationIcon = '<img src="/img/iconNoClassification2.png" title="Unspecified" alt="Unspecified" width="9" />';
-						break;
-				}
-
-				if($itemCount>0 && $itemCount%2==0){
-					echo '</div>';echo '</div>';
-					echo '<div class="checkCol">';
-				}
-				if(!$disabled){
-					echo '<input type="checkbox" name="terms[]" data-title="'.$termName.'" data-vocabID="'.$term->commrid.'" value="'.$termID.'" id="chk'.$termID.$random.'" class="chk'.$termID.'" '.$disabled.' '.($originTermID == $termID ? 'checked' : '').'>';
-				}else{
-					//echo '<img class="denied" src="/img/denied.png" alt="Not available for request." title="Not available for request.">';
-				}
-
-				echo $classificationIcon.
-					'    <label for="chk'.$termID.$random.'">'.$termName.'</label><div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$termDef.'" class="info"><img src="/img/iconInfo.png"></div>';
-				if($itemCount%2==0){
-					echo '<br/>';
-				}
-				$itemCount++;
+			if(sizeof($term->synonym_for)!=0){
+				$termDef = 'Synonym for '.$term->synonym_for[0]->synonymname;
 			}
+
+			$random = uniqid(rand(111111,999999));
+			$classification = $term->classification;
+			switch($classification){
+				case 'Public':
+				case '1 - Public':
+					$classificationIcon = '<img src="/img/iconPublic.png" title="Public" alt="Public" width="9" />';
+					break;
+				case 'Internal':
+				case '2 - Internal':
+					$classificationIcon = '<img src="/img/iconInternal.png" title="Internal" alt="Internal" width="9" />';
+					break;
+				case 'Confidential':
+				case '3 - Confidential':
+					$classificationIcon = '<img src="/img/iconClassified.png" title="Confidential" alt="Confidential" width="9" />';
+					break;
+				case 'Highly Confidential':
+				case '4 - Highly Confidential':
+					$classificationIcon = '<img src="/img/iconHighClassified.png" title="Highly Confidential" alt="Highly Confidential" width="9" />';
+					break;
+				case 'Not Applicable':
+				case '0 - N/A':
+					$classificationIcon = '<img src="/img/iconNotApplicable.png" title="Not Applicable" alt="Not Applicable" width="9" />';
+					break;
+				default:
+					$classificationIcon = '<img src="/img/iconNoClassification2.png" title="Unspecified" alt="Unspecified" width="9" />';
+					break;
+			}
+
+			if($itemCount>0 && $itemCount%2==0){
+				echo '</div>';echo '</div>';
+				echo '<div class="checkCol">';
+			}
+			if(!$disabled){
+				echo '<input type="checkbox" name="terms[]" data-title="'.$termName.'" data-vocabID="'.$term->commrid.'" value="'.$termID.'" id="chk'.$termID.$random.'" class="chk'.$termID.'" '.$disabled.' '.($originTermID == $termID ? 'checked' : '').'>';
+			}else{
+				echo '<img class="denied" src="/img/denied.png" alt="Not available for request." title="This is a conceptual term not available for request.">';
+			}
+
+			echo $classificationIcon.
+				'    <label for="chk'.$termID.$random.'">'.$termName.'</label><div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$termDef.'" class="info"><img src="/img/iconInfo.png"></div>';
+			if($itemCount%2==0){
+				echo '<br/>';
+			}
+			$itemCount++;
 
 		}
 		echo '</div>';
@@ -467,17 +465,6 @@ class SearchController extends AppController {
 				'value' => $result->name->id]];
 		}
 		$filters = [['OR' => $ridFilter]];
-		if(!Configure::read('allowUnrequestableTerms')){
-			$filters[] = [
-				'OR' => [
-					['Field' => [
-						'name' => 'concept',
-						'operator' => 'NULL']],
-					['Field' => [
-						'name' => 'concept',
-						'operator' => 'EQUALS',
-						'value' => false]]]];
-		}
 		$options = ['additionalFilters' => $filters];
 		// set sort if not sorting by score
 		if($sortField != 'score'){

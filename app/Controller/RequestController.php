@@ -290,11 +290,8 @@ class RequestController extends AppController {
 
 					foreach ($arrTermDetails as $term) {
 						if (empty($arrQueue['businessTerms'][$term->termrid]) && empty($arrQueue['concepts'][$term->termrid])) {
-							// verify that the term is requestable
-							$concept = false;
-							if (!Configure::read('allowUnrequestableTerms')) {
-								$concept = $term->concept == 'true';
-							}
+
+							$concept = $term->concept == 'true';
 
 							$requestable = true;
 							if (!Configure::read('allowUnapprovedTerms')) {
