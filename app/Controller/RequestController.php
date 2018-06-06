@@ -268,6 +268,7 @@ class RequestController extends AppController {
 				}
 
 				$this->Session->write('queue', $arrQueue);
+				$this->updateDraftCart();
 				echo $newTermsAdded;
 			} else {
 				$newTermsAdded = 0;
@@ -545,6 +546,7 @@ class RequestController extends AppController {
 		foreach ($draft->attributes as $attr) {
 			if ($attr->attrSignifier == 'Additional Information Requested') {
 				$attrId = $attr->attrResourceId;
+				break;
 			}
 		}
 
@@ -1594,7 +1596,11 @@ class RequestController extends AppController {
 
 		$apis = [];
 		$tables = [];
+		$individualTerms = [];
 		foreach ($arrQueue['businessTerms'] as $term) {
+			if (empty($term['apiPath']) && empty($term['apiHost']) && empty($term['tableName'])) {
+				array_push($individualTerms, $term['term']);
+			}
 			if (!empty($term['apiPath']) && !empty($term['apiHost'])) {
 				$apis[$term['apiHost']][$term['apiPath']] = [];
 			}
@@ -1660,6 +1666,9 @@ class RequestController extends AppController {
 			}
 		}
 		$preFilled['descriptionOfInformation'] = '';
+		if (!empty($individualTerms)) {
+			$preFilled['descriptionOfInformation'] .= "<b>Individual Business Terms:</b>\n. . " . implode("\n. . ", $individualTerms) . "\n\n";
+		}
 		if (!empty($apis)) {
 			$apiList = "<b>Requested APIs:</b>\n";
 			foreach ($apis as $apiHost => $apiPaths) {
