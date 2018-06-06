@@ -907,9 +907,11 @@ class RequestController extends AppController {
 						return false;
 					}
 				}
-				foreach ($requestData['arrBusinessTerms'] as $newAdditionId) {
-					if ($newAdditionId == $term->termId) {
-						return false;
+				if (isset($requestData['arrBusinessTerms'])) {
+					foreach ($requestData['arrBusinessTerms'] as $newAdditionId) {
+						if ($newAdditionId == $term->termId) {
+							return false;
+						}
 					}
 				}
 				return true;
@@ -931,7 +933,16 @@ class RequestController extends AppController {
 				}
 			}
 			if ($addPolicy) {
-				array_push($relationsPostData['policies'], Configure::read('Collibra.policy.trustedPartnerSecurityStandards'));
+				foreach ($request->policies as $policy) {
+					if ($policy->policyId == Configure::read('Collibra.policy.trustedPartnerSecurityStandards')) {
+						$addPolicy = false;
+						break;
+					}
+				}
+
+				if ($addPolicy) {
+					array_push($relationsPostData['policies'], Configure::read('Collibra.policy.trustedPartnerSecurityStandards'));
+				}
 			}
 
 			foreach ($additionalTerms as $term) {
