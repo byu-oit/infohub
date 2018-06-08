@@ -523,7 +523,7 @@ class RequestController extends AppController {
 		}
 
 		$postString = http_build_query($postData);
-		$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
+		$postString = preg_replace("/%5B[0-9]+%5D/", "", $postString);
 		$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.createDSRDraft').'/start', $postString);
 
 		if ($resp->code != '200') {
