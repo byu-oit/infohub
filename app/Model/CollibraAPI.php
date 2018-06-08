@@ -763,6 +763,10 @@ class CollibraAPI extends Model {
 			array_push($wfPostData['target'], $column['id']);
 		}
 
+		if (empty($wfPostData['source']) && empty($wfPostData['target'])) {
+			return true;
+		}
+
 		while (count($wfPostData['source']) + count($wfPostData['target']) > 100) {
 			$postString = http_build_query([
 				'relationTypeId' => $wfPostData['relationTypeId'],
@@ -1206,6 +1210,10 @@ class CollibraAPI extends Model {
 			}
 			array_push($wfPostData['source'], $term['business_term']);
 			array_push($wfPostData['target'], $term['id']);
+		}
+
+		if (empty($wfPostData['source']) && empty($wfPostData['target'])) {
+			return true;
 		}
 
 		while (count($wfPostData['source']) + count($wfPostData['target']) > 100) {
