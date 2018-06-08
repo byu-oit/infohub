@@ -16,7 +16,8 @@
 		}, 250);
 
 		if (!validateForm()) {
-			alert('You must propose a name and definition for each business term selected.');
+			alert('You must propose a name for each new business term proposed.');
+			clearInterval(loadingTextInterval);
 			return;
 		}
 
@@ -77,7 +78,7 @@
 				return;
 			}
 
-			if (!thisElem.find('.bt-new-name').val() || !thisElem.find('.bt-new-definition').val()) {
+			if (!thisElem.find('.bt-new-name').val()) {
 				valid = false;
 				return false;
 			}

@@ -746,7 +746,7 @@ class CollibraAPI extends Model {
 
 				$postString = http_build_query([
 					'label' => Configure::read('Collibra.attribute.definition'),
-					'value' => $column['propDefinition']
+					'value' => empty($column['propDefinition']) ? '(Definition pending.)' : $column['propDefinition']
 				]);
 				$resp = $this->post('term/'.$columnId.'/attributes', $postString);
 			}
@@ -1195,7 +1195,7 @@ class CollibraAPI extends Model {
 
 				$postString = http_build_query([
 					'label' => Configure::read('Collibra.attribute.definition'),
-					'value' => $term['propDefinition']
+					'value' => empty($term['propDefinition']) ? '(Definition pending.)' : $term['propDefinition']
 				]);
 				$resp = $this->post('term/'.$termId.'/attributes', $postString);
 			}
