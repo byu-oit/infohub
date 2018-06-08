@@ -27,6 +27,57 @@
 		$('.irLower').on('click', '#request-undo', function() {
 			autoSave();
 		});
+
+		$('#net-id').click(function() {
+			if ($('#net-id-input-wrapper').css('display') == 'none') {
+				$('#net-id-input-wrapper').fadeIn('fast');
+				var inputElement = $('#net-id-input');
+			} else {
+				$('#net-id-input-wrapper').fadeOut('fast');
+			}
+		});
+		$('.save').click(function() {
+			var netIdInput = $('#net-id-input');
+			if (netIdInput.val() != netIdInput.data('lastSave')) {
+				$.get('/directory/requesterAndSupervisorLookup?netId='+netIdInput.val())
+					.done(function(data) {
+						data = JSON.parse(data);
+						if (data.message) {
+							alert(data.message);
+						}
+						if (data.success) {
+							netIdInput.data('lastSave', netIdInput.val());
+
+							$('#name').val(data.requester.name);
+							$('#phone').val(data.requester.phone);
+							$('#role').val(data.requester.role);
+							<?php if (Configure::read('debug') == 0): ?>
+								$('#email').val(data.requester.email);
+							<?php endif ?>
+							$('#requestingOrganization').val(data.requester.department);
+
+							$('#sponsorName').val(data.supervisor.name);
+							$('#sponsorPhone').val(data.supervisor.phone);
+							$('#sponsorRole').val(data.supervisor.role);
+							<?php if (Configure::read('debug') == 0): ?>
+								$('#sponsorEmail').val(data.supervisor.email);
+							<?php endif ?>
+
+							$('#net-id-input-wrapper').fadeOut('fast');
+						}
+					});
+			} else {
+				$('#net-id-input-wrapper').fadeOut('fast');
+			}
+		});
+		$('#net-id-input').keypress(function(event) { return event.keyCode != 13; });
+		$('#net-id-input').on({
+			keyup: function(e) {
+				if (e.which === 13) {
+					$('.save').click();
+				}
+			}
+		});
 	});
 
 	$(window).resize(resultsWidth);
@@ -149,7 +200,12 @@
 					</div>
 				</div>
 
-				<h3 class="headerTab">Requester Information</h3>
+				<h3 class="headerTab">Requester Information*</h3><div class="edit-btn grow" id="net-id" title="Enter a Net ID to populate all fields"></div>
+				<div id="net-id-input-wrapper">
+					<label for="requesterNetId">Requester Net Id*</label>
+					<input type="text" id="net-id-input" name="requesterNetId" class="inputShade" placeholder="Input requester's Net ID" value="<?= empty($preFilled['requesterNetId']) ? h($netId) : h($preFilled['requesterNetId']) ?>" data-last-save="<?=$netId?>">
+					<div class="save grow">Save</div>
+				</div>
 				<div class="clear"></div>
 				<div class="fieldGroup">
 					<!-- <div class="infoCol"> -->

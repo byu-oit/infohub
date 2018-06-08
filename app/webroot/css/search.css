@@ -1068,6 +1068,43 @@ img.resultBodyLoading {
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
+#request #searchBody #requestForm .edit-btn {
+  display: inline-block;
+  height: 22px;
+  width: 22px;
+  margin: 5px 0px 10px 12px;
+  border-radius: 5px;
+  background-image: url(../img/edit.png);
+  background-size: 29px;
+  background-position: center;
+  cursor: pointer;
+}
+#request #searchBody #requestForm #net-id-input-wrapper {
+  margin: 10px 0px;
+  display: none;
+}
+#request #searchBody #requestForm #net-id-input-wrapper .save {
+  margin: 8px 10px;
+  padding: 4px 11px;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  background-color: #114477;
+  cursor: pointer;
+  text-decoration: none;
+  -webkit-box-shadow: -1px 1px 5px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -1px 1px 5px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -1px 1px 5px 1px rgba(50, 50, 50, 0.22);
+}
+#searchBody #requestForm #srLower #net-id-input-wrapper label {
+  display: block;
+  font-weight: bold;
+  font-size: 11px;
+}
+#request #searchBody #requestForm #net-id-input-wrapper input {
+  margin: 0 0 12px 0;
+}
 #searchBody #requestForm #srLower .policy-header-wrapper {
   width: 300px;
   display: flex;
@@ -1180,7 +1217,7 @@ img.resultBodyLoading {
 #searchBody #searchSuccess #srLower .fieldGroup label,
 #apiBody #searchSuccess #srLower .fieldGroup label {
   display: block;
-  font-size: bold;
+  font-weight: bold;
   font-size: 11px;
 }
 #searchBody #requestForm #srLower .fieldGroup input,

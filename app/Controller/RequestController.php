@@ -1314,13 +1314,13 @@ class RequestController extends AppController {
 		$phone = $this->request->data['phone'];
 		$role = $this->request->data['role'];
 
-		$netID = $this->Auth->user('username');
+		$netID = $this->request->data['requesterNetId'];
 		$byuUser = $this->BYUAPI->personalSummary($netID);
 		$supervisorInfo = $this->BYUAPI->supervisorLookup($netID);
 
-		$postData['requesterNetId'] = [$byuUser->identifiers->net_id, $supervisorInfo->net_id];
+		$postData['requesterNetId'] = [$byuUser->identifiers->net_id, $supervisorInfo->net_id, $this->Auth->user('username')];
 		foreach($this->request->data as $key => $val){
-			if (!in_array($key, ['name', 'phone', 'email', 'role', 'terms', 'apiFields', 'requestSubmit', 'collibraUser'])) {
+			if (!in_array($key, ['name', 'phone', 'email', 'role', 'terms', 'apiFields', 'requestSubmit', 'collibraUser', 'requesterNetId'])) {
 				$postData[$key] = $val;
 			}
 		}
@@ -1768,7 +1768,8 @@ class RequestController extends AppController {
 				'Description of Intended Use' => 'descriptionOfIntendedUse',
 				'Access Rights' => 'accessRights',
 				'Access Method' => 'accessMethod',
-				'Impact on System' => 'impactOnSystem'
+				'Impact on System' => 'impactOnSystem',
+				'Requester Net Id' => 'requesterNetId'
 			];
 			$arrFormFields = [];
 			foreach ($draft->attributes as $attr) {
@@ -1826,6 +1827,7 @@ class RequestController extends AppController {
 		$this->set('formFields', $formResp);
 		$this->set('termDetails', $termResp);
 
+		$netId = $this->Auth->user('username');
 		$psName = '';
 		$psPhone = '';
 		$psEmail = '';
@@ -1851,7 +1853,7 @@ class RequestController extends AppController {
 			$psDepartment = $byuUser->employee_information->department;
 		}
 
-		$this->set(compact('preFilled', 'arrQueue', 'psName', 'psPhone', 'psEmail', 'psRole', 'psDepartment', 'psReportsToName', 'supervisorInfo', 'policies'));
+		$this->set(compact('preFilled', 'arrQueue', 'netId', 'psName', 'psPhone', 'psEmail', 'psRole', 'psDepartment', 'psReportsToName', 'supervisorInfo', 'policies'));
 		$this->set('submitErr', isset($this->request->query['err']));
 	}
 }

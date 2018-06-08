@@ -117,7 +117,7 @@
 					searchName = inputElement.val();
 				}
 
-				$.get("/directory/lookup?term="+searchName)
+				$.get("/directory/collaboratorSearch?term="+searchName)
 					.done(function(data) {
 						inputWrapper.parent().find('.collaborators-search-result').remove();
 						data = JSON.parse(data);
