@@ -161,8 +161,9 @@
 						alert(data.message);
 						return;
 					}
+					var jobTitle = data.person.employee_information.job_title === undefined ? data.person.employee_information.employee_role : data.person.employee_information.job_title;
 					var html = '<strong>'+data.person.names.preferred_name+':</strong> '
-								+data.person.employee_information.job_title+', '
+								+jobTitle+', '
 								+data.person.contact_information.email_address+'&nbsp;&nbsp;&nbsp;&nbsp;'
 								+'<div class="remove" data-assetid="'+thisElem.parent().attr('id')+'" data-netid="'+data.person.identifiers.net_id+'">X</div><br>';
 					thisElem.parent().find('.collaborators-view').append(html);
@@ -364,8 +365,9 @@
 				<div class="clear"></div>
 				<div class="attrValue collaborators-view">
 					<?php foreach ($req->attributes['Collaborators'] as $col) {
+						$title = !isset($col->employee_information->job_title) ? $col->employee_information->employee_role : $col->employee_information->job_title;
 						echo '<strong>'.$col->names->preferred_name.':</strong> '.
-							$col->employee_information->job_title.', '.
+							$title.', '.
 							$col->contact_information->email_address;
 						echo str_repeat("&nbsp;", 4);
 						echo '<div class="remove hidden" data-assetid="'.$req->id.'" data-netid="'.$col->identifiers->net_id.'">X</div><br>';

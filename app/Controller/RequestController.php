@@ -1513,10 +1513,7 @@ class RequestController extends AppController {
 			$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.changeAttributes').'/start', $postString);
 		}
 
-		$this->set('netID', $netID);
-		$this->set('asset', $asset);
-		$this->set('parent', $parent);
-		$this->set('expand', $expand);
+		$this->set(compact('netID', 'asset', 'parent', 'expand'));
 	}
 
 	public function printView($assetId, $dsr = 'true') {
