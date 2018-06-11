@@ -84,6 +84,7 @@ class Swagger extends AppModel {
 
 		App::uses('HttpSocket', 'Network/Http');
 		$HttpSocket = new HttpSocket();
+		$HttpSocket->configProxy(Configure::read('proxy'));
 		$results = $HttpSocket->get($url, [], $requestOptions);
 		if (!$results || !$results->isOk()) {
 			return null;
