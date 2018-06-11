@@ -134,9 +134,9 @@
 				}
 
 				var searchName = '';
-				if (inputElement.val().match(/[a-z]+ [a-z]+/i)) {
+				if (inputElement.val().match(/^[a-z]+ [a-z]+/i)) {
 					var names = inputElement.val().split(' ');
-					searchName = names[1] + ', ' + names[0];
+					searchName = names.pop() + ', ' + names.join(' ');
 				} else {
 					searchName = inputElement.val();
 				}
