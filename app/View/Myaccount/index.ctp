@@ -152,6 +152,14 @@
 
 			}, 300));
 		});
+		$('.collaborators-input').keypress(function(event) { return event.keyCode != 13; });
+		$('.collaborators-input').on({
+			keyup: function(e) {
+				if (e.which === 13) {
+					$('.collaborators-search-result').first().click();
+				}
+			}
+		});
 		$('.detailsBody').on('click', '.collaborators-search-result', function() {
 			var thisElem = $(this);
 			$.post("/request/addCollaborator/"+$(this).parent().attr('id')+"/"+$(this).attr('person-id'))
