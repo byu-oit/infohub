@@ -305,10 +305,15 @@
 		}
 		echo '</div></div>';
 		echo '	<div class="detailsBody" id="'.$asset->id.'">';
+		$pendingStatuses = ['Pending Custodian', 'Pending Steward', 'In Progress', 'Request In Progress', 'Agreement Review'];
+		if (in_array($asset->statusName, $pendingStatuses) && empty($asset->dsas)) {
+			$assetName = $parent ? "Request" : "Agreement";
+			echo '<div class="lower-btn edit grow" data-rid="'.$asset->id.'">Edit '.$assetName.'</div>';
+		}
 ?>
 
 		<h3 class="headerTab">Requested Data</h3>
-		<?php $pendingStatuses = ['Pending Custodian', 'Pending Steward', 'In Progress', 'Request In Progress', 'Agreement Review'];
+		<?php
 		if ($parent && in_array($asset->statusName, $pendingStatuses) && empty($asset->dsas)): ?><a class="edit-btn grow" href="/request/editTerms/<?=$asset->id?>" title="Add/Remove Terms"></a><?php endif ?>
 		<div class="clear"></div>
 		<div class="attrValue">
@@ -543,6 +548,9 @@
 				echo '	<a class="details-btn grow" data-rid="'.$dsa->dsaId.'"><span class="detailsLess">Hide</span><span class="detailsMore">Show</span>&nbsp;Details</a></div></div>';
 
 				echo '<div class="detailsBody" id="'.$dsa->dsaId.'">';
+				if (in_array($dsa->dsaStatus, $pendingStatuses)) {
+					echo '<div class="lower-btn edit grow" data-rid="'.$dsa->dsaId.'" data-dsa="true">Edit Agreement</div>';
+				}
 				echo '<p class="riDate"><strong>Requested Data:</strong>';
 				$dsaGlossaryFoundRequired = false;
 				foreach ($asset->termGlossaries as $glossaryName => $terms) {
