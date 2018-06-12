@@ -308,7 +308,7 @@
 		$pendingStatuses = ['Pending Custodian', 'Pending Steward', 'In Progress', 'Request In Progress', 'Agreement Review'];
 		if (in_array($asset->statusName, $pendingStatuses) && empty($asset->dsas)) {
 			$assetName = $parent ? "Request" : "Agreement";
-			echo '<div class="lower-btn edit grow" data-rid="'.$asset->id.'">Edit '.$assetName.'</div>';
+			echo '<div class="lower-btn edit grow" data-rid="'.$asset->id.'"'; if (!$parent) echo ' data-dsa="true"'; echo '>Edit '.$assetName.'</div>';
 		}
 ?>
 
