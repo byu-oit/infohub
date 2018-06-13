@@ -38,32 +38,49 @@
 				});
 
 		} else {
+			window.postSuccess = true;
+			largeApiUpdate(postData)
+				.then(function(data) {
+					if (!window.postSuccess) {
+						window.location.reload(true);
+					} else {
+						window.location.href = '/apis/'+host+path;
+					}
+				});
+		}
+	}
 
-			var chunkedElements = [];
-			var i;
-			for (i = 0; i < numElements - 99; i += 100) {
-				chunkedElements.push(postData.data.Api.elements.slice(i, i+100))
-			}
-			if (i < numElements) {
-				chunkedElements.push(postData.data.Api.elements.slice(i, numElements));
-			}
+	function largeApiUpdate(postData, stride = 100) {
+		if (postData.data.Api.elements.length > stride) {
+			return new Promise(function(resolve) {
+				var postDataElements = postData.data.Api.elements;
 
-			var success = true;
-			for (i = 0; i < chunkedElements.length; i++) {
-				postData.data.Api.elements = chunkedElements[i];
-				$.post('/api_admin/update/'+host+path, postData)
-					.done(function(data) {
-	            		data = JSON.parse(data);
+				postData.data.Api.elements = postDataElements.slice(0, stride);
+				var request = $.post('/api_admin/update/'+postData.data.Api.host+postData.data.Api.basePath, postData)
+					.then(function(data) {
+						data = JSON.parse(data);
 						if (!data.success) {
-							success = false;
+							window.postSuccess = false;
 						}
 					});
-			}
-			if (!success) {
-				window.location.reload(true);
-			}
 
-			window.location.href = '/apis/'+host+path;
+				postData.data.Api.elements = postDataElements.slice(stride);
+				var recur = largeApiUpdate(postData);
+
+				Promise.all([request, recur]).then(() => resolve());
+			});
+		}
+		else {
+			return new Promise(function(resolve) {
+				$.post('/api_admin/update/'+postData.data.Api.host+postData.data.Api.basePath, postData)
+					.then(function(data) {
+						data = JSON.parse(data);
+						if (!data.success) {
+							window.postSuccess = false;
+						}
+						resolve();
+					});
+			});
 		}
 	}
 

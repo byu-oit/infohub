@@ -38,32 +38,49 @@
 				});
 
 		} else {
+			window.postSuccess = true;
+			largeTableUpdate(postData)
+				.then(function(data) {
+					if (!window.postSuccess) {
+						window.location.reload(true);
+					} else {
+						window.location.href = '/databases/view/'+schema+'/'+tableName;
+					}
+				});
+		}
+	}
 
-			var chunkedElements = [];
-			var i;
-			for (i = 0; i < numElements - 99; i += 100) {
-				chunkedElements.push(postData.data.Table.elements.slice(i, i+100))
-			}
-			if (i < numElements) {
-				chunkedElements.push(postData.data.Table.elements.slice(i, numElements));
-			}
+	function largeTableUpdate(postData, stride = 100) {
+		if (postData.data.Table.elements.length > stride) {
+			return new Promise(function(resolve) {
+				var postDataElements = postData.data.Table.elements;
 
-			var success = true;
-			for (i = 0; i < chunkedElements.length; i++) {
-				postData.data.Table.elements = chunkedElements[i];
-				$.post('/database_admin/update/'+schema+'/'+tableName, postData)
-					.done(function(data) {
-	            		data = JSON.parse(data);
+				postData.data.Table.elements = postDataElements.slice(0, stride);
+				var request = $.post('/database_admin/update/'+postData.data.Table.schemaName+'/'+postData.data.Table.tableName, postData)
+					.then(function(data) {
+						data = JSON.parse(data);
 						if (!data.success) {
-							success = false;
+							window.postSuccess = false;
 						}
 					});
-			}
-			if (!success) {
-				window.location.reload(true);
-			}
 
-			window.location.href = '/databases/view/'+schema+'/'+tableName;
+				postData.data.Table.elements = postDataElements.slice(stride);
+				var recur = largeTableUpdate(postData);
+
+				Promise.all([request, recur]).then(() => resolve());
+			});
+		}
+		else {
+			return new Promise(function(resolve) {
+				$.post('/database_admin/update/'+postData.data.Table.schemaName+'/'+postData.data.Table.tableName, postData)
+					.then(function(data) {
+						data = JSON.parse(data);
+						if (!data.success) {
+							window.postSuccess = false;
+						}
+						resolve();
+					});
+			});
 		}
 	}
 
