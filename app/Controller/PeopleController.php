@@ -171,7 +171,7 @@ class PeopleController extends AppController {
 				$query = preg_replace('/[^ \w]+/', '', $query);
 			}
 
-			$request = '{"query":"'.$query.'*", "filter": { "community": ["'.Configure::read('Collibra.community.byu').'"], "category":["CO", "VC", "UR"], "vocabulary":[], "type":{"asset":[]},';
+			$request = '{"query":"'.$query.'*", "filter": { "community": [], "category":["CO", "VC", "UR"], "vocabulary":[], "type":{"asset":[]},';
 			if(!Configure::read('allowUnapprovedTerms')){
 				$request .= '"status": ["00000000-0000-0000-0000-000000005009"], ';
 			}
