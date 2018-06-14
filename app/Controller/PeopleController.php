@@ -117,7 +117,7 @@ class PeopleController extends AppController {
 				foreach($arrUserData[$group][$r->userrid]['stewardRoles'] as $roleKey => $role){
 					if($role->hasNonMetaChildren == 'true'){
 						foreach($communities[1]->Vocabularies as $vocab){
-							if($role->subcommunityid == $vocab->vocabularyParentCommunityId){
+							if($role->subcommunityid == $vocab->vocabularyParentCommunityId && strpos($vocab->vocabulary, 'Glossary') !== false){
 								$role->vocabulary = $vocab->vocabulary;
 								$role->vocabularyid = $vocab->vocabularyid;
 								break;
@@ -131,7 +131,7 @@ class PeopleController extends AppController {
 				foreach($arrUserData[$group][$r->userrid]['custodianRoles'] as $roleKey => $role){
 					if($role->hasNonMetaChildren == 'true'){
 						foreach($communities[1]->Vocabularies as $vocab){
-							if($role->subcommunityid == $vocab->vocabularyParentCommunityId){
+							if($role->subcommunityid == $vocab->vocabularyParentCommunityId && strpos($vocab->vocabulary, 'Glossary') !== false){
 								$role->vocabulary = $vocab->vocabulary;
 								$role->vocabularyid = $vocab->vocabularyid;
 								break;
@@ -240,7 +240,7 @@ class PeopleController extends AppController {
 						foreach($arrUserData[$group][$r->userrid]['stewardRoles'] as $roleKey => $role){
 							if($role->hasNonMetaChildren == 'true'){
 								foreach($communities[1]->Vocabularies as $vocab){
-									if($role->subcommunityid == $vocab->vocabularyParentCommunityId){
+									if($role->subcommunityid == $vocab->vocabularyParentCommunityId && strpos($vocab->vocabulary, 'Glossary') !== false){
 										$role->vocabulary = $vocab->vocabulary;
 										$role->vocabularyid = $vocab->vocabularyid;
 										break;
@@ -254,7 +254,7 @@ class PeopleController extends AppController {
 						foreach($arrUserData[$group][$r->userrid]['custodianRoles'] as $roleKey => $role){
 							if($role->hasNonMetaChildren == 'true'){
 								foreach($communities[1]->Vocabularies as $vocab){
-									if($role->subcommunityid == $vocab->vocabularyParentCommunityId){
+									if($role->subcommunityid == $vocab->vocabularyParentCommunityId && strpos($vocab->vocabulary, 'Glossary') !== false){
 										$role->vocabulary = $vocab->vocabulary;
 										$role->vocabularyid = $vocab->vocabularyid;
 										break;
