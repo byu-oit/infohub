@@ -1180,8 +1180,10 @@ class RequestController extends AppController {
 			if ($attr->attrSignifier == 'Requester Net Id') {
 				if ($attr->attrValue == $netID) {
 					$guest = false;
-					break;
 				}
+			}
+			if (preg_match('/<head\/?>/', $attr->attrValue)) {
+				$attr->attrValue = preg_replace('/<head\/?>/', '', $attr->attrValue);
 			}
 		}
 
