@@ -505,9 +505,9 @@ class RequestController extends AppController {
 
 		$postData = [];
 		$postData['netId'] = $netId;
-		$draft = $this->CollibraAPI->checkForDSRDraft($netId);
-		if (!empty($draft)) {
-			$this->CollibraAPI->delete('term/'.$draft[0]->id);
+		$oldDraft = $this->CollibraAPI->checkForDSRDraft($netId);
+		if (!empty($oldDraft)) {
+			$this->CollibraAPI->post('term/'.$oldDraft[0]->id.'/signifier', 'signifier=_DRAFT-'.$netId);
 		}
 
 		$postData['attributeIds'] = [];
@@ -527,7 +527,15 @@ class RequestController extends AppController {
 		$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.createDSRDraft').'/start', $postString);
 
 		if ($resp->code != '200') {
-			return json_encode(['success' => 0, 'message' => $resp->message]);
+			if (!empty($oldDraft)) {
+				$this->CollibraAPI->post('term/'.$oldDraft[0]->id.'/signifier', 'signifier=DRAFT-'.$netId);
+			}
+
+			return json_encode(['success' => 0, 'message' => 'Error saving draft']);
+		}
+
+		if (!empty($oldDraft)) {
+			$this->CollibraAPI->delete('term/'.$oldDraft[0]->id);
 		}
 		return json_encode(['success' => 1, 'message' => 'Saved successfully']);
 	}
