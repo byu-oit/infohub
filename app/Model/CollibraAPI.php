@@ -154,12 +154,12 @@ class CollibraAPI extends Model {
 			return false;
 		}
 
-		if (!empty($byuInfo->contact_information->email)) {
-			if (empty($collibraInfo->UserEmailaddress) || html_entity_decode($collibraInfo->UserEmailaddress) != $byuInfo->contact_information->email) {
+		if (!empty($byuInfo->contact_information->work_email_address)) {
+			if (empty($collibraInfo->UserEmailaddress) || html_entity_decode($collibraInfo->UserEmailaddress) != $byuInfo->contact_information->work_email_address) {
 				$this->updateUser($collibraInfo->UserId, [
 					'firstName' => $collibraInfo->UserFirstName,
 					'lastName' => $collibraInfo->UserLastName,
-					'email' => $byuInfo->contact_information->email,
+					'email' => $byuInfo->contact_information->work_email_address,
 					'gender' => $collibraInfo->UserGender
 				]);
 			}

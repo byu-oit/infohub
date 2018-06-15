@@ -196,7 +196,9 @@ class MyaccountController extends AppController {
 		if(isset($byuUser->employee_information->department)){
 			$psDepartment = $byuUser->employee_information->department;
 		}
-		if(isset($byuUser->contact_information->email_address)){
+		if(isset($byuUser->contact_information->work_email_address)) {
+			$psEmail = $byuUser->contact_information->work_email_address;
+		} else if(isset($byuUser->contact_information->email_address)){
 			$psEmail = $byuUser->contact_information->email_address;
 		}
 		$this->set(compact('expand', 'psName', 'psRole', 'psDepartment', 'psEmail', 'psNetID'));

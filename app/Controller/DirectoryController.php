@@ -55,7 +55,11 @@ class DirectoryController extends AppController {
 		if (isset($requester->names->preferred_name)) $arrReturn['requester']['name'] = $requester->names->preferred_name;
 		if (isset($requester->contact_information->work_phone)) $arrReturn['requester']['phone'] = $requester->contact_information->work_phone;
 		if (isset($requester->employee_information->job_title)) $arrReturn['requester']['role'] = $requester->employee_information->job_title;
-		if (isset($requester->contact_information->email)) $arrReturn['requester']['email'] = $requester->contact_information->email;
+		if (isset($requester->contact_information->work_email_address)) {
+			$arrReturn['requester']['email'] = $requester->contact_information->work_email_address;
+		} else if (isset($requester->contact_information->email_address)) {
+			$arrReturn['requester']['email'] = $requester->contact_information->email_address;
+		}
 		if (isset($requester->employee_information->department)) $arrReturn['requester']['department'] = $requester->employee_information->department;
 
 		$supervisor = $this->BYUAPI->supervisorLookup($netId);

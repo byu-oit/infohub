@@ -70,7 +70,11 @@ class BYUAPI extends Model {
 		$supervisor->name = empty($data->names->preferred_name) ? '' : $data->names->preferred_name;
 		$supervisor->net_id = empty($data->identifiers->net_id) ? '' : $data->identifiers->net_id;
 		$supervisor->phone = empty($data->contact_information->work_phone) ? '' : $data->contact_information->work_phone;
-		$supervisor->email = empty($data->contact_information->email) ? '' : $data->contact_information->email;
+		if (!empty($data->contact_information->work_email_address)) {
+			$supervisor->email = $data->contact_information->work_email_address;
+		} else {
+			$supervisor->email = empty($data->contact_information->email_address) ? '' : $data->contact_information->email_address;
+		}
 		$supervisor->job_title = empty($data->employee_information->job_title) ? '' : $data->employee_information->job_title;
 		return $supervisor;
 	}

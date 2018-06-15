@@ -1839,7 +1839,9 @@ class RequestController extends AppController {
 		if(isset($byuUser->contact_information->work_phone)){
 			$psPhone = $byuUser->contact_information->work_phone;
 		}
-		if(isset($byuUser->contact_information->email)){
+		if(isset($byuUser->contact_information->work_email_address)) {
+			$psEmail = $byuUser->contact_information->work_email_address;
+		} else if(isset($byuUser->contact_information->email)){
 			$psEmail = $byuUser->contact_information->email;
 		}
 		if(isset($byuUser->employee_information->job_title)){
