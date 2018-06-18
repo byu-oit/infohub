@@ -17,6 +17,7 @@
                 if (i == loadingTexts.length) i = 0;
             }, 250);
 
+			var database = $('#databaseName').val();
             var schema = $('#schemaName').val();
             var table = $('#tableName').val();
 
@@ -36,7 +37,7 @@
 
             schema = schema.toUpperCase();
             table = table.toUpperCase();
-            $.post('/databaseAdmin/syncDatabase', {schema:schema, table:table})
+            $.post('/databaseAdmin/syncDatabase', {database:database, schema:schema, table:table})
                 .done(function(data) {
                     clearInterval(loadingTextInterval);
                     thisElem.html('Sync');
@@ -88,6 +89,11 @@
         <div class="tableHelp" style="cursor:default;"></div>
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
+				<select name="database" id="databaseName">
+					<option value="DWPRD">DWPRD</option>
+					<option value="CESPRD">CESPRD</option>
+					<option value="DWHRPRD">DWHRPRD</option>
+				</select>
                 <input type="text" id="schemaName" placeholder="Schema name" style="width:100px;">
                 <input type="text" id="tableName" placeholder="Table name" style="width:250px;">
 				<div class="sync-btn grow">Sync</div>

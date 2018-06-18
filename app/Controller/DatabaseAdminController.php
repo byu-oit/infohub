@@ -53,8 +53,9 @@ class DatabaseAdminController extends AppController {
 		} else {
 			$schemaName = $this->request->data['schema'];
 			$tableName = $this->request->data['table'];
-			$oracleColumns = $this->BYUAPI->oracleColumns($schemaName, $tableName);
-			return json_encode($this->DataWarehouse->syncDataWarehouse($schemaName, $tableName, $oracleColumns));
+			$database = $this->request->data['database'];
+			$oracleColumns = $this->BYUAPI->oracleColumns($schemaName, $tableName, $database);
+			return json_encode($this->DataWarehouse->syncDataWarehouse($schemaName, $tableName, $oracleColumns, $database));
 		}
 	}
 }

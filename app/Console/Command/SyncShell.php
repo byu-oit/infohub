@@ -34,8 +34,8 @@ class SyncShell extends AppShell {
         $arrAllColumns = [];
         $columnsCount = 0;
         foreach ($tables as $table) {
-            $cols = $this->BYUAPI->oracleColumns($table['schema'], $table['table']);
-            $arrAllColumns[$table['schema']][$table['table']] = $cols;
+            $cols = $this->BYUAPI->oracleColumns($table['schema'], $table['table'], $table['database']);
+            $arrAllColumns[$table['database']][$table['schema']][$table['table']] = $cols;
             $columnsCount += count($cols);
         }
 
@@ -54,8 +54,8 @@ class SyncShell extends AppShell {
                 $this->out(date('H:i:s').' - New hash didn\'t match the saved one. Double-checking the result.');
                 $arrDoubleCheckColumns = [];
                 foreach ($tables as $table) {
-                    $arrDoubleCheckColumns[$table['schema']][$table['table']] =
-                        $this->BYUAPI->oracleColumns($table['schema'], $table['table']);
+                    $arrDoubleCheckColumns[$table['database']][$table['schema']][$table['table']] =
+                        $this->BYUAPI->oracleColumns($table['schema'], $table['table'], $table['database']);
                 }
                 $doubleCheckHash = hash('sha256', json_encode($arrDoubleCheckColumns));
                 if ($doubleCheckHash !== $hash) {
@@ -72,11 +72,13 @@ class SyncShell extends AppShell {
 
         $collection = new ComponentCollection();
         $this->DataWarehouse = $collection->load('DataWarehouse');
-        foreach ($arrAllColumns as $schemaName => $schemaTables) {
-            foreach ($schemaTables as $tableName => $columns) {
-                $resp = $this->DataWarehouse->syncDataWarehouse($schemaName, $tableName, $columns);
-                $level = isset($resp['noChange']) ? Shell::VERBOSE : Shell::NORMAL;
-                $this->out(date('H:i:s').' - '.$resp['message'], 1, $level);
+        foreach ($arrAllColumns as $databaseName => $databaseSchemas) {
+            foreach ($databaseSchemas as $schemaName => $schemaTables) {
+                foreach ($schemaTables as $tableName => $columns) {
+                    $resp = $this->DataWarehouse->syncDataWarehouse($schemaName, $tableName, $columns, $databaseName);
+                    $level = isset($resp['noChange']) ? Shell::VERBOSE : Shell::NORMAL;
+                    $this->out(date('H:i:s').' - '.$resp['message'], 1, $level);
+                }
             }
         }
         $this->out(' ');

@@ -3,7 +3,7 @@
 App::uses('Component', 'Controller');
 
 class DataWarehouseComponent extends Component {
-    public function syncDataWarehouse($schemaName, $tableName, $oracleColumns) {
+    public function syncDataWarehouse($schemaName, $tableName, $oracleColumns, $database) {
         $this->CollibraAPI = ClassRegistry::init('CollibraAPI');
         $table = $this->CollibraAPI->getTableObject($schemaName.' > '.$tableName);
 
@@ -28,7 +28,7 @@ class DataWarehouseComponent extends Component {
             }
         } else if (!empty($oracleColumns) && empty($table)) {
             // add the table to Collibra
-            $postData = ['schemaName' => $schemaName, 'tableName' => $schemaName.' > '.$tableName, 'columns' => $oracleColumns, 'newTable' => 'true'];
+            $postData = ['database' => $database, 'schemaName' => $schemaName, 'tableName' => $schemaName.' > '.$tableName, 'columns' => $oracleColumns, 'newTable' => 'true'];
 
             $postString = http_build_query($postData);
             $postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);

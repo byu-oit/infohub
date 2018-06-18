@@ -93,13 +93,20 @@ class BYUAPI extends Model {
 		];
 	}
 
-	public function oracleColumns($schema = null, $table = null) {
+	public function oracleColumns($schema = null, $table = null, $db = null) {
 		$url = 'domains/infohub/infohub-utils/v1/columns';
 		if (!empty($schema)) {
 			$url .= "/{$schema}";
 		}
 		if (!empty($table)) {
 			$url .= "/{$table}";
+		}
+		if (!empty($db)) {
+			if ($db === 'CESPRD' || $db === 'DWPRD') {
+				$url .= "?db=default";
+			} else {
+				$url .= "?db={$db}";
+			}
 		}
 
 		$response = $this->_get($url);
