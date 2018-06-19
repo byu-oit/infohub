@@ -1328,7 +1328,7 @@ class RequestController extends AppController {
 		$byuUser = $this->BYUAPI->personalSummary($netID);
 		$supervisorInfo = $this->BYUAPI->supervisorLookup($netID);
 
-		$postData['requesterNetId'] = [$byuUser->identifiers->net_id, $supervisorInfo->net_id, $this->Auth->user('username')];
+		$postData['requesterNetId'] = array_unique([$byuUser->identifiers->net_id, $supervisorInfo->net_id, $this->Auth->user('username')]);
 		foreach($this->request->data as $key => $val){
 			if (!in_array($key, ['name', 'phone', 'email', 'role', 'terms', 'apiFields', 'requestSubmit', 'collibraUser', 'requesterNetId'])) {
 				$postData[$key] = $val;
