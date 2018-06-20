@@ -172,14 +172,14 @@ class RequestController extends AppController {
 		$pdf->Ln(2);
 
 		$pdf->SetFont('','',9);
-		$pdf->Cell(($w / 2),4,$dsa->attributes['Requester Name']);
-		$pdf->Cell(($w / 2),4,$dsa->attributes['Sponsor Name'],0,1);
-		$pdf->Cell(($w / 2),4,$dsa->attributes['Requester Role'].' | '.$dsa->attributes['Requesting Organization']);
-		$pdf->Cell(($w / 2),4,$dsa->attributes['Sponsor Role'],0,1);
-		$pdf->Cell(($w / 2),4,$dsa->attributes['Requester Email']);
-		$pdf->Cell(($w / 2),4,$dsa->attributes['Sponsor Email'],0,1);
-		$pdf->Cell(($w / 2),4,$dsa->attributes['Requester Phone']);
-		$pdf->Cell(($w / 2),4,$dsa->attributes['Sponsor Phone'],0,1);
+		$pdf->Cell(($w / 2),4,$dsa->attributes['Requester Name']->attrValue);
+		$pdf->Cell(($w / 2),4,$dsa->attributes['Sponsor Name']->attrValue,0,1);
+		$pdf->Cell(($w / 2),4,$dsa->attributes['Requester Role']->attrValue.' | '.$dsa->attributes['Requesting Organization']->attrValue);
+		$pdf->Cell(($w / 2),4,$dsa->attributes['Sponsor Role']->attrValue,0,1);
+		$pdf->Cell(($w / 2),4,$dsa->attributes['Requester Email']->attrValue);
+		$pdf->Cell(($w / 2),4,$dsa->attributes['Sponsor Email']->attrValue,0,1);
+		$pdf->Cell(($w / 2),4,$dsa->attributes['Requester Phone']->attrValue);
+		$pdf->Cell(($w / 2),4,$dsa->attributes['Sponsor Phone']->attrValue,0,1);
 
 		if (!empty($dsa->policies)) {
 			$pdf->AddPage();

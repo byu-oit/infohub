@@ -89,7 +89,7 @@
 		foreach ($arrOrderedFormFields as $field) {
 			if (!empty($asset->attributes[$field])) {
 				echo '<h3>'.$asset->attributes[$field]->attrSignifier.'</h3>'.
-					'<div class="form-field">'.$asset->attribute[$field]->attrValue.'</div>';
+					'<div class="form-field">'.$asset->attributes[$field]->attrValue.'</div>';
 			}
 		}
 	}
