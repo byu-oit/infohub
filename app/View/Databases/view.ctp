@@ -3,6 +3,10 @@
 	$this->Html->css('search', null, ['inline' => false]);
 ?>
 <script>
+	$(document).ready(function() {
+		$("#databasesLink").addClass('active');
+	});
+
 	function displayPendingApproval(elem) {
 		$('#searchResults').append('<div id="pendingApprovalMessage">The classification of this element is pending approval.</div>');
 		$('#pendingApprovalMessage').offset({top:$(elem).offset().top - 45, left:$(elem).offset().left - 77});

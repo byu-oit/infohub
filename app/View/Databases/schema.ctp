@@ -5,6 +5,8 @@
 
 <script>
 $(document).ready(function() {
+	$("#databasesLink").addClass('active');
+
 	var tables = [<?php foreach ($schema->tables as $table) { echo '"'.$table->tableName.'",'; } ?> ""];
 	$('#tableFilter').on('input', function() {
 		var filterValue = $(this).val().toLowerCase();

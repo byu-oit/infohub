@@ -6,6 +6,8 @@
 <script>
 
     $(document).ready(function() {
+		$("#databasesLink").addClass('active');
+
         $('.sync-btn').click(function() {
             var thisElem = $(this);
 

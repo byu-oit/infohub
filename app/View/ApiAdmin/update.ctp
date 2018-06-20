@@ -5,6 +5,9 @@
 ?>
 <script type="text/javascript" src="/js/jquery.serialize-object.min.js"></script>
 <script>
+	$(document).ready(function() {
+		$("#apisLink").addClass('active');
+	});
 
 	function chunkPostData() {
 		var i = 0;

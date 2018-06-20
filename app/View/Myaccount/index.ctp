@@ -43,6 +43,8 @@
 	}
 
 	$(document).ready(function() {
+		$("#myRequestsLink").addClass('active');
+
 		colSize();
 		loadCoordinatorPhones();
 

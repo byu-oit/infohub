@@ -2,6 +2,11 @@
 	$this->Html->css('secondary', null, ['inline' => false]);
 	$this->Html->css('search', null, ['inline' => false]);
 ?>
+<script>
+	$(document).ready(function() {
+		$("#databasesLink").addClass('active');
+	});
+</script>
 
 <!-- Background image div -->
 <div id="searchBg" class="searchBg">

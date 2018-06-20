@@ -5,6 +5,8 @@
 
 <script>
 $(document).ready(function() {
+	$("#apisLink").addClass('active')
+
 	var apis = [<?php foreach ($community->vocabularyReferences->vocabularyReference as $api) { echo '"'.$api->name.'",'; } ?> ""];
 	$('#apiFilter').on('input', function() {
 		var filterValue = $(this).val().toLowerCase();

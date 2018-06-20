@@ -4,7 +4,6 @@
 ?>
 <script>
 	$(document).ready(function() {
-		$("#searchLink").addClass('active');
 		resultsWidth();
 
 		<?php

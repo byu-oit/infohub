@@ -167,7 +167,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 						API Store
 					</a>
 				</li>
-				<li><a href="/myaccount" id="resourceLink">My Requests</a></li>
+				<li><a href="/myaccount" id="myRequestsLink">My Requests</a></li>
 			</ul>
 		</nav>
 		<div id="content">
