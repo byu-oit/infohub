@@ -2,7 +2,7 @@
 
 App::uses('HttpSocket', 'Network/Http');
 App::uses('Model', 'Model');
-App::uses('String', 'Utility');
+App::uses('CakeText', 'Utility');
 App::uses('CakeSession', 'Model/Datasource');
 
 class CollibraAPI extends Model {
@@ -394,7 +394,7 @@ class CollibraAPI extends Model {
 	}
 
 	public function uploadFile($rawData, $filename = null) {
-		$boundary = 'CakePHPBoundary' . str_replace('-', '', String::uuid());
+		$boundary = 'CakePHPBoundary' . str_replace('-', '', CakeText::uuid());
 		if (empty($filename)) {
 			$filename = 'uploadfile';
 		}
