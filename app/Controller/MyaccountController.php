@@ -113,28 +113,10 @@ class MyaccountController extends AppController {
 		$arrChangedAttrIds = [];
 		$arrChangedAttrValues = [];
 		foreach($arrRequests as $r){
-			$arrNewAttr = [];
-			$arrCollaborators = [];
-			foreach($r->attributes as $attr){
-				if ($attr->attrSignifier == 'Requester Net Id') {
-					if ($attr->attrValue == $netID) {
-						$person = $byuUser;
-					} else {
-						$person = $this->BYUAPI->personalSummary($attr->attrValue);
-					}
-					unset($person->person_summary_line, $person->personal_information, $person->student_information, $person->relationships);
-					array_push($arrCollaborators, $person);
-					continue;
-				}
-				$arrNewAttr[$attr->attrSignifier] = $attr;
-			}
-			$arrNewAttr['Collaborators'] = $arrCollaborators;
-			$r->attributes = $arrNewAttr;
-
 			// Making edits in Collibra inserts weird html into the attributes; if an
 			// edit was made in Collibra, we replace their html with some more cooperative tags
 			foreach($r->attributes as $label => $attr) {
-				if ($label == 'Collaborators' || $label == 'Request Date') continue;
+				if ($label == 'Request Date') continue;
 				if (preg_match('/<div>/', $attr->attrValue)) {
 					array_push($arrChangedAttrIds, $attr->attrResourceId);
 					$newValue = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->attrValue);

@@ -123,12 +123,7 @@ class RequestController extends AppController {
 			}
 		}
 
-		foreach ($dsa->attributes as $attr) {
-			if ($attr->attrSignifier == 'Effective Start Date') {
-				$effectiveDate = date('n/j/Y', $attr->attrValue/1000);
-				break;
-			}
-		}
+		$effectiveDate = date('n/j/Y', $dsa->attributes['Effective Start Date']->attrValue/1000);
 		$pdf->Ln(8);
 		$pdf->SetFont('','B',12);
 		$pdf->Cell(0,4,"Approved ".date('n/j/Y')."  -  Effective Start Date: {$effectiveDate}",0,1);
@@ -151,44 +146,35 @@ class RequestController extends AppController {
 			"Additional Information Requested"
 		];
 		foreach ($arrOrderedFormFields as $field) {
-			foreach ($dsa->attributes as $attr) {
-				if ($attr->attrSignifier == $field && !empty($attr->attrValue)) {
-					$pdf->SetFont('','B',12);
-					$pdf->Cell(0,10,$field,'B',1);
-					$pdf->Ln(2);
-					$pdf->SetFont('','',9);
+			$attr = $dsa->attributes[$field];
+			$pdf->SetFont('','B',12);
+			$pdf->Cell(0,10,$field,'B',1);
+			$pdf->Ln(2);
+			$pdf->SetFont('','',9);
 
-					$attrText = $attr->attrValue;
-					$attrText = preg_replace('/<br[^\/,>]*\/?>/',"\n",$attrText);
-					$attrText = preg_replace(['/<li[^>]*>/','/<\/li>/'],[" ".chr(127)." ",""],$attrText);
-					$attrText = preg_replace(['/<ul[^>]*>/','/<\/ul>/'],["\n",""],$attrText);
-					$attrText = preg_replace('/<[^><]*>/','',$attrText);
-					$attrText = str_replace(chr(194),'',$attrText);
-					$attrText = preg_replace('/^\s/','',$attrText);
+			$attrText = $attr->attrValue;
+			$attrText = preg_replace('/<br[^\/,>]*\/?>/',"\n",$attrText);
+			$attrText = preg_replace(['/<li[^>]*>/','/<\/li>/'],[" ".chr(127)." ",""],$attrText);
+			$attrText = preg_replace(['/<ul[^>]*>/','/<\/ul>/'],["\n",""],$attrText);
+			$attrText = preg_replace('/<[^><]*>/','',$attrText);
+			$attrText = str_replace(chr(194),'',$attrText);
+			$attrText = preg_replace('/^\s/','',$attrText);
 
-					$pdf->MultiCell(0,4,$attrText,0,'J');
-					$pdf->Ln(4);
-					break;
-				}
-			}
+			$pdf->MultiCell(0,4,$attrText,0,'J');
+			$pdf->Ln(4);
 		}
 
 		$arrPersonInfo = [
-			'Requester Name' => '',
-			'Requester Role' => '',
-			'Requesting Organization' => '',
-			'Requester Email' => '',
-			'Requester Phone' => '',
-			'Sponsor Name' => '',
-			'Sponsor Role' => '',
-			'Sponsor Email' => '',
-			'Sponsor Phone' => ''
+			'Requester Name' => $dsa->attributes['Requester Name'],
+			'Requester Role' => $dsa->attributes['Requester Role'],
+			'Requesting Organization' => $dsa->attributes['Requesting Organization'],
+			'Requester Email' => $dsa->attributes['Requester Email'],
+			'Requester Phone' => $dsa->attributes['Requester Phone'],
+			'Sponsor Name' => $dsa->attributes['Sponsor Name'],
+			'Sponsor Role' => $dsa->attributes['Sponsor Role'],
+			'Sponsor Email' => $dsa->attributes['Sponsor Email'],
+			'Sponsor Phone' => $dsa->attributes['Sponsor Phone']
 		];
-		foreach ($dsa->attributes as $attr) {
-			if (array_key_exists($attr->attrSignifier, $arrPersonInfo)) {
-				$arrPersonInfo[$attr->attrSignifier] = html_entity_decode($attr->attrValue);
-			}
-		}
 
 		$pdf->SetFont('','B',12);
 		$w = $pdf->GetPageWidth();
@@ -424,8 +410,8 @@ class RequestController extends AppController {
 
 		$request = $this->CollibraAPI->getRequestDetails($dsrId);
 
-		foreach($request->attributes as $attr) {
-			if ($attr->attrSignifier == 'Requester Net Id' && $attr->attrValue == $person->identifiers->net_id) {
+		foreach($request->collaborators as $collaborator) {
+			if ($collaborator->identifiers->net_id == $person->identifiers->net_id) {
 				return json_encode(['success' => 0, 'message' => 'This person is already a collaborator on this request.']);
 			}
 		}
@@ -472,17 +458,17 @@ class RequestController extends AppController {
 		$toDeleteIds = [];
 		foreach ($request->dsas as $dsa) {
 			$dsa->attributes = $this->CollibraAPI->getAttributes($dsa->dsaId);
-			foreach ($dsa->attributes as $attr) {
-				if ($attr->attrSignifier == 'Requester Net Id' && $attr->attrValue == $netId) {
-					array_push($toDeleteIds, $attr->attrResourceId);
+			foreach ($dsa->collaborators as $collaborator) {
+				if ($collaborator->identifiers->net_id == $netId) {
+					array_push($toDeleteIds, $collaborator->attrInfo->attrResourceId);
 					break;
 				}
 			}
 		}
 
-		foreach ($request->attributes as $attr) {
-			if ($attr->attrSignifier == 'Requester Net Id' && $attr->attrValue == $netId) {
-				array_push($toDeleteIds, $attr->attrResourceId);
+		foreach ($request->collaborators as $collaborator) {
+			if ($collaborator->identifiers->net_id == $netId) {
+				array_push($toDeleteIds, $collaborator->attrInfo->attrResourceId);
 				break;
 			}
 		}
@@ -551,12 +537,7 @@ class RequestController extends AppController {
 			return;
 		}
 		$draft = $this->CollibraAPI->getRequestDetails($draftId[0]->id);
-		foreach ($draft->attributes as $attr) {
-			if ($attr->attrSignifier == 'Additional Information Requested') {
-				$attrId = $attr->attrResourceId;
-				break;
-			}
-		}
+		$attrId = $draft->attributes['Additional Information Requested']->attrResourceId;
 
 		$arrQueue = $this->Session->read('queue');
 		$postData['value'] = json_encode($arrQueue);
@@ -882,16 +863,13 @@ class RequestController extends AppController {
 			}
 
 			$additionalInfoFound = false;
-			foreach ($request->attributes as $attr) {
-				if ($attr->attrSignifier == 'Additional Information Requested') {
-					$additionalInfoFound = true;
-					$postString = http_build_query(['value' => $attr->attrValue . $additionString]);
-					$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
-					$formResp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $postString);
-					$formResp = json_decode($formResp);
-					if (!isset($formResp)) $success = false;
-					break;
-				}
+			if (!empty($request->attributes['Additional Information Requested'])) {
+				$additionalInfoFound = true;
+				$postString = http_build_query(['value' => $request->attributes['Additional Information Requested']->attrValue . $additionString]);
+				$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
+				$formResp = $this->CollibraAPI->post('attribute/'.$request->attributes['Additional Information Requested']->attrResourceId, $postString);
+				$formResp = json_decode($formResp);
+				if (!isset($formResp)) $success = false;
 			}
 			if (!$additionalInfoFound) {
 				$postString = http_build_query([
@@ -992,16 +970,13 @@ class RequestController extends AppController {
 
 			$request = $this->CollibraAPI->getRequestDetails($this->request->data['dsrId']);
 			$additionalInfoFound = false;
-			foreach ($request->attributes as $attr) {
-				if ($attr->attrSignifier == 'Additional Information Requested') {
-					$additionalInfoFound = true;
-					$postString = http_build_query(['value' => $attr->attrValue . $deletionString]);
-					$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
-					$resp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $postString);
-					$resp = json_decode($resp);
-					if (!isset($resp)) $success = false;
-					break;
-				}
+			if (!empty($request->attributes['Additional Information Requested'])) {
+				$additionalInfoFound = true;
+				$postString = http_build_query(['value' => $request->attributes['Additional Information Requested']->attrValue . $deletionString]);
+				$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
+				$resp = $this->CollibraAPI->post('attribute/'.$request->attributes['Additional Information Requested']->attrResourceId, $postString);
+				$resp = json_decode($resp);
+				if (!isset($resp)) $success = false;
 			}
 			if (!$additionalInfoFound) {
 				$postString = http_build_query([
@@ -1184,12 +1159,13 @@ class RequestController extends AppController {
 		$netID = $this->Auth->user('username');
 
 		$guest = true;
-		foreach($asset->attributes as $attr) {
-			if ($attr->attrSignifier == 'Requester Net Id') {
-				if ($attr->attrValue == $netID) {
-					$guest = false;
-				}
+		foreach ($asset->collaborators as $collaborator) {
+			if ($collaborator->identifiers->net_id == $netID) {
+				$guest = false;
+				break;
 			}
+		}
+		foreach($asset->attributes as $attr) {
 			if (preg_match('/<head\/?>/', $attr->attrValue)) {
 				$attr->attrValue = preg_replace('/<head\/?>/', '', $attr->attrValue);
 			}
@@ -1209,17 +1185,6 @@ class RequestController extends AppController {
 		// load form fields for ISA workflow
 		$formResp = $this->CollibraAPI->get('workflow/'.Configure::read('Collibra.workflow.intakeDSR').'/form/start');
 		$formResp = json_decode($formResp);
-
-		$arrNewAttr = [];
-		foreach($formResp->formProperties as $wf){
-			foreach($asset->attributes as $attr){
-				if($attr->attrSignifier == $wf->name){
-					$arrNewAttr[$attr->attrSignifier] = $attr;
-					break;
-				}
-			}
-		}
-		$asset->attributes = $arrNewAttr;
 
 		$this->set('guest', $guest);
 		$this->set('formFields', $formResp);
@@ -1318,8 +1283,7 @@ class RequestController extends AppController {
 
 		$name = explode(' ',$this->request->data['name']);
 		$firstName = $name[0];
-		$lastName = '';
-		if(sizeof($name)>1) $lastName = $name[1];
+		$lastName = sizeof($name) > 1 ? $name[1] : '';
 		$email = $this->request->data['email'];
 		$phone = $this->request->data['phone'];
 		$role = $this->request->data['role'];
@@ -1462,26 +1426,12 @@ class RequestController extends AppController {
 			}
 		}
 
-		$arrNewAttr = [];
-		$arrCollaborators = [];
-		foreach($asset->attributes as $attr){
-			if ($attr->attrSignifier == 'Requester Net Id') {
-				$person = $this->BYUAPI->personalSummary($attr->attrValue);
-				unset($person->person_summary_line, $person->personal_information, $person->student_information, $person->relationships);
-				array_push($arrCollaborators, $person);
-				continue;
-			}
-			$arrNewAttr[$attr->attrSignifier] = $attr;
-		}
-		$arrNewAttr['Collaborators'] = $arrCollaborators;
-		$asset->attributes = $arrNewAttr;
-
 		// Making edits in Collibra inserts weird html into the attributes; if an
 		// edit was made in Collibra, we replace their html with some more cooperative tags
 		$arrChangedAttrIds = [];
 		$arrChangedAttrValues = [];
 		foreach($asset->attributes as $label => $attr) {
-			if ($label == 'Collaborators' || $label == 'Request Date') continue;
+			if ($label == 'Request Date') continue;
 			if (preg_match('/<div>/', $attr->attrValue)) {
 				array_push($arrChangedAttrIds, $attr->attrResourceId);
 				$newValue = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->attrValue);
@@ -1559,17 +1509,6 @@ class RequestController extends AppController {
 		// sort request attribute data based on workflow form field order
 		$workflowResp = $this->CollibraAPI->get('workflow/'.Configure::read('Collibra.workflow.intakeDSR').'/form/start');
 		$workflowResp = json_decode($workflowResp);
-
-		$arrNewAttr = [];
-		foreach ($workflowResp->formProperties as $wf) {
-			foreach ($asset->attributes as $attr) {
-				if ($attr->attrSignifier == $wf->name) {
-					$arrNewAttr[$attr->attrSignifier] = $attr;
-					break;
-				}
-			}
-		}
-		$asset->attributes = $arrNewAttr;
 
 		if ($parent) {
 			for ($i = 0; $i < sizeof($asset->dsas); $i++) {
@@ -1778,13 +1717,8 @@ class RequestController extends AppController {
 				'Impact on System' => 'impactOnSystem',
 				'Requester Net Id' => 'requesterNetId'
 			];
-			$arrFormFields = [];
-			foreach ($draft->attributes as $attr) {
-				if ($attr->attrSignifier == 'Additional Information Requested') {
-					continue;
-				}
-				$label = $arrLabelMatch[$attr->attrSignifier];
-				$preFilled[$label] = $attr->attrValue;
+			foreach ($arrLabelMatch as $signifier => $label) {
+				$preFilled[$label] = $draft->attributes[$signifier];
 			}
 		}
 

@@ -406,7 +406,7 @@
 		<h3 class="headerTab">Collaborators</h3><div class="edit-btn grow collaborators" title="Add Collaborators"></div><img class="infoIcon" src="/img/icon-question.png" onmouseover="displayHelpText(this)" onmouseout="hideHelpText()" helpText="People on the collaborators list will see this request listed on their 'My Requests' page.">
 		<div class="clear"></div>
 		<div class="attrValue collaborators-view">
-			<?php foreach ($asset->attributes['Collaborators'] as $col) {
+			<?php foreach ($asset->collaborators as $col) {
 				$title = !isset($col->employee_information->job_title) ? $col->employee_information->employee_role : $col->employee_information->job_title;
 				echo '<strong>'.$col->names->preferred_name.':</strong> '.
 					$title.', ';
@@ -442,12 +442,9 @@
 
 		if (empty($asset->dsas)) {
 			foreach ($arrOrderedFormFields as $field) {
-				foreach ($asset->attributes as $attr) {
-					if (!empty($attr->attrValue) && $attr->attrSignifier == $field) {
-						echo '<h3 class="headerTab">'.$attr->attrSignifier.'</h3><div class="clear"></div>'.
-							'<div class="attrValue">'.$attr->attrValue.'</div>';
-						break;
-					}
+				if (!empty($asset->attributes[$field]->attrValue)) {
+					echo '<h3 class="headerTab">'.$attr->attrSignifier.'</h3><div class="clear"></div>'.
+						'<div class="attrValue">'.$attr->attrValue.'</div>';
 				}
 			}
 		}
@@ -577,12 +574,9 @@
 				if (!$dsaGlossaryFoundRequired) echo ' No business terms requested from '.$dsa->dsaCommunityName.' Glossary';
 				echo '</p>';
 				foreach ($arrOrderedFormFields as $field) {
-					foreach ($dsa->attributes as $attr) {
-						if (!empty($attr->attrValue) && $attr->attrSignifier == $field) {
-							echo '<h3 class="headerTab">'.$attr->attrSignifier.'</h3><div class="clear"></div>'.
-								'<div class="attrValue">'.$attr->attrValue.'</div>';
-							break;
-						}
+					if (!empty($dsa->attributes[$field]->attrValue)) {
+						echo '<h3 class="headerTab">'.$dsa->attributes[$field]->attrSignifier.'</h3><div class="clear"></div>'.
+							'<div class="attrValue">'.$dsa->attributes[$field]->attrValue.'</div>';
 					}
 				}
 

@@ -1715,6 +1715,20 @@ class CollibraAPI extends Model {
 
 		$results = $this->fullDataTable($tableConfig);
 		if (!empty($results)) {
+			$arrNewAttr = [];
+			$arrCollaborators = [];
+			foreach ($results[0]->attributes as $attr) {
+				if ($attr->attrSignifier === 'Requester Net Id') {
+					$person = ClassRegistry::init('BYUAPI')->personalSummary($attr->attrValue);
+					unset($person->person_summary_line, $person->personal_information, $person->student_information, $person->relationships);
+					$person->attrInfo = $attr;
+					array_push($arrCollaborators, $person);
+					continue;
+				}
+				$arrNewAttr[$attr->attrSignifier] = $attr;
+			}
+			$results[0]->collaborators = $arrCollaborators;
+			$results[0]->attributes = $arrNewAttr;
 			return $results[0];
 		}
 		return [];

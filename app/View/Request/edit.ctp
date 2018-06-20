@@ -151,13 +151,7 @@
 							'<div class="taBox">';
 
 						$placeholderText = $field->value;
-                        $val = '';
-                        foreach($asset->attributes as $attr) {
-                            if ($field->name == $attr->attrSignifier) {
-                                $val = preg_replace('/<br\/>/', "\n", $attr->attrValue);
-                                break;
-                            }
-                        }
+                        $val = preg_replace('/<br\/>/', "\n", $asset->attributes[$field->name]->attrValue);
 
 						if($field->type == 'textarea'){
 							echo '<textarea name="'.Configure::read('Collibra.formFields.'.$field->id).'" id="'.$field->id.'" class="inputShade noPlaceHolder" placeholder="'.$placeholderText.'">'.$val.'</textarea>';
