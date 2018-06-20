@@ -146,13 +146,12 @@ class RequestController extends AppController {
 			"Additional Information Requested"
 		];
 		foreach ($arrOrderedFormFields as $field) {
-			$attr = $dsa->attributes[$field];
 			$pdf->SetFont('','B',12);
 			$pdf->Cell(0,10,$field,'B',1);
 			$pdf->Ln(2);
 			$pdf->SetFont('','',9);
 
-			$attrText = $attr->attrValue;
+			$attrText = $dsa->attributes[$field]->attrValue;
 			$attrText = preg_replace('/<br[^\/,>]*\/?>/',"\n",$attrText);
 			$attrText = preg_replace(['/<li[^>]*>/','/<\/li>/'],[" ".chr(127)." ",""],$attrText);
 			$attrText = preg_replace(['/<ul[^>]*>/','/<\/ul>/'],["\n",""],$attrText);
@@ -164,18 +163,6 @@ class RequestController extends AppController {
 			$pdf->Ln(4);
 		}
 
-		$arrPersonInfo = [
-			'Requester Name' => $dsa->attributes['Requester Name'],
-			'Requester Role' => $dsa->attributes['Requester Role'],
-			'Requesting Organization' => $dsa->attributes['Requesting Organization'],
-			'Requester Email' => $dsa->attributes['Requester Email'],
-			'Requester Phone' => $dsa->attributes['Requester Phone'],
-			'Sponsor Name' => $dsa->attributes['Sponsor Name'],
-			'Sponsor Role' => $dsa->attributes['Sponsor Role'],
-			'Sponsor Email' => $dsa->attributes['Sponsor Email'],
-			'Sponsor Phone' => $dsa->attributes['Sponsor Phone']
-		];
-
 		$pdf->SetFont('','B',12);
 		$w = $pdf->GetPageWidth();
 		$pdf->Cell(($w / 4),8,"Requester",'B');
@@ -185,14 +172,14 @@ class RequestController extends AppController {
 		$pdf->Ln(2);
 
 		$pdf->SetFont('','',9);
-		$pdf->Cell(($w / 2),4,$arrPersonInfo['Requester Name']);
-		$pdf->Cell(($w / 2),4,$arrPersonInfo['Sponsor Name'],0,1);
-		$pdf->Cell(($w / 2),4,$arrPersonInfo['Requester Role'].' | '.$arrPersonInfo['Requesting Organization']);
-		$pdf->Cell(($w / 2),4,$arrPersonInfo['Sponsor Role'],0,1);
-		$pdf->Cell(($w / 2),4,$arrPersonInfo['Requester Email']);
-		$pdf->Cell(($w / 2),4,$arrPersonInfo['Sponsor Email'],0,1);
-		$pdf->Cell(($w / 2),4,$arrPersonInfo['Requester Phone']);
-		$pdf->Cell(($w / 2),4,$arrPersonInfo['Sponsor Phone'],0,1);
+		$pdf->Cell(($w / 2),4,$dsa->attributes['Requester Name']);
+		$pdf->Cell(($w / 2),4,$dsa->attributes['Sponsor Name'],0,1);
+		$pdf->Cell(($w / 2),4,$dsa->attributes['Requester Role'].' | '.$dsa->attributes['Requesting Organization']);
+		$pdf->Cell(($w / 2),4,$dsa->attributes['Sponsor Role'],0,1);
+		$pdf->Cell(($w / 2),4,$dsa->attributes['Requester Email']);
+		$pdf->Cell(($w / 2),4,$dsa->attributes['Sponsor Email'],0,1);
+		$pdf->Cell(($w / 2),4,$dsa->attributes['Requester Phone']);
+		$pdf->Cell(($w / 2),4,$dsa->attributes['Sponsor Phone'],0,1);
 
 		if (!empty($dsa->policies)) {
 			$pdf->AddPage();
@@ -457,7 +444,7 @@ class RequestController extends AppController {
 
 		$toDeleteIds = [];
 		foreach ($request->dsas as $dsa) {
-			$dsa->attributes = $this->CollibraAPI->getAttributes($dsa->dsaId);
+			list($dsa->attributes, $dsa->collaborators) = $this->CollibraAPI->getAttributes($dsa->dsaId);
 			foreach ($dsa->collaborators as $collaborator) {
 				if ($collaborator->identifiers->net_id == $netId) {
 					array_push($toDeleteIds, $collaborator->attrInfo->attrResourceId);
@@ -862,16 +849,13 @@ class RequestController extends AppController {
 				}
 			}
 
-			$additionalInfoFound = false;
 			if (!empty($request->attributes['Additional Information Requested'])) {
-				$additionalInfoFound = true;
 				$postString = http_build_query(['value' => $request->attributes['Additional Information Requested']->attrValue . $additionString]);
 				$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
 				$formResp = $this->CollibraAPI->post('attribute/'.$request->attributes['Additional Information Requested']->attrResourceId, $postString);
 				$formResp = json_decode($formResp);
 				if (!isset($formResp)) $success = false;
-			}
-			if (!$additionalInfoFound) {
+			} else {
 				$postString = http_build_query([
 					'label' => Configure::read('Collibra.formFields.descriptionOfInformation'),
 					'value' => $additionString
@@ -969,16 +953,13 @@ class RequestController extends AppController {
 			}
 
 			$request = $this->CollibraAPI->getRequestDetails($this->request->data['dsrId']);
-			$additionalInfoFound = false;
 			if (!empty($request->attributes['Additional Information Requested'])) {
-				$additionalInfoFound = true;
 				$postString = http_build_query(['value' => $request->attributes['Additional Information Requested']->attrValue . $deletionString]);
 				$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
 				$resp = $this->CollibraAPI->post('attribute/'.$request->attributes['Additional Information Requested']->attrResourceId, $postString);
 				$resp = json_decode($resp);
 				if (!isset($resp)) $success = false;
-			}
-			if (!$additionalInfoFound) {
+			} else {
 				$postString = http_build_query([
 					'label' => Configure::read('Collibra.formFields.descriptionOfInformation'),
 					'value' => $deletionString
@@ -1444,7 +1425,7 @@ class RequestController extends AppController {
 
 		if ($parent) {
 			for ($i = 0; $i < sizeof($asset->dsas); $i++) {
-				$asset->dsas[$i]->attributes = $this->CollibraAPI->getAttributes($asset->dsas[$i]->dsaId);
+				list($asset->dsas[$i]->attributes, $asset->dsas[$i]->collaborators) = $this->CollibraAPI->getAttributes($asset->dsas[$i]->dsaId);
 
 				foreach($asset->dsas[$i]->attributes as $attr) {
 					if (preg_match('/<div>/', $attr->attrValue)) {
@@ -1512,7 +1493,7 @@ class RequestController extends AppController {
 
 		if ($parent) {
 			for ($i = 0; $i < sizeof($asset->dsas); $i++) {
-				$asset->dsas[$i]->attributes = $this->CollibraAPI->getAttributes($asset->dsas[$i]->dsaId);
+				list($asset->dsas[$i]->attributes, $asset->dsas[$i]->collaborators) = $this->CollibraAPI->getAttributes($asset->dsas[$i]->dsaId);
 				$asset->dsas[$i]->roles = $this->CollibraAPI->getResponsibilities($asset->dsas[$i]->dsaVocabularyId);
 			}
 		}
@@ -1715,10 +1696,9 @@ class RequestController extends AppController {
 				'Access Rights' => 'accessRights',
 				'Access Method' => 'accessMethod',
 				'Impact on System' => 'impactOnSystem',
-				'Requester Net Id' => 'requesterNetId'
 			];
 			foreach ($arrLabelMatch as $signifier => $label) {
-				$preFilled[$label] = $draft->attributes[$signifier];
+				$preFilled[$label] = $draft->attributes[$signifier]->attrValue;
 			}
 		}
 

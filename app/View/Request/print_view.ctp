@@ -87,8 +87,10 @@
 	];
 	if (empty($asset->dsas)) {
 		foreach ($arrOrderedFormFields as $field) {
-			echo '<h3>'.$asset->attributes[$field]->attrSignifier.'</h3>'.
-				'<div class="form-field">'.$asset->attribute[$field]->attrValue.'</div>';
+			if (!empty($asset->attributes[$field])) {
+				echo '<h3>'.$asset->attributes[$field]->attrSignifier.'</h3>'.
+					'<div class="form-field">'.$asset->attribute[$field]->attrValue.'</div>';
+			}
 		}
 	}
 ?>
@@ -165,8 +167,10 @@
 		</div>
 <?php
 		foreach ($arrOrderedFormFields as $field) {
-			echo '<h3>'.$dsa->attributes[$field]->attrSignifier.'</h3>'.
-				'<div class="form-field">'.$dsa->attributes[$field]->attrValue.'</div>';
+			if (!empty($dsa->attributes[$field])) {
+				echo '<h3>'.$dsa->attributes[$field]->attrSignifier.'</h3>'.
+					'<div class="form-field">'.$dsa->attributes[$field]->attrValue.'</div>';
+			}
 		}
 		if (!empty($dsa->policies)) {
 			echo '<h3>Data Usage Policies</h3>';

@@ -128,7 +128,7 @@ class MyaccountController extends AppController {
 			}
 
 			for ($i = 0; $i < sizeof($r->dsas); $i++) {
-				$r->dsas[$i]->attributes = $this->CollibraAPI->getAttributes($r->dsas[$i]->dsaId);
+				list($r->dsas[$i]->attributes, $r->dsas[$i]->collaborators) = $this->CollibraAPI->getAttributes($r->dsas[$i]->dsaId);
 				foreach($r->dsas[$i]->attributes as $attr) {
 					if (preg_match('/<div>/', $attr->attrValue)) {
 						array_push($arrChangedAttrIds, $attr->attrResourceId);
