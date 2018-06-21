@@ -443,8 +443,8 @@
 		if (empty($asset->dsas)) {
 			foreach ($arrOrderedFormFields as $field) {
 				if (!empty($asset->attributes[$field]->attrValue)) {
-					echo '<h3 class="headerTab">'.$attr->attrSignifier.'</h3><div class="clear"></div>'.
-						'<div class="attrValue">'.$attr->attrValue.'</div>';
+					echo '<h3 class="headerTab">'.$asset->attributes[$field]->attrSignifier.'</h3><div class="clear"></div>'.
+						'<div class="attrValue">'.$asset->attributes[$field]->attrValue.'</div>';
 				}
 			}
 		}
