@@ -27,10 +27,10 @@ class RequestController extends AppController {
 		// The DSR form fields were changed on 2018/06/22; this asset's creation
 		// date relative to that date indicates which fields we have to work with
 		if ($parent) {
-			return intval($asset->attributes['Request Date']->attrValue) < 1529647200000;
+			return intval($asset->attributes['Request Date']->attrValue) < 1529625600000;
 		} else {
 			$parentDSR = $this->CollibraAPI->getRequestDetails($asset->parentId);
-			return intval($parentDSR->attributes['Request Date']->attrValue) < 1529647200000;
+			return intval($parentDSR->attributes['Request Date']->attrValue) < 1529625600000;
 		}
 	}
 
