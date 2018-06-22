@@ -342,12 +342,12 @@
 					<div class="attrValue"><?php echo $req->attributes['Requester Phone']->attrValue ?></div>
 				</div>
 				<div class="data-col">
-					<h5>Email:</h5>
-					<div class="attrValue"><?php echo $req->attributes['Requester Email']->attrValue ?></div>
-				</div>
-				<div class="data-col">
 					<h5>Role:</h5>
 					<div class="attrValue"><?php echo $req->attributes['Requester Role']->attrValue ?></div>
+				</div>
+				<div class="data-col">
+					<h5>Email:</h5>
+					<div class="attrValue"><?php echo $req->attributes['Requester Email']->attrValue ?></div>
 				</div>
 				<div class="data-col">
 					<h5>Requesting Organization:</h5>
@@ -362,16 +362,16 @@
 					<div class="attrValue"><?php echo $req->attributes['Sponsor Name']->attrValue ?></div>
 				</div>
 				<div class="data-col">
+					<h5>Sponsor Phone:</h5>
+					<div class="attrValue"><?php echo $req->attributes['Sponsor Phone']->attrValue ?></div>
+				</div>
+				<div class="data-col">
 					<h5>Sponsor Role:</h5>
 					<div class="attrValue"><?php echo $req->attributes['Sponsor Role']->attrValue ?></div>
 				</div>
 				<div class="data-col">
 					<h5>Sponsor Email:</h5>
 					<div class="attrValue"><?php echo $req->attributes['Sponsor Email']->attrValue ?></div>
-				</div>
-				<div class="data-col">
-					<h5>Sponsor Phone:</h5>
-					<div class="attrValue"><?php echo $req->attributes['Sponsor Phone']->attrValue ?></div>
 				</div>
 				<div class="clear"></div>
 
@@ -409,7 +409,12 @@
 					"Access Method",
 					"Impact on System",
 					"Application Identity",
-					"Additional Information Requested"
+					"Additional Information Requested",
+					"Description of Application or Project",
+					"Necessity of Data",
+					"Scope and Control",
+					"Requested Information Map",
+					"Data Steward Response"
 				];
 
 				if (empty($req->dsas)) {

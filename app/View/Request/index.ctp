@@ -77,6 +77,18 @@
 				}
 			}
 		});
+
+		$('.radioBox').click(function() {
+			if ($(this).hasClass('selected')) {
+				return;
+			}
+			$('.radioBox').each(function() {
+				$(this).toggleClass('selected');
+			});
+			$('#readWriteAccessInput').val($(this).data('value'));
+
+			autoSave();
+		});
 	});
 
 	$(window).resize(resultsWidth);
@@ -269,6 +281,9 @@
 						"sponsorRole",
 						"sponsorEmail",
 						"sponsorPhone",
+						"readWriteAccess",
+						"requestedInformationMap",
+						"technologyType",
 						"api",
 						"tables",
 						Configure::read('Collibra.requiredElementsString'),
@@ -301,8 +316,20 @@
 						}
 
 						echo '</div>';
-					}
+					} ?>
 
+					<label class="headerTab" for="readWriteAccess">Read-Write Access</label>
+					<div class="clear"></div>
+					<div class="taBox">
+						<div class="info">Will you need write access to the data or read only?</div><br/>
+						<div style="height:65px;">
+							<input type="hidden" id="readWriteAccessInput" name="readWriteAccess" value="<?= empty($preFilled['readWriteAccess']) ? 'false' : $preFilled['readWriteAccess'] ?>">
+							<div class="radioBox <?= empty($preFilled['readWriteAccess']) ? 'selected' : ( $preFilled['readWriteAccess'] === 'false' ? 'selected' : '' ) ?> grow" data-value="false">Read-only</div>
+							<div class="radioBox <?= empty($preFilled['readWriteAccess']) ? '' : ( $preFilled['readWriteAccess'] === 'true' ? 'selected' : '' ) ?> grow" data-value="true">Read-write</div>
+						</div>
+					</div>
+
+					<?php
 					if (!empty($policies)) {
 						echo '<div class="policy-header-wrapper"><label class="headerTab">Data Usage Policies</label>
 								  <div class="policies-btn grow">

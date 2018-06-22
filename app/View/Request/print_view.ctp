@@ -83,7 +83,12 @@
 		"Access Rights",
 		"Access Method",
 		"Impact on System",
-		"Additional Information Requested"
+		"Additional Information Requested",
+		"Description of Application or Project",
+		"Necessity of Data",
+		"Scope and Control",
+		"Requested Information Map",
+		"Data Steward Response"
 	];
 	if (empty($asset->dsas)) {
 		foreach ($arrOrderedFormFields as $field) {

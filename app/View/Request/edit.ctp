@@ -120,29 +120,8 @@
 
 				</div>
 				<?php endif;
-					$arrNonDisplay = [
-						"requesterName",
-						"requesterEmail",
-						"requesterPhone",
-						"requesterRole",
-						"requesterPersonId",
-						"requesterNetId",
-						"requestingOrganization",
-						"sponsorName",
-						"sponsorRole",
-						"sponsorEmail",
-						"sponsorPhone",
-						"api",
-						"tables",
-						Configure::read('Collibra.requiredElementsString'),
-						Configure::read('Collibra.additionalElementsString')
-                    ];
 
-
-					foreach($formFields->formProperties as $field){
-						if(in_array($field->id, $arrNonDisplay)){
-							continue;
-						}
+					foreach($formFields as $field){
 						echo '<label class="headerTab" for="'.$field->id.'">'.$field->name;
 						if ($field->id == 'applicationName') echo '*';
 						echo '</label>'.

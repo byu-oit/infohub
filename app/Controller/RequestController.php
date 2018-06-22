@@ -23,6 +23,17 @@ class RequestController extends AppController {
 		return strcmp($a->domainname, $b->domainname);
 	}
 
+	private function isLegacy($asset, $parent = true) {
+		// The DSR form fields were changed on 2018/06/22; this asset's creation
+		// date relative to that date indicates which fields we have to work with
+		if ($parent) {
+			return intval($asset->attributes['Request Date']->attrValue) < 1529647200000;
+		} else {
+			$parentDSR = $this->CollibraAPI->getRequestDetails($asset->parentId);
+			return intval($parentDSR->attributes['Request Date']->attrValue) < 1529647200000;
+		}
+	}
+
 	// Called by a Collibra workflow upon approval of a DSA
 	public function generatePDF() {
 		$this->autoRender = false;
@@ -143,24 +154,31 @@ class RequestController extends AppController {
 			"Access Method",
 			"Impact on System",
 			"Application Identity",
-			"Additional Information Requested"
+			"Additional Information Requested",
+			"Description of Application or Project",
+			"Necessity of Data",
+			"Scope and Control",
+			"Requested Information Map",
+			"Data Steward Response"
 		];
 		foreach ($arrOrderedFormFields as $field) {
-			$pdf->SetFont('','B',12);
-			$pdf->Cell(0,10,$field,'B',1);
-			$pdf->Ln(2);
-			$pdf->SetFont('','',9);
+			if (!empty($dsa->attributes[$field])) {
+				$pdf->SetFont('','B',12);
+				$pdf->Cell(0,10,$field,'B',1);
+				$pdf->Ln(2);
+				$pdf->SetFont('','',9);
 
-			$attrText = $dsa->attributes[$field]->attrValue;
-			$attrText = preg_replace('/<br[^\/,>]*\/?>/',"\n",$attrText);
-			$attrText = preg_replace(['/<li[^>]*>/','/<\/li>/'],[" ".chr(127)." ",""],$attrText);
-			$attrText = preg_replace(['/<ul[^>]*>/','/<\/ul>/'],["\n",""],$attrText);
-			$attrText = preg_replace('/<[^><]*>/','',$attrText);
-			$attrText = str_replace(chr(194),'',$attrText);
-			$attrText = preg_replace('/^\s/','',$attrText);
+				$attrText = $dsa->attributes[$field]->attrValue;
+				$attrText = preg_replace('/<br[^\/,>]*\/?>/',"\n",$attrText);
+				$attrText = preg_replace(['/<li[^>]*>/','/<\/li>/'],[" ".chr(127)." ",""],$attrText);
+				$attrText = preg_replace(['/<ul[^>]*>/','/<\/ul>/'],["\n",""],$attrText);
+				$attrText = preg_replace('/<[^><]*>/','',$attrText);
+				$attrText = str_replace(chr(194),'',$attrText);
+				$attrText = preg_replace('/^\s/','',$attrText);
 
-			$pdf->MultiCell(0,4,$attrText,0,'J');
-			$pdf->Ln(4);
+				$pdf->MultiCell(0,4,$attrText,0,'J');
+				$pdf->Ln(4);
+			}
 		}
 
 		$pdf->SetFont('','B',12);
@@ -486,20 +504,32 @@ class RequestController extends AppController {
 		$postData['attributeIds'] = [];
 		$postData['values'] = [];
 		$arrQueue = $this->Session->read('queue');
-		array_push($postData['attributeIds'], Configure::read('Collibra.formFields.descriptionOfInformation'));
-		array_push($postData['values'], json_encode($arrQueue).'  ');
+		$queueSize = count($arrQueue, COUNT_RECURSIVE);
+		if ($queueSize < 75) {
+			array_push($postData['attributeIds'], Configure::read('Collibra.formFields.draftUserCart'));
+			array_push($postData['values'], json_encode($arrQueue).'  ');
+		}
 
 		foreach ($this->request->data as $label => $value) {
-			if (empty($value) || $label == 'descriptionOfInformation') continue;
+			if (empty($value)) continue;
 			array_push($postData['attributeIds'], Configure::read("Collibra.formFields.{$label}"));
 			array_push($postData['values'], $value.'  ');
 		}
 
+		$success = true;
 		$postString = http_build_query($postData);
 		$postString = preg_replace("/%5B[0-9]+%5D/", "", $postString);
-		$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.createDSRDraft').'/start', $postString);
+		$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.createDSRDraft').'/start', rtrim($postString, '+'));
+		if ($resp->code != '200') $success = false;
 
-		if ($resp->code != '200') {
+		if ($queueSize >= 75) {
+			$newDraft = $this->CollibraAPI->checkForDSRDraft($netId);
+			$postString = http_build_query(['label' => Configure::read('Collibra.formFields.draftUserCart'), 'value' => json_encode($arrQueue)]);
+			$resp = $this->CollibraAPI->post('term/'.$newDraft[0]->id.'/attributes', $postString);
+			if ($resp->code != '201') $success = false;
+		}
+
+		if (!$success) {
 			if (!empty($oldDraft)) {
 				$this->CollibraAPI->post('term/'.$oldDraft[0]->id.'/signifier', 'signifier=DRAFT-'.$netId);
 			}
@@ -524,7 +554,7 @@ class RequestController extends AppController {
 			return;
 		}
 		$draft = $this->CollibraAPI->getRequestDetails($draftId[0]->id);
-		$attrId = $draft->attributes['Additional Information Requested']->attrResourceId;
+		$attrId = $draft->attributes['Draft User Cart']->attrResourceId;
 
 		$arrQueue = $this->Session->read('queue');
 		$postData['value'] = json_encode($arrQueue);
@@ -783,7 +813,17 @@ class RequestController extends AppController {
 				}
 			}
 
+			$legacy = $this->isLegacy($request);
 			if (!empty($addedApis)) {
+				if (!$legacy && strpos($request->attributes['Technology Type']->attrValue, 'API') === false) {
+					$attr = $request->attributes['Technology Type'];
+					$newValues = array_merge(explode(';', $attr->attrValue), ['API']);
+					$postString = http_build_query(['value' => $newValues]);
+					$postString = preg_replace('/%5B[0-9]*%5D/', '', $postString);
+					$resp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $postString);
+					if ($resp->code != '200') $success = false;
+				}
+
 				$additionString .= "<br/><br/><b>Newly Requested APIs:</b><br/>";
 				foreach ($addedApis as $apiHost => $apiPaths) {
 					foreach ($apiPaths as $apiPath => $term) {
@@ -818,6 +858,15 @@ class RequestController extends AppController {
 			}
 
 			if (!empty($addedTables)) {
+				if (!$legacy && strpos($request->attributes['Technology Type']->attrValue, 'Data Warehouse') === false) {
+					$attr = $request->attributes['Technology Type'];
+					$newValues = array_merge(explode(';', $attr->attrValue), ['Data Warehouse']);
+					$postString = http_build_query(['value' => $newValues]);
+					$postString = preg_replace('/%5B[0-9]*%5D/', '', $postString);
+					$resp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $postString);
+					if ($resp->code != '200') $success = false;
+				}
+
 				$additionString .= "<br/><br/><b>Newly Requested Database Tables:</b><br/>";
 				foreach ($addedTables as $tableName => $table) {
 					$additionString .= ". . <u><b>{$tableName}</u></b><br/>";
@@ -849,15 +898,17 @@ class RequestController extends AppController {
 				}
 			}
 
-			if (!empty($request->attributes['Additional Information Requested'])) {
-				$postString = http_build_query(['value' => $request->attributes['Additional Information Requested']->attrValue . $additionString]);
+			$attrKey = $legacy ? 'Additional Information Requested' : 'Requested Information Map';
+			$attrName = $legacy ? 'descriptionOfInformation' : 'requestedInformationMap';
+			if (!empty($request->attributes[$attrKey])) {
+				$postString = http_build_query(['value' => $request->attributes[$attrKey]->attrValue . $additionString]);
 				$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
-				$formResp = $this->CollibraAPI->post('attribute/'.$request->attributes['Additional Information Requested']->attrResourceId, $postString);
+				$formResp = $this->CollibraAPI->post('attribute/'.$request->attributes[$attrKey]->attrResourceId, $postString);
 				$formResp = json_decode($formResp);
 				if (!isset($formResp)) $success = false;
 			} else {
 				$postString = http_build_query([
-					'label' => Configure::read('Collibra.formFields.descriptionOfInformation'),
+					'label' => Configure::read('Collibra.formFields.'.$attrName),
 					'value' => $additionString
 				]);
 				$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
@@ -953,15 +1004,19 @@ class RequestController extends AppController {
 			}
 
 			$request = $this->CollibraAPI->getRequestDetails($this->request->data['dsrId']);
-			if (!empty($request->attributes['Additional Information Requested'])) {
-				$postString = http_build_query(['value' => $request->attributes['Additional Information Requested']->attrValue . $deletionString]);
+			$legacy = $this->isLegacy($request);
+			$attrKey = $legacy ? 'Additional Information Requested' : 'Requested Information Map';
+			$attrName = $legacy ? 'descriptionOfInformation' : 'requestedInformationMap';
+
+			if (!empty($request->attributes[$attrKey])) {
+				$postString = http_build_query(['value' => $request->attributes[$attrKey]->attrValue . $deletionString]);
 				$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
-				$resp = $this->CollibraAPI->post('attribute/'.$request->attributes['Additional Information Requested']->attrResourceId, $postString);
+				$resp = $this->CollibraAPI->post('attribute/'.$request->attributes[$attrKey]->attrResourceId, $postString);
 				$resp = json_decode($resp);
 				if (!isset($resp)) $success = false;
 			} else {
 				$postString = http_build_query([
-					'label' => Configure::read('Collibra.formFields.descriptionOfInformation'),
+					'label' => Configure::read('Collibra.formFields.'.$attrName),
 					'value' => $deletionString
 				]);
 				$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
@@ -1163,14 +1218,91 @@ class RequestController extends AppController {
 			$this->redirect(['controller' => 'myaccount', 'action' => 'index']);
 		}
 
-		// load form fields for ISA workflow
-		$formResp = $this->CollibraAPI->get('workflow/'.Configure::read('Collibra.workflow.intakeDSR').'/form/start');
-		$formResp = json_decode($formResp);
+		if ($this->isLegacy($asset, $parent)) {
+			$formFields = [
+				(object) [
+					'id' => 'applicationName',
+					'name' => 'Application Name',
+					'type' => 'string',
+					'value' => 'Name of Application you are creating. (Should match in WSO2 API Manager if applicable.)',
+					'writable' => 1,
+					'required' => null,
+					'multiValue' => null
+				],
+				(object) [
+					'id' => 'descriptionOfInformation',
+					'name' => 'Additional Information Requested',
+					'type' => 'textarea',
+					'value' => 'Was there other information you need to access but were unable to find on this site?',
+					'writable' => 1,
+					'required' => null,
+					'multiValue' => null
+				],
+				(object) [
+					'id' => 'descriptionOfIntendedUse',
+					'name' => 'Description of Intended Use',
+					'type' => 'textarea',
+					'value' => 'Enter a paragraph or two describing the application and how access to the requested information will help your users to be more successful (e.g. quicker, more accurate, safer, less work).',
+					'writable' => 1,
+					'required' => null,
+					'multiValue' => null
+				],
+				(object) [
+					'id' => 'accessRights',
+					'name' => 'Access Rights',
+					'type' => 'textarea',
+					'value' => 'Who will be allowed to access the requested information?',
+					'writable' => 1,
+					'required' => null,
+					'multiValue' => null
+				],
+				(object) [
+					'id' => 'accessMethod',
+					'name' => 'Access Method',
+					'type' => 'textarea',
+					'value' => 'How is access expected to be granted and managed to ensure compliance?',
+					'writable' => 1,
+					'required' => null,
+					'multiValue' => null
+				],
+				(object) [
+					'id' => 'impactOnSystem',
+					'name' => 'Impact on System',
+					'type' => 'textarea',
+					'value' => 'How often will the information need to be updated (e.g. These five data elements need to be refreshed on demand - anticipated no more than 15 times per hours)?',
+					'writable' => 1,
+					'required' => null,
+					'multiValue' => null
+				]
+			];
+		} else {
+			$formResp = $this->CollibraAPI->get('workflow/'.Configure::read('Collibra.workflow.intakeDSR').'/form/start');
+			$formResp = json_decode($formResp);
+			$formFields = array_filter($formResp->formProperties, function($property) {
+				return !in_array($property->id, [
+					'requesterName',
+					'requesterEmail',
+					'requesterPhone',
+					'requesterRole',
+					'requesterPersonId',
+					'requesterNetId',
+					'requestingOrganization',
+					'sponsorName',
+					'sponsorRole',
+					'sponsorEmail',
+					'sponsorPhone',
+					'api',
+					'tables',
+					'readWriteAccess',
+					'requestedInformationMap',
+					'technologyType',
+					Configure::read('Collibra.requiredElementsString'),
+					Configure::read('Collibra.additionalElementsString')
+				]);
+			});
+		}
 
-		$this->set('guest', $guest);
-		$this->set('formFields', $formResp);
-		$this->set('asset', $asset);
-		$this->set('parent', $parent);
+		$this->set(compact('guest', 'formFields', 'asset', 'parent', 'legacy'));
 		$this->set('submitErr', isset($this->request->query['err']));
 	}
 
@@ -1230,8 +1362,12 @@ class RequestController extends AppController {
 		$businessTermIds = [];
 		$apis = [];
 		$tables = [];
+		$individualTerms = [];
 		foreach ($arrQueue['businessTerms'] as $id => $term) {
 			array_push($businessTermIds, $id);
+			if (empty($term['apiPath']) && empty($term['apiHost']) && empty($term['tableName'])) {
+				array_push($individualTerms, $term['term']);
+			}
 			if (!empty($term['apiPath']) && !empty($term['apiHost'])) {
 				$apis[$term['apiHost']][$term['apiPath']] = [];
 			}
@@ -1255,12 +1391,129 @@ class RequestController extends AppController {
 			}
 		}
 
-		$additionalInformationAPIs = "";
+		foreach ($apis as $apiHost => $apiPaths) {
+			foreach ($apiPaths as $apiPath => $ignore) {
+				$apiFields = $this->CollibraAPI->getApiFields($apiHost, $apiPath);
+				foreach ($apiFields as $field) {
+					if (!empty($field->assetType) && strtolower($field->assetType) == 'fieldset') {
+						continue;
+					}
+					if (empty($field->businessTerm[0]->termId)) {
+						if (array_key_exists($field->name, $arrQueue['apiFields'])) {
+							$apis[$apiHost][$apiPath]['unmapped']['requested'][] = $field->name;
+						} else {
+							$apis[$apiHost][$apiPath]['unmapped']['unrequested'][] = $field->name;
+						}
+					} else {
+						if (array_key_exists($field->businessTerm[0]->termId, $arrQueue['concepts'])) {
+							$apis[$apiHost][$apiPath]['requestedConcept'][] = '('.$field->businessTerm[0]->termCommunityName.') '.$field->businessTerm[0]->term;
+						} else if (array_key_exists($field->businessTerm[0]->termId, $arrQueue['businessTerms'])) {
+							$apis[$apiHost][$apiPath]['requestedBusinessTerm'][] = '('.$field->businessTerm[0]->termCommunityName.') '.$field->businessTerm[0]->term;
+						} else {
+							$apis[$apiHost][$apiPath]['unrequested'][] = '('.$field->businessTerm[0]->termCommunityName.') '.$field->businessTerm[0]->term;
+						}
+					}
+				}
+			}
+		}
+		foreach ($tables as $tableName => $_) {
+			$tableColumns = $this->CollibraAPI->getTableColumns($tableName);
+			foreach ($tableColumns as $column) {
+				if (empty($column->businessTerm[0]->termId)) {
+					if (array_key_exists($column->columnName, $arrQueue['dbColumns'])) {
+						$tables[$tableName]['unmapped']['requested'][] = $column->columnName;
+					} else {
+						$tables[$tableName]['unmapped']['unrequested'][] = $column->columnName;
+					}
+				} else {
+					if (array_key_exists($column->businessTerm[0]->termId, $arrQueue['concepts'])) {
+						$tables[$tableName]['requestedConcept'][] = '('.$column->businessTerm[0]->termCommunityName.') '.$column->businessTerm[0]->term;
+					} else if (array_key_exists($column->businessTerm[0]->termId, $arrQueue['businessTerms'])) {
+						$tables[$tableName]['requestedBusinessTerm'][] = '('.$column->businessTerm[0]->termCommunityName.') '.$column->businessTerm[0]->term;
+					} else {
+						$tables[$tableName]['unrequested'][] = '('.$column->businessTerm[0]->termCommunityName.') '.$column->businessTerm[0]->term;
+					}
+				}
+			}
+		}
+		$postData['requestedInformationMap'] = '';
+		if (!empty($individualTerms)) {
+			$postData['requestedInformationMap'] .= "<b>Individual Business Terms:</b><br/>. . " . implode("<br/>. . ", $individualTerms) . "<br/><br/>";
+		}
+		if (!empty($apis) || !empty($arrQueue['emptyApis'])) {
+			$postData['requestedInformationMap'] .= "<b>Requested APIs:</b><br/>";
+		}
 		foreach ($arrQueue['emptyApis'] as $path => $api) {
-			$additionalInformationAPIs .= "\n. . {$api['apiHost']}/{$path}\n. . . . [No specified output fields]";
+			$postData['requestedInformationMap'] .= "<br/>. . {$api['apiHost']}/{$path}<br/>. . . . [No specified output fields]";
 			$apis[$api['apiHost']][$path] = [];
 		}
-		$this->request->data['descriptionOfInformation'] .= $additionalInformationAPIs;
+		if (!empty($apis)) {
+			$apiList = "";
+			foreach ($apis as $apiHost => $apiPaths) {
+				foreach ($apiPaths as $apiPath => $term) {
+					$apiList .= ". . <u><b>{$apiHost}/{$apiPath}</u></b><br/>";
+					if (!empty($term['requestedBusinessTerm'])) {
+						$term['requestedBusinessTerm'] = array_unique($term['requestedBusinessTerm']);
+						sort($term['requestedBusinessTerm']);
+						$apiList .= "<br/>. . . . <b>Requested business terms:</b><br/>. . . . . . " . implode("<br/>. . . . . . ", $term['requestedBusinessTerm']) . "<br/>";
+					}
+					if (!empty($term['requestedConcept'])) {
+						$term['requestedConcept'] = array_unique($term['requestedConcept']);
+						sort($term['requestedConcept']);
+						$apiList .= ". . . . Requested conceptual terms:<br/>. . . . . . " . implode("<br/>. . . . . . ", $term['requestedConcept']) . "<br/>";
+					}
+					if (!empty($term['unrequested'])) {
+						$term['unrequested'] = array_unique($term['unrequested']);
+						sort($term['unrequested']);
+						$apiList .= "<br/>. . . . <b>Unrequested terms:</b><br/>. . . . . . " . implode("<br/>. . . . . . ", $term['unrequested']) . "<br/>";
+					}
+					if (!empty($term['unmapped'])) {
+						$apiList .= "<br/>. . . . <b>*Fields with no Business Terms:</b><br/>";
+						if (!empty($term['unmapped']['requested'])) {
+							$apiList .= ". . . . . . Requested:<br/>. . . . . . . . " . implode("<br/>. . . . . . . . ", $term['unmapped']['requested']) . "<br/>";
+						}
+						if (!empty($term['unmapped']['unrequested'])) {
+							$apiList .= ". . . . . . Unrequested:<br/>. . . . . . . . " . implode("<br/>. . . . . . . . ", $term['unmapped']['unrequested']) . "<br/>";
+						}
+					}
+					$apiList .= "<br/><br/>";
+				}
+			}
+			$postData['requestedInformationMap'] .= $apiList;
+		}
+		if (!empty($tables)) {
+			$tableList = "<b>Requested Tables:</b><br/>";
+			foreach ($tables as $tableName => $term) {
+				$tableList .= ". . <u><b>{$tableName}</u></b><br/>";
+				if (!empty($term['requestedBusinessTerm'])) {
+					$term['requestedBusinessTerm'] = array_unique($term['requestedBusinessTerm']);
+					sort($term['requestedBusinessTerm']);
+					$tableList .= "<br/>. . . . <b>Requested business terms:</b><br/>. . . . . . " . implode("<br/>. . . . . . ", $term['requestedBusinessTerm']) . "<br/>";
+				}
+				if (!empty($term['requestedConcept'])) {
+					$term['requestedConcept'] = array_unique($term['requestedConcept']);
+					sort($term['requestedConcept']);
+					$tableList .= ". . . . Requested conceptual terms:<br/>. . . . . . " . implode("<br/>. . . . . . ", $term['requestedConcept']) . "<br/>";
+				}
+				if (!empty($term['unrequested'])) {
+					$term['unrequested'] = array_unique($term['unrequested']);
+					sort($term['unrequested']);
+					$tableList .= "<br/>. . . . <b>Unrequested terms:</b><br/>. . . . . . " . implode("<br/>. . . . . . ", $term['unrequested']) . "<br/>";
+				}
+				if (!empty($term['unmapped'])) {
+					$tableList .= "<br/>. . . . <b>*Columns with no Business Terms:</b><br/>";
+					if (!empty($term['unmapped']['requested'])) {
+						$tableList .= ". . . . . . Requested:<br/>. . . . . . . . " . implode("<br/>. . . . . . . . ", $term['unmapped']['requested']) . "<br/>";
+					}
+					if (!empty($term['unmapped']['unrequested'])) {
+						$tableList .= ". . . . . . Unrequested:<br/>. . . . . . . . " . implode("<br/>. . . . . . . . ", $term['unmapped']['unrequested']) . "<br/>";
+					}
+				}
+				$tableList .= "<br/>";
+			}
+			$postData['requestedInformationMap'] .= $tableList;
+		}
+
 
 		$name = explode(' ',$this->request->data['name']);
 		$firstName = $name[0];
@@ -1284,6 +1537,13 @@ class RequestController extends AppController {
 		$postData['requesterEmail'] = $email;
 		$postData['requesterPhone'] = $phone;
 		$postData['requesterRole'] = $role;
+
+		if (!empty($apis)) {
+			$postData['technologyType'][] = 'API';
+		}
+		if (!empty($tables)) {
+			$postData['technologyType'][] = 'Data Warehouse';
+		}
 
 		$requiredElementsString = Configure::read('Collibra.requiredElementsString');
 		$additionalElementsString = Configure::read('Collibra.additionalElementsString');
@@ -1345,7 +1605,6 @@ class RequestController extends AppController {
 		//so we have to tweak the output a bit
 		$postString = http_build_query($postData);
 		$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
-		$postString = preg_replace('/%0D%0A/','<br/>',$postString);
 
 		$formResp = $this->CollibraAPI->post(
 			'workflow/'.Configure::read('Collibra.workflow.intakeDSR').'/start',
@@ -1487,10 +1746,6 @@ class RequestController extends AppController {
 			}
 		}
 
-		// sort request attribute data based on workflow form field order
-		$workflowResp = $this->CollibraAPI->get('workflow/'.Configure::read('Collibra.workflow.intakeDSR').'/form/start');
-		$workflowResp = json_decode($workflowResp);
-
 		if ($parent) {
 			for ($i = 0; $i < sizeof($asset->dsas); $i++) {
 				list($asset->dsas[$i]->attributes, $asset->dsas[$i]->collaborators) = $this->CollibraAPI->getAttributes($asset->dsas[$i]->dsaId);
@@ -1532,148 +1787,6 @@ class RequestController extends AppController {
 			exit;
 		}
 
-		$apis = [];
-		$tables = [];
-		$individualTerms = [];
-		foreach ($arrQueue['businessTerms'] as $term) {
-			if (empty($term['apiPath']) && empty($term['apiHost']) && empty($term['tableName'])) {
-				array_push($individualTerms, $term['term']);
-			}
-			if (!empty($term['apiPath']) && !empty($term['apiHost'])) {
-				$apis[$term['apiHost']][$term['apiPath']] = [];
-			}
-			if (!empty($term['tableName'])) {
-				$tables[$term['tableName']] = [];
-			}
-		}
-		foreach ($arrQueue['apiFields'] as $fieldName => $field) {
-			if (!empty($field['apiPath']) && !empty($field['apiHost'])) {
-				$apis[$field['apiHost']][$field['apiPath']] = [];
-			}
-		}
-		foreach ($arrQueue['dbColumns'] as $column) {
-			if (!empty($column['tableName'])) {
-				$tables[$column['tableName']] = [];
-			}
-		}
-
-		$preFilled = [];
-		foreach ($apis as $apiHost => $apiPaths) {
-			foreach ($apiPaths as $apiPath => $ignore) {
-				$apiFields = $this->CollibraAPI->getApiFields($apiHost, $apiPath);
-				foreach ($apiFields as $field) {
-					if (!empty($field->assetType) && strtolower($field->assetType) == 'fieldset') {
-						continue;
-					}
-					if (empty($field->businessTerm[0]->termId)) {
-						if (array_key_exists($field->name, $arrQueue['apiFields'])) {
-							$apis[$apiHost][$apiPath]['unmapped']['requested'][] = $field->name;
-						} else {
-							$apis[$apiHost][$apiPath]['unmapped']['unrequested'][] = $field->name;
-						}
-					} else {
-						if (array_key_exists($field->businessTerm[0]->termId, $arrQueue['concepts'])) {
-							$apis[$apiHost][$apiPath]['requestedConcept'][] = '('.$field->businessTerm[0]->termCommunityName.') '.$field->businessTerm[0]->term;
-						} else if (array_key_exists($field->businessTerm[0]->termId, $arrQueue['businessTerms'])) {
-							$apis[$apiHost][$apiPath]['requestedBusinessTerm'][] = '('.$field->businessTerm[0]->termCommunityName.') '.$field->businessTerm[0]->term;
-						} else {
-							$apis[$apiHost][$apiPath]['unrequested'][] = '('.$field->businessTerm[0]->termCommunityName.') '.$field->businessTerm[0]->term;
-						}
-					}
-				}
-			}
-		}
-		foreach ($tables as $tableName => $_) {
-			$tableColumns = $this->CollibraAPI->getTableColumns($tableName);
-			foreach ($tableColumns as $column) {
-				if (empty($column->businessTerm[0]->termId)) {
-					if (array_key_exists($column->columnName, $arrQueue['dbColumns'])) {
-						$tables[$tableName]['unmapped']['requested'][] = $column->columnName;
-					} else {
-						$tables[$tableName]['unmapped']['unrequested'][] = $column->columnName;
-					}
-				} else {
-					if (array_key_exists($column->businessTerm[0]->termId, $arrQueue['concepts'])) {
-						$tables[$tableName]['requestedConcept'][] = '('.$column->businessTerm[0]->termCommunityName.') '.$column->businessTerm[0]->term;
-					} else if (array_key_exists($column->businessTerm[0]->termId, $arrQueue['businessTerms'])) {
-						$tables[$tableName]['requestedBusinessTerm'][] = '('.$column->businessTerm[0]->termCommunityName.') '.$column->businessTerm[0]->term;
-					} else {
-						$tables[$tableName]['unrequested'][] = '('.$column->businessTerm[0]->termCommunityName.') '.$column->businessTerm[0]->term;
-					}
-				}
-			}
-		}
-		$preFilled['descriptionOfInformation'] = '';
-		if (!empty($individualTerms)) {
-			$preFilled['descriptionOfInformation'] .= "<b>Individual Business Terms:</b>\n. . " . implode("\n. . ", $individualTerms) . "\n\n";
-		}
-		if (!empty($apis)) {
-			$apiList = "<b>Requested APIs:</b>\n";
-			foreach ($apis as $apiHost => $apiPaths) {
-				foreach ($apiPaths as $apiPath => $term) {
-					$apiList .= ". . <u><b>{$apiHost}/{$apiPath}</u></b>\n";
-					if (!empty($term['requestedBusinessTerm'])) {
-						$term['requestedBusinessTerm'] = array_unique($term['requestedBusinessTerm']);
-						sort($term['requestedBusinessTerm']);
-						$apiList .= "\n. . . . <b>Requested business terms:</b>\n. . . . . . " . implode("\n. . . . . . ", $term['requestedBusinessTerm']) . "\n";
-					}
-					if (!empty($term['requestedConcept'])) {
-						$term['requestedConcept'] = array_unique($term['requestedConcept']);
-						sort($term['requestedConcept']);
-						$apiList .= ". . . . Requested conceptual terms:\n. . . . . . " . implode("\n. . . . . . ", $term['requestedConcept']) . "\n";
-					}
-					if (!empty($term['unrequested'])) {
-						$term['unrequested'] = array_unique($term['unrequested']);
-						sort($term['unrequested']);
-						$apiList .= "\n. . . . <b>Unrequested terms:</b>\n. . . . . . " . implode("\n. . . . . . ", $term['unrequested']) . "\n";
-					}
-					if (!empty($term['unmapped'])) {
-						$apiList .= "\n. . . . <b>*Fields with no Business Terms:</b>\n";
-						if (!empty($term['unmapped']['requested'])) {
-							$apiList .= ". . . . . . Requested:\n. . . . . . . . " . implode("\n. . . . . . . . ", $term['unmapped']['requested']) . "\n";
-						}
-						if (!empty($term['unmapped']['unrequested'])) {
-							$apiList .= ". . . . . . Unrequested:\n. . . . . . . . " . implode("\n. . . . . . . . ", $term['unmapped']['unrequested']) . "\n";
-						}
-					}
-					$apiList .= "\n\n";
-				}
-			}
-			$preFilled['descriptionOfInformation'] .= $apiList;
-		}
-		if (!empty($tables)) {
-			$tableList = "<b>Requested Tables:</b>\n";
-			foreach ($tables as $tableName => $term) {
-				$tableList .= ". . <u><b>{$tableName}</u></b>\n";
-				if (!empty($term['requestedBusinessTerm'])) {
-					$term['requestedBusinessTerm'] = array_unique($term['requestedBusinessTerm']);
-					sort($term['requestedBusinessTerm']);
-					$tableList .= "\n. . . . <b>Requested business terms:</b>\n. . . . . . " . implode("\n. . . . . . ", $term['requestedBusinessTerm']) . "\n";
-				}
-				if (!empty($term['requestedConcept'])) {
-					$term['requestedConcept'] = array_unique($term['requestedConcept']);
-					sort($term['requestedConcept']);
-					$tableList .= ". . . . Requested conceptual terms:\n. . . . . . " . implode("\n. . . . . . ", $term['requestedConcept']) . "\n";
-				}
-				if (!empty($term['unrequested'])) {
-					$term['unrequested'] = array_unique($term['unrequested']);
-					sort($term['unrequested']);
-					$tableList .= "\n. . . . <b>Unrequested terms:</b>\n. . . . . . " . implode("\n. . . . . . ", $term['unrequested']) . "\n";
-				}
-				if (!empty($term['unmapped'])) {
-					$tableList .= "\n. . . . <b>*Columns with no Business Terms:</b>\n";
-					if (!empty($term['unmapped']['requested'])) {
-						$tableList .= ". . . . . . Requested:\n. . . . . . . . " . implode("\n. . . . . . . . ", $term['unmapped']['requested']) . "\n";
-					}
-					if (!empty($term['unmapped']['unrequested'])) {
-						$tableList .= ". . . . . . Unrequested:\n. . . . . . . . " . implode("\n. . . . . . . . ", $term['unmapped']['unrequested']) . "\n";
-					}
-				}
-				$tableList .= "\n";
-			}
-			$preFilled['descriptionOfInformation'] .= $tableList;
-		}
-
 		// Retrieve the customer's work if they have a draft
 		$draftId = $this->CollibraAPI->checkForDSRDraft($this->Auth->user('username'));
 		if (!empty($draftId)) {
@@ -1691,14 +1804,16 @@ class RequestController extends AppController {
 				'Sponsor Role' => 'sponsorRole',
 				'Sponsor Email' => 'sponsorEmail',
 				'Application Name' => 'applicationName',
-				//'Additional Information Requested' => 'descriptionOfInformation',
-				'Description of Intended Use' => 'descriptionOfIntendedUse',
-				'Access Rights' => 'accessRights',
-				'Access Method' => 'accessMethod',
-				'Impact on System' => 'impactOnSystem',
+				'Additional Information Requested' => 'descriptionOfInformation',
+				'Scope and Control' => 'scopeAndControl',
+				'Necessity of Data' => 'necessityOfData',
+				'Description of Application or Project' => 'descriptionOfApplicationOrProject',
+				'Read-write Access' => 'readWriteAccess'
 			];
 			foreach ($arrLabelMatch as $signifier => $label) {
-				$preFilled[$label] = $draft->attributes[$signifier]->attrValue;
+				if (!empty($draft->attributes[$signifier])) {
+					$preFilled[$label] = $draft->attributes[$signifier]->attrValue;
+				}
 			}
 		}
 

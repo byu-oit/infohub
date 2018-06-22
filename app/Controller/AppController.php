@@ -143,12 +143,8 @@ class AppController extends Controller {
 		}
 
 		$draft = $this->CollibraAPI->getRequestDetails($draftId[0]->id);
-		if (!empty($draft->attributes['Additional Information Requested'])) {
-			$arrQueue = json_decode($draft->attributes['Additional Information Requested']->attrValue, true);
-			// Temporary for transition to new queue structure
-			if (!isset($arrQueue['dbColumns'])) {
-				$arrQueue['dbColumns'] = [];
-			}
+		if (!empty($draft->attributes['Draft User Cart'])) {
+			$arrQueue = json_decode($draft->attributes['Draft User Cart']->attrValue, true);
 			$this->Session->write('queue', $arrQueue);
 		}
 
