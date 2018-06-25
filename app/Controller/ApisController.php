@@ -70,8 +70,8 @@ class ApisController extends AppController {
 		$this->set(compact('hostname', 'basePath', 'fields', 'isOITEmployee', 'containsFieldset'));
 
 		$arrRecent = $this->Session->check('recentAPIs') ? $this->Session->read('recentAPIs') : [];
-		array_unshift($arrRecent, $basePath);
-		$arrRecent = array_unique($arrRecent);
+		array_unshift($arrRecent, ['host' => $hostname, 'basePath' => $basePath]);
+		$arrRecent = array_unique($arrRecent, SORT_REGULAR);
 		$this->Session->write('recentAPIs', array_slice($arrRecent, 0, 5));
 
 		if (array_key_exists('checkout', $this->request->query)) {

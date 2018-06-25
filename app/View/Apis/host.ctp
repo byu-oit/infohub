@@ -59,7 +59,7 @@ $(document).ready(function() {
 				<ul class="catalogParent">
 					<?php foreach ($recent as $endpoint): ?>
 						<li class="catalogItem">
-							<?= $this->Html->link($endpoint, array_merge(['action' => 'view', 'hostname' => $hostname], explode('/', $endpoint))) ?>
+							<?= $this->Html->link($endpoint['basePath'], array_merge(['action' => 'view', 'hostname' => $endpoint['host']], explode('/', $endpoint['basePath']))) ?>
 						</li>
 					<?php endforeach ?>
 				</ul>
