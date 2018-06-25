@@ -214,7 +214,7 @@
 				<h3 class="headerTab">Requester Information*</h3><div class="edit-btn grow" id="net-id" title="Enter a Net ID to populate all fields"></div>
 				<div id="net-id-input-wrapper">
 					<label for="requesterNetId">Requester Net Id*</label>
-					<input type="text" id="net-id-input" name="requesterNetId" class="inputShade" placeholder="Input requester's Net ID" value="<?= empty($preFilled['requesterNetId']) ? h($netId) : h($preFilled['requesterNetId']) ?>" data-last-save="<?=$netId?>">
+					<input type="text" id="net-id-input" name="requesterNetId" class="inputShade" placeholder="Input requester's Net ID" value="<?= empty($preFilled['requesterNetId']) ? h($netId) : h($preFilled['requesterNetId']) ?>" data-last-save="<?= empty($preFilled['requesterNetId']) ? h($netId) : h($preFilled['requesterNetId']) ?>">
 					<div class="save grow">Save</div>
 				</div>
 				<div class="clear"></div>

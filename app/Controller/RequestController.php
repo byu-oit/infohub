@@ -1815,6 +1815,9 @@ class RequestController extends AppController {
 					$preFilled[$label] = $draft->attributes[$signifier]->attrValue;
 				}
 			}
+			if (!empty($draft->collaborators)) {
+				$preFilled['requesterNetId'] = $draft->collaborators[0]->attrInfo->attrValue;
+			}
 		}
 
 		$termResp = $this->CollibraAPI->getBusinessTermDetails($arrQueue['businessTerms']);
