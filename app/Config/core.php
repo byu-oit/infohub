@@ -118,7 +118,7 @@ if (!function_exists('denv')) {
 			'sponsorPhone' => 'd16d9253-e1fc-4d3b-a5a7-39d2ffb92560',
 			'sponsorRole' => '2791b03b-464a-4bc9-b97d-2b70d4274a1e',
 			'sponsorEmail' => '51e3cd5e-9aa9-4953-8a29-31cfd0492d0c',
-			'applicationName' => 'c70f71fb-a92b-4034-b8b6-9f042c0a39ea',
+			'applicationOrProjectName' => 'c70f71fb-a92b-4034-b8b6-9f042c0a39ea',
 			'descriptionOfInformation' => '6b41a821-2a26-4fe8-8202-23442c1e54bb',
 			'descriptionOfApplicationOrProject' => '459f3f5c-2904-47f7-b91d-005a02ad2fce',
 			'necessityOfData' => '12d99132-6845-48f9-89b6-e4c74e1ab978',

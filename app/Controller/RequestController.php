@@ -148,7 +148,7 @@ class RequestController extends AppController {
 		$pdf->Ln(8);
 
 		$arrOrderedFormFields = [
-			"Application Name",
+			"Application or Project Name",
 			"Description of Intended Use",
 			"Access Rights",
 			"Access Method",
@@ -1221,10 +1221,10 @@ class RequestController extends AppController {
 		if ($this->isLegacy($asset, $parent)) {
 			$formFields = [
 				(object) [
-					'id' => 'applicationName',
-					'name' => 'Application Name',
+					'id' => 'applicationOrProjectName',
+					'name' => 'Application or Project Name',
 					'type' => 'string',
-					'value' => 'Name of Application you are creating. (Should match in WSO2 API Manager if applicable.)',
+					'value' => 'This name will be included in the title of this request to help you easily find it in the future.',
 					'writable' => 1,
 					'required' => null,
 					'multiValue' => null
@@ -1803,7 +1803,7 @@ class RequestController extends AppController {
 				'Sponsor Phone' => 'sponsorPhone',
 				'Sponsor Role' => 'sponsorRole',
 				'Sponsor Email' => 'sponsorEmail',
-				'Application Name' => 'applicationName',
+				'Application or Project Name' => 'applicationOrProjectName',
 				'Additional Information Requested' => 'descriptionOfInformation',
 				'Scope and Control' => 'scopeAndControl',
 				'Necessity of Data' => 'necessityOfData',

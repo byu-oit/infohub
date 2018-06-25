@@ -148,7 +148,7 @@
 				return false;
 			}
 		});
-		if(!isValid) alert('Requester and Sponsor Information and Application Name are required.');
+		if(!isValid) alert('Requester and Sponsor Information and Application or Project Name are required.');
 		return isValid;
 	}
 
@@ -294,7 +294,7 @@
 							continue;
 						}
 						echo '<label class="headerTab" for="'.$field->id.'">'.$field->name;
-						if ($field->name == 'Application Name') echo '*';
+						if ($field->name == 'Application or Project Name') echo '*';
 						echo '</label>'.
 							'<div class="clear"></div>'.
 							'<div class="taBox">';
@@ -321,7 +321,7 @@
 					<label class="headerTab" for="readWriteAccess">Read-Write Access</label>
 					<div class="clear"></div>
 					<div class="taBox">
-						<div class="info">Will you need write access to the data or read only?</div><br/>
+						<div class="info">Most requests need read-only access to the data, but let us know if you need write access as well.</div><br/>
 						<div style="height:65px;">
 							<input type="hidden" id="readWriteAccessInput" name="readWriteAccess" value="<?= empty($preFilled['readWriteAccess']) ? 'false' : $preFilled['readWriteAccess'] ?>">
 							<div class="radioBox <?= empty($preFilled['readWriteAccess']) ? 'selected' : ( $preFilled['readWriteAccess'] === 'false' ? 'selected' : '' ) ?> grow" data-value="false">Read-only</div>

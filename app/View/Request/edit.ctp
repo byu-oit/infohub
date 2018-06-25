@@ -35,9 +35,9 @@
 		});
 		if(!isValid) {
 			if ('<?=$parent?>' == '1') {
-				alert('Requester and Sponsor Information and Application Name are required.');
+				alert('Requester and Sponsor Information and Application or Project Name are required.');
 			} else {
-				alert('Application Name is required.');
+				alert('Application or Project Name is required.');
 			}
 		}
 		return isValid;
@@ -123,7 +123,7 @@
 
 					foreach($formFields as $field){
 						echo '<label class="headerTab" for="'.$field->id.'">'.$field->name;
-						if ($field->id == 'applicationName') echo '*';
+						if ($field->id == 'applicationOrProjectName') echo '*';
 						echo '</label>'.
 							'<div class="clear"></div>'.
 							'<div class="taBox">';

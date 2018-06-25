@@ -74,8 +74,8 @@
 			<?php endif ?>
 	<div class="clear"></div>
 
-	<h3>Application Name</h3>
-	<div class="form-field"><?= $asset->attributes['Application Name']->attrValue ?></div>
+	<h3>Application or Project Name</h3>
+	<div class="form-field"><?= $asset->attributes['Application or Project Name']->attrValue ?></div>
 
 <?php
 	$arrOrderedFormFields = [

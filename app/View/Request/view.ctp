@@ -426,9 +426,9 @@
 		</div>
 		<div class="clear"></div>
 
-		<h3 class="headerTab">Application Name</h3>
+		<h3 class="headerTab">Application or Project Name</h3>
 		<div class="clear"></div>
-		<div class="attrValue"><?= $asset->attributes['Application Name']->attrValue ?></div>
+		<div class="attrValue"><?= $asset->attributes['Application or Project Name']->attrValue ?></div>
 
 <?php
 		$arrOrderedFormFields = [
