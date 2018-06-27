@@ -545,6 +545,10 @@ $(document).on( 'click', function ( e ) {
 	if ( $( e.target ).closest('.autoComplete').length === 0 ) {
 		$('.autoComplete').hide();
 	}
+	if ( $( e.target ).closest('#browse-tab').length === 0 && $('#drop-down-menu').hasClass('open') ) {
+		$('#browse-tab').removeClass('open');
+		$('#drop-down-menu').removeClass('open');
+	}
 });
 
 $(window).scroll(function(){
