@@ -505,10 +505,8 @@ class RequestController extends AppController {
 		$postData['values'] = [];
 		$arrQueue = $this->Session->read('queue');
 		$queueSize = count($arrQueue, COUNT_RECURSIVE);
-		if ($queueSize < 75) {
-			array_push($postData['attributeIds'], Configure::read('Collibra.formFields.draftUserCart'));
-			array_push($postData['values'], json_encode($arrQueue).'  ');
-		}
+		array_push($postData['attributeIds'], Configure::read('Collibra.formFields.draftUserCart'));
+		array_push($postData['values'], json_encode($arrQueue).'  ');
 
 		foreach ($this->request->data as $label => $value) {
 			if (empty($value)) continue;
@@ -521,13 +519,6 @@ class RequestController extends AppController {
 		$postString = preg_replace("/%5B[0-9]+%5D/", "", $postString);
 		$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.createDSRDraft').'/start', rtrim($postString, '+'));
 		if ($resp->code != '200') $success = false;
-
-		if ($queueSize >= 75) {
-			$newDraft = $this->CollibraAPI->checkForDSRDraft($netId);
-			$postString = http_build_query(['label' => Configure::read('Collibra.formFields.draftUserCart'), 'value' => json_encode($arrQueue)]);
-			$resp = $this->CollibraAPI->post('term/'.$newDraft[0]->id.'/attributes', $postString);
-			if ($resp->code != '201') $success = false;
-		}
 
 		if (!$success) {
 			if (!empty($oldDraft)) {
@@ -968,20 +959,6 @@ class RequestController extends AppController {
 
 			foreach ($additionalTerms as $term) {
 				array_push($relationsPostData['additionalTerms'], $term->termId);
-			}
-
-			while (count($relationsPostData['requestedTerms']) + count($relationsPostData['additionalTerms']) > 100) {
-				if (count($relationsPostData['requestedTerms']) > count($relationsPostData['additionalTerms'])) {
-					$longerArrayKey = 'requestedTerms';
-				} else {
-					$longerArrayKey = 'additionalTerms';
-				}
-				$postString = http_build_query(['dsrId' => $relationsPostData['dsrId'], $longerArrayKey => array_slice($relationsPostData[$longerArrayKey], 0, 100)]);
-				$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
-				$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.changeDSRRelations').'/start', $postString);
-				if ($resp->code != '200') $success = false;
-
-				$relationsPostData[$longerArrayKey] = array_slice($relationsPostData[$longerArrayKey], 100);
 			}
 
 			$postString = http_build_query($relationsPostData);

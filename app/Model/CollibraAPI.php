@@ -767,19 +767,6 @@ class CollibraAPI extends Model {
 			return true;
 		}
 
-		while (count($wfPostData['source']) + count($wfPostData['target']) > 100) {
-			$postString = http_build_query([
-				'relationTypeId' => $wfPostData['relationTypeId'],
-				'source' => array_slice($wfPostData['source'], 0, 50),
-				'target' => array_slice($wfPostData['target'], 0, 50)
-			]);
-			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
-			$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', $postString);
-
-			$wfPostData['source'] = array_slice($wfPostData['source'], 50);
-			$wfPostData['target'] = array_slice($wfPostData['target'], 50);
-		}
-
 		$postString = http_build_query($wfPostData);
 		$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
 		$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', $postString);
@@ -1135,19 +1122,6 @@ class CollibraAPI extends Model {
 			array_push($wfPostData['target'], $id);
 		}
 
-		while (count($wfPostData['source']) + count($wfPostData['target']) > 100) {
-			$postString = http_build_query([
-				'relationTypeId' => $wfPostData['relationTypeId'],
-				'source' => array_slice($wfPostData['source'], 0, 50),
-				'target' => array_slice($wfPostData['target'], 0, 50)
-			]);
-			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
-			$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', $postString);
-
-			$wfPostData['source'] = array_slice($wfPostData['source'], 50);
-			$wfPostData['target'] = array_slice($wfPostData['target'], 50);
-		}
-
 		$postString = http_build_query($wfPostData);
 		$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
 		$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', $postString);
@@ -1214,19 +1188,6 @@ class CollibraAPI extends Model {
 
 		if (empty($wfPostData['source']) && empty($wfPostData['target'])) {
 			return true;
-		}
-
-		while (count($wfPostData['source']) + count($wfPostData['target']) > 100) {
-			$postString = http_build_query([
-				'relationTypeId' => $wfPostData['relationTypeId'],
-				'source' => array_slice($wfPostData['source'], 0, 50),
-				'target' => array_slice($wfPostData['target'], 0, 50)
-			]);
-			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
-			$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', $postString);
-
-			$wfPostData['source'] = array_slice($wfPostData['source'], 50);
-			$wfPostData['target'] = array_slice($wfPostData['target'], 50);
 		}
 
 		$postString = http_build_query($wfPostData);
