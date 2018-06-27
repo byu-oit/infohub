@@ -150,15 +150,21 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 		<nav>
 			<a id="mob-nav" class="box-shadow-menu inner">&nbsp;</a>
 			<ul id="mainNav" class="inner">
-				<li><a href="/search" id="searchLink">Search</a></li>
+				<li id="browse-tab">
+					Browse Data
+					<div id="drop-down-menu">
+						<a href="/search" class="drop-down-link">Search Business Terms</a>
+						<h6>Technology Types</h6>
+						<a href="/apis" class="drop-down-link">APIs</a>
+						<a href="/databases" class="drop-down-link">Databases</a>
+					</div>
+				</li>
 				<li><a href="/people" id="findLink">Find People</a></li>
 				<li><a href="/resources" id="resourceLink">Procedures</a></li>
-				<li><a href="/apis" id="apisLink">APIs</a></li>
-				<li><a href="/databases" id="databasesLink">Databases</a></li>
 				<li>
 					<a href="https://developer.byu.edu/" target="_blank">
 						<i class="fa fa-external-link" aria-hidden="true"></i>
-						API Documentation
+						Developer Portal
 					</a>
 				</li>
 				<li>

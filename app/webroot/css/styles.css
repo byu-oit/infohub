@@ -426,9 +426,9 @@ nav ul {
   position: relative;
   margin: 0;
   padding: 0;
+  padding-left: 95px;
   list-style: none;
   *zoom: 1;
-  padding-left: 5%;
 }
 nav ul:before,
 nav ul:after {
@@ -447,22 +447,68 @@ nav ul li {
   display: inline-block;
   text-align: center;
 }
-nav ul li a {
+nav ul li a:not(.drop-down-link),
+nav ul li#browse-tab {
   color: #e0edf9;
   display: block;
-  padding: 9px 24px;
+  padding: 9px 31px;
   text-shadow: 0px -1px 0px black;
   font-size: 14px;
   text-decoration: none;
   white-space: nowrap;
 }
-nav ul li a:hover,
-nav ul li a.active {
+nav ul li a:hover:not(.drop-down-link),
+nav ul li a.active,
+nav ul li#browse-tab:hover:not(.open),
+nav ul li#browse-tab.active {
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #336699), color-stop(1px, #003366), color-stop(100%, #002255));
   background-image: -webkit-linear-gradient(#336699, #003366 1px, #002255);
   background-image: -moz-linear-gradient(#336699, #003366 1px, #002255);
   background-image: -o-linear-gradient(#336699, #003366 1px, #002255);
   background-image: linear-gradient(#336699, #003366 1px, #002255);
+}
+nav ul li#browse-tab {
+  cursor: pointer;
+}
+nav ul li#browse-tab.open {
+  background-color: white;
+  background-image: none;
+  color: #001948;
+  font-weight: 500;
+  text-shadow: none;
+}
+#drop-down-menu {
+  display: none;
+}
+#drop-down-menu.open {
+  display: block;
+  position: absolute;
+  left: 95px;
+  top: 37px;
+  width: 17%;
+  padding: 8px 0px 8px 0px;
+  z-index: 10;
+  background-color: white;
+  box-shadow: 6px 6px 15px -5px rgba(0, 25, 72, 0.5);
+  text-align: left;
+  cursor: auto;
+}
+#drop-down-menu .drop-down-link {
+  display: block;
+  width: 84%;
+  padding: 0px 8%;
+  color: #001948;
+  text-decoration: none;
+  white-space: nowrap;
+}
+#drop-down-menu .drop-down-link:hover {
+  background-color: #ebebeb;
+}
+#drop-down-menu h6 {
+  margin: 8px 0px 0px 15px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: underline;
 }
 footer #footerTop {
   background-color: #e8e8e8;

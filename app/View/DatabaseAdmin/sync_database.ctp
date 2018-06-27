@@ -6,7 +6,7 @@
 <script>
 
     $(document).ready(function() {
-		$("#databasesLink").addClass('active');
+		$("#browse-tab").addClass('active');
 
         $('.sync-btn').click(function() {
             var thisElem = $(this);

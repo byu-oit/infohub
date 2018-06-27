@@ -9,6 +9,12 @@ $(document).ready(function(){
 		$('#mainNav').toggle("slide", { direction: "left" }, 300);
 	});
 
+	// Browse nav menu
+	$('#browse-tab').click(function() {
+		$(this).toggleClass('open');
+		$('#drop-down-menu').toggleClass('open');
+	});
+
 	// Help Pop-out functionality
 	$("#deskTopHelp").click(function() {
 		$(this).hide();

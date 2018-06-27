@@ -4,7 +4,7 @@
 ?>
 <script>
 	$(document).ready(function() {
-		$("#apisLink").addClass('active');
+		$("#browse-tab").addClass('active');
 
 		$('input.fieldset').change(function() {
 			var thisElem = $(this);

@@ -4,7 +4,7 @@
 ?>
 <script>
 	$(document).ready(function() {
-		$("#databasesLink").addClass('active');
+		$("#browse-tab").addClass('active');
 	});
 </script>
 <!-- Background image div -->

@@ -6,7 +6,7 @@
 <script type="text/javascript" src="/js/jquery.serialize-object.min.js"></script>
 <script>
 	$(document).ready(function() {
-		$("#databasesLink").addClass('active');
+		$("#browse-tab").addClass('active');
 	});
 
 	function chunkPostData() {
