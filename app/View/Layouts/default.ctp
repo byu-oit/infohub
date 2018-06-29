@@ -151,7 +151,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			<a id="mob-nav" class="box-shadow-menu inner">&nbsp;</a>
 			<ul id="mainNav" class="inner">
 				<li id="browse-tab">
-					Browse Data
+					Find Data
 					<div id="drop-down-menu">
 						<a href="/search" class="drop-down-link">Search Business Terms</a>
 						<h6>Technology Types</h6>

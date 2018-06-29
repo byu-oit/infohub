@@ -569,6 +569,9 @@ footer #footerBottom p a:hover {
     padding: 0 4%;
     width: 92%;
   }
+  #drop-down-menu.open {
+    left: 4%;
+  }
 }
 @media screen and (min-width: 850px) {
   footer #footerTop .footerBox {
