@@ -266,10 +266,12 @@ class RequestController extends AppController {
 				$arrTerms = empty($this->request->data['t']) ? null : $this->request->data['t'];
 				$arrFields = empty($this->request->data['f']) ? null : $this->request->data['f'];
 				$arrColumns = empty($this->request->data['c']) ? null : $this->request->data['c'];
+				$arrSamlFields = empty($this->request->data['s']) ? null : $this->request->data['s'];
 				$apiHost = empty($this->request->data['apiHost']) ? null : $this->request->data['apiHost'];
 				$apiPath = empty($this->request->data['apiPath']) ? null : $this->request->data['apiPath'];
 				$schemaName = empty($this->request->data['schemaName']) ? null : $this->request->data['schemaName'];
 				$tableName = empty($this->request->data['tableName']) ? null : $this->request->data['tableName'];
+				$responseName = empty($this->request->data['responseName']) ? null : $this->request->data['responseName'];
 
 				$arrQueue = $this->Session->read('queue');
 
@@ -292,10 +294,10 @@ class RequestController extends AppController {
 
 							if ($requestable && !$concept) {
 								$newTermsAdded++;
-								$arrQueue['businessTerms'][$term->termrid] = ['term' => $term->termsignifier, 'communityId' => $term->commrid, 'apiHost' => $apiHost, 'apiPath' => $apiPath, 'schemaName' => $schemaName, 'tableName' => $tableName];
+								$arrQueue['businessTerms'][$term->termrid] = ['term' => $term->termsignifier, 'communityId' => $term->commrid, 'apiHost' => $apiHost, 'apiPath' => $apiPath, 'schemaName' => $schemaName, 'tableName' => $tableName, 'responseName' => $responseName];
 							} else if ($requestable && $concept) {
 								$newTermsAdded++;
-								$arrQueue['concepts'][$term->termrid] = ['term' => $term->termsignifier, 'communityId' => $term->commrid, 'apiHost' => $apiHost, 'apiPath' => $apiPath, 'schemaName' => $schemaName, 'tableName' => $tableName];
+								$arrQueue['concepts'][$term->termrid] = ['term' => $term->termsignifier, 'communityId' => $term->commrid, 'apiHost' => $apiHost, 'apiPath' => $apiPath, 'schemaName' => $schemaName, 'tableName' => $tableName, 'responseName' => $responseName];
 							}
 						}
 					}
@@ -315,6 +317,14 @@ class RequestController extends AppController {
 						if (empty($arrQueue['dbColumns'][$column])) {
 							$newTermsAdded++;
 							$arrQueue['dbColumns'][$column] = ['name' => end((explode(" > ", $column))), 'schemaName' => $schemaName, 'tableName' => $tableName];
+						}
+					}
+				}
+				if (isset($arrSamlFields)) {
+					foreach ($arrSamlFields as $field) {
+						if (empty($arrQueue['samlFields'][$field])) {
+							$newTermsAdded++;
+							$arrQueue['samlFields'][$field] = ['name' => $field, 'responseName' => $responseName];
 						}
 					}
 				}
@@ -339,6 +349,8 @@ class RequestController extends AppController {
 				unset($arrQueue['apiFields'][$termID]);
 			} else if (array_key_exists($termID, $arrQueue['dbColumns'])) {
 				unset($arrQueue['dbColumns'][$termID]);
+			} else if (array_key_exists($termID, $arrQueue['samlFields'])) {
+				unset($arrQueue['samlFields'][$termID]);
 			} else if (array_key_exists($termID, $arrQueue['emptyApis'])) {
 				unset($arrQueue['emptyApis'][$termID]);
 			}
@@ -354,6 +366,7 @@ class RequestController extends AppController {
 		$arrQueue['concepts'] = [];
 		$arrQueue['apiFields'] = [];
 		$arrQueue['dbColumns'] = [];
+		$arrQueue['samlFields'] = [];
 		$arrQueue['emptyApis'] = [];
 		$this->Session->write('queue', $arrQueue);
 		$this->updateDraftCart();
@@ -367,6 +380,7 @@ class RequestController extends AppController {
 			  count($arrQueue['concepts']) +
 			  count($arrQueue['apiFields']) +
 			  count($arrQueue['dbColumns']) +
+			  count($arrQueue['samlFields']) +
 			  count($arrQueue['emptyApis']);
 	}
 
@@ -375,7 +389,7 @@ class RequestController extends AppController {
 		$responseHTML = '';
 
 		$arrQueue = $this->Session->read('queue');
-		$responseHTML = '<h3>Requested Items: '.(count($arrQueue['businessTerms']) + count($arrQueue['concepts']) + count($arrQueue['apiFields']) + count($arrQueue['dbColumns']) + count($arrQueue['emptyApis'])).'</h3>'.
+		$responseHTML = '<h3>Requested Items: '.(count($arrQueue['businessTerms']) + count($arrQueue['concepts']) + count($arrQueue['apiFields']) + count($arrQueue['dbColumns']) + count($arrQueue['samlFields']) + count($arrQueue['emptyApis'])).'</h3>'.
 			'<a class="close" href="javascript: hideRequestQueue()">X</a>'.
 			'<div class="arrow"></div>'.
 			'<a class="clearQueue" href="javascript: clearRequestQueue()">Empty cart</a>';
@@ -385,6 +399,7 @@ class RequestController extends AppController {
 			!empty($arrQueue['concepts']) ||
 			!empty($arrQueue['apiFields']) ||
 			!empty($arrQueue['dbColumns']) ||
+			!empty($arrQueue['samlFields']) ||
 			!empty($arrQueue['emptyApis'])
 		){
 			$responseHTML .= '<a class="btn-orange" href="/request">View Request</a>';
@@ -585,6 +600,7 @@ class RequestController extends AppController {
 
 			$addedApis = [];
 			$addedTables = [];
+			$addedSamlResponses = [];
 			$additionString = "<br/><br/>Addition, ".date('Y-m-d').":";
 
 			$relationsPostData['dsrId'] = $this->request->data['dsrId'];
@@ -592,6 +608,7 @@ class RequestController extends AppController {
 			$relationsPostData['additionalTerms'] = [];
 			$relationsPostData['apis'] = [];
 			$relationsPostData['tables'] = [];
+			$relationsPostData['saml'] = [];
 			$relationsPostData['policies'] = [];
 
 			$addPolicy = false;
@@ -625,6 +642,9 @@ class RequestController extends AppController {
 							} else if (isset($queueTerm['tableName'])) {
 								$addedTables[$queueTerm['tableName']] = [];
 								$additionString .= "<br/>{$queueTerm['term']} (Business Term), from table: {$queueTerm['tableName']}";
+							} else if (isset($queueTerm['responseName'])) {
+								$addedSamlResponses[$queueTerm['responseName']] = [];
+								$additionString .= "<br/>{$queueTerm['term']} (Business Term), from SAML response: {$queueTerm['responseName']}";
 							} else {
 								$additionString .= "<br/>{$queueTerm['term']} (Business Term)";
 							}
@@ -669,6 +689,15 @@ class RequestController extends AppController {
 						}
 					}
 				}
+				if (isset($this->request->data['arrSamlFields'])) {
+					foreach ($this->request->data['arrSamlFields'] as $field) {
+						$addedSamlResponses[$field['responseName']] = [];
+						$additionString .= "<br/>{$field['field']}";
+						if (array_key_exists($field['field'], $arrQueue['samlFields'])) {
+							unset($arrQueue['samlFields'][$field['field']]);
+						}
+					}
+				}
 				if (isset($this->request->data['arrApis'])) {
 					foreach ($this->request->data['arrApis'] as $api) {
 						$addedApis[$arrQueue['emptyApis'][$api]['apiHost']][$api] = [];
@@ -689,6 +718,10 @@ class RequestController extends AppController {
 
 			foreach ($request->necessaryTables as $alreadyListed) {
 				unset($addedTables[$alreadyListed->tableName]);
+			}
+
+			foreach ($request->necessarySamlResponses as $alreadyListed) {
+				unset($addedSamlResponses[$alreadyListed->responseName]);
 			}
 
 			$additionalTerms = [];
@@ -803,6 +836,59 @@ class RequestController extends AppController {
 					}
 				}
 			}
+			foreach ($addedSamlResponses as $responseName => $_) {
+				$response = $this->CollibraAPI->getSamlResponseObject($responseName);
+				array_push($relationsPostData['saml'], $response->id);
+
+				$fields = $this->CollibraAPI->getSamlResponseFields($responseName);
+				foreach ($fields as $field) {
+					if (empty($field->businessTerm[0]->termId)) {
+						$requestedField = false;
+						if (isset($this->request->data['arrSamlFields'])) {
+							foreach ($this->request->data['arrSamlFields'] as $requested) {
+								if ($field->fieldName == $requested['field']) {
+									$requestedField = true;
+									break;
+								}
+							}
+						}
+						if ($requestedField) {
+							$addedSamlResponses[$responseName]['unmapped']['requested'][] = $field->fieldName;
+						} else {
+							$addedSamlResponses[$responseName]['unmapped']['unrequested'][] = $field->fieldName;
+						}
+					} else {
+						array_push($additionalTerms, $field->businessTerm[0]);
+						$requestedConcept = false;
+						if (isset($this->request->data['arrConcepts'])) {
+							foreach ($this->request->data['arrConcepts'] as $concept) {
+								if ($field->businessTerm[0]->termId == $concept['id']) {
+									$requestedConcept = true;
+									break;
+								}
+							}
+						}
+						if ($requestedConcept) {
+							$addedSamlResponses[$responseName]['requestedConcept'][] = '('.$field->businessTerm[0]->termCommunityName.') '.$field->businessTerm[0]->term;
+						} else {
+							$requestedTerm = false;
+							if (isset($this->request->data['arrBusinessTerms'])) {
+								foreach ($this->request->data['arrBusinessTerms'] as $termid) {
+									if ($field->businessTerm[0]->termId == $termid) {
+										$requestedTerm = true;
+										break;
+									}
+								}
+							}
+							if ($requestedTerm) {
+								$addedSamlResponses[$responseName]['requestedBusinessTerm'][] = '('.$field->businessTerm[0]->termCommunityName.') '.$field->businessTerm[0]->term;
+							} else {
+								$addedSamlResponses[$responseName]['unrequested'][] = '('.$field->businessTerm[0]->termCommunityName.') '.$field->businessTerm[0]->term;
+							}
+						}
+					}
+				}
+			}
 
 			$legacy = $this->isLegacy($request);
 			if (!empty($addedApis)) {
@@ -883,6 +969,47 @@ class RequestController extends AppController {
 						}
 						if (!empty($table['unmapped']['unrequested'])) {
 							$additionString .= ". . . . . . Unrequested:<br/>. . . . . . . . " . implode("<br/>. . . . . . . . ", $table['unmapped']['unrequested']) . "<br/>";
+						}
+					}
+					$additionString .= "<br/>";
+				}
+			}
+
+			if (!empty($addedSamlResponses)) {
+				if (!$legacy && strpos($request->attributes['Technology Type']->attrValue, 'SAML') === false) {
+					$attr = $request->attributes['Technology Type'];
+					$newValues = array_merge(explode(';', $attr->attrValue), ['SAML']);
+					$postString = http_build_query(['value' => $newValues]);
+					$postString = preg_replace('/%5B[0-9]*%5D/', '', $postString);
+					$resp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $postString);
+					if ($resp->code != '200') $success = false;
+				}
+
+				$additionString .= "<br/><br/><b>Newly Requested SAML Responses:</b><br/>";
+				foreach ($addedSamlResponses as $responseName => $response) {
+					$additionString .= ". . <u><b>{$responseName}</u></b><br/>";
+					if (!empty($response['requestedBusinessTerm'])) {
+						$response['requestedBusinessTerm'] = array_unique($response['requestedBusinessTerm']);
+						sort($response['requestedBusinessTerm']);
+						$additionString .= "<br/>. . . . <b>Requested business terms:</b><br/>. . . . . . " . implode("<br/>. . . . . . ", $response['requestedBusinessTerm']) . "<br/>";
+					}
+					if (!empty($response['requestedConcept'])) {
+						$response['requestedConcept'] = array_unique($response['requestedConcept']);
+						sort($response['requestedConcept']);
+						$additionString .= ". . . . Requested conceptual terms:<br/>. . . . . . " . implode("<br/>. . . . . . ", $response['requestedConcept']) . "<br/>";
+					}
+					if (!empty($response['unrequested'])) {
+						$response['unrequested'] = array_unique($response['unrequested']);
+						sort($response['unrequested']);
+						$additionString .= "<br/>. . . . <b>Unrequested terms:</b><br/>. . . . . . " . implode("<br/>. . . . . . ", $response['unrequested']) . "<br/>";
+					}
+					if (!empty($response['unmapped'])) {
+						$additionString .= "<br/>. . . . <b>*Fields with no Business Terms:</b><br/>";
+						if (!empty($response['unmapped']['requested'])) {
+							$additionString .= ". . . . . . Requested:<br/>. . . . . . . . " . implode("<br/>. . . . . . . . ", $response['unmapped']['requested']) . "<br/>";
+						}
+						if (!empty($response['unmapped']['unrequested'])) {
+							$additionString .= ". . . . . . Unrequested:<br/>. . . . . . . . " . implode("<br/>. . . . . . . . ", $response['unmapped']['unrequested']) . "<br/>";
 						}
 					}
 					$additionString .= "<br/>";
@@ -1015,6 +1142,14 @@ class RequestController extends AppController {
 				foreach ($columns as $column) {
 					if (!empty($column->businessTerm) && in_array($column->businessTerm[0]->termId, $this->request->data['arrIds'])) {
 						array_push($nowAdditionallyIncluded, $column->businessTerm[0]->termId);
+					}
+				}
+			}
+			foreach ($request->necessarySamlResponses as $response) {
+				$fields = $this->CollibraAPI->getSamlResponseFields($response->responseName);
+				foreach ($fields as $field) {
+					if (!empty($field->businessTerm) && in_array($field->businessTerm[0]->termId, $this->request->data['arrIds'])) {
+						array_push($nowAdditionallyIncluded, $field->businessTerm[0]->termId);
 					}
 				}
 			}
@@ -1270,6 +1405,7 @@ class RequestController extends AppController {
 					'sponsorPhone',
 					'api',
 					'tables',
+					'saml',
 					'readWriteAccess',
 					'requestedInformationMap',
 					'technologyType',
@@ -1330,6 +1466,7 @@ class RequestController extends AppController {
 			empty($arrQueue['concepts']) &&
 			empty($arrQueue['apiFields']) &&
 			empty($arrQueue['dbColumns']) &&
+			empty($arrQueue['samlFields']) &&
 			empty($arrQueue['emptyApis'])
 		) {
 			$this->redirect(['action' => 'index', '?' => ['err' => 1]]);
@@ -1342,14 +1479,14 @@ class RequestController extends AppController {
 		$individualTerms = [];
 		foreach ($arrQueue['businessTerms'] as $id => $term) {
 			array_push($businessTermIds, $id);
-			if (empty($term['apiPath']) && empty($term['apiHost']) && empty($term['tableName'])) {
-				array_push($individualTerms, $term['term']);
-			}
 			if (!empty($term['apiPath']) && !empty($term['apiHost'])) {
 				$apis[$term['apiHost']][$term['apiPath']] = [];
-			}
-			if (!empty($term['tableName'])) {
+			} else if (!empty($term['tableName'])) {
 				$tables[$term['tableName']] = [];
+			} else if (!empty($term['responseName'])) {
+				$samlResponses[$term['responseName']] = [];
+			} else {
+				array_push($individualTerms, $term['term']);
 			}
 		}
 		foreach ($arrQueue['concepts'] as $id => $term) {
@@ -1365,6 +1502,11 @@ class RequestController extends AppController {
 		foreach ($arrQueue['dbColumns'] as $columnName => $column) {
 			if (!empty($column['tableName'])) {
 				$tables[$column['tableName']] = [];
+			}
+		}
+		foreach ($arrQueue['samlFields'] as $fieldName => $field) {
+			if (!empty($field['responseName'])) {
+				$samlResponses[$field['responseName']] = [];
 			}
 		}
 
@@ -1409,6 +1551,26 @@ class RequestController extends AppController {
 						$tables[$tableName]['requestedBusinessTerm'][] = '('.$column->businessTerm[0]->termCommunityName.') '.$column->businessTerm[0]->term;
 					} else {
 						$tables[$tableName]['unrequested'][] = '('.$column->businessTerm[0]->termCommunityName.') '.$column->businessTerm[0]->term;
+					}
+				}
+			}
+		}
+		foreach ($samlResponses as $responseName => $_) {
+			$responseFields = $this->CollibraAPI->getSamlResponseFields($responseName);
+			foreach ($responseFields as $field) {
+				if (empty($field->businessTerm[0]->termId)) {
+					if (array_key_exists($field->fieldName, $arrQueue['samlFields'])) {
+						$samlResponses[$responseName]['unmapped']['requested'][] = $field->fieldName;
+					} else {
+						$samlResponses[$responseName]['unmapped']['unrequested'][] = $field->fieldName;
+					}
+				} else {
+					if (array_key_exists($field->businessTerm[0]->termId, $arrQueue['concepts'])) {
+						$samlResponses[$responseName]['requestedConcept'][] = '('.$field->businessTerm[0]->termCommunityName.') '.$field->businessTerm[0]->term;
+					} else if (array_key_exists($field->businessTerm[0]->termId, $arrQueue['businessTerms'])) {
+						$samlResponses[$responseName]['requestedBusinessTerm'][] = '('.$field->businessTerm[0]->termCommunityName.') '.$field->businessTerm[0]->term;
+					} else {
+						$samlResponses[$responseName]['unrequested'][] = '('.$field->businessTerm[0]->termCommunityName.') '.$field->businessTerm[0]->term;
 					}
 				}
 			}
@@ -1490,6 +1652,38 @@ class RequestController extends AppController {
 			}
 			$postData['requestedInformationMap'] .= $tableList;
 		}
+		if (!empty($samlResponses)) {
+			$responseList = "<b>Requested SAML Responses:</b><br/>";
+			foreach ($samlResponses as $responseName => $term) {
+				$responseList .= ". . <u><b>{$responseName}</u></b><br/>";
+				if (!empty($term['requestedBusinessTerm'])) {
+					$term['requestedBusinessTerm'] = array_unique($term['requestedBusinessTerm']);
+					sort($term['requestedBusinessTerm']);
+					$responseList .= "<br/>. . . . <b>Requested business terms:</b><br/>. . . . . . " . implode("<br/>. . . . . . ", $term['requestedBusinessTerm']) . "<br/>";
+				}
+				if (!empty($term['requestedConcept'])) {
+					$term['requestedConcept'] = array_unique($term['requestedConcept']);
+					sort($term['requestedConcept']);
+					$responseList .= ". . . . Requested conceptual terms:<br/>. . . . . . " . implode("<br/>. . . . . . ", $term['requestedConcept']) . "<br/>";
+				}
+				if (!empty($term['unrequested'])) {
+					$term['unrequested'] = array_unique($term['unrequested']);
+					sort($term['unrequested']);
+					$responseList .= "<br/>. . . . <b>Unrequested terms:</b><br/>. . . . . . " . implode("<br/>. . . . . . ", $term['unrequested']) . "<br/>";
+				}
+				if (!empty($term['unmapped'])) {
+					$responseList .= "<br/>. . . . <b>*Fields with no Business Terms:</b><br/>";
+					if (!empty($term['unmapped']['requested'])) {
+						$responseList .= ". . . . . . Requested:<br/>. . . . . . . . " . implode("<br/>. . . . . . . . ", $term['unmapped']['requested']) . "<br/>";
+					}
+					if (!empty($term['unmapped']['unrequested'])) {
+						$responseList .= ". . . . . . Unrequested:<br/>. . . . . . . . " . implode("<br/>. . . . . . . . ", $term['unmapped']['unrequested']) . "<br/>";
+					}
+				}
+				$responseList .= "<br/>";
+			}
+			$postData['requestedInformationMap'] .= $responseList;
+		}
 
 
 		$name = explode(' ',$this->request->data['name']);
@@ -1521,12 +1715,16 @@ class RequestController extends AppController {
 		if (!empty($tables)) {
 			$postData['technologyType'][] = 'Data Warehouse';
 		}
+		if (!empty($samlResponses)) {
+			$postData['technologyType'][] = 'SAML';
+		}
 
 		$requiredElementsString = Configure::read('Collibra.requiredElementsString');
 		$additionalElementsString = Configure::read('Collibra.additionalElementsString');
 		$postData[$requiredElementsString] = !empty($businessTermIds) ? $businessTermIds : '';
 		$postData['api'] = [];
 		$postData['tables'] = [];
+		$postData['saml'] = [];
 		if (!empty($additionalElementsString)) {
 			$postData[$additionalElementsString] = [];
 			foreach ($apis as $apiHost => $apiPaths) {
@@ -1560,6 +1758,19 @@ class RequestController extends AppController {
 					}
 				}
 			}
+			foreach ($samlResponses as $responseName => $_) {
+				$responseObject = $this->CollibraAPI->getSamlResponseObject($responseName);
+				array_push($postData['saml'], $responseObject->id);
+				$responseFields = $this->CollibraAPI->getSamlResponseFields($responseName);
+				foreach ($responseFields as $field) {
+					if (empty($field->businessTerm[0]->termId)) {
+						continue;
+					}
+					if (!array_key_exists($field->businessTerm[0]->termId, $arrQueue['businessTerms'])) {
+						array_push($postData[$additionalElementsString], $field->businessTerm[0]->termId);
+					}
+				}
+			}
 			$postData[$additionalElementsString] = array_unique($postData[$additionalElementsString]);
 			if (empty($postData[$additionalElementsString])) {
 				//Collibra requires "additionalElements" field to exist, even if empty,
@@ -1576,6 +1787,9 @@ class RequestController extends AppController {
 		}
 		if (empty($postData['tables'])) {
 			$postData['tables'] = '';
+		}
+		if (empty($postData['saml'])) {
+			$postData['saml'] = '';
 		}
 
 		//For array data, PHP's http_build_query creates query/POST string in a format Collibra doesn't like,
@@ -1805,6 +2019,7 @@ class RequestController extends AppController {
 				$term->apipath = $arrQueue['businessTerms'][$term->termrid]['apiPath'];
 				$term->schemaname = $arrQueue['businessTerms'][$term->termrid]['schemaName'];
 				$term->tablename = $arrQueue['businessTerms'][$term->termrid]['tableName'];
+				$term->responsename = $arrQueue['businessTerms'][$term->termrid]['responseName'];
 			}
 			array_multisort($termNames, SORT_ASC, $termResp);
 		}

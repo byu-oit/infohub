@@ -423,7 +423,7 @@ class CollibraAPI extends Model {
 			return $hosts;
 		}
 		foreach ($hostsRaw->communityReference as $host) {
-			if (empty($host->name) || !preg_match('/^[a-zA-Z][a-zA-Z0-9\.]*$/', $host->name)) {
+			if (empty($host->name) || !preg_match('/^[a-zA-Z][a-zA-Z0-9\.]*$/', $host->name) || $host->name === 'SAML') {
 				continue;
 			}
 			$hosts[] = $host->name;
@@ -772,6 +772,136 @@ class CollibraAPI extends Model {
 		$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', $postString);
 
 		return true;
+	}
+
+	public function getSamlResponses() {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'responseId']],
+				['Column' => ['fieldName' => 'responseName']]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'responseId'],
+					'Signifier' => ['name' => 'responseName'],
+					'ConceptType' => [
+						'Id' => ['name' => 'conceptTypeId']],
+					'Vocabulary' => [
+						'Community' => [
+							'Id' => ['name' => 'communityId'],
+							'Name' => ['name' => 'databaseName']]],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+								'name' => 'communityId',
+								'operator' => 'EQUALS',
+								'value' => Configure::read('Collibra.community.saml')]],
+						[
+							'Field' => [
+								'name' => 'conceptTypeId',
+								'operator' => 'EQUALS',
+								'value' => Configure::read('Collibra.type.samlResponse')]]]]]]]];
+
+		$results = $this->fullDataTable($tableConfig);
+		return $results;
+	}
+
+	public function getSamlResponseObject($responseName) {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'id']],
+				['Column' => ['fieldName' => 'name']],
+				['Column' => ['fieldName' => 'description']],
+				['Column' => ['fieldName' => 'vocabId']]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'id'],
+					'Signifier' => ['name' => 'name'],
+					'StringAttribute' => [[
+						'labelId' => Configure::read('Collibra.attribute.description'),
+						'Value' => ['name' => 'description']]],
+					'ConceptType' => [
+						'Id' => ['name' => 'conceptTypeId']],
+					'Vocabulary' => [
+						'Id' => ['name' => 'vocabId']],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+								'name' => 'name',
+								'operator' => 'EQUALS',
+								'value' => $responseName]],
+						[
+							'Field' => [
+								'name' => 'conceptTypeId',
+								'operator' => 'EQUALS',
+								'value' => Configure::read('Collibra.type.samlResponse')]]]]]]]];
+
+		$results = $this->fullDataTable($tableConfig);
+		if (isset($results[0])) {
+			return $results[0];
+		}
+		return [];
+	}
+
+	public function getSamlResponseFields($responseName) {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'fieldName']],
+				['Column' => ['fieldName' => 'fieldId']],
+				['Column' => ['fieldName' => 'fieldDescription']],
+				['Group' => [
+					'name' => 'businessTerm',
+					'Columns' => [
+						['Column' => ['fieldName' => 'termCommunityId']],
+						['Column' => ['fieldName' => 'termCommunityName']],
+						['Column' => ['fieldName' => 'termClassification']],
+						['Column' => ['fieldName' => 'approvalStatus']],
+						['Column' => ['fieldName' => 'termId']],
+						['Column' => ['fieldName' => 'termDescription']],
+						['Column' => ['fieldName' => 'termRelationId']],
+						['Column' => ['fieldName' => 'term']]]]]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'fieldId'],
+					'Signifier' => ['name' => 'fieldName'],
+					'StringAttribute' => [[
+						'Value' => ['name' => 'fieldDescription'],
+						'labelId' => Configure::read('Collibra.attribute.description')]],
+					'Relation' => [[
+						'typeId' => Configure::read('Collibra.relationship.termToDataAsset'),
+						'type' => 'TARGET',
+						'Id' => ['name' => 'termRelationId'],
+						'Source' => [
+							'Id' => ['name' => 'termId'],
+							'Signifier' => ['name' => 'term'],
+							'Vocabulary' => [
+								'Community' => [
+									'Id' => ['name' => 'termCommunityId'],
+									'Name' => ['name' => 'termCommunityName']]],
+							'Status' => [
+								'signifier' => ['name' => 'approvalStatus']],
+							'StringAttribute' => [[
+								'Value' => ['name' => 'termDescription'],
+								'labelId' => Configure::read('Collibra.attribute.definition')]],
+							'SingleValueListAttribute' => [[
+								'Value' => ['name' => 'termClassification'],
+								'labelId' => Configure::read('Collibra.attribute.classification')]]]],
+					[
+						'typeId' => Configure::read('Collibra.relationship.fieldToSaml'),
+						'type' => 'TARGET',
+						'Source' => [
+							'Signifier' => ['name' => 'responseName']]]],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+								'name' => 'responseName',
+								'operator' => 'EQUALS',
+								'value' => $responseName]]]]]]]];
+
+		$results = $this->fullDataTable($tableConfig);
+		usort($results, function($a, $b) {
+			return strcmp($a->fieldName, $b->fieldName);
+		});
+		return $results;
 	}
 
 	public function getBusinessTermDetails($arrQueuedBusinessTerms) {
@@ -1458,6 +1588,16 @@ class CollibraAPI extends Model {
 						['Column' => ['fieldName' => 'tableCommName']]]]],
 
 				['Group' => [
+					'name' => 'necessarySamlResponses',
+					'Columns' => [
+						['Column' => ['fieldName' => 'responseId']],
+						['Column' => ['fieldName' => 'responseName']],
+						['Column' => ['fieldName' => 'responseVocabId']],
+						['Column' => ['fieldName' => 'responseVocabName']],
+						['Column' => ['fieldName' => 'responseCommId']],
+						['Column' => ['fieldName' => 'responseCommName']]]]],
+
+				['Group' => [
 					'name' => 'policies',
 					'Columns' => [
 						['Column' => ['fieldName' => 'policyId']],
@@ -1593,7 +1733,20 @@ class CollibraAPI extends Model {
 								'Name' => ['name' => 'tableVocabName'],
 								'Community' => [
 									'Id' => ['name' => 'tableCommId'],
-									'Name' => ['name' => 'tableCommName']]]]]);
+									'Name' => ['name' => 'tableCommName']]]]],
+
+					[
+						'typeId' => Configure::read('Collibra.relationship.DSRtoNecessarySAML'),
+						'type' => 'SOURCE',
+						'Target' => [
+							'Id' => ['name' => 'responseId'],
+							'Signifier' => ['name' => 'responseName'],
+							'Vocabulary' => [
+								'Id' => ['name' => 'responseVocabId'],
+								'Name' => ['name' => 'responseVocabName'],
+								'Community' => [
+									'Id' => ['name' => 'responseCommId'],
+									'Name' => ['name' => 'responseCommName']]]]]);
 		} else {
 			array_push($tableConfig['TableViewConfig']['Columns'],
 				['Column' => ['fieldName' => 'parentId']],
@@ -1660,18 +1813,31 @@ class CollibraAPI extends Model {
 										'Id' => ['name' => 'apiCommId'],
 										'Name' => ['name' => 'apiCommName']]]]],
 
-							[
-								'typeId' => Configure::read('Collibra.relationship.DSRtoNecessaryTable'),
-								'type' => 'SOURCE',
-								'Target' => [
-									'Id' => ['name' => 'tableId'],
-									'Signifier' => ['name' => 'tableName'],
-									'Vocabulary' => [
-										'Id' => ['name' => 'tableVocabId'],
-										'Name' => ['name' => 'tableVocabName'],
-										'Community' => [
-											'Id' => ['name' => 'tableCommId'],
-											'Name' => ['name' => 'tableCommName']]]]]]]]);
+						[
+							'typeId' => Configure::read('Collibra.relationship.DSRtoNecessaryTable'),
+							'type' => 'SOURCE',
+							'Target' => [
+								'Id' => ['name' => 'tableId'],
+								'Signifier' => ['name' => 'tableName'],
+								'Vocabulary' => [
+									'Id' => ['name' => 'tableVocabId'],
+									'Name' => ['name' => 'tableVocabName'],
+									'Community' => [
+										'Id' => ['name' => 'tableCommId'],
+										'Name' => ['name' => 'tableCommName']]]]],
+
+						[
+							'typeId' => Configure::read('Collibra.relationship.DSRtoNecessarySAML'),
+							'type' => 'SOURCE',
+							'Target' => [
+								'Id' => ['name' => 'responseId'],
+								'Signifier' => ['name' => 'responseName'],
+								'Vocabulary' => [
+									'Id' => ['name' => 'responseVocabId'],
+									'Name' => ['name' => 'responseVocabName'],
+									'Community' => [
+										'Id' => ['name' => 'responseCommId'],
+										'Name' => ['name' => 'responseCommName']]]]]]]]);
 		}
 
 		$results = $this->fullDataTable($tableConfig);

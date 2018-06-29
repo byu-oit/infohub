@@ -17,6 +17,7 @@
 		var arrConcepts = [];
 		var arrApiFields = [];
 		var arrDbColumns = [];
+		var arrSamlFields = [];
 		var arrApis = [];
 		$(elem).parent().find('input').each(function() {
 			if ($(this).prop('checked')) {
@@ -45,6 +46,12 @@
 						schemaName:$(this).attr('schemaName')
 					});
 				}
+				else if ($(this).attr('name') == 'samlFields[]') {
+					arrSamlFields.push({
+						field:$(this).val(),
+						responseName:$(this).attr('responseName')
+					});
+				}
 				else if ($(this).attr('name') == 'apis[]') {
 					arrApis.push($(this).val());
 				}
@@ -56,13 +63,14 @@
 			arrConcepts.length == 0 &&
 			arrApiFields.length == 0 &&
 			arrDbColumns.length == 0 &&
+			arrSamlFields.length == 0 &&
 			arrApis.length == 0
 		) {
 			alert('No elements to add selected');
 			return;
 		}
 
-		$.post("/request/editTermsSubmit", {action:"add",dsrId:dsrId,arrBusinessTerms:arrBusinessTerms,arrConcepts:arrConcepts,arrApiFields:arrApiFields,arrDbColumns:arrDbColumns,arrApis:arrApis})
+		$.post("/request/editTermsSubmit", {action:"add",dsrId:dsrId,arrBusinessTerms:arrBusinessTerms,arrConcepts:arrConcepts,arrApiFields:arrApiFields,arrDbColumns:arrDbColumns,arrSamlFields:arrSamlFields,arrApis:arrApis})
 			.done(function(data) {
 				clearInterval(loadingTextInterval);
 				data = JSON.parse(data);
@@ -124,7 +132,7 @@
 				<h3 class="headerTab">Add Information</h3>
 				<div class="clear"></div>
 				<div class="resultItem">
-					<?php if (!empty($arrQueue['businessTerms']) || !empty($arrQueue['concepts']) || !empty($arrQueue['emptyApis']) || !empty($arrQueue['apiFields']) || !empty($arrQueue['dbColumns'])): ?>
+					<?php if (!empty($arrQueue['businessTerms']) || !empty($arrQueue['concepts']) || !empty($arrQueue['emptyApis']) || !empty($arrQueue['apiFields']) || !empty($arrQueue['dbColumns']) || !empty($arrQueue['samlFields'])): ?>
 					<div class="checkAll"><input type="checkbox" onclick="toggleAllCheckboxes(this)" checked="checked">Check/Uncheck all</div>
 					<div class="irLower"><ul class="cart">
 						<?php
@@ -153,6 +161,9 @@
 							}
 							foreach ($arrQueue['dbColumns'] as $columnName => $column) {
 								echo '<li id="requestItem'.$columnName.'"><input type="checkbox" name="dbColumns[]" value="'.$columnName.'" schemaName="'.$column['schemaName'].'" tableName="'.$column['tableName'].'" checked="checked">'.$column['name'].'</li>';
+							}
+							foreach ($arrQueue['samlFields'] as $fieldName => $field) {
+								echo '<li id="requestItem'.$fieldName.'"><input type="checkbox" name="samlFields[]" value="'.$fieldName.'" responseName="'.$field['responseName'].'" checked="checked">'.$field['name'].'</li>';
 							}
 							echo '</ul><a class="addTerms grow">Add to this DSR</a>';
 						?>

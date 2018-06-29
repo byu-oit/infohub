@@ -184,9 +184,9 @@
 				<div class="resultItem">
 					<div class="irLower"><ul class="cart">
 						<?php
-					if(!empty($termDetails) || !empty($arrQueue['concepts']) || !empty($arrQueue['emptyApis']) || !empty($arrQueue['apiFields']) || !empty($arrQueue['dbColumns'])) {
+					if(!empty($termDetails) || !empty($arrQueue['concepts']) || !empty($arrQueue['emptyApis']) || !empty($arrQueue['apiFields']) || !empty($arrQueue['dbColumns']) || !empty($arrQueue['samlFields'])) {
 							foreach ($termDetails as $term){
-								echo '<li id="requestItem'.$term->termrid.'" data-title="'.$term->termsignifier.'" data-id="'.$term->termrid.'" data-vocabID="'.$term->commrid.'" api-host="'.$term->apihost.'" api-path="'.$term->apipath.'" schema-name="'.$term->schemaname.'" table-name="'.$term->tablename.'" data-type="term"><a class="delete" href="javascript:removeFromRequestQueue(\''.$term->termrid.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$term->termsignifier.'</li>';
+								echo '<li id="requestItem'.$term->termrid.'" data-title="'.$term->termsignifier.'" data-id="'.$term->termrid.'" data-vocabID="'.$term->commrid.'" api-host="'.$term->apihost.'" api-path="'.$term->apipath.'" schema-name="'.$term->schemaname.'" table-name="'.$term->tablename.'" response-name="'.$term->responsename.'" data-type="term"><a class="delete" href="javascript:removeFromRequestQueue(\''.$term->termrid.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$term->termsignifier.'</li>';
 							}
 							foreach ($arrQueue['concepts'] as $id => $term) {
 								echo '<li id="requestItem'.$id.'" data-title"'.$term['term'].'" data-id="'.$id.'"data-vocabID="'.$term['communityId'].'" api-host="'.$term['apiHost'].'" api-path="'.$term['apiPath'].'" data-type="concept"><a class="delete" href="javascript:removeFromRequestQueue(\''.$id.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$term['term'].'</li>';
@@ -203,6 +203,10 @@
 							foreach ($arrQueue['dbColumns'] as $columnName => $column) {
 								$id = preg_replace('/ > /', '', $columnName);
 								echo '<li id="requestItem'.$id.'" data-title="'.$columnName.'" schema-name="'.$column['schemaName'].'" table-name="'.$column['tableName'].'" data-type="column"><a class="delete" href="javascript:removeFromRequestQueue(\''.$columnName.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$column['name'].'</li>';
+							}
+							foreach ($arrQueue['samlFields'] as $fieldName => $field) {
+								$id = preg_replace('/\./', '', $fieldName);
+								echo '<li id="requestItem'.$id.'" data-title="'.$fieldName.'" response-name="'.$field['responseName'].'" data-type="samlField"><a class="delete" href="javascript:removeFromRequestQueue(\''.$fieldName.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$field['name'].'</li>';
 							}
 							echo '</ul><a class="clearQueue" href="javascript: clearRequestQueue()">Clear All Items</a>';
 						}else{
@@ -286,6 +290,7 @@
 						"technologyType",
 						"api",
 						"tables",
+						"saml",
 						Configure::read('Collibra.requiredElementsString'),
 						Configure::read('Collibra.additionalElementsString')
 					];

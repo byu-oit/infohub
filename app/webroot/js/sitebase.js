@@ -230,8 +230,9 @@ function removeFromRequestQueue(id){
 					var apiPath = elem.attr('api-path');
 					var schemaName = elem.attr('schema-name');
 					var tableName = elem.attr('table-name');
+					var responseName = elem.attr('response-name');
 
-					var undoData = {emptyApi:'false',t:[{title:title,id:dataId,vocabId:vocabId}],apiHost:apiHost,apiPath:apiPath,schemaName:schemaName,tableName:tableName};
+					var undoData = {emptyApi:'false',t:[{title:title,id:dataId,vocabId:vocabId}],apiHost:apiHost,apiPath:apiPath,schemaName:schemaName,tableName:tableName,responseName:responseName};
 					break;
 				case 'concept':
 					var title = elem.data('title');
@@ -261,6 +262,12 @@ function removeFromRequestQueue(id){
 					var tableName = elem.attr('table-name');
 
 					var undoData = {emptyApi:'false',c:[title],schemaName:schemaName,tableName:tableName};
+					break;
+				case 'samlField':
+					var title = elem.data('title');
+					var responseName = elem.attr('response-name');
+
+					var undoData = {emptyApi:'false',s:[title],responseName:responseName};
 					break;
 			}
 
@@ -533,6 +540,56 @@ function largeAddToQueueDBTable(arrTerms, arrColumns, schemaName, tableName, ter
 				});
 			});
 	}
+}
+function addToQueueSAMLResponse(elem, displayCart) {
+	var i = 0;
+	var loadingTexts = ['Working on it   ','Working on it.  ','Working on it.. ','Working on it...'];
+	var loadingTextInterval = setInterval(function() {
+		$(elem).parent().find('.requestAccess').attr('value', loadingTexts[i]);
+		i++;
+		if (i == loadingTexts.length) i = 0;
+	}, 250);
+
+	var arrTerms = [{
+		title: $(elem).data('title'),
+		id: $(elem).data('rid'),
+		vocabId: $(elem).data('vocabid')
+	}];
+	var arrFields = [];
+	var responseName = $(elem).data('responsename');
+
+	$(elem).parent().find('.checkBoxes').find('input').each(function(){
+		if($(this).prop("checked") && $(this).prop("name") != "toggleCheckboxes"){
+
+			if (!$(this).val()) {		// For a field with no Business Term:
+				arrFields.push($(this).data('title'));
+			}
+
+			else {						// For a Business Term:
+				for (var i = 0; i < arrTerms.length; i++) {
+					if (arrTerms[i].id == $(this).val()) {
+						return;		// continue;
+					}
+				}
+
+				arrTerms.push({
+					title: $(this).data('title'),
+					id: $(this).val(),
+					vocabId: $(this).data('vocabid')
+				});
+			}
+		}
+	});
+	$.post("/request/addToQueue", {emptyApi:'false', t:arrTerms, s:arrFields, responseName:responseName})
+		.done(function(data) {
+			clearInterval(loadingTextInterval);
+			$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
+			$(elem).closest('.resultItem').find('input[type=checkbox]').prop('checked', false);
+			if (displayCart) {
+				showRequestQueue();
+			}
+			updateQueueSize();
+	});
 }
 function toggleAllCheckboxes(elem) {
 	$(elem).closest('.resultItem').find('input').each(function(){
