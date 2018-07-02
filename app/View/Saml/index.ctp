@@ -18,6 +18,9 @@ $(document).ready(function() {
 			}
 		}
 	});
+	$('#saml_help_btn').click(function() {
+		$('#saml_help').toggle(500);
+	});
 
 	$('#responseFilter').keypress(function(event) { return event.keyCode != 13; });
 	$('#responseFilter').on({
@@ -55,6 +58,8 @@ $(document).ready(function() {
 		<h1 class="headerTab">SAML Responses</h2>
 		<div class="clear"></div>
 		<div id="smLower" class="whiteBox">
+			<div id="saml_help_btn" class="samlHelp">Not seeing the SAML response you need?</div>
+			<div id="saml_help" class="samlHelpSml">If you would like to request a custom SAML response, you can <a href="/search">search for the terms you need here</a>. Once you've found the data you need, <a href="/request">fill out the request form</a> and note in the "Additional Information Requested" field that you need the data via SAML.</div>
 			<ul class="catalogParent">
 				<?php if (empty($responses)): ?>
 					No responses found

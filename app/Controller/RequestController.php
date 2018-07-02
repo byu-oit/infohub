@@ -1719,6 +1719,11 @@ class RequestController extends AppController {
 		if (!empty($samlResponses)) {
 			$postData['technologyType'][] = 'SAML';
 		}
+		if (!isset($postData['technologyType']) || !in_array('SAML', $postData['technologyType'])) {
+			if (strpos($this->request->data['descriptionOfInformation'], 'SAML') !== false) {
+				$postData['technologyType'][] = 'SAML';
+			}
+		}
 
 		$requiredElementsString = Configure::read('Collibra.requiredElementsString');
 		$additionalElementsString = Configure::read('Collibra.additionalElementsString');

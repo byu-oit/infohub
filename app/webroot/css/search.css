@@ -1396,7 +1396,8 @@ img.resultBodyLoading {
   top: -35px;
 }
 #apiBody .apiHelp,
-#apiBody .tableHelp {
+#apiBody .tableHelp,
+#smLower .samlHelp {
   margin-top: 15px;
   color: rgba(14, 50, 100, 0.85);
   font-size: 18px;
@@ -1405,7 +1406,8 @@ img.resultBodyLoading {
   cursor: pointer;
   padding-bottom: 8px;
 }
-#apiBody .apiHelpSml {
+#apiBody .apiHelpSml,
+#smLower .samlHelpSml {
   font-size: 14px;
   width: 100%;
   display: none;
