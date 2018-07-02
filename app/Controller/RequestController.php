@@ -661,7 +661,7 @@ class RequestController extends AppController {
 				}
 			}
 
-			if (isset($this->request->data['arrConcepts']) || isset($this->request->data['arrApiFields']) || isset($this->request->data['arrDbColumns']) || isset($this->request->data['arrApis'])) {
+			if (isset($this->request->data['arrConcepts']) || isset($this->request->data['arrApiFields']) || isset($this->request->data['arrDbColumns']) || isset($this->request->data['arrApis']) || isset($this->request->data['arrSamlFields'])) {
 				if (isset($this->request->data['arrConcepts'])) {
 					foreach ($this->request->data['arrConcepts'] as $concept) {
 						$addedApis[$concept['apiHost']][$concept['apiPath']] = [];
@@ -1476,6 +1476,7 @@ class RequestController extends AppController {
 		$businessTermIds = [];
 		$apis = [];
 		$tables = [];
+		$samlResponses = [];
 		$individualTerms = [];
 		foreach ($arrQueue['businessTerms'] as $id => $term) {
 			array_push($businessTermIds, $id);

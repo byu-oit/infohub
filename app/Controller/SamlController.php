@@ -1,7 +1,7 @@
 <?php
 
 class SamlController extends AppController {
-	public $uses = ['CollibraAPI', 'BYUAPI'];
+	public $uses = ['CollibraAPI'];
 
 	public function index() {
         $responses = $this->CollibraAPI->getSamlResponses();
@@ -10,7 +10,6 @@ class SamlController extends AppController {
 
 	public function view($responseName) {
 		$fields = $this->CollibraAPI->getSamlResponseFields($responseName);
-		$isOITEmployee = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04');
-		$this->set(compact('responseName', 'fields', 'isOITEmployee'));
+		$this->set(compact('responseName', 'fields'));
 	}
 }

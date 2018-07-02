@@ -66,7 +66,6 @@ class AppController extends Controller {
 				if (!isset($arrQueue['samlFields'])) {
 					$arrQueue['samlFields'] = [];
 				}
-				if (!isset($arrQueue['']))
 				$cartEmpty = empty($arrQueue['businessTerms']) &&
 							 empty($arrQueue['concepts']) &&
 							 empty($arrQueue['apiFields']) &&
