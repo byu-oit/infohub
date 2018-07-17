@@ -1,7 +1,7 @@
 <?php
 
 class SearchController extends AppController {
-	public $uses = array('CollibraAPI', 'CmsPage');
+	public $uses = ['CollibraAPI', 'CmsPage'];
 
 	public function beforeFilter() {
 		parent::beforeFilter();
@@ -33,17 +33,17 @@ class SearchController extends AppController {
 	}
 
 	private function convert_smart_quotes($string){
-		$search = array(chr(145),
+		$search = [chr(145),
 			chr(146),
 			chr(147),
 			chr(148),
-			chr(151));
+			chr(151)];
 
-		$replace = array("'",
+		$replace = ["'",
 			"'",
 			'"',
 			'"',
-			'-');
+			'-'];
 
 		return str_replace($search, $replace, $string);
 	}
@@ -56,6 +56,10 @@ class SearchController extends AppController {
 
 	public function catalog() {
 		$this->set('commonSearches', $this->getCommonSearches());
+	}
+
+	public function noGlossary() {
+
 	}
 
 	public function term($query = null) {
@@ -86,7 +90,21 @@ class SearchController extends AppController {
 		if($page==0) $page=1;
 
 		$domainID = $this->request->params['pass'][0];
-		$terms = $this->getDomainTerms($domainID, $page-1, 25);
+		$terms = $this->getDomainTerms($domainID, $page-1);
+
+		foreach ($terms->aaData as &$term) {
+			if (!empty($term->synonym_for)) {
+				$synonym = $this->CollibraAPI->get('term/'.$term->synonym_for[0]->synonymid);
+				$synonym = json_decode($synonym);
+
+				foreach ($synonym->attributeReferences->attributeReference as $attr) {
+					if ($attr->labelReference->signifier == 'Definition') {
+						$term->description = $attr->value;
+						break;
+					}
+				}
+			}
+		}
 
 		$this->set('commonSearches', $this->getCommonSearches());
 		//$this->set('totalPages', ceil($terms->iTotalDisplayRecords/25));
@@ -105,32 +123,30 @@ class SearchController extends AppController {
 		// set community filter based on querystring value
 		///////////////////////////////////////////////////////
 		$filter = '';
-		if(isset($this->request->query['f'])){
-			if($this->request->query['f'] != ''){
-				$filter = $this->request->query['f'];
-			}
+		if(isset($this->request->query['f']) && $this->request->query['f'] != ''){
+			$filter = $this->request->query['f'];
 		}
 		///////////////////////////////////////////////////////
 
 		// set sort filter based on querystring value
 		///////////////////////////////////////////////////////
 		$sort = isset($this->request->query['s'])?$this->request->query['s']:0;
-		$sortOrder = null;
+		$sortOrder = 'DESC';
 		$sortField = null;
 		switch($sort){
 			case 0:
 				$sortField = 'score';
-				$sortOrder = 'DESC';
 				break;
 			case 1:
 				$sortField = 'termsignifier';
+				$sortOrder = 'ASC';
 				break;
 			case 2:
 				$sortField = 'lastModified';
-				$sortOrder = 'DESC';
 				break;
 			case 3:
 				$sortField = 'classification';
+				$sortOrder = 'ASC';
 				break;
 		}
 		///////////////////////////////////////////////////////
@@ -144,10 +160,9 @@ class SearchController extends AppController {
 
 		// get all terms matching query
 		$terms = $this->searchTerms(html_entity_decode($query), $page-1, 10, $sortField, $sortOrder, $filter);
-		//print_r($terms);exit;
 
-		// save search and delete anything over 300 entries
 		if(!empty($terms->aaData)){
+			// save search and delete anything over 300 entries
 			$this->loadModel('CommonSearch');
 			// delete last record
 			$results = $this->CommonSearch->find('all', ['order' => 'id']);
@@ -156,6 +171,34 @@ class SearchController extends AppController {
 			}
 			// add new record
 			$this->CommonSearch->save(['query' => $query]);
+
+			//Highlight search terms in description
+			$searchInput = trim(html_entity_decode($query), ' \"');
+			$arrQuery = explode(" ", $searchInput);
+			$wrapBefore = '<span class="highlight">';
+			$wrapAfter  = '</span>';
+			foreach ($terms->aaData as &$term) {
+				if (!empty($term->synonym_for)) {
+					$synonym = $this->CollibraAPI->get('term/'.$term->synonym_for[0]->synonymid);
+					$synonym = json_decode($synonym);
+
+					foreach ($synonym->attributeReferences->attributeReference as $attr) {
+						if ($attr->labelReference->signifier == 'Definition') {
+							$term->description = $attr->value;
+							break;
+						}
+					}
+				}
+				if (empty($term->description)) {
+					continue;
+				}
+				$def = strip_tags($term->description, '<p><span><div><ul><li>');
+				foreach ($arrQuery as $text){
+					$def = preg_replace("/\b({$text})\b/i", "{$wrapBefore}\$1{$wrapAfter}", $def);
+				}
+
+				$term->description = $def;
+			}
 		}
 		///////////////////////////////////////////////////////
 
@@ -196,19 +239,45 @@ class SearchController extends AppController {
 
 		if(!Configure::read('allowUnapprovedTerms')){
 		}
-		$resp = $this->CollibraAPI->postJSON(
-				'output/data_table',
-				'{"TableViewConfig":{"Columns":[{"Community":{"name":"Subcommunities","Columns":[{"Column":{"fieldName":"subcommunityid"}},{"Column":{"fieldName":"subcommunity"}},{"Column":{"fieldName":"hasNonMetaChildren"}},{"Group":{"Columns":[{"Column":{"label":"Admin User ID","fieldName":"userRole00000000000000000000000000005015rid"}},{"Column":{"label":"Admin Gender","fieldName":"userRole00000000000000000000000000005015gender"}},{"Column":{"label":"Admin First Name","fieldName":"userRole00000000000000000000000000005015fn"}},{"Column":{"label":"Admin Last Name","fieldName":"userRole00000000000000000000000000005015ln"}}],"name":"Role00000000000000000000000000005015"}},{"Group":{"Columns":[{"Column":{"label":"Admin Group ID","fieldName":"groupRole00000000000000000000000000005015grid"}},{"Column":{"label":"Admin Group Name","fieldName":"groupRole00000000000000000000000000005015ggn"}}],"name":"Role00000000000000000000000000005015g"}},{"Group":{"Columns":[{"Column":{"label":"Collibra Steward User ID","fieldName":"userRole00000000000000000000000000005016rid"}},{"Column":{"label":"Collibra Steward Gender","fieldName":"userRole00000000000000000000000000005016gender"}},{"Column":{"label":"Collibra Steward First Name","fieldName":"userRole00000000000000000000000000005016fn"}},{"Column":{"label":"Collibra Steward Last Name","fieldName":"userRole00000000000000000000000000005016ln"}}],"name":"Role00000000000000000000000000005016"}},{"Group":{"Columns":[{"Column":{"label":"Collibra Steward Group ID","fieldName":"groupRole00000000000000000000000000005016grid"}},{"Column":{"label":"Collibra Steward Group Name","fieldName":"groupRole00000000000000000000000000005016ggn"}}],"name":"Role00000000000000000000000000005016g"}},{"Group":{"Columns":[{"Column":{"label":"Stakeholder User ID","fieldName":"userRole00000000000000000000000000005018rid"}},{"Column":{"label":"Stakeholder Gender","fieldName":"userRole00000000000000000000000000005018gender"}},{"Column":{"label":"Stakeholder First Name","fieldName":"userRole00000000000000000000000000005018fn"}},{"Column":{"label":"Stakeholder Last Name","fieldName":"userRole00000000000000000000000000005018ln"}}],"name":"Role00000000000000000000000000005018"}},{"Group":{"Columns":[{"Column":{"label":"Stakeholder Group ID","fieldName":"groupRole00000000000000000000000000005018grid"}},{"Column":{"label":"Stakeholder Group Name","fieldName":"groupRole00000000000000000000000000005018ggn"}}],"name":"Role00000000000000000000000000005018g"}}]}},{"Vocabulary":{"name":"Vocabularies","Columns":[{"Column":{"fieldName":"vocabulary"}},{"Column":{"fieldName":"vocabularyid"}},{"Column":{"fieldName":"domainType"}},{"Group":{"Columns":[{"Column":{"label":"Admin User ID","fieldName":"userRole00000000000000000000000000005015VOCSUFFIXrid"}},{"Column":{"label":"Admin Gender","fieldName":"userRole00000000000000000000000000005015VOCSUFFIXgender"}},{"Column":{"label":"Admin First Name","fieldName":"userRole00000000000000000000000000005015VOCSUFFIXfn"}},{"Column":{"label":"Admin Last Name","fieldName":"userRole00000000000000000000000000005015VOCSUFFIXln"}}],"name":"Role00000000000000000000000000005015VOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Admin Group ID","fieldName":"groupRole00000000000000000000000000005015gVOCSUFFIXrid"}},{"Column":{"label":"Admin Group Name","fieldName":"groupRole00000000000000000000000000005015gVOCSUFFIXgn"}}],"name":"Role00000000000000000000000000005015gVOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Collibra Steward User ID","fieldName":"userRole00000000000000000000000000005016VOCSUFFIXrid"}},{"Column":{"label":"Collibra Steward Gender","fieldName":"userRole00000000000000000000000000005016VOCSUFFIXgender"}},{"Column":{"label":"Collibra Steward First Name","fieldName":"userRole00000000000000000000000000005016VOCSUFFIXfn"}},{"Column":{"label":"Collibra Steward Last Name","fieldName":"userRole00000000000000000000000000005016VOCSUFFIXln"}}],"name":"Role00000000000000000000000000005016VOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Collibra Steward Group ID","fieldName":"groupRole00000000000000000000000000005016gVOCSUFFIXrid"}},{"Column":{"label":"Collibra Steward Group Name","fieldName":"groupRole00000000000000000000000000005016gVOCSUFFIXgn"}}],"name":"Role00000000000000000000000000005016gVOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Stakeholder User ID","fieldName":"userRole00000000000000000000000000005018VOCSUFFIXrid"}},{"Column":{"label":"Stakeholder Gender","fieldName":"userRole00000000000000000000000000005018VOCSUFFIXgender"}},{"Column":{"label":"Stakeholder First Name","fieldName":"userRole00000000000000000000000000005018VOCSUFFIXfn"}},{"Column":{"label":"Stakeholder Last Name","fieldName":"userRole00000000000000000000000000005018VOCSUFFIXln"}}],"name":"Role00000000000000000000000000005018VOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Stakeholder Group ID","fieldName":"groupRole00000000000000000000000000005018gVOCSUFFIXrid"}},{"Column":{"label":"Stakeholder Group Name","fieldName":"groupRole00000000000000000000000000005018gVOCSUFFIXgn"}}],"name":"Role00000000000000000000000000005018gVOCSUFFIX"}}]}}],"Resources":{"Community":{"Id":{"name":"subcommunityid"},"Name":{"name":"subcommunity"},"Meta":{"name":"issubmeta"},"hasNonMetaChildren":{"name":"hasNonMetaChildren"},"ParentCommunity":{"Id":{"name":"parentCommunityId"}},"Member":[{"User":{"Gender":{"name":"userRole00000000000000000000000000005015gender"},"FirstName":{"name":"userRole00000000000000000000000000005015fn"},"Id":{"name":"userRole00000000000000000000000000005015rid"},"LastName":{"name":"userRole00000000000000000000000000005015ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005015sig"},"name":"Role00000000000000000000000000005015","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005015rid"}},"roleId":"00000000-0000-0000-0000-000000005015"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005015g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005015grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005015ggn"},"Id":{"name":"groupRole00000000000000000000000000005015grid"}},"roleId":"00000000-0000-0000-0000-000000005015"},{"User":{"Gender":{"name":"userRole00000000000000000000000000005016gender"},"FirstName":{"name":"userRole00000000000000000000000000005016fn"},"Id":{"name":"userRole00000000000000000000000000005016rid"},"LastName":{"name":"userRole00000000000000000000000000005016ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016sig"},"name":"Role00000000000000000000000000005016","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016rid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005016ggn"},"Id":{"name":"groupRole00000000000000000000000000005016grid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"User":{"Gender":{"name":"userRole00000000000000000000000000005018gender"},"FirstName":{"name":"userRole00000000000000000000000000005018fn"},"Id":{"name":"userRole00000000000000000000000000005018rid"},"LastName":{"name":"userRole00000000000000000000000000005018ln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005018sig"},"name":"Role00000000000000000000000000005018","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005018rid"}},"roleId":"00000000-0000-0000-0000-000000005018"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005018g"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005018grid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005018ggn"},"Id":{"name":"groupRole00000000000000000000000000005018grid"}},"roleId":"00000000-0000-0000-0000-000000005018"}],"Filter":{"AND":[{"AND":[{"Field":{"name":"issubmeta","operator":"EQUALS","value":false}}]},{"AND":[{"Field":{"name":"parentCommunityId","operator":"EQUALS","value":"'.$community.'"}}]}]},"Order":[{"Field":{"name":"subcommunity","order":"ASC"}}]},"Vocabulary":{"Name":{"name":"vocabulary"},"Id":{"name":"vocabularyid"},"Meta":{"name":"isvocmeta"},"Community":{"Id":{"name":"vocabularyParentCommunityId"}},"VocabularyType":{"Signifier":{"name":"domainType"}},"Member":[{"User":{"Gender":{"name":"userRole00000000000000000000000000005015VOCSUFFIXgender"},"FirstName":{"name":"userRole00000000000000000000000000005015VOCSUFFIXfn"},"Id":{"name":"userRole00000000000000000000000000005015VOCSUFFIXrid"},"LastName":{"name":"userRole00000000000000000000000000005015VOCSUFFIXln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005015VOCSUFFIXsig"},"name":"Role00000000000000000000000000005015VOCSUFFIX","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005015VOCSUFFIXrid"}},"roleId":"00000000-0000-0000-0000-000000005015"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005015gVOCSUFFIX"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005015gVOCSUFFIXrid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005015gVOCSUFFIXgn"},"Id":{"name":"groupRole00000000000000000000000000005015gVOCSUFFIXrid"}},"roleId":"00000000-0000-0000-0000-000000005015"},{"User":{"Gender":{"name":"userRole00000000000000000000000000005016VOCSUFFIXgender"},"FirstName":{"name":"userRole00000000000000000000000000005016VOCSUFFIXfn"},"Id":{"name":"userRole00000000000000000000000000005016VOCSUFFIXrid"},"LastName":{"name":"userRole00000000000000000000000000005016VOCSUFFIXln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016VOCSUFFIXsig"},"name":"Role00000000000000000000000000005016VOCSUFFIX","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016VOCSUFFIXrid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005016gVOCSUFFIX"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005016gVOCSUFFIXrid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005016gVOCSUFFIXgn"},"Id":{"name":"groupRole00000000000000000000000000005016gVOCSUFFIXrid"}},"roleId":"00000000-0000-0000-0000-000000005016"},{"User":{"Gender":{"name":"userRole00000000000000000000000000005018VOCSUFFIXgender"},"FirstName":{"name":"userRole00000000000000000000000000005018VOCSUFFIXfn"},"Id":{"name":"userRole00000000000000000000000000005018VOCSUFFIXrid"},"LastName":{"name":"userRole00000000000000000000000000005018VOCSUFFIXln"}},"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005018VOCSUFFIXsig"},"name":"Role00000000000000000000000000005018VOCSUFFIX","Id":{"hidden":"true","name":"roleRole00000000000000000000000000005018VOCSUFFIXrid"}},"roleId":"00000000-0000-0000-0000-000000005018"},{"Role":{"Signifier":{"hidden":"true","name":"Role00000000000000000000000000005018gVOCSUFFIX"},"Id":{"hidden":"true","name":"roleRole00000000000000000000000000005018gVOCSUFFIXrid"}},"Group":{"GroupName":{"name":"groupRole00000000000000000000000000005018gVOCSUFFIXgn"},"Id":{"name":"groupRole00000000000000000000000000005018gVOCSUFFIXrid"}},"roleId":"00000000-0000-0000-0000-000000005018"}],"Filter":{"AND":[{"AND":[{"Field":{"name":"isvocmeta","operator":"EQUALS","value":false}}]},{"AND":[{"Field":{"name":"vocabularyParentCommunityId","operator":"EQUALS","value":"'.$community.'"}}]},{"AND":[{"Field":{"name":"domainType","operator":"EQUALS","value":"Glossary"}}]}]},"Order":[{"Field":{"name":"vocabulary","order":"ASC"}}]}},"displayStart":0,"displayLength":100,"generalConceptId":"' . Configure::read('Collibra.community.byu') . '"}}'
-		);
+		$resp = $this->CollibraAPI->getCommunityData($community);
 
 		return $resp;
 	}
 
+	// called on results page's more details tab
+	public function getTermRoles() {
+		session_write_close(); //No local database writes, so allow this ajax request to run in parallel with others
+		$this->autoRender = false;
+		$termrid = $this->request->query['resource'];
+
+		$resp = json_decode($this->CollibraAPI->get('/member/find/all?resource='.$termrid));
+		$steward = null;
+		$custodian = null;
+		$members = $resp->memberReference;
+		$i = 0;
+		while (!($steward && $custodian) && ($i < 20)) {
+			if ($members[$i]->role->signifier == 'Steward') {
+				$steward = $members[$i]->ownerUser->firstName . " " . $members[$i]->ownerUser->lastName;
+			}
+			if ($members[$i]->role->signifier == 'Custodian') {
+				$custodian = $members[$i]->ownerUser->firstName . " " . $members[$i]->ownerUser->lastName;
+			}
+			$i++;
+		}
+		$result = [
+			'steward' => $steward,
+			'custodian' => $custodian
+		];
+		return json_encode($result);
+	}
+
 	// get list of all other terms within a vocabulary/glossary
 	public function getFullVocab() {
+		session_write_close(); //No local database writes, so allow this ajax request to run in parallel with others
 		$vocabRID= $this->request->query['rid'];
+		$originTermID = isset($this->request->query['termid']) ? $this->request->query['termid'] : null;
 
-		$jsonResp = $this->CollibraAPI->getTerms($vocabRID, ['length' => 1000]);
+		$jsonResp = $this->CollibraAPI->getTerms($vocabRID);
 
 
 		echo '<div class="checkCol">';
@@ -221,86 +290,78 @@ class SearchController extends AppController {
 			if(Configure::read('allowUnrequestableTerms')){
 				$disabled = '';
 			}else{
-				$disabled = $term->requestable == 'false'?'disabled':'';
+				$disabled = $term->concept == 'true'?'disabled':'';
+			}
+
+			if(sizeof($term->synonym_for)!=0){
+				$termDef = 'Synonym for '.$term->synonym_for[0]->synonymname;
+			}
+
+			$random = uniqid(rand(111111,999999));
+			$classification = $term->classification;
+			switch($classification){
+				case 'Public':
+				case '1 - Public':
+					$classificationIcon = '<img src="/img/iconPublic.png" title="Public" alt="Public" width="9" />';
+					break;
+				case 'Internal':
+				case '2 - Internal':
+					$classificationIcon = '<img src="/img/iconInternal.png" title="Internal" alt="Internal" width="9" />';
+					break;
+				case 'Confidential':
+				case '3 - Confidential':
+					$classificationIcon = '<img src="/img/iconClassified.png" title="Confidential" alt="Confidential" width="9" />';
+					break;
+				case 'Highly Confidential':
+				case '4 - Highly Confidential':
+					$classificationIcon = '<img src="/img/iconHighClassified.png" title="Highly Confidential" alt="Highly Confidential" width="9" />';
+					break;
+				case 'Not Applicable':
+				case '0 - N/A':
+					$classificationIcon = '<img src="/img/iconNotApplicable.png" title="Not Applicable" alt="Not Applicable" width="9" />';
+					break;
+				default:
+					$classificationIcon = '<img src="/img/iconNoClassification2.png" title="Unspecified" alt="Unspecified" width="9" />';
+					break;
+			}
+
+			if($itemCount>0 && $itemCount%2==0){
+				echo '</div>';echo '</div>';
+				echo '<div class="checkCol">';
 			}
 			if(!$disabled){
-				if(sizeof($term->synonym_for)!=0){
-					$termDef = 'Synonym for '.$term->synonym_for[0]->synonymname;
-				}
-
-				$random = uniqid(rand(111111,999999));
-				$classification = $term->classification;
-				switch($classification){
-					case '1 - Public':
-						$classificationIcon = '<img src="/img/iconPublic.png" title="Public" alt="Public" width="9" />';
-						break;
-					case '2 - Internal':
-						$classificationIcon = '<img src="/img/iconInternal.png" title="Internal" alt="Internal" width="9" />';
-						break;
-					case '3 - Confidential':
-						$classificationIcon = '<img src="/img/iconClassified.png" title="Confidential" alt="Confidential" width="9" />';
-						break;
-					case '4 - Highly Confidential':
-						$classificationIcon = '<img src="/img/iconHighClassified.png" title="Highly Confidential" alt="Highly Confidential" width="9" />';
-						break;
-					default:
-						$classificationIcon = '';
-						break;
-				}
-
-				if($itemCount>0 && $itemCount%2==0){
-					echo '</div>';echo '</div>';
-					echo '<div class="checkCol">';
-				}
-				if(!$disabled){
-					echo '<input type="checkbox" name="terms[]" data-title="'.$termName.'" data-vocabID="'.$term->commrid.'" value="'.$termID.'" id="chk'.$termID.$random.'" class="chk'.$termID.'" '.$disabled.'>';
-				}else{
-					//echo '<img class="denied" src="/img/denied.png" alt="Not available for request." title="Not available for request.">';
-				}
-
-				echo $classificationIcon.
-					'    <label for="chk'.$termID.$random.'">'.$termName.'</label><div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$termDef.'" class="info"><img src="/img/iconInfo.png"></div>';
-				if($itemCount%2==0){
-					echo '<br/>';
-				}
-				$itemCount++;
+				echo '<input type="checkbox" name="terms[]" data-title="'.$termName.'" data-vocabID="'.$term->commrid.'" value="'.$termID.'" id="chk'.$termID.$random.'" class="chk'.$termID.'" '.$disabled.' '.($originTermID == $termID ? 'checked' : '').'>';
+			}else{
+				echo '<img class="denied" src="/img/denied.png" alt="Not available for request." title="This is a conceptual term not available for request.">';
 			}
+
+			echo $classificationIcon.
+				'    <label for="chk'.$termID.$random.'">'.$termName.'</label><div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$termDef.'" class="info"><img src="/img/iconInfo.png"></div>';
+			if($itemCount%2==0){
+				echo '<br/>';
+			}
+			$itemCount++;
 
 		}
 		echo '</div>';
 		exit;
 	}
 
-	public function getTermDefinition() {
-		$vocabRID= $this->request->query['vocabRid'];
-		$searchInput= html_entity_decode($this->request->query['searchInput']);
-		$searchInput = addslashes($searchInput);
-
-		$resp = $this->CollibraAPI->get('term/'.$vocabRID, ['json' => true]);
-		$def = '';
-		foreach($resp->attributeReferences->attributeReference as $attr){
-			if($attr->labelReference->signifier == 'Definition'){
-				$def = $attr->value;
-				break;
+	public function getTermApis($term) {
+		$arrApis = [];
+		foreach ($term->representing_apifields as $field) {
+			$resp = json_decode($this->CollibraAPI->get("term/{$field->fieldrid}"));
+			$api = $resp->vocabularyReference->name;
+			if (!in_array($api, $arrApis)) {
+				array_push($arrApis, $api);
 			}
 		}
 
-		// highlight each search term
-		$def = strip_tags($def, '<p><span><div><ul><li>');
-		$wrapBefore = '<span class="highlight">';
-		$wrapAfter  = '</span>';
-
-		$searchInput = trim($searchInput, '\"');
-		$arrQuery = explode(" ", $searchInput);
-		for($i=0; $i<sizeof($arrQuery); $i++){
-			$def = preg_replace("/\b(".$arrQuery[$i].")\b/i", "$wrapBefore$1$wrapAfter", $def);
-		}
-
-		echo $def;
-		exit;
+		return $arrApis;
 	}
 
 	public function autoCompleteTerm() {
+		session_write_close(); //No local database writes, so allow this ajax request to run in parallel with others
 		$query= $this->request->query('q');
 		if(empty($query)){
 			return new CakeResponse(['type' => 'application/javascript', 'body' => []]);
@@ -312,31 +373,21 @@ class SearchController extends AppController {
 		// create JSON request string
 		$jsonResp = $this->CollibraAPI->searchTerms($query);
 		for($i=0; $i<sizeof($jsonResp->results); $i++){
-			$requestable = true;
-			// don't show non-requestable items
-			foreach($jsonResp->results[$i]->attributes as $attr){
-				if($attr->type == 'Requestable' && $attr->val == 'false'){
-					$requestable = false;
-					break;
-				}
-			}
-			if($requestable){
-				$result = $jsonResp->results[$i];
-				if (empty($result->definition) && !empty($result->attributes)) {
-					foreach ($result->attributes as $attribute) {
-						if ($attribute->typeId == $definitionAttributeTypeId) {
-							$result->definition = $attribute;
-						}
+			$result = $jsonResp->results[$i];
+			if (empty($result->definition) && !empty($result->attributes)) {
+				foreach ($result->attributes as $attribute) {
+					if ($attribute->typeId == $definitionAttributeTypeId) {
+						$result->definition = $attribute;
 					}
 				}
-				$results[] = $result;
 			}
+			$results[] = $result;
 		}
 		return new CakeResponse(['type' => 'application/javascript', 'body' => json_encode($results)]);
 	}
 
 	public function getCommonSearches(){
-		$commonSearches = array();
+		$commonSearches = [];
 		$this->loadModel('CommonSearch');
 		$results = $this->CommonSearch->find('all', [
 			'fields' => 'query',
@@ -383,17 +434,13 @@ class SearchController extends AppController {
 				}
 				$fullCommunityName .= $term[$i]->communityname;
 				$term[$i]->communityname = $fullCommunityName;
-
-				// check to see if this terms is stored in user's quick links cookie
-				$arrQl = (array)$this->Cookie->read('QL');
-				$term[$i]->saved = !empty($arrQl[$term[$i]->termrid]);
 			}
 		}
 
 		return $resp;
 	}
 
-	private function searchTerms($query, $page=0, $displayLength=20, $sortField='termsignifier', $sortOrder='ASC', $communityFilter='', $termOnly=false){
+	private function searchTerms($query, $page=0, $displayLength=1000, $sortField='termsignifier', $sortOrder='ASC', $communityFilter='', $termOnly=false){
 		$displayStart = $page*$displayLength;
 
 		// use API search call to query based on user input
@@ -408,21 +455,8 @@ class SearchController extends AppController {
 				'value' => $result->name->id]];
 		}
 		$filters = [['OR' => $ridFilter]];
-		if(!Configure::read('allowUnrequestableTerms')){
-			$filters[] = [
-				'OR' => [
-					['Field' => [
-						'name' => 'requestable',
-						'operator' => 'NULL']],
-					['Field' => [
-						'name' => 'requestable',
-						'operator' => 'EQUALS',
-						'value' => true]]]];
-		}
+		$options = ['additionalFilters' => $filters];
 		// set sort if not sorting by score
-		$options = [
-			'length' => 100,
-			'additionalFilters' => $filters];
 		if($sortField != 'score'){
 			$options['sortField'] = $sortField;
 			$options['sortOrder'] = $sortOrder;
@@ -434,7 +468,7 @@ class SearchController extends AppController {
 
 		//order results based on first search
 		if($sortField == 'score' && sizeof($resp->aaData)>0){
-			$arrTmpTerms = array();
+			$arrTmpTerms = [];
 			foreach($searchResp->results as $result){
 				foreach($resp->aaData as $term){
 					if($term->termrid == $result->name->id){
@@ -469,17 +503,13 @@ class SearchController extends AppController {
 				}
 				$fullCommunityName .= $term[$i]->communityname;
 				$term[$i]->communityname = $fullCommunityName;
-
-				// check to see if this terms is stored in user's quick links cookie
-				$arrQl = (array)$this->Cookie->read('QL');
-				$term[$i]->saved = !empty($arrQl[$term[$i]->termrid]);
 			}
 		}
 
 		return $resp;
 	}
 
-	private function getDomainTerms($domainFilter='', $page=0, $length=20, $sortField='termsignifier', $sortOrder='ASC'){
+	private function getDomainTerms($domainFilter='', $page=0, $length=1000, $sortField='termsignifier', $sortOrder='ASC'){
 		$start = $page*$length;
 		$options = compact('sortField', 'sortOrder', 'start', 'length');
 
@@ -507,10 +537,6 @@ class SearchController extends AppController {
 				}
 				$fullCommunityName .= $term[$i]->communityname;
 				$term[$i]->communityname = $fullCommunityName;
-
-				// check to see if this terms is stored in user's quick links cookie
-				$arrQl = (array)$this->Cookie->read('QL');
-				$term[$i]->saved = !empty($arrQl[$term[$i]->termrid]);
 			}
 		}
 		return $resp;

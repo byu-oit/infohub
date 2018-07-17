@@ -1,7 +1,13 @@
 <?php
-	$this->Html->css('secondary', null, array('inline' => false));
-	$this->Html->css('search', null, array('inline' => false));
+	$this->Html->css('secondary', null, ['inline' => false]);
+	$this->Html->css('search', null, ['inline' => false]);
 ?>
+<script>
+	$(document).ready(function() {
+		$("#browse-tab").addClass('active');
+	});
+</script>
+
 <div id="searchBody" class="innerLower">
 	<div id="searchResults">
 		<h1 class="headerTab">APIs</h1>

@@ -1,6 +1,6 @@
 <?php
-	$this->Html->css('secondary', null, array('inline' => false));
-	$this->Html->css('resource', null, array('inline' => false));
+	$this->Html->css('secondary', null, ['inline' => false]);
+	$this->Html->css('resource', null, ['inline' => false]);
 ?>
 <script>
 	$(document).ready(function() {
@@ -28,9 +28,9 @@
 			$('.contentBody, .aside').css('height', 'initial');
 			$('aside').css('height', 'initial');
 		}
-		
+
 	});
-		
+
 	$(window).resize(function() {
 		if($(window).width() > 750) {
 			$('.contentBody, .aside').css('height', 'initial');
@@ -41,7 +41,7 @@
 			$('.contentBody, .aside').css('height', 'initial');
 			$('aside').css('height', 'initial');
 		}
-		
+
 	});
 
 	function colHeight() {
@@ -61,7 +61,7 @@
 <!-- Request list -->
 <div id="resourceBody" class="innerLower">
 	<div id="resourceTop">
-		<h1 class="headerTab" >Resources</h1>
+		<h1 class="headerTab">Resources</h1>
 		<div class="clear"></div>
 		<div id="reLower" class="whiteBox">
 			<aside>
@@ -80,6 +80,3 @@
 		</div>
 	</div>
 </div>
-
-<!-- Quick links -->
-<?php echo $this->element('quick_links'); ?>

@@ -2,6 +2,7 @@
 
 class ApisController extends AppController {
 	public $uses = ['CollibraAPI', 'BYUAPI'];
+	public $helpers = ['Fieldset'];
 
 	public function index() {
 		$hosts = $this->CollibraAPI->getApiHosts();
@@ -12,6 +13,10 @@ class ApisController extends AppController {
 	}
 
 	public function host($hostname) {
+		if ($this->Session->check('recentAPIs')) {
+			$this->set('recent', $this->Session->read('recentAPIs'));
+		}
+
 		$community = $this->CollibraAPI->findTypeByName('community', $hostname, ['full' => true]);
 		if (empty($community->resourceId)) {
 			$this->redirect(['action' => 'index']);
@@ -23,17 +28,21 @@ class ApisController extends AppController {
 					return strcmp(strtolower($a->name), strtolower($b->name));
 				});
 		}
-		$dataAssetDomainTypeId = Configure::read('Collibra.dataAssetDomainTypeId');
-		$techAssetDomainTypeId = Configure::read('Collibra.techAssetDomainTypeId');
-		$this->set(compact('hostname', 'community', 'dataAssetDomainTypeId', 'techAssetDomainTypeId'));
+		$this->set(compact('hostname', 'community'));
 	}
 
 	public function view() {
 		$args = func_get_args();
 		$hostname = array_shift($args);
 		$basePath = '/' . implode('/', $args);
-		$terms = $this->CollibraAPI->getApiTerms($hostname, $basePath);
-		if (empty($terms)) {
+		if (!isset($this->request->query['upper'])) {
+			$basePath = strtolower($basePath);
+		}
+		$fields = $this->CollibraAPI->getApiFields($hostname, $basePath, true);
+		if (empty($fields) && !isset($this->request->query['upper'])) {
+			return $this->redirect($hostname.'/'.implode('/', $args).'?upper=1');
+		}
+		if (empty($fields)) {
 			//Check if non-existent API, or simply empty API
 			$community = $this->CollibraAPI->findTypeByName('community', $hostname, ['full' => true]);
 			if (empty($community->vocabularyReferences->vocabularyReference)) {
@@ -50,28 +59,40 @@ class ApisController extends AppController {
 				return $this->redirect(['action' => 'host', 'hostname' => $hostname]);
 			}
 		}
+		$containsFieldset = false;
+		foreach ($fields as $field) {
+			if (!empty($field->descendantFields)) {
+				$containsFieldset = true;
+				break;
+			}
+		}
+		$isOITEmployee = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04');
+		$this->set(compact('hostname', 'basePath', 'fields', 'isOITEmployee', 'containsFieldset'));
 
-		$this->set(compact('hostname', 'basePath', 'terms'));
+		$arrRecent = $this->Session->check('recentAPIs') ? $this->Session->read('recentAPIs') : [];
+		array_unshift($arrRecent, ['host' => $hostname, 'basePath' => $basePath]);
+		$arrRecent = array_unique($arrRecent, SORT_REGULAR);
+		$this->Session->write('recentAPIs', array_slice($arrRecent, 0, 5));
 
 		if (array_key_exists('checkout', $this->request->query)) {
-			return $this->_autoCheckout($hostname, $basePath, $terms);
+			return $this->_autoCheckout($hostname, $basePath, $fields);
 		}
 	}
 
-	protected function _autoCheckout($hostname, $basePath, $terms) {
-		$queue = (array)$this->Cookie->read('queue');
-		foreach ($terms as $term) {
-			if (empty($term->businessTerm[0])) {
+	protected function _autoCheckout($hostname, $basePath, $fields) {
+		$queue = $this->Session->read('queue');
+		foreach ($fields as $field) {
+			if (empty($field->businessTerm[0])) {
 				continue;
 			}
-			$queue[$term->businessTerm[0]->termId] = [
-				'term' => $term->businessTerm[0]->term,
-				'communityId' => $term->businessTerm[0]->termCommunityId,
+			$queue['businessTerms'][$field->businessTerm[0]->termId] = [
+				'term' => $field->businessTerm[0]->term,
+				'communityId' => $field->businessTerm[0]->termCommunityId,
 				'apiHost' => $hostname,
 				'apiPath' => $basePath];
 		}
 
-		$this->Cookie->write('queue', $queue, true, '90 days');
+		$this->Session->write('queue', $queue);
 		return $this->redirect(['controller' => 'request', 'action' => 'index']);
 	}
 

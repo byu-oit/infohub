@@ -3,6 +3,7 @@
 /app/Config/core-local.php
 /app/tmp
 /app/webroot/*info.php
+/app/webroot/robots.txt
 /lib/Cake/Console/Templates/skel/tmp/
 /plugins
 /vendors
@@ -12,6 +13,7 @@
 *.mo
 /composer.phar
 /docker-compose.yml
+/data-warehouse-tables.json
 # INTENTIONALLY adding /vendor to version control
 # Technically recreatable via composer, but actual
 # number of libraries in this case is extremely

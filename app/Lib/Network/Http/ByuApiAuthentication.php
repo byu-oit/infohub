@@ -45,7 +45,8 @@ class ByuApiAuthentication {
 		}
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, 'https://api.byu.edu/token');
-		curl_setopt($ch, CURLOPT_USERPWD, "{$authInfo['key']}:{$authInfo['secret']}");
+		curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Basic '.base64_encode($authInfo['key'].':'.$authInfo['secret']), 'Content-Type: application/x-www-form-urlencoded']);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_POST, true);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, 'grant_type=client_credentials');
@@ -64,16 +65,21 @@ class ByuApiAuthentication {
 	}
 
 	protected static function _regenerateBearerToken($authInfo) {
-		CakeSession::delete('ByuApiBearerToken');
+		$tokenInfo = CakeSession::consume('ByuApiBearerToken');
 		if (empty($authInfo['key']) || empty($authInfo['secret'])) {
 			return null;
 		}
+
+		if (empty($tokenInfo->access_token)) { //No token stored, so no need to revoke
+			return self::_generateBearerToken($authInfo);
+		}
+
 		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, 'https://api.byu.edu/token/revoke');
+		curl_setopt($ch, CURLOPT_URL, 'https://api.byu.edu/revoke');
 		curl_setopt($ch, CURLOPT_USERPWD, "{$authInfo['key']}:{$authInfo['secret']}");
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_POST, true);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, 'grant_type=client_credentials');
+		curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(['grant_type' => 'client_credentials', 'token' => $tokenInfo->access_token]));
 
 		$revokeRaw = curl_exec($ch);
 		curl_close($ch);

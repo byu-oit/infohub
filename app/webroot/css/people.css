@@ -164,6 +164,11 @@
   margin: 0 0 10px;
   clear: both;
 }
+#peopleBody #peopleBottom #peopleMain #rightCol .deptHeader a {
+  color: #234e77;
+  cursor: pointer;
+  text-decoration: none;
+}
 #peopleBody #peopleBottom #peopleMain #rightCol .contactBox {
   *zoom: 1;
   float: left;

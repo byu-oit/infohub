@@ -9,7 +9,7 @@ class CasAuthenticate extends BaseAuthenticate {
 	function __construct($collection, $settings) {
 		$this->settings = Hash::merge(
 			$this->settings,
-			array('hostname' => null, 'uri' => '', 'port' => 443),
+			['hostname' => null, 'uri' => '', 'port' => 443],
 			(array)Configure::read('CAS'));
 		parent::__construct($collection, $settings);
 
@@ -32,7 +32,7 @@ class CasAuthenticate extends BaseAuthenticate {
 	public function authenticate(CakeRequest $request, CakeResponse $response) {
 		phpCAS::handleLogoutRequests(false);
 		phpCAS::forceAuthentication();
-		$user = array_merge(array('username' => phpCAS::getUser()), phpCAS::getAttributes());
+		$user = array_merge(['username' => phpCAS::getUser()], phpCAS::getAttributes());
 		$event = new CakeEvent('CAS.authenticated', $this, $user);
 		$this->_Collection->getController()->getEventManager()->dispatch($event);
 		return $event->data;
@@ -65,7 +65,7 @@ class CasAuthenticate extends BaseAuthenticate {
 			//        header, which is a problem because CakePHP still thinks the
 			//        user is logged in. See Step 2.
 			$current_url = Router::url(null, true);
-			phpCAS::logout(array('url' => $current_url));
+			phpCAS::logout(['url' => $current_url]);
 		} else {
 			//Step 2. This will run when the CAS server has redirected the client
 			//        back to us. Do nothing in this block, then after this method
