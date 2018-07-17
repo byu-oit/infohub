@@ -20,7 +20,7 @@ class MyaccountController extends AppController {
 	}
 
 	public function login() {
-		$this->redirect('/');
+		$this->redirect($this->request->query['return']);
 	}
 
 	public function logout() {
@@ -29,7 +29,7 @@ class MyaccountController extends AppController {
 	}
 
 	function sortArrayByArray(Array $array, Array $orderArray) {
-		$ordered = array();
+		$ordered = [];
 		foreach($orderArray as $key) {
 			if(array_key_exists($key,$array)) {
 				$ordered[$key] = $array[$key];
@@ -40,91 +40,135 @@ class MyaccountController extends AppController {
 	}
 
 	public function index() {
-		$requestStatus = 'Submitted';
-		$page = 'current';
-		if(isset($this->request->query['s'])){
-			$requestStatus = 'Complete';
-			$page = 'past';
+		$completedStatuses = ['Completed', 'Obsolete'];
+		$expand = '';
+		if(isset($this->request->query['expand'])){
+			$expand = $this->request->query['expand'];
 		}
 
 		$netID = $this->Auth->user('username');
 		$this->loadModel('BYUAPI');
 		$byuUser = $this->BYUAPI->personalSummary($netID);
-		$personID = $byuUser->identifiers->person_id;
 
 		$this->loadModel('CollibraAPI');
-		// attempt to reindex source to make sure latest requests are displayed
-		/*$resp = $this->CollibraAPI->post('search/re-index');*/
-
-		// get all request for this user
 		$resp = $this->CollibraAPI->postJSON(
 				'search',
-				'{"query":"'.$personID.'", "filter": {"category": ["TE"], "vocabulary": ["' . Configure::read('Collibra.vocabulary.isaRequest') . '"] }, "fields": ["' . Configure::read('Collibra.attribute.isaRequestPersonId') . '"] }'
+				'{"query":"'.$netID.'", "filter": {"category": ["TE"], "type": {"asset": ["' . Configure::read('Collibra.type.dataSharingRequest') . '"] }}, "fields": ["' . Configure::read('Collibra.attribute.requesterNetId') . '"] }'
 		);
-		$isaRequests = json_decode($resp);
+		$requests = json_decode($resp);
 
-		$arrRequests = array();
-		foreach($isaRequests->results as $r){
-			if($r->status == $requestStatus){
-				// load terms details
-				$resp = $this->CollibraAPI->get('term/'.$r->name->id);
-				$request = json_decode($resp);
-				//$createdDate = $request->createdOn/1000;
-				//$createdDate = date('m/d/Y', $request->createdOn);
-
-				// load terms submitted in request
-				////////////////////////////////////////////
-				$resp = $this->CollibraAPI->postJSON(
-						'output/data_table',
-						'{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldName":"relationrid"}},{"Column":{"fieldName":"startDate"}},{"Column":{"fieldName":"endDate"}},{"Column":{"fieldName":"relstatusrid"}},{"Column":{"fieldName":"relstatusname"}},{"Column":{"fieldName":"communityname"}},{"Column":{"fieldName":"commrid"}},{"Column":{"fieldName":"domainname"}},{"Column":{"fieldName":"domainrid"}},{"Column":{"fieldName":"concepttypename"}},{"Column":{"fieldName":"concepttyperid"}}], "Resources":{"Term":{"Id":{"name":"termrid"}, "Signifier":{"name":"termsignifier"}, "Relation":{"typeId":"' . Configure::read('Collibra.relationship.isaRequestToTerm') . '", "Id":{"name":"relationrid"}, "StartingDate":{"name":"startDate"}, "EndingDate":{"name":"endDate"}, "Status":{"Id":{"name":"relstatusrid"}, "Signifier":{"name":"relstatusname"}}, "Filter":{"AND":[{"Field":{"name":"reltermrid", "operator":"EQUALS", "value":"'.$r->name->id.'"}}]}, "type":"TARGET", "Source":{"Id":{"name":"reltermrid"}}}, "Vocabulary":{"Community":{"Name":{"name":"communityname"}, "Id":{"name":"commrid"}}, "Name":{"name":"domainname"}, "Id":{"name":"domainrid"}}, "ConceptType":[{"Signifier":{"name":"concepttypename"}, "Id":{"name":"concepttyperid"}}], "Filter":{"AND":[{"AND":[{"Field":{"name":"reltermrid", "operator":"EQUALS", "value":"'.$r->name->id.'"}}]}]}, "Order":[{"Field":{"name":"termsignifier", "order":"ASC"}}]}}, "displayStart":0, "displayLength":10}}'
-				);
-				$requestedTerms = json_decode($resp);
-				// add property to request object to hold terms
-				if(isset($requestedTerms->aaData)){
-					$request->terms = $requestedTerms;
-				}
-				////////////////////////////////////////////
-
-				// load approval objects for request
-				////////////////////////////////////////////
-				$termRid = $r->name->id;
-				$resp = $this->CollibraAPI->postJSON(
-						'output/data_table',
-						'{"TableViewConfig":{"Columns":[{"Column":{"fieldName":"termrid"}},{"Column":{"fieldName":"termsignifier"}},{"Column":{"fieldName":"relationrid"}},{"Column":{"fieldName":"startDate"}},{"Column":{"fieldName":"endDate"}},{"Column":{"fieldName":"relstatusrid"}},{"Column":{"fieldName":"relstatusname"}},{"Column":{"fieldName":"Attr4331ec0988a248e6b0969ece6648aff3rid"}},{"Column":{"fieldName":"Attr4331ec0988a248e6b0969ece6648aff3longExpr"}},{"Column":{"fieldName":"Attr4331ec0988a248e6b0969ece6648aff3"}},{"Column":{"fieldName":"Attr0cbbfd32fc9747cebef1a89ae4e77ee8rid"}},{"Column":{"fieldName":"Attr0cbbfd32fc9747cebef1a89ae4e77ee8longExpr"}},{"Column":{"fieldName":"Attr0cbbfd32fc9747cebef1a89ae4e77ee8"}},{"Column":{"fieldName":"Attr9a18e247c09040c3896eab97335ae759rid"}},{"Column":{"fieldName":"Attr9a18e247c09040c3896eab97335ae759longExpr"}},{"Column":{"fieldName":"Attr9a18e247c09040c3896eab97335ae759"}},{"Column":{"fieldName":"statusrid"}},{"Column":{"fieldName":"statusname"}}],"Resources":{"Term":{"Id":{"name":"termrid"},"Signifier":{"name":"termsignifier"},"Relation":{"typeId":"' . Configure::read('Collibra.relationship.isaRequestToApproval') . '","Id":{"name":"relationrid"},"StartingDate":{"name":"startDate"},"EndingDate":{"name":"endDate"},"Status":{"Id":{"name":"relstatusrid"},"Signifier":{"name":"relstatusname"}},"Filter":{"AND":[{"Field":{"name":"reltermrid","operator":"EQUALS","value":"'.$termRid.'"}}]},"type":"TARGET","Source":{"Id":{"name":"reltermrid"}}},"StringAttribute":[{"Id":{"name":"Attr4331ec0988a248e6b0969ece6648aff3rid"},"labelId":"' . Configure::read('Collibra.attribute.stewardName') . '","LongExpression":{"name":"Attr4331ec0988a248e6b0969ece6648aff3longExpr"},"Value":{"name":"Attr4331ec0988a248e6b0969ece6648aff3"}},{"Id":{"name":"Attr0cbbfd32fc9747cebef1a89ae4e77ee8rid"},"labelId":"' . Configure::read('Collibra.attribute.stewardEmail') . '","LongExpression":{"name":"Attr0cbbfd32fc9747cebef1a89ae4e77ee8longExpr"},"Value":{"name":"Attr0cbbfd32fc9747cebef1a89ae4e77ee8"}},{"Id":{"name":"Attr9a18e247c09040c3896eab97335ae759rid"},"labelId":"' . Configure::read('Collibra.attribute.stewardPhone') . '","LongExpression":{"name":"Attr9a18e247c09040c3896eab97335ae759longExpr"},"Value":{"name":"Attr9a18e247c09040c3896eab97335ae759"}}],"Status":{"Id":{"name":"statusrid"},"Signifier":{"name":"statusname"}},"Filter":{"AND":[{"AND":[{"Field":{"name":"reltermrid","operator":"EQUALS","value":"'.$termRid.'"}}]}]},"Order":[{"Field":{"name":"termsignifier","order":"ASC"}}]}},"displayStart":0,"displayLength":20}}'
-				);
-				$approvalObjects = json_decode($resp);// add property to request object to hold approvals
-				if(isset($approvalObjects->aaData)){
-					$request->approvals = $approvalObjects;
-				}
-				////////////////////////////////////////////
-
-				// add to request data array
-				array_push($arrRequests, $request);
+		$arrRequests = [];
+		foreach($requests->results as $r){
+			if ($r->status == 'Deleted') {
+				continue;
 			}
+
+			$request = $this->CollibraAPI->getRequestDetails($r->name->id);
+			$request->roles = $this->CollibraAPI->getResponsibilities($request->vocabularyId);
+			for ($i = 0; $i < sizeof($request->dsas); $i++) {
+				$request->dsas[$i]->roles = $this->CollibraAPI->getResponsibilities($request->dsas[$i]->dsaId);
+			}
+			$resp = $this->CollibraAPI->get('term/'.$r->name->id.'/attachments');
+			$resp = json_decode($resp);
+			$request->attachments = $resp->attachment;
+
+			$request->reqTermGlossaries = [];
+			foreach ($request->requestedTerms as $term) {
+				if (array_key_exists($term->reqTermVocabName, $request->reqTermGlossaries)) {
+					array_push($request->reqTermGlossaries[$term->reqTermVocabName], $term);
+				} else {
+					$request->reqTermGlossaries[$term->reqTermVocabName] = [$term];
+				}
+			}
+
+			if (!empty($request->additionallyIncludedTerms)) {
+				$request->addTermGlossaries = [];
+				foreach ($request->additionallyIncludedTerms as $term) {
+					if (array_key_exists($term->addTermVocabName, $request->addTermGlossaries)) {
+						array_push($request->addTermGlossaries[$term->addTermVocabName], $term);
+					} else {
+						$request->addTermGlossaries[$term->addTermVocabName] = [$term];
+					}
+				}
+			}
+			// add to request data array
+			array_push($arrRequests, $request);
 		}
 		// sort results by date added
 		usort($arrRequests, 'self::sortRequests');
 
-		// sort request attribute data based on workflow form field order
-		$workflowResp = $this->CollibraAPI->get('workflow/'.Configure::read('Collibra.isaWorkflow.id').'/form/start');
-		$workflowResp = json_decode($workflowResp);
+		// Temporary fix for a mysterious bug in Collibra that sometimes
+		// returns two copies of the most recently created DSR
+		$numRequests = count($arrRequests);
+		if ($numRequests > 1 && $arrRequests[$numRequests - 1]->id == $arrRequests[$numRequests - 2]->id) {
+			array_pop($arrRequests);
+		}
+
+		$sortedRequests = [
+			'inProgress' => [],
+			'completed' => [],
+			'canceled' => []
+		];
+
+		$arrChangedAttrIds = [];
+		$arrChangedAttrValues = [];
 		foreach($arrRequests as $r){
-			$arrNewAttr = array();
-			foreach($workflowResp->formProperties as $wf){
-				foreach($r->attributeReferences->attributeReference as $attr){
-					if($attr->labelReference->signifier == $wf->name){
-						$arrNewAttr[$attr->labelReference->signifier] = $attr;
-						break;
-					}
+			// Making edits in Collibra inserts weird html into the attributes; if an
+			// edit was made in Collibra, we replace their html with some more cooperative tags
+			foreach($r->attributes as $label => $attr) {
+				if ($label == 'Request Date') continue;
+				if (preg_match('/<div>/', $attr->attrValue)) {
+					array_push($arrChangedAttrIds, $attr->attrResourceId);
+					$newValue = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->attrValue);
+					array_push($arrChangedAttrValues, $newValue.'  ');
+
+					// After updating the value in Collibra, just replace the value for this page load
+					$attr->attrValue = $newValue;
 				}
 			}
-			$r->attributeReferences->attributeReference = $arrNewAttr;
+
+			for ($i = 0; $i < sizeof($r->dsas); $i++) {
+				list($r->dsas[$i]->attributes, $r->dsas[$i]->collaborators) = $this->CollibraAPI->getAttributes($r->dsas[$i]->dsaId);
+				foreach($r->dsas[$i]->attributes as $attr) {
+					if (preg_match('/<div>/', $attr->attrValue)) {
+						array_push($arrChangedAttrIds, $attr->attrResourceId);
+						$newValue = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->attrValue);
+						array_push($arrChangedAttrValues, $newValue.'  ');
+
+						// After updating the value in Collibra, just replace the value for this page load
+						$attr->attrValue = $newValue;
+					}
+				}
+
+				$resp = $this->CollibraAPI->get('term/'.$r->dsas[$i]->dsaId.'/attachments');
+				$resp = json_decode($resp);
+				$r->dsas[$i]->attachments = $resp->attachment;
+			}
+
+			$pendingStatuses = ['In Progress', 'Request In Progress', 'Agreement Review', 'In Provisioning'];
+			if (in_array($r->statusName, $pendingStatuses)) {
+				array_push($sortedRequests['inProgress'], $r);
+			} else if ($r->statusName == 'Completed' || $r->statusName == 'Obsolete') {
+				array_push($sortedRequests['completed'], $r);
+			} else if ($r->statusName == 'Canceled') {
+				array_push($sortedRequests['canceled'], $r);
+			}
+		}
+
+		if (!empty($arrChangedAttrIds)) {
+			// Here update all the attributes Collibra inserted HTML tags into
+			$postData['attributes'] = $arrChangedAttrIds;
+			$postData['values'] = $arrChangedAttrValues;
+			$postString = http_build_query($postData);
+			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
+			$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.changeAttributes').'/start', $postString);
 		}
 
 		$psName = '';
 		$psRole = 'N/A';
 		$psDepartment = 'N/A';
-		$psPersonID = $byuUser->identifiers->person_id;
+		$psEmail = '';
+		$psNetID = $netID;
 		if(isset($byuUser->names->preferred_name)){
 			$psName = $byuUser->names->preferred_name;
 		}
@@ -134,10 +178,12 @@ class MyaccountController extends AppController {
 		if(isset($byuUser->employee_information->department)){
 			$psDepartment = $byuUser->employee_information->department;
 		}
-		$this->set('psName', $psName);
-		$this->set('psRole', $psRole);
-		$this->set('psDepartment', $psDepartment);
-		$this->set('requests', $arrRequests);
-		$this->set('page', $page);
+		if(isset($byuUser->contact_information->work_email_address)) {
+			$psEmail = $byuUser->contact_information->work_email_address;
+		} else if(isset($byuUser->contact_information->email_address)){
+			$psEmail = $byuUser->contact_information->email_address;
+		}
+		$this->set(compact('expand', 'psName', 'psRole', 'psDepartment', 'psEmail', 'psNetID'));
+		$this->set('requestStatuses', $sortedRequests);
 	}
 }

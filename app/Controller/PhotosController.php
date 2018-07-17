@@ -5,12 +5,13 @@ class PhotosController extends AppController {
 
 	function beforeFilter() {
 		parent::beforeFilter();
-		$this->Auth->deny();
+		$this->Auth->deny('index', 'update', 'view');
 		$this->layout = 'admin';
 	}
 
 	public function isAuthorized($user) {
-		return $this->isAdmin($user);
+		//All authenticated users allowed to see collibraview
+		return ($this->request->action == 'collibraview') ? true : $this->isAdmin($user);
 	}
 
 	public function index() {

@@ -1,8 +1,8 @@
 <?php
 
 class AdminController extends AppController {
-	public $uses = array('CmsPage', 'CmsUsers');
-	public $helpers = array('Html', 'Form');
+	public $uses = ['CmsPage', 'CmsUsers'];
+	public $helpers = ['Html', 'Form'];
 
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -16,7 +16,7 @@ class AdminController extends AppController {
 	}
 
 	public function index(){
-		$this->redirect(array('action' => 'manageusers'));
+		$this->redirect(['action' => 'manageusers']);
 	}
 
 	public function logout(){
@@ -36,13 +36,13 @@ class AdminController extends AppController {
 				throw new NotFoundException(__('Invalid page'));
 			}
 
-			if ($this->request->is(array('post', 'put'))) {
+			if ($this->request->is(['post', 'put'])) {
 			   $this->CmsPage->id = $id;
 				if ($this->CmsPage->save($this->request->data)) {
 					$this->Session->setFlash(__('The page has been updated.'));
-					//return $this->redirect(array('action' => 'index'));
+					//return $this->redirect(['action' => 'index']);
 				}else{
-					$this->Session->setFlash('Unable to update the page', 'default', array('class' => 'error'));
+					$this->Session->setFlash('Unable to update the page', 'default', ['class' => 'error']);
 				}
 			}
 		}
@@ -77,7 +77,7 @@ class AdminController extends AppController {
 			$page = $this->CmsPage->loadPage($pageID);
 			$cmsPage = $page['CmsPage'];
 		}else{
-			$this->Session->setFlash('Invalid page', 'default', array('class' => 'error'));
+			$this->Session->setFlash('Invalid page', 'default', ['class' => 'error']);
 			$page = null;
 			$cmsPage = null;
 		}
@@ -87,9 +87,9 @@ class AdminController extends AppController {
 			$this->CmsPage->create();
 			if ($this->CmsPage->save($this->request->data)) {
 				$this->Session->setFlash(__('Your page has been saved.'));
-				//return $this->redirect(array('action' => 'index'));
+				//return $this->redirect(['action' => 'index']);
 			}else{
-				$this->Session->setFlash('Unable to save page', 'default', array('class' => 'error'));
+				$this->Session->setFlash('Unable to save page', 'default', ['class' => 'error']);
 			}
 		}
 
@@ -110,7 +110,7 @@ class AdminController extends AppController {
 			);
 		}
 
-		return $this->redirect(array('action' => 'managepages'));
+		return $this->redirect(['action' => 'managepages']);
 	}
 
 	public function manageusers(){
@@ -125,7 +125,7 @@ class AdminController extends AppController {
 			if (!$user) {
 				throw new NotFoundException(__('Invalid user'));
 			}else{
-				if ($this->request->is(array('post', 'put'))) {
+				if ($this->request->is(['post', 'put'])) {
 					$data = $this->request['data']['CmsUsers'];
 					$newActive = $data['active'];
 
@@ -137,7 +137,7 @@ class AdminController extends AppController {
 						$this->Session->setFlash(__('This user has been updated.'));
 						$this->redirect($this->request->here());
 					}else{
-						$this->Session->setFlash('Unable to update this user.', 'default', array('class' => 'error'));
+						$this->Session->setFlash('Unable to update this user.', 'default', ['class' => 'error']);
 					}
 				}
 			}
@@ -169,13 +169,13 @@ class AdminController extends AppController {
 		// update user data
 		if ($this->request->is('post')) {
 			if($this->CmsUsers->userExists($this->request['data']['CmsUsers']['username'])){
-				$this->Session->setFlash('This user already exists.', 'default', array('class' => 'error'));
+				$this->Session->setFlash('This user already exists.', 'default', ['class' => 'error']);
 			}else{
 				$data = $this->request['data'];
 				if ($this->CmsUsers->save($data)) {
 					$this->Session->setFlash(__('The user has been added.'));
 				}else{
-					$this->Session->setFlash('Unable to save user.', 'default', array('class' => 'error'));
+					$this->Session->setFlash('Unable to save user.', 'default', ['class' => 'error']);
 				}
 			}
 		}
@@ -196,7 +196,7 @@ class AdminController extends AppController {
 			);
 		}
 
-		return $this->redirect(array('action' => 'manageusers'));
+		return $this->redirect(['action' => 'manageusers']);
 	}
 
 	public function changerank(){

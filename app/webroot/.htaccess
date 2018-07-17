@@ -9,3 +9,4 @@
 <IfDefine !NoCustomPHPSessionPath>
     php_value session.save_path /opt/phproot/infohub/app/tmp/sessions
 </IfDefine>
+php_value max_input_vars 10000

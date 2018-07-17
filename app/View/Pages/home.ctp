@@ -1,8 +1,8 @@
 <?php
-    $this->Html->css('home', null, array('inline' => false));
+    $this->Html->css('home', null, ['inline' => false]);
 ?>
 <script>
-	$(window).resize(boxWidth);	
+	$(window).resize(boxWidth);
  	$(window).load(boxWidth);
  	$(window).load(showHelpFirst);
  	$(window).scroll(showHelpFirst);
@@ -66,7 +66,7 @@
 			</div>
 			<div id="searchBox">
 				<form action="#" onsubmit="document.location='/search/results/'+this.searchInput.value.replace('+','&'); return false;" method="post">
-                    		<input id="searchInput" name="searchInput" type="text" class="inputShade" placeholder="Search keyword, topic, or phrase" maxlength="50" autocomplete="off"  />
+                    		<input id="searchInput" name="searchInput" type="text" class="inputShade" placeholder="What information are you looking for?" maxlength="50" autocomplete="off"  />
                     		<?php echo $this->element('auto_complete'); ?>
                     		<input type="submit" value="Search" class="inputButton" />
                     		<p>or <a href="/search" id="catalogLink" >Browse our full catalog</a></p>
@@ -74,7 +74,7 @@
 			</div>
 			<!-- <a href="/search" id="catalogLink" class="grow"><img src="/img/catalogLink2.png" alt="See full catealog"></a> -->
 		</div>
-	</div>	
+	</div>
 </div>
 <div id="homeQL" class="inner">
 	<h3><span>Quick Links</span></h3>

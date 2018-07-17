@@ -9,6 +9,12 @@ $(document).ready(function(){
 		$('#mainNav').toggle("slide", { direction: "left" }, 300);
 	});
 
+	// Browse nav menu
+	$('#browse-tab').click(function() {
+		$(this).toggleClass('open');
+		$('#drop-down-menu').toggleClass('open');
+	});
+
 	// Help Pop-out functionality
 	$("#deskTopHelp").click(function() {
 		$(this).hide();
@@ -28,17 +34,6 @@ $(document).ready(function(){
 
 	$("#mobileHelp").click(function() {
 		$("#nhContent").slideToggle();
-	});
-
-	$('.editQL').click(function() {
-		$('.ql-edit').addClass('active');
-		$('.ql-list').addClass('ql-active');
-		$('.quickLink').addClass('active-link')
-	});
-	$('.saveEdit').click(function() {
-		$('.ql-edit').removeClass('active');
-		$('.ql-list').removeClass('ql-active');
-		$('.quickLink').removeClass('active-link')
 	});
 });
 
@@ -134,8 +129,17 @@ $(document).ready(function(){
 			}
 			else{
 				var val = $('#searchInput').val();
-				$.getJSON( "/search/autoCompleteTerm", { q: val } )
-				.done(function( data ) {
+				setTimeout(function() {
+					if (val != $('#searchInput').val()) {
+						//User continued typing, so throw this out
+						return;
+					}
+					$.getJSON( "/search/autoCompleteTerm", { q: val } )
+					.done(function( data ) {
+						if (val != $('#searchInput').val()) {
+							//User continued typing, so throw this out
+							return;
+						}
 						$('.autoComplete .results').html('');
 						for (var i in data) {
 							$('.autoComplete .results').append($('<li>', {text: data[i].name.val}));
@@ -145,7 +149,8 @@ $(document).ready(function(){
 							$('#searchInput').parent().submit();
 							$('.autoComplete').hide();
 						});
-				});
+					});
+				}, 300);
 
 				$('.autoComplete').show();
 			}
@@ -153,7 +158,7 @@ $(document).ready(function(){
 			if(m){
 				$('.autoComplete li.active').removeClass('active');
 				$('.autoComplete li').eq(index).addClass('active');
-		   }
+			}
 		}
 	});
 });
@@ -167,34 +172,25 @@ function showTermDef(elem){
 	var winTop = pos.top - $('#info-win').outerHeight() - 5;
 	$('#info-win').css('top',winTop).css('left',winLeft);
 }
-	function hideTermDef(){
-			$('#info-win').hide();
-	}
+function hideTermDef(){
+	$('#info-win').hide();
+}
 
 // Request functions
 ///////////////////////////////
 function toggleRequestQueue(){
 	if ($('#request-popup').css('display') == 'none'){
-		$.get("/request/listQueue")
-			.done(function(data){
-				if($(window).scrollTop()>50){
-					var requestIconPos = $('#request-queue .request-num').offset();
-					var left = requestIconPos.left - $('#request-popup').width() - 16;
-					$('#request-popup').addClass('fixed').css('left', left);
-				}else{
-					$('#request-popup').removeClass('fixed').css('left', 'auto');
-				}
-				$('#request-popup').html(data).slideDown('fast');
-			});
+		showRequestQueue();
 	}else{
-		$('#request-popup').hide();
+		hideRequestQueue();
 	}
 }
 function showRequestQueue(){
-	$.get("/request/listQueue")
+	$.get("/request/cartDropdown")
 		.done(function(data){
+			updateQueueSize();
 			if($(window).scrollTop()>50){
-				var requestIconPos = $('#request-queue .request-num').offset();
+				var requestIconPos = $('#request-queue').offset();
 				var left = requestIconPos.left - $('#request-popup').width() - 16;
 				$('#request-popup').addClass('fixed').css('left', left);
 			}else{
@@ -209,132 +205,415 @@ function hideRequestQueue(){
 function removeFromRequestQueue(id){
 	$.post("/request/removeFromQueue", {id:id})
 		.done(function(data){
-			var title = $('#requestItem'+id).attr('data-title');
-			var rID = $('#requestItem'+id).attr('data-rid');
-			var vocabID = $('#requestItem'+id).attr('data-vocabID');
+			// We're using the path to identify empty APIs. However, slashes
+			// in selectors cause problems w/ jQuery, so we need to remove them.
+			if (id.indexOf('/') > -1) {
+				id = id.replace(/\//g, '');
+			}
+			// Likewise for unlinked API fields
+			if (id.indexOf('.') > -1) {
+				id = id.replace(/\./g, '');
+			}
+			// And for the ' > ' used in database columns' names
+			if (id.indexOf(' > ') > -1) {
+				id = id.replace(/ > /g, '');
+			}
+
+			var elem = $('#requestItem'+id);
+			var type = elem.data('type');
+			switch (type) {
+				case 'term':
+					var title = elem.data('title');
+					var dataId = elem.data('id');
+					var vocabId = elem.data('vocabID');
+					var apiHost = elem.attr('api-host');
+					var apiPath = elem.attr('api-path');
+					var schemaName = elem.attr('schema-name');
+					var tableName = elem.attr('table-name');
+					var responseName = elem.attr('response-name');
+
+					var undoData = {emptyApi:'false',t:[{title:title,id:dataId,vocabId:vocabId}],apiHost:apiHost,apiPath:apiPath,schemaName:schemaName,tableName:tableName,responseName:responseName};
+					break;
+				case 'concept':
+					var title = elem.data('title');
+					var dataId = elem.data('id');
+					var vocabId = elem.data('vocabID');
+					var apiHost = elem.attr('api-host');
+					var apiPath = elem.attr('api-path');
+
+					var undoData = {emptyApi:'false',t:[{title:title,dataId:id,vocabId:vocabId}],apiHost:apiHost,apiPath:apiPath};
+					break;
+				case 'api':
+					var title = elem.data('title');
+					var apiHost = elem.attr('api-host');
+
+					var undoData = {emptyApi:'true',t:[title],apiHost:apiHost};
+					break;
+				case 'field':
+					var title = elem.data('title');
+					var apiHost = elem.attr('api-host');
+					var apiPath = elem.attr('api-path');
+
+					var undoData = {emptyApi:'false',f:[title],apiHost:apiHost,apiPath:apiPath};
+					break;
+				case 'column':
+					var title = elem.data('title');
+					var schemaName = elem.attr('schema-name');
+					var tableName = elem.attr('table-name');
+
+					var undoData = {emptyApi:'false',c:[title],schemaName:schemaName,tableName:tableName};
+					break;
+				case 'samlField':
+					var title = elem.data('title');
+					var responseName = elem.attr('response-name');
+
+					var undoData = {emptyApi:'false',s:[title],responseName:responseName};
+					break;
+			}
 
 			$('#request-undo').remove();
-			$('#requestItem'+id).fadeOut('fast',function(){
-				var html = '<div id="request-undo" data-title="' + title + '" data-rid="' + rID + '" data-vocabID="' + vocabID + '">Item removed. Click to undo.</div>';
-				$(html).insertBefore('#request-popup ul');
+			elem.fadeOut('fast', function() {
+				var html = '<div id="request-undo">Item removed. Click to undo.</div>';
+
+				$(html).insertBefore('.irLower ul');
 				$('#request-undo').click(function(){
-					addToQueue(this, false);
+					$.post("request/addToQueue", undoData);
 					$(this).remove();
-				})
-				getCurrentRequestTerms();
+					elem.fadeIn('fast');
+				});
+				updateQueueSize();
 			});
 	});
 }
-function getCurrentRequestTerms(){
-	$.get("/request/getQueueJSArray")
+function clearRequestQueue(){
+	$.post("/request/clearQueue")
 		.done(function(data){
-			var originalData = data;
-			data = data.split(',');
-			$('#request-queue .request-num').text(data.length).removeClass('request-hidden');
-			$('input[type=checkbox]').prop('checked', false);
-
-			for(i=0; i<data.length; i++){
-				$('.chk'+data[i]).prop('checked', true);
-			}
-			if(originalData.length <= 0){
-				$('#request-queue .request-num').addClass('request-hidden');
-				hideRequestQueue();
+			$('#request-queue .request-num').text('0').addClass('request-hidden');
+			$('#request-popup').find('.clearQueue').fadeOut('fast');
+			$('#request-popup').find('h3').html('Requested Items: 0');
+			$('.irLower').find('ul.cart').find('li').fadeOut('fast');
+			$('.irLower').find('#request-undo').fadeOut('fast');
+			$('<div class="cart-cleared">Request items removed.</div>').insertBefore('.irLower ul.cart');
+		});
+}
+function updateQueueSize(){
+	$.get("/request/getQueueSize")
+		.done(function(data){
+			data = parseInt(data);
+			if (data == 0) {
+				$('#request-queue .request-num').text(data).addClass('request-hidden');
+			} else {
+				$('#request-queue .request-num').text(data).removeClass('request-hidden');
 			}
 	});
 }
-function addToQueue(elem, clearRelated){
-	var arrTitles = [$(elem).attr('data-title')];
-	var arrIDs = [$(elem).attr('data-rid')];
-	var arrVocabIDs = [$(elem).attr('data-vocabID')];
-	var apiHost = $(elem).attr('data-apiHost');
-	var apiPath = $(elem).attr('data-apiPath');
+function addToQueue(elem, displayCart){
+	var i = 0;
+	var loadingTexts = ['Working on it   ','Working on it.  ','Working on it.. ','Working on it...'];
+	var loadingTextInterval = setInterval(function() {
+		$(elem).parent().find('.requestAccess').attr('value', loadingTexts[i]);
+		i++;
+		if (i == loadingTexts.length) i = 0;
+	}, 250);
+
+	if ($(elem).attr('api') == 'false') {
+		var arrTerms = [{
+			title: $(elem).data('title'),
+			id: $(elem).data('rid'),
+			vocabId: $(elem).data('vocabid')
+		}];
+		var arrFields = [];
+		var apiHost = $(elem).attr('data-apiHost');
+		var apiPath = $(elem).attr('data-apiPath');
+
+		$(elem).parent().find('.checkBoxes').find('input').each(function(){
+			if($(this).prop("checked") && $(this).prop("name") != "toggleCheckboxes"){
+
+				if (!$(this).val()) {		// For an API field with no Business Term:
+					arrFields.push($(this).data('title'));
+				}
+
+				else {						// For a Business Term:
+					for (var i = 0; i < arrTerms.length; i++) {
+						if (arrTerms[i].id == $(this).val()) {
+							return;		// continue;
+						}
+					}
+
+					arrTerms.push({
+						title: $(this).data('title'),
+						id: $(this).val(),
+						vocabId: $(this).data('vocabid')
+					});
+				}
+			}
+		});
+		if ((arrTerms.length * 3) + arrFields.length < 500) {
+			$.post("/request/addToQueue", {emptyApi:'false', t:arrTerms, f:arrFields, apiHost:apiHost, apiPath:apiPath})
+				.done(function(data) {
+					clearInterval(loadingTextInterval);
+					$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
+					$(elem).closest('.resultItem').find('input[type=checkbox]').prop('checked', false);
+					if (displayCart) {
+						showRequestQueue();
+					}
+					updateQueueSize();
+			});
+		} else {
+			largeAddProgressSetUp(arrTerms.length, arrFields.length);
+			largeAddToQueue(arrTerms, arrFields, apiHost, apiPath)
+				.then(function(data) {
+					clearInterval(loadingTextInterval);
+					$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
+					$(elem).closest('.resultItem').find('input[type=checkbox]').prop('checked', false);
+					if (displayCart) {
+						showRequestQueue();
+					}
+					updateQueueSize();
+				});
+		}
+	} else {
+		// Add an API without specified fields to cart.
+		var arrTitle = [$(elem).attr('data-apiPath')];
+		var apiHost = $(elem).attr('data-apiHost');
+		$.post("/request/addToQueue", {emptyApi:'true', t:arrTitle, apiHost:apiHost})
+			.done(function(data) {
+				clearInterval(loadingTextInterval);
+				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
+				if (displayCart) {
+					showRequestQueue();
+				}
+				updateQueueSize();
+		});
+	}
+}
+function largeAddToQueue(arrTerms, arrFields, apiHost, apiPath, termsStride = 75, fieldsStride = 150) {
+	if (arrTerms.length > termsStride) {
+		return new Promise(function(resolve) {
+			var request = $.post("/request/addToQueue", {emptyApi:'false', t:arrTerms.slice(0, termsStride), f:[], apiHost:apiHost, apiPath:apiPath})
+				.then(() => {
+					largeAddProgressIncrement();
+				});
+			var recur = largeAddToQueue(arrTerms.slice(termsStride), arrFields, apiHost, apiPath, termsStride, fieldsStride);
+
+			Promise.all([request, recur]).then(() => resolve());
+			});
+	}
+	else if (arrFields.length > fieldsStride) {
+		return new Promise(function(resolve) {
+			var request = $.post("/request/addToQueue", {emptyApi:'false', t:[], f:arrFields.slice(0, fieldsStride), apiHost:apiHost, apiPath:apiPath})
+				.then(() => {
+					largeAddProgressIncrement();
+				});
+			var recur = largeAddToQueue(arrTerms, arrFields.slice(fieldsStride), apiHost, apiPath, termsStride, fieldsStride);
+
+			Promise.all([request, recur]).then(() => resolve());
+			});
+	}
+	else {
+		return new Promise(function(resolve) {
+			$.post("/request/addToQueue", {emptyApi:'false', t:arrTerms, f:arrFields, apiHost:apiHost, apiPath:apiPath})
+				.then(() => {
+					largeAddProgressIncrement();
+					resolve();
+				});
+			});
+	}
+}
+function largeAddProgressSetUp(termsSize, fieldsSize, termsStride = 75, fieldsStride = 150) {
+	var denominator = Math.floor(termsSize / termsStride) + Math.floor(fieldsSize / fieldsStride) + 1;
+
+	var html = '<strong>This will take a moment... (<span id="progress-numerator">0</span>/'+denominator+')</strong>'+
+				'<progress id="progress-bar" value="0" max="1" data-numerator="0" data-denominator="'+denominator+'">0% done</progress>';
+	if ($(window).scrollTop() > 50) {
+		var requestIconPos = $('#request-queue').offset();
+		var left = requestIconPos.left - $('#request-popup').width() - 16;
+		$('#request-popup').addClass('fixed').css('left', left);
+	} else {
+		$('#request-popup').removeClass('fixed').css('left', 'auto');
+	}
+	$('#request-popup').html(html).slideDown('fast');
+}
+function largeAddProgressIncrement() {
+	var bar = $('#progress-bar');
+	var numerator = bar.data('numerator') + 1;
+	var denominator = bar.data('denominator');
+
+	$('#progress-numerator').html(numerator);
+	bar.data('numerator', numerator);
+	bar.val(numerator / denominator);
+}
+function addToQueueDBTable(elem, displayCart) {
+	var i = 0;
+	var loadingTexts = ['Working on it   ','Working on it.  ','Working on it.. ','Working on it...'];
+	var loadingTextInterval = setInterval(function() {
+		$(elem).parent().find('.requestAccess').attr('value', loadingTexts[i]);
+		i++;
+		if (i == loadingTexts.length) i = 0;
+	}, 250);
+
+	var arrTerms = [{
+		title: $(elem).data('title'),
+		id: $(elem).data('rid'),
+		vocabId: $(elem).data('vocabid')
+	}];
+	var arrColumns = [];
+	var schemaName = $(elem).data('schemaname');
+	var tableName = $(elem).data('tablename');
 
 	$(elem).parent().find('.checkBoxes').find('input').each(function(){
-		if($(this).prop("checked")){
-			arrTitles.push($(this).attr('data-title'));
-			arrIDs.push($(this).val());
-			arrVocabIDs.push($(this).attr('data-vocabID'));
-		}
-	});
-	$.post("/request/addToQueue", {t:arrTitles, id:arrIDs, vocab:arrVocabIDs, clearRelated:clearRelated, apiHost: apiHost, apiPath: apiPath})
-		.done(function(data){
-			$(elem).attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
-			data = parseInt(data);
-			if(data>0){
-				showRequestQueue();
-				getCurrentRequestTerms();
+		if($(this).prop("checked") && $(this).prop("name") != "toggleCheckboxes"){
+
+			if (!$(this).val()) {		// For a column with no Business Term:
+				arrColumns.push($(this).data('title'));
 			}
-	});
-}
-/////////////////////////////
 
-// QuickLinks functions
-/////////////////////////////
-function removeQL(li, id){
-	$.ajax({
-		type: 'POST',
-		url: '/quickLinks/remove',
-		data: {'id':id}
-	});
-	$(li).parent().fadeOut();
-}
+			else {						// For a Business Term:
+				for (var i = 0; i < arrTerms.length; i++) {
+					if (arrTerms[i].id == $(this).val()) {
+						return;		// continue;
+					}
+				}
 
-function addQL(t, id) {
-	$.ajax({
-		type: 'POST',
-		url: '/quickLinks/add',
-		data: {'ql':t, 'id':id}
-	})
-	.done(function(data){
-		$('#term'+id+' .addQuickLink img').attr('src', '/img/iconStarOrange.gif');
-		if(data==1){
-			var html = '<li>'+
-				'    <a class="ql-list ql-remove" href="#" onclick="removeQL(this,\''+id+'\'); return false;"><img src="/img/ql-delete.png"></a>'+
-				'    <a class="quickLink" href="/search/term/'+id+'">'+t+'</a>'+
-				'</li>';
-			$('#QLContainer ul').append(html);
+				arrTerms.push({
+					title: $(this).data('title'),
+					id: $(this).val(),
+					vocabId: $(this).data('vocabid')
+				});
+			}
 		}
 	});
+	if ((arrTerms.length * 3) + arrColumns.length < 500) {
+		$.post("/request/addToQueue", {emptyApi:'false', t:arrTerms, c:arrColumns, schemaName:schemaName, tableName:tableName})
+			.done(function(data) {
+				clearInterval(loadingTextInterval);
+				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
+				$(elem).closest('.resultItem').find('input[type=checkbox]').prop('checked', false);
+				if (displayCart) {
+					showRequestQueue();
+				}
+				updateQueueSize();
+		});
+	} else {
+		largeAddProgressSetUp(arrTerms.length, arrColumns.length);
+		largeAddToQueueDBTable(arrTerms, arrColumns, schemaName, tableName)
+			.then(function(data) {
+				clearInterval(loadingTextInterval);
+				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
+				$(elem).closest('.resultItem').find('input[type=checkbox]').prop('checked', false);
+				if (displayCart) {
+					showRequestQueue();
+				}
+				updateQueueSize();
+			});
+	}
 }
+function largeAddToQueueDBTable(arrTerms, arrColumns, schemaName, tableName, termsStride = 75, columnsStride = 150) {
+	if (arrTerms.length > termsStride) {
+		return new Promise(function(resolve) {
+			var request = $.post("/request/addToQueue", {emptyApi:'false', t:arrTerms.slice(0, termsStride), c:[], schemaName:schemaName, tableName:tableName})
+				.then(() => {
+					largeAddProgressIncrement();
+				});
+			var recur = largeAddToQueueDBTable(arrTerms.slice(termsStride), arrColumns, schemaName, tableName, termsStride, columnsStride);
+
+			Promise.all([request, recur]).then(() => resolve());
+			});
+	}
+	else if (arrColumns.length > columnsStride) {
+		return new Promise(function(resolve) {
+			var request = $.post("/request/addToQueue", {emptyApi:'false', t:[], c:arrColumns.slice(0, columnsStride), schemaName:schemaName, tableName:tableName})
+				.then(() => {
+					largeAddProgressIncrement();
+				});
+			var recur = largeAddToQueueDBTable(arrTerms, arrColumns.slice(columnsStride), schemaName, tableName, termsStride, columnsStride);
+
+			Promise.all([request, recur]).then(() => resolve());
+			});
+	}
+	else {
+		return new Promise(function(resolve) {
+			$.post("/request/addToQueue", {emptyApi:'false', t:arrTerms, c:arrColumns, schemaName:schemaName, tableName:tableName})
+				.then(() => {
+					largeAddProgressIncrement();
+					resolve();
+				});
+			});
+	}
+}
+function addToQueueSAMLResponse(elem, displayCart) {
+	var i = 0;
+	var loadingTexts = ['Working on it   ','Working on it.  ','Working on it.. ','Working on it...'];
+	var loadingTextInterval = setInterval(function() {
+		$(elem).parent().find('.requestAccess').attr('value', loadingTexts[i]);
+		i++;
+		if (i == loadingTexts.length) i = 0;
+	}, 250);
+
+	var arrTerms = [{
+		title: $(elem).data('title'),
+		id: $(elem).data('rid'),
+		vocabId: $(elem).data('vocabid')
+	}];
+	var arrFields = [];
+	var responseName = $(elem).data('responsename');
+
+	$(elem).parent().find('.checkBoxes').find('input').each(function(){
+		if($(this).prop("checked") && $(this).prop("name") != "toggleCheckboxes"){
+
+			if (!$(this).val()) {		// For a field with no Business Term:
+				arrFields.push($(this).data('title'));
+			}
+
+			else {						// For a Business Term:
+				for (var i = 0; i < arrTerms.length; i++) {
+					if (arrTerms[i].id == $(this).val()) {
+						return;		// continue;
+					}
+				}
+
+				arrTerms.push({
+					title: $(this).data('title'),
+					id: $(this).val(),
+					vocabId: $(this).data('vocabid')
+				});
+			}
+		}
+	});
+	$.post("/request/addToQueue", {emptyApi:'false', t:arrTerms, s:arrFields, responseName:responseName})
+		.done(function(data) {
+			clearInterval(loadingTextInterval);
+			$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
+			$(elem).closest('.resultItem').find('input[type=checkbox]').prop('checked', false);
+			if (displayCart) {
+				showRequestQueue();
+			}
+			updateQueueSize();
+	});
+}
+function toggleAllCheckboxes(elem) {
+	$(elem).closest('.resultItem').find('input').each(function(){
+		$(this).prop('checked', $(elem).prop('checked'));
+	});
+}
+/////////////////////////////
 
 $(document).on( 'click', function ( e ) {
 	if ( $( e.target ).closest('.autoComplete').length === 0 ) {
 		$('.autoComplete').hide();
 	}
+	if ( $( e.target ).closest('#browse-tab').length === 0 && $('#drop-down-menu').hasClass('open') ) {
+		$('#browse-tab').removeClass('open');
+		$('#drop-down-menu').removeClass('open');
+	}
 });
 
 $(window).scroll(function(){
 	if($(this).scrollTop()>50){
-		var requestIconPos = $('#request-queue .request-num').offset();
+		var requestIconPos = $('#request-queue').offset();
 		var left = requestIconPos.left - $('#request-popup').width() - 16;
 		$('#request-popup').addClass('fixed').css('left', left);
 	}else{
 		$('#request-popup').removeClass('fixed').css('left', 'auto');
-	}
-});
-
-$(function() {
-	if(!$.support.placeholder) {
-		var active = document.activeElement;
-		$('textarea').each(function(index, element) {
-			if($(this).val().length == 0 && !$(this).hasClass('noPlaceHolder')) {
-				$(this).html($(this).attr('id')).addClass('hasPlaceholder');
-			}
-		});
-		$('input, textarea').focus(function () {
-			if ($(this).attr('placeholder') != '' && $(this).val() == $(this).attr('placeholder') && !$(this).hasClass('noPlaceHolder')) {
-				$(this).val('').removeClass('hasPlaceholder');
-			}
-		}).blur(function () {
-			if (($(this).attr('placeholder') != '' && ($(this).val() == '' || $(this).val() == $(this).attr('placeholder')) && !$(this).hasClass('noPlaceHolder'))) {
-				$(this).val($(this).attr('placeholder')).addClass('hasPlaceholder');
-				//$(this).css('background', 'red');
-			}
-		});
-		$(':text').blur();
-		$(active).focus();
-		$('form').submit(function () {
-			$(this).find('.hasPlaceholder').each(function() { $(this).val(''); });
-		});
 	}
 });

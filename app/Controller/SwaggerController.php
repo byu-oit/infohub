@@ -9,7 +9,7 @@ class SwaggerController extends AppController {
 		if ($this->request->param('action') == 'import') {
 			$this->Auth->authenticate = ['QuickDirty'];
 		}
-		$this->Auth->deny();
+		$this->Auth->allow('import');
 	}
 
 	public function index() {
@@ -18,7 +18,7 @@ class SwaggerController extends AppController {
 			$swagUrl = $this->request->data('Swagger.url');
 			$filename = $this->_swaggerFilename();
 			if (!empty($swagUrl)) {
-				$swag = file_get_contents($swagUrl);
+				$swag = $this->Swagger->downloadFile($swagUrl);
 				if (empty($swag)) {
 					$this->Session->setFlash('Error downloading from URL', 'default', ['class' => 'error']);
 					return;
@@ -57,6 +57,17 @@ class SwaggerController extends AppController {
 				$this->Session->setFlash('Error: ' . implode('<br>', $this->Swagger->parseErrors), 'default', ['class' => 'error']);
 				return $this->redirect(['action' => 'index']);
 			}
+			$fields = $this->CollibraAPI->getApiFields($this->request->data['Api']['host'], $this->request->data['Api']['basePath'].'/'.$this->request->data['Api']['version']);
+			if (!empty($fields)) {
+				for ($i = 0; $i < count($this->request->data['Api']['elements']); $i++) {
+					foreach ($fields as $existingField) {
+						if ($this->request->data['Api']['elements'][$i]['name'] == $existingField->name) {
+							$this->request->data['Api']['elements'][$i]['businessTerm'] = $existingField->businessTerm;
+							break;
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -84,10 +95,10 @@ class SwaggerController extends AppController {
 			return ['error' => ['messages' => ['POST only']]];
 		}
 
-		if (!empty($this->request->query['url'])) {
-			$json = @file_get_contents($this->request->query['url']);
+		if (isset($this->request->data['url'])) {
+			$json = $this->Swagger->downloadFile($this->request->data['url']);
 			if (empty($json)) {
-				return ['error' => ['messages' => ["Unable to download swagger from {$this->request->query['url']}"]]];
+				return ['error' => ['messages' => ["Unable to download swagger from {$this->request->data['url']}"]]];
 			}
 		} else {
 			$json = $this->request->input();
@@ -101,12 +112,20 @@ class SwaggerController extends AppController {
 			return ['error' => ['messages' => $this->Swagger->parseErrors]];
 		}
 
+		$termToFieldRelationshipId = Configure::read('Collibra.relationship.termToDataAsset');
+		foreach ($swagger['elements'] as &$elem) {
+			$businessTerm = $this->CollibraAPI->searchStandardLabel($elem['name']);
+			if (!empty($businessTerm)) {
+				$elem['business_term'] = $businessTerm[0]->name->id;
+			}
+		}
+
 		$import = $this->CollibraAPI->importSwagger($swagger);
 		if (empty($import)) {
 			return ['error' => ['messages' => $this->CollibraAPI->errors]];
 		}
 
-		return ['status' => 'success'];
+		return ['status' => 'success', 'link' => "{$this->request->host()}/apis/{$swagger['host']}{$swagger['basePath']}/{$swagger['version']}"];
 	}
 
 	protected function _getUploadedSwagger() {

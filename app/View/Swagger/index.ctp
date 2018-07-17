@@ -1,3 +1,4 @@
+<?php $this->Html->css('swagger', null, ['inline' => false]); ?>
 <div class="innerLower">
 	<?= $this->Form->create(null, ['type' => 'file']) ?>
 		<?= $this->Form->input('url', ['label' => 'URL', 'class' => 'noPlaceHolder']) ?>

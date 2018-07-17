@@ -2,7 +2,7 @@
 
 /*
  * Mimicking Cake 3 database configuration: now all config is in core.php
- * (with potatential overrides in core-local.php)
+ * (with potential overrides in core-local.php)
  */
 class DATABASE_CONFIG {
 	public $default = null;

@@ -2,7 +2,7 @@
 
 App::uses('HttpSocket', 'Network/Http');
 App::uses('Model', 'Model');
-App::uses('String', 'Utility');
+App::uses('CakeText', 'Utility');
 App::uses('CakeSession', 'Model/Datasource');
 
 class CollibraAPI extends Model {
@@ -14,6 +14,7 @@ class CollibraAPI extends Model {
 	private $requestTries = 0;
 
 	private $settings;
+	private $_rolesCache = [];
 
 	private static function cmp($a, $b){
 		return strcmp($a->name, $b->name);
@@ -37,6 +38,7 @@ class CollibraAPI extends Model {
 			}
 			$this->_client = new HttpSocket($config);
 			$this->_client->configAuth('Basic', $this->settings['username'], $this->settings['password']);
+			$this->_client->configProxy(Configure::read('proxy'));
 		}
 		return $this->_client;
 	}
@@ -70,6 +72,15 @@ class CollibraAPI extends Model {
 	public function postJSON($url, $data, $options = []) {
 		$options['header']['Content-Type'] = 'application/json';
 		return $this->post($url, $data, $options);
+	}
+
+	public function delete($url = NULL, $cascade = true) {
+		return $this->client()->delete($this->settings['url'] . $url);
+	}
+
+	public function deleteJSON($url = NULL, $data = []) {
+		$options['header']['Accept'] = 'application/json';
+		return $this->client()->delete($this->settings['url'] . $url, $data, $options);
 	}
 
 	public function dataTable($config) {
@@ -143,12 +154,12 @@ class CollibraAPI extends Model {
 			return false;
 		}
 
-		if (!empty($byuInfo->contact_information->email)) {
-			if (empty($collibraInfo->UserEmailaddress) || html_entity_decode($collibraInfo->UserEmailaddress) != $byuInfo->contact_information->email) {
+		if (!empty($byuInfo->contact_information->work_email_address)) {
+			if (empty($collibraInfo->UserEmailaddress) || html_entity_decode($collibraInfo->UserEmailaddress) != $byuInfo->contact_information->work_email_address) {
 				$this->updateUser($collibraInfo->UserId, [
 					'firstName' => $collibraInfo->UserFirstName,
 					'lastName' => $collibraInfo->UserLastName,
-					'email' => $byuInfo->contact_information->email,
+					'email' => $byuInfo->contact_information->work_email_address,
 					'gender' => $collibraInfo->UserGender
 				]);
 			}
@@ -223,6 +234,130 @@ class CollibraAPI extends Model {
 		return empty($user->UserId) ? null : $user->UserId;
 	}
 
+	public function getUserData() {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'userrid']],
+				['Column' => ['fieldName' => 'userenabled']],
+				['Column' => ['fieldName' => 'userfirstname']],
+				['Group' => [
+					'name' => 'groupname',
+					'Columns' => [
+						['Column' => ['fieldName' => 'groupgroupname']],
+						['Column' => ['fieldName' => 'grouprid']]]]],
+				['Column' => ['fieldName' => 'userlastname']],
+				['Column' => ['fieldName' => 'emailemailaddress']],
+				['Group' => [
+					'name' => 'phonenumber',
+					'Columns' => [
+						['Column' => ['fieldName' => 'phonephonenumber']],
+						['Column' => ['fieldName' => 'phonerid']]]]],
+				['Column' => ['fieldName' => 'useractivated']],
+				['Column' => ['fieldName' => 'isuserldap']],
+				['Group' => [
+					'name' => 'Rolef86d1d3abc2e4beeb17fe0e9985d5afb',
+					'Columns' => [
+						['Column' => ['label' => 'Custodian User ID', 'fieldName' => 'userRolef86d1d3abc2e4beeb17fe0e9985d5afbrid']],
+						['Column' => ['label' => 'Custodian Gender', 'fieldName' => 'userRolef86d1d3abc2e4beeb17fe0e9985d5afbgender']],
+						['Column' => ['label' => 'Custodian First Name', 'fieldName' => 'userRolef86d1d3abc2e4beeb17fe0e9985d5afbfn']],
+						['Column' => ['label' => 'Custodian Last Name', 'fieldName' => 'userRolef86d1d3abc2e4beeb17fe0e9985d5afbln']]]]],
+				['Group' => [
+					'name' => 'Rolef86d1d3abc2e4beeb17fe0e9985d5afbg',
+					'Columns' => [
+						['Column' => ['label' => 'Custodian Group ID', 'fieldName' => 'groupRolef86d1d3abc2e4beeb17fe0e9985d5afbgrid']],
+						['Column' => ['label' => 'Custodian Group Name', 'fieldName' => 'groupRolef86d1d3abc2e4beeb17fe0e9985d5afbggn']]]]],
+				['Group' => [
+					'name' => 'Role8a0a6c89106c4adb9936f09f29b747ac',
+					'Columns' => [
+						['Column' => ['label' => 'Steward User ID', 'fieldName' => 'userRole8a0a6c89106c4adb9936f09f29b747acrid']],
+						['Column' => ['label' => 'Steward Gender', 'fieldName' => 'userRole8a0a6c89106c4adb9936f09f29b747acgender']],
+						['Column' => ['label' => 'Steward First Name', 'fieldName' => 'userRole8a0a6c89106c4adb9936f09f29b747acfn']],
+						['Column' => ['label' => 'Steward Last Name', 'fieldName' => 'userRole8a0a6c89106c4adb9936f09f29b747acln']]]]],
+				['Group' => [
+					'name' => 'Role8a0a6c89106c4adb9936f09f29b747acg',
+					'Columns' => [
+						['Column' => ['label' => 'Steward Group ID', 'fieldName' => 'groupRole8a0a6c89106c4adb9936f09f29b747acgrid']],
+						['Column' => ['label' => 'Steward Group Name', 'fieldName' => 'groupRole8a0a6c89106c4adb9936f09f29b747acggn']]]]]],
+			'Resources' => [
+				'User' => [
+					'Enabled' => ['name' => 'userenabled'],
+					'UserName' => ['name' => 'userusername'],
+					'FirstName' => ['name' => 'userfirstname'],
+					'LastName' => ['name' => 'userlastname'],
+					'Emailaddress' => ['name' => 'emailemailaddress'],
+					'Phone' => [
+						'Phonenumber' => ['name' => 'phonephonenumber'],
+						'Id' => ['name' => 'phonerid']],
+					'Group' => [
+						'Groupname' => ['name' => 'groupgroupname'],
+						'Id' => ['name' => 'grouprid']],
+					'Activated' => ['name' => 'useractivated'],
+					'LDAPUser' => ['name' => 'isuserldap'],
+					'Id' => ['name' => 'userrid'],
+					'Member' => [[
+						'User' => [
+							'Gender' => ['name' => 'userRolef86d1d3abc2e4beeb17fe0e9985d5afbgender'],
+							'FirstName' => ['name' => 'userRolef86d1d3abc2e4beeb17fe0e9985d5afbfn'],
+							'Id' => ['name' => 'userRolef86d1d3abc2e4beeb17fe0e9985d5afbrid'],
+							'LastName' => ['name' => 'userRolef86d1d3abc2e4beeb17fe0e9985d5afbln']],
+						'Role' => [
+							'name' => 'Rolef86d1d3abc2e4beeb17fe0e9985d5afb',
+							'Signifier' => ['hidden' => 'true', 'name' => 'Rolef86d1d3abc2e4beeb17fe0e9985d5afbsig'],
+							'Id' => ['hidden' => 'true', 'name' => 'roleRolef86d1d3abc2e4beeb17fe0e9985d5afbrid']],
+						'roleId' => Configure::read('Collibra.role.custodian')],
+					[
+						'Role' => [
+							'Signifier' => ['hidden' => 'true', 'name' => 'Rolef86d1d3abc2e4beeb17fe0e9985d5afbg'],
+							'Id' => ['hidden' => 'true', 'name' => 'roleRolef86d1d3abc2e4beeb17fe0e9985d5afbgrid']],
+						'Group' => [
+							'GroupName' => ['name' => 'groupRolef86d1d3abc2e4beeb17fe0e9985d5afbggn'],
+							'Id' => ['name' => 'groupRolef86d1d3abc2e4beeb17fe0e9985d5afbgrid']],
+							'roleId' => Configure::read('Collibra.role.custodian')],
+					[
+						'User' => [
+							'Gender' => ['name' => 'userRole8a0a6c89106c4adb9936f09f29b747acgender'],
+							'FirstName' => ['name' => 'userRole8a0a6c89106c4adb9936f09f29b747acfn'],
+							'Id' => ['name' => 'userRole8a0a6c89106c4adb9936f09f29b747acrid'],
+							'LastName' => ['name' => 'userRole8a0a6c89106c4adb9936f09f29b747acln']],
+						'Role' => [
+							'name' => 'Role8a0a6c89106c4adb9936f09f29b747ac',
+							'Signifier' => ['hidden' => 'true', 'name' => 'Role8a0a6c89106c4adb9936f09f29b747acsig'],
+							'Id' => ['hidden' => 'true', 'name' => 'roleRole8a0a6c89106c4adb9936f09f29b747acrid']],
+						'roleId' => Configure::read('Collibra.role.steward')],
+					[
+						'Role' => [
+							'Signifier' => ['hidden' => 'true', 'name' => 'Role8a0a6c89106c4adb9936f09f29b747acg'],
+							'Id' => ['hidden' => 'true', 'name' => 'roleRole8a0a6c89106c4adb9936f09f29b747acgrid']],
+						'Group' => [
+							'GroupName' => ['name' => 'groupRole8a0a6c89106c4adb9936f09f29b747acggn'],
+							'Id' => ['name' => 'groupRole8a0a6c89106c4adb9936f09f29b747acgrid']],
+						'roleId' => Configure::read('Collibra.role.steward')]],
+					'Filter' => [
+						'AND' => [[
+							'OR' => [[
+								'Field' => [
+									'name' => 'userRole8a0a6c89106c4adb9936f09f29b747acrid',
+									'operator' => 'NOT_NULL']],
+							[
+								'Field' => [
+									'name' => 'userRolef86d1d3abc2e4beeb17fe0e9985d5afbrid',
+									'operator' => 'NOT_NULL']]]],
+						[
+							'AND' => [[
+								'Field' => ['name' => 'userenabled',
+									'operator' => 'EQUALS',
+									'value' => 'true']]]]]]]],
+			'Order' => [[
+				'Field' => [
+					'name' => 'userlasttname',
+					'order' => 'ASC']]],
+			'displayStart' => 0,
+			'displayLength' => 1000]];
+
+		$results = $this->fullDataTable($tableConfig);
+		return $results;
+	}
+
 	public function userList($limit = 20, $offset = 0) {
 		$config = $this->buildTableConfig(['User' => ['Id', 'UserName', 'FirstName', 'LastName', 'Emailaddress']]);
 		$config['TableViewConfig']['Resources']['User']['Order'][] = [
@@ -259,7 +394,7 @@ class CollibraAPI extends Model {
 	}
 
 	public function uploadFile($rawData, $filename = null) {
-		$boundary = 'CakePHPBoundary' . str_replace('-', '', String::uuid());
+		$boundary = 'CakePHPBoundary' . str_replace('-', '', CakeText::uuid());
 		if (empty($filename)) {
 			$filename = 'uploadfile';
 		}
@@ -288,7 +423,7 @@ class CollibraAPI extends Model {
 			return $hosts;
 		}
 		foreach ($hostsRaw->communityReference as $host) {
-			if (empty($host->name) || !preg_match('/^[a-zA-Z][a-zA-Z0-9\.]*$/', $host->name)) {
+			if (empty($host->name) || !preg_match('/^[a-zA-Z][a-zA-Z0-9\.]*$/', $host->name) || $host->name === 'SAML') {
 				continue;
 			}
 			$hosts[] = $host->name;
@@ -296,7 +431,44 @@ class CollibraAPI extends Model {
 		return $hosts;
 	}
 
-	public function getApiTerms($host, $path) {
+	public function getApiObject($host, $path) {
+		$hostCommunity = $this->findTypeByName('community', $host);
+		if (empty($hostCommunity->resourceId)) {
+			return null;
+		}
+		$vocabulary = $this->findTypeByName('vocabulary', $path, ['parent' => $hostCommunity->resourceId]);
+		if (empty($vocabulary->resourceId)) {
+			return null;
+		}
+		$query = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'id']],
+				['Column' => ['fieldName' => 'name']],
+				['Column' => ['fieldName' => 'status']]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'id'],
+					'Signifier' => ['name' => 'name'],
+					'Status' => ['name' => 'status'],
+					'Vocabulary' => [
+						'Id' => ['name' => 'vocabId']],
+					'ConceptType' => [
+						'Id' => ['name' => 'assetTypeId']],
+					'Filter' => [
+						'AND' => [
+							['Field' => [
+								'name' => 'vocabId',
+								'operator' => 'EQUALS',
+								'value' => $vocabulary->resourceId]],
+							['Field' => [
+								'name' => 'assetTypeId',
+								'operator' => 'EQUALS',
+								'value' => Configure::read('Collibra.type.api')]]]]]]]];
+		$result = $this->fullDataTable($query);
+		return $result[0];
+	}
+
+	public function getApiFields($host, $path, $treeStructure = false) {
 		$hostCommunity = $this->findTypeByName('community', $host);
 		if (empty($hostCommunity->resourceId)) {
 			return null;
@@ -315,8 +487,12 @@ class CollibraAPI extends Model {
 						'name' => 'businessTerm',
 						'Columns' => [
 							['Column' => ['fieldName' => 'termCommunityId']],
+							['Column' => ['fieldName' => 'termCommunityName']],
 							['Column' => ['fieldName' => 'termClassification']],
+							['Column' => ['fieldName' => 'approvalStatus']],
 							['Column' => ['fieldName' => 'termId']],
+							['Column' => ['fieldName' => 'termDescription']],
+							['Column' => ['fieldName' => 'termRelationId']],
 							['Column' => ['fieldName' => 'term']]]]]],
 				'Resources' => [
 					'Term' => [
@@ -326,16 +502,23 @@ class CollibraAPI extends Model {
 							'Signifier' => ['name' => 'assetType'],
 							'Id' => ['name' => 'assetTypeId']],
 						'Relation' => [[ /* Yes, intentional [[ there */
-							'typeId' => Configure::read('Collibra.relationship.termToField'),
+							'typeId' => Configure::read('Collibra.relationship.termToDataAsset'),
 							'type' => 'TARGET',
+							'Id' => ['name' => 'termRelationId'],
 							'Source' => [
 								'Id' => ['name' => 'termId'],
+								'Status' => [
+									'signifier' => ['name' => 'approvalStatus']],
+								'StringAttribute' => [[
+									'Value' => ['name' => 'termDescription'],
+									'labelId' => Configure::read('Collibra.attribute.definition')]],
 								'SingleValueListAttribute' => [[
 									'Value' => ['name' => 'termClassification'],
 									'labelId' => Configure::read('Collibra.attribute.classification')]],
 								'Vocabulary' => [
 									'Community' => [
-										'Id' => ['name' => 'termCommunityId']]],
+										'Id' => ['name' => 'termCommunityId'],
+										'Name' => ['name' => 'termCommunityName']]],
 								'Signifier' => ['name' => 'term']]]],
 						'Vocabulary' => [
 							'Id' => ['name' => 'domainId']],
@@ -359,10 +542,432 @@ class CollibraAPI extends Model {
 								'name' => 'name',
 								'order' => 'ASC']]]]]]];
 		$terms = $this->fullDataTable($termsQuery);
+
+		if ($treeStructure) {
+			$sortedTerms = [];
+			foreach ($terms as $term) {
+				$term->descendantFields = [];
+				$sortedTerms[$term->name] = $term;
+			}
+
+			$sortedTerms = array_reverse($sortedTerms);
+
+			foreach ($sortedTerms as $name => $term) {
+				$term->descendantFields = array_reverse($term->descendantFields);
+
+				$pathArray = explode('.', $name);
+				if (count($pathArray) > 1) {
+					array_pop($pathArray);
+					$fieldsetPath = implode('.', $pathArray);
+					array_push($sortedTerms[$fieldsetPath]->descendantFields, $term);
+
+					unset($sortedTerms[$name]);
+				}
+			}
+
+			return array_reverse($sortedTerms);
+		}
+
 		return $terms;
 	}
 
-	public function searchTerms($query, $limit = 5, $community = null) {
+	public function getSchemaTables($schemaName) {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'schemaName']],
+				['Column' => ['fieldName' => 'schemaId']],
+				['Column' => ['fieldName' => 'databaseName']],
+				['Column' => ['fieldName' => 'databaseId']],
+				['Group' => [
+					'name' => 'tables',
+					'Columns' => [
+						['Column' => ['fieldName' => 'tableName']],
+						['Column' => ['fieldName' => 'tableId']],
+						['Column' => ['fieldName' => 'tableDescription']]]]]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'schemaId'],
+					'Signifier' => ['name' => 'schemaName'],
+					'Vocabulary' => [
+						'Community' => [
+							'Id' => ['name' => 'databaseId'],
+							'Name' => ['name' => 'databaseName'],
+							'ParentCommunity' => [
+								'Id' => ['name' => 'dataWarehouseId']]]],
+					'Relation' => [
+						'typeId' => Configure::read('Collibra.relationship.schemaToTable'),
+						'type' => 'SOURCE',
+						'Target' => [
+							'Id' => ['name' => 'tableId'],
+							'Signifier' => ['name' => 'tableName'],
+							'StringAttribute' => [[
+								'Value' => ['name' => 'tableDescription'],
+								'labelId' => Configure::read('Collibra.attribute.description')]]]],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+								'name' => 'schemaName',
+								'operator' => 'EQUALS',
+								'value' => $schemaName]],
+						[
+							'Field' => [
+								'name' => 'dataWarehouseId',
+								'operator' => 'EQUALS',
+								'value' => Configure::read('Collibra.community.dataWarehouse')]]]]]]]];
+
+		$results = $this->fullDataTable($tableConfig);
+		return $results[0];
+	}
+
+	public function getTableObject($tableName) {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'id']],
+				['Column' => ['fieldName' => 'name']],
+				['Column' => ['fieldName' => 'description']],
+				['Column' => ['fieldName' => 'schemaId']],
+				['Column' => ['fieldName' => 'schemaName']],
+				['Column' => ['fieldName' => 'databaseId']],
+				['Column' => ['fieldName' => 'databaseName']]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'id'],
+					'Signifier' => ['name' => 'name'],
+					'StringAttribute' => [[
+						'labelId' => Configure::read('Collibra.attribute.description'),
+						'Value' => ['name' => 'description']]],
+					'Vocabulary' => [
+						'Community' => [
+							'Id' => ['name' => 'databaseId'],
+							'Name' => ['name' => 'databaseName']]],
+					'Relation' => [
+						'typeId' => Configure::read('Collibra.relationship.schemaToTable'),
+						'type' => 'TARGET',
+						'Source' => [
+							'Id' => ['name' => 'schemaId'],
+							'Signifier' => ['name' => 'schemaName']]],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+								'name' => 'name',
+								'operator' => 'EQUALS',
+								'value' => $tableName]]]]]]]];
+
+		$results = $this->fullDataTable($tableConfig);
+		if (isset($results[0])) {
+			return $results[0];
+		}
+		return [];
+	}
+
+	public function getTableColumns($tableName) {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'columnName']],
+				['Column' => ['fieldName' => 'columnId']],
+				['Column' => ['fieldName' => 'columnDescription']],
+				['Group' => [
+					'name' => 'businessTerm',
+					'Columns' => [
+						['Column' => ['fieldName' => 'termCommunityId']],
+						['Column' => ['fieldName' => 'termCommunityName']],
+						['Column' => ['fieldName' => 'termClassification']],
+						['Column' => ['fieldName' => 'approvalStatus']],
+						['Column' => ['fieldName' => 'termId']],
+						['Column' => ['fieldName' => 'termDescription']],
+						['Column' => ['fieldName' => 'termRelationId']],
+						['Column' => ['fieldName' => 'term']]]]]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'columnId'],
+					'Signifier' => ['name' => 'columnName'],
+					'StringAttribute' => [[
+						'Value' => ['name' => 'columnDescription'],
+						'labelId' => Configure::read('Collibra.attribute.description')]],
+					'Relation' => [[
+						'typeId' => Configure::read('Collibra.relationship.termToDataAsset'),
+						'type' => 'TARGET',
+						'Id' => ['name' => 'termRelationId'],
+						'Source' => [
+							'Id' => ['name' => 'termId'],
+							'Signifier' => ['name' => 'term'],
+							'Vocabulary' => [
+								'Community' => [
+									'Id' => ['name' => 'termCommunityId'],
+									'Name' => ['name' => 'termCommunityName']]],
+							'Status' => [
+								'signifier' => ['name' => 'approvalStatus']],
+							'StringAttribute' => [[
+								'Value' => ['name' => 'termDescription'],
+								'labelId' => Configure::read('Collibra.attribute.definition')]],
+							'SingleValueListAttribute' => [[
+								'Value' => ['name' => 'termClassification'],
+								'labelId' => Configure::read('Collibra.attribute.classification')]]]],
+					[
+						'typeId' => Configure::read('Collibra.relationship.columnToTable'),
+						'type' => 'SOURCE',
+						'Target' => [
+							'Signifier' => ['name' => 'tableName']]]],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+								'name' => 'tableName',
+								'operator' => 'EQUALS',
+								'value' => $tableName]]]]]]]];
+
+		$results = $this->fullDataTable($tableConfig);
+		usort($results, function($a, $b) {
+			return strcmp($a->columnName, $b->columnName);
+		});
+		return $results;
+	}
+
+	public function updateTableBusinessTermLinks($columns) {
+		$wfPostData = [
+			'relationTypeId' => Configure::read('Collibra.relationship.termToDataAsset'),
+			'source' => [],
+			'target' => []
+		];
+		foreach ($columns as $column) {
+			if (empty($column['id'])) {
+				continue;
+			}
+			if (isset($column['new'])) {
+				$glossary = !empty($column['propGlossary']) ? $column['propGlossary'] : Configure::read('Collibra.vocabulary.newBusinessTerms');
+				$resp = $this->post('term', [
+					'vocabulary' => $glossary,
+					'signifier' => $column['propName'],
+					'conceptType' => Configure::read('Collibra.type.term')
+				]);
+				$resp = json_decode($resp);
+
+				$columnId = $resp->resourceId;
+				$column['business_term'] = $columnId;
+
+				$postString = http_build_query([
+					'label' => Configure::read('Collibra.attribute.definition'),
+					'value' => empty($column['propDefinition']) ? '(Definition pending.)' : $column['propDefinition']
+				]);
+				$resp = $this->post('term/'.$columnId.'/attributes', $postString);
+			}
+			if (isset($column['previous_business_term'])) {
+				if ($column['previous_business_term'] == $column['business_term']) {
+					continue;
+				}
+				$this->delete("relation/{$column['previous_business_term_relation']}");
+			}
+			if (empty($column['business_term'])) {
+				continue;
+			}
+			array_push($wfPostData['source'], $column['business_term']);
+			array_push($wfPostData['target'], $column['id']);
+		}
+
+		if (empty($wfPostData['source']) && empty($wfPostData['target'])) {
+			return true;
+		}
+
+		$postString = http_build_query($wfPostData);
+		$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
+		$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', $postString);
+
+		return true;
+	}
+
+	public function getSamlResponses() {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'responseId']],
+				['Column' => ['fieldName' => 'responseName']]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'responseId'],
+					'Signifier' => ['name' => 'responseName'],
+					'ConceptType' => [
+						'Id' => ['name' => 'conceptTypeId']],
+					'Vocabulary' => [
+						'Community' => [
+							'Id' => ['name' => 'communityId'],
+							'Name' => ['name' => 'databaseName']]],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+								'name' => 'communityId',
+								'operator' => 'EQUALS',
+								'value' => Configure::read('Collibra.community.saml')]],
+						[
+							'Field' => [
+								'name' => 'conceptTypeId',
+								'operator' => 'EQUALS',
+								'value' => Configure::read('Collibra.type.samlResponse')]]]]]]]];
+
+		$results = $this->fullDataTable($tableConfig);
+		return $results;
+	}
+
+	public function getSamlResponseObject($responseName) {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'id']],
+				['Column' => ['fieldName' => 'name']],
+				['Column' => ['fieldName' => 'description']],
+				['Column' => ['fieldName' => 'vocabId']]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'id'],
+					'Signifier' => ['name' => 'name'],
+					'StringAttribute' => [[
+						'labelId' => Configure::read('Collibra.attribute.description'),
+						'Value' => ['name' => 'description']]],
+					'ConceptType' => [
+						'Id' => ['name' => 'conceptTypeId']],
+					'Vocabulary' => [
+						'Id' => ['name' => 'vocabId']],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+								'name' => 'name',
+								'operator' => 'EQUALS',
+								'value' => $responseName]],
+						[
+							'Field' => [
+								'name' => 'conceptTypeId',
+								'operator' => 'EQUALS',
+								'value' => Configure::read('Collibra.type.samlResponse')]]]]]]]];
+
+		$results = $this->fullDataTable($tableConfig);
+		if (isset($results[0])) {
+			return $results[0];
+		}
+		return [];
+	}
+
+	public function getSamlResponseFields($responseName) {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'fieldName']],
+				['Column' => ['fieldName' => 'fieldId']],
+				['Column' => ['fieldName' => 'fieldDescription']],
+				['Group' => [
+					'name' => 'businessTerm',
+					'Columns' => [
+						['Column' => ['fieldName' => 'termCommunityId']],
+						['Column' => ['fieldName' => 'termCommunityName']],
+						['Column' => ['fieldName' => 'termClassification']],
+						['Column' => ['fieldName' => 'approvalStatus']],
+						['Column' => ['fieldName' => 'termId']],
+						['Column' => ['fieldName' => 'termDescription']],
+						['Column' => ['fieldName' => 'termRelationId']],
+						['Column' => ['fieldName' => 'term']]]]]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'fieldId'],
+					'Signifier' => ['name' => 'fieldName'],
+					'StringAttribute' => [[
+						'Value' => ['name' => 'fieldDescription'],
+						'labelId' => Configure::read('Collibra.attribute.description')]],
+					'Relation' => [[
+						'typeId' => Configure::read('Collibra.relationship.termToDataAsset'),
+						'type' => 'TARGET',
+						'Id' => ['name' => 'termRelationId'],
+						'Source' => [
+							'Id' => ['name' => 'termId'],
+							'Signifier' => ['name' => 'term'],
+							'Vocabulary' => [
+								'Community' => [
+									'Id' => ['name' => 'termCommunityId'],
+									'Name' => ['name' => 'termCommunityName']]],
+							'Status' => [
+								'signifier' => ['name' => 'approvalStatus']],
+							'StringAttribute' => [[
+								'Value' => ['name' => 'termDescription'],
+								'labelId' => Configure::read('Collibra.attribute.definition')]],
+							'SingleValueListAttribute' => [[
+								'Value' => ['name' => 'termClassification'],
+								'labelId' => Configure::read('Collibra.attribute.classification')]]]],
+					[
+						'typeId' => Configure::read('Collibra.relationship.fieldToSaml'),
+						'type' => 'TARGET',
+						'Source' => [
+							'Signifier' => ['name' => 'responseName']]]],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+								'name' => 'responseName',
+								'operator' => 'EQUALS',
+								'value' => $responseName]]]]]]]];
+
+		$results = $this->fullDataTable($tableConfig);
+		usort($results, function($a, $b) {
+			return strcmp($a->fieldName, $b->fieldName);
+		});
+		return $results;
+	}
+
+	public function getBusinessTermDetails($arrQueuedBusinessTerms) {
+		if (empty($arrQueuedBusinessTerms)) {
+			return [];
+		}
+
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'createdOn']],
+				['Column' => ['fieldName' => 'termrid']],
+				['Column' => ['fieldName' => 'termsignifier']],
+				['Column' => ['fieldName' => 'concept']],
+				['Column' => ['fieldName' => 'statusname']],
+				['Column' => ['fieldName' => 'statusrid']],
+				['Column' => ['fieldName' => 'communityname']],
+				['Column' => ['fieldName' => 'commrid']],
+				['Column' => ['fieldName' => 'domainname']],
+				['Column' => ['fieldName' => 'domainrid']],
+				['Column' => ['fieldName' => 'concepttypename']],
+				['Column' => ['fieldName' => 'concepttyperid']]],
+			'Resources' => [
+				'Term' => [
+					'CreatedOn' => ['name' => 'createdOn'],
+					'Id' => ['name' => 'termrid'],
+					'Signifier' => ['name' => 'termsignifier'],
+					'BooleanAttribute' => [[
+						'Value' => ['name' => 'concept'],
+						'labelId' => Configure::read('Collibra.attribute.concept')]],
+					'Status' => [
+						'Signifier' => ['name' => 'statusname'],
+						'Id' => ['name' => 'statusrid']],
+					'Vocabulary' => [
+						'Community' => [
+							'Name' => ['name' => 'communityname'],
+							'Id' => ['name' => 'commrid']],
+						'Name' => ['name' => 'domainname'],
+						'Id' => ['name' => 'domainrid']],
+					'ConceptType' => [[
+						'Signifier' => ['name' => 'concepttypename'],
+						'Id' => ['name' => 'concepttyperid']]],
+					'Filter' => [
+						'AND' => [[
+							'OR' => []]]],
+					'Order' => [[
+						'Field' => [
+							'name' => 'termsignifier',
+							'order' => 'ASC']]]]],
+			'displayStart' => 0,
+			'displayLength' => 100]];
+
+		foreach ($arrQueuedBusinessTerms as $termId => $term) {
+			array_push(
+				$tableConfig['TableViewConfig']['Resources']['Term']['Filter']['AND'][0]['OR'],
+				['Field' => [
+					'name' => 'termrid',
+					'operator' => 'EQUALS',
+					'value' => $termId]]
+				);
+		}
+
+		$termResp = $this->fullDataTable($tableConfig);
+		return $termResp;
+	}
+
+	public function searchTerms($query, $limit = 10, $community = null) {
 		if (empty($community)) {
 			$community = Configure::read('Collibra.community.byu');
 		}
@@ -402,21 +1007,24 @@ class CollibraAPI extends Model {
 			'sortField' => 'termsignifier',
 			'sortOrder' => 'ASC',
 			'start' => 0,
-			'length' => 25];
+			'length' => 1000];
 		$options = array_merge($defaults, $passedOptions);
 
 		$tableConfig = ["TableViewConfig" => [
 			"Columns" => [
 				["Column" => ["fieldName" => "termrid"]],
 				["Column" => ["fieldName" => "termsignifier"]],
+				["Column" => ["fieldName" => "standardFieldName"]],
 				["Column" => ["fieldName" => "description"]],
+				["Column" => ["fieldName" => "descriptiveExample"]],
 				["Column" => ["fieldName" => "lastModified"]],
 				["Column" => ["fieldName" => "domainrid"]],
 				["Column" => ["fieldName" => "domainname"]],
-				["Column" => ["fieldName" => "requestable"]],
+				["Column" => ["fieldName" => "concept"]],
 				["Column" => ["fieldName" => "classification"]],
 				["Column" => ["fieldName" => "commrid"]],
 				["Column" => ["fieldName" => "communityname"]],
+				["Column" => ["fieldName" => "statusname"]],
 				["Group" => [
 					"Columns" => [
 						["Column" => ["fieldName" => "userRole00000000000000000000000000005016fn"]],
@@ -427,18 +1035,33 @@ class CollibraAPI extends Model {
 					"Columns" => [
 						["Column" => ["fieldName" => "synonymname"]],
 						["Column" => ["fieldName" => "synonymrelid"]],
-						["Column" => ["fieldName" => "synonymid"]]]]]],
+						["Column" => ["fieldName" => "synonymid"]]]]],
+				["Group" => [
+					"name" => "representing_apifields",
+					"Columns" => [
+						["Column" => ["fieldName" => "apifield"]],
+						["Column" => ["fieldName" => "fieldrid"]]]]],
+				["Column" => ["fieldName" => "notes"]]],
 			"Resources" => [
 				"Term" => [
 					"Id" => ["name" => "termrid"],
 					"Signifier" => ["name" => "termsignifier"],
+					"StringAttribute" => [[
+						"Value" => ["name" => "standardFieldName"],
+						"labelId" => Configure::read('Collibra.attribute.standardFieldName')],
+					[
+						"Value" => ["name" => "description"],
+						"labelId" => Configure::read('Collibra.attribute.definition')],
+					[
+						"Value" => ["name" => "descriptiveExample"],
+						"labelId" => Configure::read('Collibra.attribute.descriptiveExample')],
+					[
+						"Value" => ["name" => "notes"],
+						"labelId" => Configure::read('Collibra.attribute.notes')]],
 					"LastModified" => ["name" => "lastModified"],
 					"BooleanAttribute" => [[
-						"Value" => ["name" => "requestable"],
-						"labelId" => Configure::read('Collibra.attribute.requestable')]],
-					"StringAttribute" => [[
-						"LongExpression" => ["name" => "description"],
-						"labelId" => Configure::read('Collibra.attribute.definition')]],
+						"Value" => ["name" => "concept"],
+						"labelId" => Configure::read('Collibra.attribute.concept')]],
 					"SingleValueListAttribute" => [[
 						"Value" => ["name" => "classification"],
 						"labelId" => Configure::read('Collibra.attribute.classification')]],
@@ -449,8 +1072,7 @@ class CollibraAPI extends Model {
 							"Name" => ["name" => "communityname"],
 							"Id" => ["name" => "commrid"]],
 						"Id" => ["name" => "domainrid"],
-						"Name" => ["name" => "domainname"]
-					],
+						"Name" => ["name" => "domainname"]],
 					"ConceptType" => [[
 						"Signifier" => ["name" => "concepttypename"]]],
 					"Member" => [[
@@ -465,7 +1087,13 @@ class CollibraAPI extends Model {
 						"Id" => ["name" => "synonymrelid"],
 						"Source" => [
 							"Id" => ["name" => "synonymid"],
-							"Signifier" => ["name" => "synonymname"]]]],
+							"Signifier" => ["name" => "synonymname"]]],
+					[
+						"typeId" => Configure::read('Collibra.relationship.termToDataAsset'),
+						"type" => "SOURCE",
+						"Target" => [
+							"Signifier" => ["name" => "apifield"],
+							"Id" => ["name" => "fieldrid"]]]],
 					"Filter" => [
 						"AND" => [
 							["OR" => [
@@ -528,10 +1156,21 @@ class CollibraAPI extends Model {
 			$this->errors[] = "Host \"{$swagger['host']}\" does not exist in Collibra";
 			return false;
 		}
-		$vocabularyId = $this->createVocabulary("{$swagger['basePath']}/{$swagger['version']}", $hostCommunity->resourceId);
-		if (empty($vocabularyId)) {
-			$this->errors[] = "Unable to create vocabulary \"{$swagger['basePath']}/{$swagger['version']}\" in community \"{$swagger['host']}\"";
-			return false;
+
+		$vocabulary = $this->get("vocabulary/name/full?name={$swagger['basePath']}/{$swagger['version']}", ['json' => true])->vocabulary;
+		$existentTerms = [];
+		if (!empty($vocabulary)) {
+			$vocabularyId = $vocabulary[0]->resourceId;
+			foreach ($vocabulary[0]->termReferences->termReference as $term) {
+				$existentTerms[$term->resourceId] = $term->signifier;
+			}
+		}
+		else {
+			$vocabularyId = $this->createVocabulary("{$swagger['basePath']}/{$swagger['version']}", $hostCommunity->resourceId);
+			if (empty($vocabularyId)) {
+				$this->errors[] = "Unable to create vocabulary \"{$swagger['basePath']}/{$swagger['version']}\" in community \"{$swagger['host']}\"";
+				return false;
+			}
 		}
 
 		$fields = [];
@@ -545,45 +1184,78 @@ class CollibraAPI extends Model {
 			if (empty($name)) {
 				continue;
 			}
+			$elements[$name] = $element;
+			if (in_array($name, $existentTerms)) {
+				continue;
+			}
 			if (!empty($element['type']) && $element['type'] == 'fieldset') {
 				$fieldSets[$name] = $name;
 			} else {
 				$fields[$name] = $name;
 			}
-			$elements[$name] = $element;
+		}
+		//Create API object
+		if (!in_array("{$swagger['basePath']}/{$swagger['version']}", $existentTerms)) {
+			$apiResult = $this->addTermstoVocabulary($vocabularyId, Configure::read('Collibra.type.api'), ["{$swagger['basePath']}/{$swagger['version']}"]);
+			if (empty($apiResult) || !$apiResult->isOk()) {
+				$this->errors[] = "Error creating an object representing \"{$swagger['basePath']}/{$swagger['version']}\"";
+				$this->deleteVocabulary($vocabularyId);
+				return false;
+			}
 		}
 		//Add fields
-		$fieldsResult = $this->addTermsToVocabulary($vocabularyId, Configure::read('Collibra.type.field'), $fields);
-		if (empty($fieldsResult) || !$fieldsResult->isOk()) {
-			$this->errors[] = "Error adding fields to \"{$swagger['basePath']}/{$swagger['version']}\"";
-			$this->deleteVocabulary($vocabularyId);
-			return false;
+		if (!empty($fields)) {
+			$fieldsResult = $this->addTermsToVocabulary($vocabularyId, Configure::read('Collibra.type.field'), $fields);
+			if (empty($fieldsResult) || !$fieldsResult->isOk()) {
+				$this->errors[] = "Error adding fields to \"{$swagger['basePath']}/{$swagger['version']}\"";
+				$this->deleteVocabulary($vocabularyId);
+				return false;
+			}
 		}
-		$fieldSetsResult = $this->addTermsToVocabulary($vocabularyId, Configure::read('Collibra.type.fieldSet'), $fieldSets);
-		if (empty($fieldSetsResult) || !$fieldSetsResult->isOk()) {
-			$this->errors[] = "Error adding fieldSets to \"{$swagger['basePath']}/{$swagger['version']}\"";
-			$this->deleteVocabulary($vocabularyId);
-			return false;
+		if (!empty($fieldSets)) {
+			$fieldSetsResult = $this->addTermsToVocabulary($vocabularyId, Configure::read('Collibra.type.fieldSet'), $fieldSets);
+			if (empty($fieldSetsResult) || !$fieldSetsResult->isOk()) {
+				$this->errors[] = "Error adding fieldSets to \"{$swagger['basePath']}/{$swagger['version']}\"";
+				$this->deleteVocabulary($vocabularyId);
+				return false;
+			}
 		}
 
 		//Link created terms to selected Business Terms
+		$wfPostData = [
+			'relationTypeId' => Configure::read('Collibra.relationship.termToDataAsset'),
+			'source' => [],
+			'target' => []
+		];
 		foreach (['fieldsResult', 'fieldSetsResult'] as $result) {
+			if (empty(${$result})) {
+				continue;
+			}
 			$terms = json_decode(${$result}->body());
 			if (empty($terms->termReference)) {
 				continue;
 			}
-			$relationshipTypeId = Configure::read('Collibra.relationship.termToField');
 			foreach ($terms->termReference as $term) {
 				if (empty($term->signifier) || empty($term->resourceId) || empty($elements[$term->signifier]['business_term'])) {
 					continue;
 				}
-				$this->post("term/{$term->resourceId}/relations", [
-					'type' => $relationshipTypeId,
-					'target' => $elements[$term->signifier]['business_term'],
-					'inverse' => 'true'
-				]);
+				array_push($wfPostData['source'], $elements[$term->signifier]['business_term']);
+				array_push($wfPostData['target'], $term->resourceId);
 			}
 		}
+		//Link already existent terms to Business Terms, if selected
+		foreach ($existentTerms as $id => $signifier) {
+			if (empty($elements[$signifier]['business_term'])) {
+				continue;
+			}
+			array_push($wfPostData['source'], $elements[$signifier]['business_term']);
+			array_push($wfPostData['target'], $id);
+		}
+
+		$postString = http_build_query($wfPostData);
+		$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
+		$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', $postString);
+
 		return true;
 	}
 
@@ -604,17 +1276,54 @@ class CollibraAPI extends Model {
 	}
 
 	public function updateApiBusinessTermLinks($terms) {
-		$relationshipTypeId = Configure::read('Collibra.relationship.termToField');
+		$wfPostData = [
+			'relationTypeId' => Configure::read('Collibra.relationship.termToDataAsset'),
+			'source' => [],
+			'target' => []
+		];
 		foreach ($terms as $term) {
-			if (empty($term['id']) || empty($term['business_term'])) {
+			if (empty($term['id'])) {
 				continue;
 			}
-			$this->post("term/{$term['id']}/relations", [
-				'type' => $relationshipTypeId,
-				'target' => $term['business_term'],
-				'inverse' => 'true'
-			]);
+			if (isset($term['new'])) {
+				$glossary = !empty($term['propGlossary']) ? $term['propGlossary'] : Configure::read('Collibra.vocabulary.newBusinessTerms');
+				$resp = $this->post('term', [
+					'vocabulary' => $glossary,
+					'signifier' => $term['propName'],
+					'conceptType' => Configure::read('Collibra.type.term')
+				]);
+				$resp = json_decode($resp);
+
+				$termId = $resp->resourceId;
+				$term['business_term'] = $termId;
+
+				$postString = http_build_query([
+					'label' => Configure::read('Collibra.attribute.definition'),
+					'value' => empty($term['propDefinition']) ? '(Definition pending.)' : $term['propDefinition']
+				]);
+				$resp = $this->post('term/'.$termId.'/attributes', $postString);
+			}
+			if (isset($term['previous_business_term'])) {
+				if ($term['previous_business_term'] == $term['business_term']) {
+					continue;
+				}
+				$this->delete("relation/{$term['previous_business_term_relation']}");
+			}
+			if (empty($term['business_term'])) {
+				continue;
+			}
+			array_push($wfPostData['source'], $term['business_term']);
+			array_push($wfPostData['target'], $term['id']);
 		}
+
+		if (empty($wfPostData['source']) && empty($wfPostData['target'])) {
+			return true;
+		}
+
+		$postString = http_build_query($wfPostData);
+		$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
+		$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', $postString);
+
 		return true;
 	}
 
@@ -689,6 +1398,52 @@ class CollibraAPI extends Model {
 			['method' => 'DELETE']);
 	}
 
+	public function getCommunityData($community) {
+		$results = $this->postJSON('output/data_table', '{"TableViewConfig":{"Columns":[{"Community":{"name":"Subcommunities","Columns":[{"Column":{"fieldName":"subcommunityid"}},{"Column":{"fieldName":"subcommunity"}},{"Column":{"fieldName":"hasNonMetaChildren"}}]}},{"Vocabulary":{"name":"Vocabularies","Columns":[{"Column":{"fieldName":"vocabulary"}},{"Column":{"fieldName":"vocabularyid"}}]}}],"Resources":{"Community":{"Id":{"name":"subcommunityid"},"Name":{"name":"subcommunity"},"Meta":{"name":"issubmeta"},"hasNonMetaChildren":{"name":"hasNonMetaChildren"},"ParentCommunity":{"Id":{"name":"parentCommunityId"}},"Filter":{"AND":[{"AND":[{"Field":{"name":"issubmeta","operator":"EQUALS","value":false}}]},{"AND":[{"Field":{"name":"parentCommunityId","operator":"EQUALS","value":"'.$community.'"}}]}]},"Order":[{"Field":{"name":"subcommunity","order":"ASC"}}]},"Vocabulary":{"Name":{"name":"vocabulary"},"Id":{"name":"vocabularyid"},"Meta":{"name":"isvocmeta"},"Community":{"Id":{"name":"vocabularyParentCommunityId"}},"Filter":{"AND":[{"AND":[{"Field":{"name":"isvocmeta","operator":"EQUALS","value":false}}]},{"AND":[{"Field":{"name":"vocabularyParentCommunityId","operator":"EQUALS","value":"'.$community.'"}}]},{"AND":[{"Field":{"name":"vocabulary","operator":"INCLUDES","value":"Glossary"}}]}]},"Order":[{"Field":{"name":"vocabulary","order":"ASC"}}]}},"displayStart":0,"displayLength":100,"generalConceptId":"'.Configure::read('Collibra.community.byu').'"}}');
+
+		return $results;
+	}
+
+	public function getAllCommunities() {
+		$resp = $this->postJSON(
+				'output/data_table',
+				'{"TableViewConfig":{"Columns":[{"Community":{"name":"Subcommunities","Columns":[{"Column":{"fieldName":"subcommunityid"}},{"Column":{"fieldName":"subcommunity"}},{"Column":{"fieldName":"parentCommunityId"}},{"Column":{"fieldName":"hasNonMetaChildren"}},{"Column":{"fieldName":"description"}},{"Group":{"Columns":[{"Column":{"label":"Custodian User ID","fieldName":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbrid"}},{"Column":{"label":"Custodian Gender","fieldName":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbgender"}},{"Column":{"label":"Custodian First Name","fieldName":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbfn"}},{"Column":{"label":"Custodian Last Name","fieldName":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbln"}}],"name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afb"}},{"Group":{"Columns":[{"Column":{"label":"Custodian Group ID","fieldName":"groupRolef86d1d3abc2e4beeb17fe0e9985d5afbgrid"}},{"Column":{"label":"Custodian Group Name","fieldName":"groupRolef86d1d3abc2e4beeb17fe0e9985d5afbggn"}}],"name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afbg"}},{"Group":{"Columns":[{"Column":{"label":"Steward User ID","fieldName":"userRole8a0a6c89106c4adb9936f09f29b747acrid"}},{"Column":{"label":"Steward Gender","fieldName":"userRole8a0a6c89106c4adb9936f09f29b747acgender"}},{"Column":{"label":"Steward First Name","fieldName":"userRole8a0a6c89106c4adb9936f09f29b747acfn"}},{"Column":{"label":"Steward Last Name","fieldName":"userRole8a0a6c89106c4adb9936f09f29b747acln"}}],"name":"Role8a0a6c89106c4adb9936f09f29b747ac"}},{"Group":{"Columns":[{"Column":{"label":"Steward Group ID","fieldName":"groupRole8a0a6c89106c4adb9936f09f29b747acgrid"}},{"Column":{"label":"Steward Group Name","fieldName":"groupRole8a0a6c89106c4adb9936f09f29b747acggn"}}],"name":"Role8a0a6c89106c4adb9936f09f29b747acg"}},{"Group":{"Columns":[{"Column":{"label":"Trustee User ID","fieldName":"userRolefb97305e00c0459a84cbb3f5ea62d411rid"}},{"Column":{"label":"Trustee Gender","fieldName":"userRolefb97305e00c0459a84cbb3f5ea62d411gender"}},{"Column":{"label":"Trustee First Name","fieldName":"userRolefb97305e00c0459a84cbb3f5ea62d411fn"}},{"Column":{"label":"Trustee Last Name","fieldName":"userRolefb97305e00c0459a84cbb3f5ea62d411ln"}}],"name":"Rolefb97305e00c0459a84cbb3f5ea62d411"}},{"Group":{"Columns":[{"Column":{"label":"Trustee Group ID","fieldName":"groupRolefb97305e00c0459a84cbb3f5ea62d411grid"}},{"Column":{"label":"Trustee Group Name","fieldName":"groupRolefb97305e00c0459a84cbb3f5ea62d411ggn"}}],"name":"Rolefb97305e00c0459a84cbb3f5ea62d411g"}}]}},{"Vocabulary":{"name":"Vocabularies","Columns":[{"Column":{"fieldName":"vocabulary"}},{"Column":{"fieldName":"vocabularyid"}},{"Column":{"fieldName":"vocabularyParentCommunityId"}},{"Group":{"Columns":[{"Column":{"label":"Custodian User ID","fieldName":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbVOCSUFFIXrid"}},{"Column":{"label":"Custodian Gender","fieldName":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbVOCSUFFIXgender"}},{"Column":{"label":"Custodian First Name","fieldName":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbVOCSUFFIXfn"}},{"Column":{"label":"Custodian Last Name","fieldName":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbVOCSUFFIXln"}}],"name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afbVOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Custodian Group ID","fieldName":"groupRolef86d1d3abc2e4beeb17fe0e9985d5afbgVOCSUFFIXrid"}},{"Column":{"label":"Custodian Group Name","fieldName":"groupRolef86d1d3abc2e4beeb17fe0e9985d5afbgVOCSUFFIXgn"}}],"name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afbgVOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Steward User ID","fieldName":"userRole8a0a6c89106c4adb9936f09f29b747acVOCSUFFIXrid"}},{"Column":{"label":"Steward Gender","fieldName":"userRole8a0a6c89106c4adb9936f09f29b747acVOCSUFFIXgender"}},{"Column":{"label":"Steward First Name","fieldName":"userRole8a0a6c89106c4adb9936f09f29b747acVOCSUFFIXfn"}},{"Column":{"label":"Steward Last Name","fieldName":"userRole8a0a6c89106c4adb9936f09f29b747acVOCSUFFIXln"}}],"name":"Role8a0a6c89106c4adb9936f09f29b747acVOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Steward Group ID","fieldName":"groupRole8a0a6c89106c4adb9936f09f29b747acgVOCSUFFIXrid"}},{"Column":{"label":"Steward Group Name","fieldName":"groupRole8a0a6c89106c4adb9936f09f29b747acgVOCSUFFIXgn"}}],"name":"Role8a0a6c89106c4adb9936f09f29b747acgVOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Trustee User ID","fieldName":"userRolefb97305e00c0459a84cbb3f5ea62d411VOCSUFFIXrid"}},{"Column":{"label":"Trustee Gender","fieldName":"userRolefb97305e00c0459a84cbb3f5ea62d411VOCSUFFIXgender"}},{"Column":{"label":"Trustee First Name","fieldName":"userRolefb97305e00c0459a84cbb3f5ea62d411VOCSUFFIXfn"}},{"Column":{"label":"Trustee Last Name","fieldName":"userRolefb97305e00c0459a84cbb3f5ea62d411VOCSUFFIXln"}}],"name":"Rolefb97305e00c0459a84cbb3f5ea62d411VOCSUFFIX"}},{"Group":{"Columns":[{"Column":{"label":"Trustee Group ID","fieldName":"groupRolefb97305e00c0459a84cbb3f5ea62d411gVOCSUFFIXrid"}},{"Column":{"label":"Trustee Group Name","fieldName":"groupRolefb97305e00c0459a84cbb3f5ea62d411gVOCSUFFIXgn"}}],"name":"Rolefb97305e00c0459a84cbb3f5ea62d411gVOCSUFFIX"}}]}}],"Resources":{"Community":{"Id":{"name":"subcommunityid"},"Name":{"name":"subcommunity"},"Meta":{"name":"issubmeta"},"hasNonMetaChildren":{"name":"hasNonMetaChildren"},"Description":{"name":"description"},"ParentCommunity":{"Id":{"name":"parentCommunityId"}},"Member":[{"User":{"Gender":{"name":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbgender"},"FirstName":{"name":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbfn"},"Id":{"name":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbrid"},"LastName":{"name":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbln"}},"Role":{"Signifier":{"hidden":"true","name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afbsig"},"name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afb","Id":{"hidden":"true","name":"roleRolef86d1d3abc2e4beeb17fe0e9985d5afbrid"}},"roleId":"' . Configure::read('Collibra.role.custodian') . '"},{"Role":{"Signifier":{"hidden":"true","name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afbg"},"Id":{"hidden":"true","name":"roleRolef86d1d3abc2e4beeb17fe0e9985d5afbgrid"}},"Group":{"GroupName":{"name":"groupRolef86d1d3abc2e4beeb17fe0e9985d5afbggn"},"Id":{"name":"groupRolef86d1d3abc2e4beeb17fe0e9985d5afbgrid"}},"roleId":"' . Configure::read('Collibra.role.custodian') . '"},{"User":{"Gender":{"name":"userRole8a0a6c89106c4adb9936f09f29b747acgender"},"FirstName":{"name":"userRole8a0a6c89106c4adb9936f09f29b747acfn"},"Id":{"name":"userRole8a0a6c89106c4adb9936f09f29b747acrid"},"LastName":{"name":"userRole8a0a6c89106c4adb9936f09f29b747acln"}},"Role":{"Signifier":{"hidden":"true","name":"Role8a0a6c89106c4adb9936f09f29b747acsig"},"name":"Role8a0a6c89106c4adb9936f09f29b747ac","Id":{"hidden":"true","name":"roleRole8a0a6c89106c4adb9936f09f29b747acrid"}},"roleId":"' . Configure::read('Collibra.role.steward') . '"},{"Role":{"Signifier":{"hidden":"true","name":"Role8a0a6c89106c4adb9936f09f29b747acg"},"Id":{"hidden":"true","name":"roleRole8a0a6c89106c4adb9936f09f29b747acgrid"}},"Group":{"GroupName":{"name":"groupRole8a0a6c89106c4adb9936f09f29b747acggn"},"Id":{"name":"groupRole8a0a6c89106c4adb9936f09f29b747acgrid"}},"roleId":"' . Configure::read('Collibra.role.steward') . '"},{"User":{"Gender":{"name":"userRolefb97305e00c0459a84cbb3f5ea62d411gender"},"FirstName":{"name":"userRolefb97305e00c0459a84cbb3f5ea62d411fn"},"Id":{"name":"userRolefb97305e00c0459a84cbb3f5ea62d411rid"},"LastName":{"name":"userRolefb97305e00c0459a84cbb3f5ea62d411ln"}},"Role":{"Signifier":{"hidden":"true","name":"Rolefb97305e00c0459a84cbb3f5ea62d411sig"},"name":"Rolefb97305e00c0459a84cbb3f5ea62d411","Id":{"hidden":"true","name":"roleRolefb97305e00c0459a84cbb3f5ea62d411rid"}},"roleId":"' . Configure::read('Collibra.role.trustee') . '"},{"Role":{"Signifier":{"hidden":"true","name":"Rolefb97305e00c0459a84cbb3f5ea62d411g"},"Id":{"hidden":"true","name":"roleRolefb97305e00c0459a84cbb3f5ea62d411grid"}},"Group":{"GroupName":{"name":"groupRolefb97305e00c0459a84cbb3f5ea62d411ggn"},"Id":{"name":"groupRolefb97305e00c0459a84cbb3f5ea62d411grid"}},"roleId":"' . Configure::read('Collibra.role.trustee') . '"}],"Filter":{"AND":[{"AND":[{"Field":{"name":"issubmeta","operator":"EQUALS","value":false}}]},{"AND":[{"Field":{"name":"parentCommunityId","operator":"NOT_NULL"}}]}]},"Order":[{"Field":{"name":"subcommunity","order":"ASC"}}]},"Vocabulary":{"Name":{"name":"vocabulary"},"Id":{"name":"vocabularyid"},"Meta":{"name":"isvocmeta"},"Community":{"Id":{"name":"vocabularyParentCommunityId"}},"Member":[{"User":{"Gender":{"name":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbVOCSUFFIXgender"},"FirstName":{"name":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbVOCSUFFIXfn"},"Id":{"name":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbVOCSUFFIXrid"},"LastName":{"name":"userRolef86d1d3abc2e4beeb17fe0e9985d5afbVOCSUFFIXln"}},"Role":{"Signifier":{"hidden":"true","name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afbVOCSUFFIXsig"},"name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afbVOCSUFFIX","Id":{"hidden":"true","name":"roleRolef86d1d3abc2e4beeb17fe0e9985d5afbVOCSUFFIXrid"}},"roleId":"' . Configure::read('Collibra.role.custodian') . '"},{"Role":{"Signifier":{"hidden":"true","name":"Rolef86d1d3abc2e4beeb17fe0e9985d5afbgVOCSUFFIX"},"Id":{"hidden":"true","name":"roleRolef86d1d3abc2e4beeb17fe0e9985d5afbgVOCSUFFIXrid"}},"Group":{"GroupName":{"name":"groupRolef86d1d3abc2e4beeb17fe0e9985d5afbgVOCSUFFIXgn"},"Id":{"name":"groupRolef86d1d3abc2e4beeb17fe0e9985d5afbgVOCSUFFIXrid"}},"roleId":"' . Configure::read('Collibra.role.custodian') . '"},{"User":{"Gender":{"name":"userRole8a0a6c89106c4adb9936f09f29b747acVOCSUFFIXgender"},"FirstName":{"name":"userRole8a0a6c89106c4adb9936f09f29b747acVOCSUFFIXfn"},"Id":{"name":"userRole8a0a6c89106c4adb9936f09f29b747acVOCSUFFIXrid"},"LastName":{"name":"userRole8a0a6c89106c4adb9936f09f29b747acVOCSUFFIXln"}},"Role":{"Signifier":{"hidden":"true","name":"Role8a0a6c89106c4adb9936f09f29b747acVOCSUFFIXsig"},"name":"Role8a0a6c89106c4adb9936f09f29b747acVOCSUFFIX","Id":{"hidden":"true","name":"roleRole8a0a6c89106c4adb9936f09f29b747acVOCSUFFIXrid"}},"roleId":"' . Configure::read('Collibra.role.steward') . '"},{"Role":{"Signifier":{"hidden":"true","name":"Role8a0a6c89106c4adb9936f09f29b747acgVOCSUFFIX"},"Id":{"hidden":"true","name":"roleRole8a0a6c89106c4adb9936f09f29b747acgVOCSUFFIXrid"}},"Group":{"GroupName":{"name":"groupRole8a0a6c89106c4adb9936f09f29b747acgVOCSUFFIXgn"},"Id":{"name":"groupRole8a0a6c89106c4adb9936f09f29b747acgVOCSUFFIXrid"}},"roleId":"' . Configure::read('Collibra.role.steward') . '"},{"User":{"Gender":{"name":"userRolefb97305e00c0459a84cbb3f5ea62d411VOCSUFFIXgender"},"FirstName":{"name":"userRolefb97305e00c0459a84cbb3f5ea62d411VOCSUFFIXfn"},"Id":{"name":"userRolefb97305e00c0459a84cbb3f5ea62d411VOCSUFFIXrid"},"LastName":{"name":"userRolefb97305e00c0459a84cbb3f5ea62d411VOCSUFFIXln"}},"Role":{"Signifier":{"hidden":"true","name":"Rolefb97305e00c0459a84cbb3f5ea62d411VOCSUFFIXsig"},"name":"Rolefb97305e00c0459a84cbb3f5ea62d411VOCSUFFIX","Id":{"hidden":"true","name":"roleRolefb97305e00c0459a84cbb3f5ea62d411VOCSUFFIXrid"}},"roleId":"' . Configure::read('Collibra.role.trustee') . '"},{"Role":{"Signifier":{"hidden":"true","name":"Rolefb97305e00c0459a84cbb3f5ea62d411gVOCSUFFIX"},"Id":{"hidden":"true","name":"roleRolefb97305e00c0459a84cbb3f5ea62d411gVOCSUFFIXrid"}},"Group":{"GroupName":{"name":"groupRolefb97305e00c0459a84cbb3f5ea62d411gVOCSUFFIXgn"},"Id":{"name":"groupRolefb97305e00c0459a84cbb3f5ea62d411gVOCSUFFIXrid"}},"roleId":"' . Configure::read('Collibra.role.trustee') . '"}],"Filter":{"AND":[{"AND":[{"Field":{"name":"isvocmeta","operator":"EQUALS","value":false}}]},{"AND":[{"Field":{"name":"vocabularyParentCommunityId","operator":"NOT_NULL"}}]}]},"Order":[{"Field":{"name":"vocabulary","order":"ASC"}}]}},"displayStart":0,"displayLength":500}}'
+			);
+		$json = json_decode($resp);
+		return $json->aaData;
+	}
+
+	public function getAllGlossaries() {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'glossaryName']],
+				['Column' => ['fieldName' => 'glossaryId']]],
+			'Resources' => [
+				'Vocabulary' => [
+					'Name' => ['name' => 'glossaryName'],
+					'Id' => ['name' => 'glossaryId'],
+					'VocabularyType' => [
+						'Id' => ['name' => 'domainTypeId']
+					],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+								'name' => 'domainTypeId',
+								'operator' => 'EQUALS',
+								'value' => Configure::read('Collibra.glossaryTypeId')]]]]]]]];
+
+		$results = $this->fullDataTable($tableConfig);
+		foreach ($results as $result) {
+			if (strpos($result->glossaryName, ' Glossary') !== FALSE) {
+				$result->glossaryName = substr($result->glossaryName, 0, strpos($result->glossaryName, ' Glossary'));
+			}
+		}
+		usort($results, function($a, $b) {
+			return strcmp($a->glossaryName, $b->glossaryName);
+		});
+		return $results;
+	}
+
 	public function searchStandardLabel($term) {
 		$query = [
 			'query' => $term,
@@ -697,7 +1452,7 @@ class CollibraAPI extends Model {
 				'type' => [
 					'asset' => [Configure::read('Collibra.businessTermTypeId')]],
 				'community' => [Configure::read('Collibra.community.byu')]],
-			'fields' => [Configure::read('Collibra.standardDataElementLabelTypeId')],
+			'fields' => [Configure::read('Collibra.attribute.standardFieldName')],
 			'order' => [
 				'by' => 'score',
 				'sort' => 'desc'],
@@ -731,6 +1486,461 @@ class CollibraAPI extends Model {
 		return $results->results;
 	}
 
+	public function getResponsibilities($resourceId) {
+		if (!empty($this->_rolesCache[$resourceId])) {
+			return $this->_rolesCache[$resourceId];
+		}
+		$members = $this->get("member/find/all?resource={$resourceId}", ['json' => true]);
+		if (empty($members->memberReference)) {
+			return [];
+		}
+		$output = [];
+		foreach ($members->memberReference as $member) {
+			$output[$member->role->signifier][] = ($member->group == 1) ? $member->ownerGroup : $member->ownerUser;
+		}
+		$this->_rolesCache[$resourceId] = $output;
+		return $output;
+	}
+
+	public function checkForDSRDraft($netId) {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'id']]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'id'],
+					'Signifier' => ['name' => 'draftname'],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+								'name' => 'draftname',
+								'operator' => 'EQUALS',
+								'value' => "DRAFT-{$netId}"]]]]]]]];
+		$results = $this->fullDataTable($tableConfig);
+		return $results;
+	}
+
+	public function getRequestDetails($assetId, $dsr = true) {
+		$policyRelTypeId = $dsr ? Configure::read('Collibra.relationship.DSRtoPolicy') : Configure::read('Collibra.relationship.DSAtoPolicy');
+
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'id']],
+				['Column' => ['fieldName' => 'assetName']],
+				['Column' => ['fieldName' => 'statusName']],
+				['Column' => ['fieldName' => 'statusId']],
+				['Column' => ['fieldName' => 'vocabularyId']],
+				['Column' => ['fieldName' => 'communityId']],
+				['Column' => ['fieldName' => 'conceptTypeId']],
+				['Column' => ['fieldName' => 'createdOn']],
+				['Group' => [
+					'name' => 'attributes',
+					'Columns' => [
+						['Column' => ['fieldName' => 'attrSignifier']],
+						['Column' => ['fieldName' => 'attrValue']],
+						['Column' => ['fieldName' => 'attrResourceId']],
+						['Column' => ['fieldName' => 'attrTypeId']]]]],
+
+				['Group' => [
+					'name' => 'requestedTerms',
+					'Columns' => [
+						['Column' => ['fieldName' => 'reqTermId']],
+						['Column' => ['fieldName' => 'reqTermSignifier']],
+						['Column' => ['fieldName' => 'reqTermRelationId']],
+						['Column' => ['fieldName' => 'reqTermVocabId']],
+						['Column' => ['fieldName' => 'reqTermVocabName']],
+						['Column' => ['fieldName' => 'reqTermCommId']],
+						['Column' => ['fieldName' => 'reqTermCommName']],
+						['Column' => ['fieldName' => 'reqTermConceptTypeId']],
+						['Column' => ['fieldName' => 'reqTermConceptTypeName']]]]],
+
+				['Group' => [
+					'name' => 'additionallyIncludedTerms',
+					'Columns' => [
+						['Column' => ['fieldName' => 'addTermId']],
+						['Column' => ['fieldName' => 'addTermSignifier']],
+						['Column' => ['fieldName' => 'addTermRelationId']],
+						['Column' => ['fieldName' => 'addTermVocabId']],
+						['Column' => ['fieldName' => 'addTermVocabName']],
+						['Column' => ['fieldName' => 'addTermCommId']],
+						['Column' => ['fieldName' => 'addTermCommName']],
+						['Column' => ['fieldName' => 'addTermConceptTypeId']],
+						['Column' => ['fieldName' => 'addTermConceptTypeName']]]]],
+
+				['Group' => [
+					'name' => 'necessaryApis',
+					'Columns' => [
+						['Column' => ['fieldName' => 'apiId']],
+						['Column' => ['fieldName' => 'apiName']],
+						['Column' => ['fieldName' => 'apiVocabId']],
+						['Column' => ['fieldName' => 'apiVocabName']],
+						['Column' => ['fieldName' => 'apiCommId']],
+						['Column' => ['fieldName' => 'apiCommName']]]]],
+
+				['Group' => [
+					'name' => 'necessaryTables',
+					'Columns' => [
+						['Column' => ['fieldName' => 'tableId']],
+						['Column' => ['fieldName' => 'tableName']],
+						['Column' => ['fieldName' => 'tableVocabId']],
+						['Column' => ['fieldName' => 'tableVocabName']],
+						['Column' => ['fieldName' => 'tableCommId']],
+						['Column' => ['fieldName' => 'tableCommName']]]]],
+
+				['Group' => [
+					'name' => 'necessarySamlResponses',
+					'Columns' => [
+						['Column' => ['fieldName' => 'responseId']],
+						['Column' => ['fieldName' => 'responseName']],
+						['Column' => ['fieldName' => 'responseVocabId']],
+						['Column' => ['fieldName' => 'responseVocabName']],
+						['Column' => ['fieldName' => 'responseCommId']],
+						['Column' => ['fieldName' => 'responseCommName']]]]],
+
+				['Group' => [
+					'name' => 'policies',
+					'Columns' => [
+						['Column' => ['fieldName' => 'policyId']],
+						['Column' => ['fieldName' => 'policyName']],
+						['Column' => ['fieldName' => 'policyDescription']],
+						['Column' => ['fieldName' => 'policyDescriptionId']],
+						['Column' => ['fieldName' => 'policyRelationId']]]]]],
+
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'id'],
+					'Signifier' => ['name' => 'assetName'],
+					'CreatedOn' => ['name' => 'createdOn'],
+					'Status' => [
+						'Signifier' => ['name' => 'statusName'],
+						'Id' => ['name' => 'statusId']],
+					'Attribute' => [
+						'Value' => ['name' => 'attrValue'],
+						'Id' => ['name' => 'attrResourceId'],
+						'AttributeType' => [
+							'Signifier' => ['name' => 'attrSignifier'],
+							'Id' => ['name' => 'attrTypeId']]],
+					'ConceptType' => [
+						'Id' => ['name' => 'conceptTypeId']],
+					'Relation' => [[
+						'typeId' => $policyRelTypeId,
+						'Id' => ['name' => 'policyRelationId'],
+						'type' => 'SOURCE',
+						'Target' => [
+							'Id' => ['name' => 'policyId'],
+							'Signifier' => ['name' => 'policyName'],
+							'StringAttribute' => [[
+								'Id' => ['name' => 'policyDescriptionId'],
+								'Value' => ['name' => 'policyDescription'],
+								'labelId' => Configure::read('Collibra.attribute.description')]]]]],
+					'Vocabulary' => [
+						'Id' => ['name' => 'vocabularyId'],
+						'Community' => [
+							'Id' => ['name' => 'communityId']]],
+					'Filter' => [
+						'AND' => [
+							['Field' => [
+								'name' => 'id',
+								'operator' => 'EQUALS',
+								'value' => $assetId]]]]]],
+			'displayStart' => 0,
+			'displayLength' => -1]];
+
+		if ($dsr) {
+			array_push($tableConfig['TableViewConfig']['Columns'],
+				['Group' => [
+					'name' => 'dsas',
+					'Columns' => [
+						['Column' => ['fieldName' => 'dsaId']],
+						['Column' => ['fieldName' => 'dsaSignifier']],
+						['Column' => ['fieldName' => 'dsaStatus']],
+						['Column' => ['fieldName' => 'dsaVocabularyId']],
+						['Column' => ['fieldName' => 'dsaVocabularyName']],
+						['Column' => ['fieldName' => 'dsaCommunityId']],
+						['Column' => ['fieldName' => 'dsaCommunityName']]]]]);
+
+			array_push($tableConfig['TableViewConfig']['Resources']['Term']['Relation'],
+				[
+					'typeId' => Configure::read('Collibra.relationship.DSAtoDSR'),
+					'type' => 'TARGET',
+					'Source' => [
+						'Id' => ['name' => 'dsaId'],
+						'Signifier' => ['name' => 'dsaSignifier'],
+						'Status' => [
+							'Signifier' => ['name' => 'dsaStatus']],
+						'Vocabulary' => [
+							'Id' => ['name' => 'dsaVocabularyId'],
+							'Name' => ['name' => 'dsaVocabularyName'],
+							'Community' => [
+								'Id' => ['name' => 'dsaCommunityId'],
+								'Name' => ['name' => 'dsaCommunityName']]]]],
+
+				[
+					'typeId' => Configure::read('Collibra.relationship.DSRtoTerm'),
+					'Id' => ['name' => 'reqTermRelationId'],
+					'type' => 'SOURCE',
+					'Target' => [
+						'Id' => ['name' => 'reqTermId'],
+						'Signifier' => ['name' => 'reqTermSignifier'],
+						'Vocabulary' => [
+							'Id' => ['name' => 'reqTermVocabId'],
+							'Name' => ['name' => 'reqTermVocabName'],
+							'Community' => [
+								'Id' => ['name' => 'reqTermCommId'],
+								'Name' => ['name' => 'reqTermCommName']]],
+						'ConceptType' => [
+							'Id' => ['name' => 'reqTermConceptTypeId'],
+							'Signifier' => ['name' => 'reqTermConceptTypeName']]]],
+
+				[
+					'typeId' => Configure::read('Collibra.relationship.DSRtoAdditionallyIncludedAsset'),
+					'Id' => ['name' => 'addTermRelationId'],
+					'type' => 'SOURCE',
+					'Target' => [
+						'Id' => ['name' => 'addTermId'],
+						'Signifier' => ['name' => 'addTermSignifier'],
+						'Vocabulary' => [
+							'Id' => ['name' => 'addTermVocabId'],
+							'Name' => ['name' => 'addTermVocabName'],
+							'Community' => [
+								'Id' => ['name' => 'addTermCommId'],
+								'Name' => ['name' => 'addTermCommName']]],
+						'ConceptType' => [
+							'Id' => ['name' => 'addTermConceptTypeId'],
+							'Signifier' => ['name' => 'addTermConceptTypeName']]]],
+
+				[
+					'typeId' => Configure::read('Collibra.relationship.DSRtoNecessaryAPI'),
+					'type' => 'SOURCE',
+					'Target' => [
+						'Id' => ['name' => 'apiId'],
+						'Signifier' => ['name' => 'apiName'],
+						'Vocabulary' => [
+							'Id' => ['name' => 'apiVocabId'],
+							'Name' => ['name' => 'apiVocabName'],
+							'Community' => [
+								'Id' => ['name' => 'apiCommId'],
+								'Name' => ['name' => 'apiCommName']]]]],
+
+					[
+						'typeId' => Configure::read('Collibra.relationship.DSRtoNecessaryTable'),
+						'type' => 'SOURCE',
+						'Target' => [
+							'Id' => ['name' => 'tableId'],
+							'Signifier' => ['name' => 'tableName'],
+							'Vocabulary' => [
+								'Id' => ['name' => 'tableVocabId'],
+								'Name' => ['name' => 'tableVocabName'],
+								'Community' => [
+									'Id' => ['name' => 'tableCommId'],
+									'Name' => ['name' => 'tableCommName']]]]],
+
+					[
+						'typeId' => Configure::read('Collibra.relationship.DSRtoNecessarySAML'),
+						'type' => 'SOURCE',
+						'Target' => [
+							'Id' => ['name' => 'responseId'],
+							'Signifier' => ['name' => 'responseName'],
+							'Vocabulary' => [
+								'Id' => ['name' => 'responseVocabId'],
+								'Name' => ['name' => 'responseVocabName'],
+								'Community' => [
+									'Id' => ['name' => 'responseCommId'],
+									'Name' => ['name' => 'responseCommName']]]]]);
+		} else {
+			array_push($tableConfig['TableViewConfig']['Columns'],
+				['Column' => ['fieldName' => 'parentId']],
+				['Column' => ['fieldName' => 'parentName']],
+				['Column' => ['fieldName' => 'parentVocabularyId']],
+				['Column' => ['fieldName' => 'parentStatus']]);
+
+			array_push($tableConfig['TableViewConfig']['Resources']['Term']['Relation'],
+				[
+					'typeId' => Configure::read('Collibra.relationship.DSAtoDSR'),
+					'type' => 'SOURCE',
+					'Target' => [
+						'Id' => ['name' => 'parentId'],
+						'Signifier' => ['name' => 'parentName'],
+						'Vocabulary' => [
+							'Id' => ['name' => 'parentVocabularyId']],
+						'Status' => [
+							'Signifier' => ['name' => 'parentStatus']],
+
+						'Relation' => [[
+							'typeId' => Configure::read('Collibra.relationship.DSRtoTerm'),
+							'Id' => ['name' => 'reqTermRelationId'],
+							'type' => 'SOURCE',
+							'Target' => [
+								'Id' => ['name' => 'reqTermId'],
+								'Signifier' => ['name' => 'reqTermSignifier'],
+								'Vocabulary' => [
+									'Id' => ['name' => 'reqTermVocabId'],
+									'Name' => ['name' => 'reqTermVocabName'],
+									'Community' => [
+										'Id' => ['name' => 'reqTermCommId'],
+										'Name' => ['name' => 'reqTermCommName']]],
+								'ConceptType' => [
+									'Id' => ['name' => 'reqTermConceptTypeId'],
+									'Signifier' => ['name' => 'reqTermConceptTypeName']]]],
+
+						[
+							'typeId' => Configure::read('Collibra.relationship.DSRtoAdditionallyIncludedAsset'),
+							'Id' => ['name' => 'addTermRelationId'],
+							'type' => 'SOURCE',
+							'Target' => [
+								'Id' => ['name' => 'addTermId'],
+								'Signifier' => ['name' => 'addTermSignifier'],
+								'Vocabulary' => [
+									'Id' => ['name' => 'addTermVocabId'],
+									'Name' => ['name' => 'addTermVocabName'],
+									'Community' => [
+										'Id' => ['name' => 'addTermCommId'],
+										'Name' => ['name' => 'addTermCommName']]],
+								'ConceptType' => [
+									'Id' => ['name' => 'addTermConceptTypeId'],
+									'Signifier' => ['name' => 'addTermConceptTypeName']]]],
+
+						[
+							'typeId' => Configure::read('Collibra.relationship.DSRtoNecessaryAPI'),
+							'type' => 'SOURCE',
+							'Target' => [
+								'Id' => ['name' => 'apiId'],
+								'Signifier' => ['name' => 'apiName'],
+								'Vocabulary' => [
+									'Id' => ['name' => 'apiVocabId'],
+									'Name' => ['name' => 'apiVocabName'],
+									'Community' => [
+										'Id' => ['name' => 'apiCommId'],
+										'Name' => ['name' => 'apiCommName']]]]],
+
+						[
+							'typeId' => Configure::read('Collibra.relationship.DSRtoNecessaryTable'),
+							'type' => 'SOURCE',
+							'Target' => [
+								'Id' => ['name' => 'tableId'],
+								'Signifier' => ['name' => 'tableName'],
+								'Vocabulary' => [
+									'Id' => ['name' => 'tableVocabId'],
+									'Name' => ['name' => 'tableVocabName'],
+									'Community' => [
+										'Id' => ['name' => 'tableCommId'],
+										'Name' => ['name' => 'tableCommName']]]]],
+
+						[
+							'typeId' => Configure::read('Collibra.relationship.DSRtoNecessarySAML'),
+							'type' => 'SOURCE',
+							'Target' => [
+								'Id' => ['name' => 'responseId'],
+								'Signifier' => ['name' => 'responseName'],
+								'Vocabulary' => [
+									'Id' => ['name' => 'responseVocabId'],
+									'Name' => ['name' => 'responseVocabName'],
+									'Community' => [
+										'Id' => ['name' => 'responseCommId'],
+										'Name' => ['name' => 'responseCommName']]]]]]]]);
+		}
+
+		$results = $this->fullDataTable($tableConfig);
+		if (!empty($results)) {
+			$arrNewAttr = [];
+			$arrCollaborators = [];
+			foreach ($results[0]->attributes as $attr) {
+				if ($attr->attrSignifier === 'Requester Net Id') {
+					$person = ClassRegistry::init('BYUAPI')->personalSummary($attr->attrValue);
+					unset($person->person_summary_line, $person->personal_information, $person->student_information, $person->relationships);
+					$person->attrInfo = $attr;
+					array_push($arrCollaborators, $person);
+					continue;
+				}
+				$arrNewAttr[$attr->attrSignifier] = $attr;
+			}
+			$results[0]->collaborators = $arrCollaborators;
+			$results[0]->attributes = $arrNewAttr;
+			return $results[0];
+		}
+		return [];
+	}
+
+	public function getAttributes($assetId) {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Group' => [
+					'name' => 'attributes',
+					'Columns' => [
+						['Column' => ['fieldName' => 'attrSignifier']],
+						['Column' => ['fieldName' => 'attrValue']],
+						['Column' => ['fieldName' => 'attrResourceId']],
+						['Column' => ['fieldName' => 'attrTypeId']]]]]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'assetId'],
+					'Attribute' => [
+						'Value' => ['name' => 'attrValue'],
+						'Id' => ['name' => 'attrResourceId'],
+						'AttributeType' => [
+							'Signifier' => ['name' => 'attrSignifier'],
+							'Id' => ['name' => 'attrTypeId']]],
+					'Filter' => [
+						'AND' => [
+							['Field' => [
+								'name' => 'assetId',
+								'operator' => 'EQUALS',
+								'value' => $assetId]]]]]],
+			'displayStart' => 0,
+			'displayLength' => -1]];
+
+		$results = $this->fullDataTable($tableConfig);
+		if (!empty($results)) {
+			$arrNewAttr = [];
+			$arrCollaborators = [];
+			foreach ($results[0]->attributes as $attr) {
+				if ($attr->attrSignifier === 'Requester Net Id') {
+					$person = ClassRegistry::init('BYUAPI')->personalSummary($attr->attrValue);
+					unset($person->person_summary_line, $person->personal_information, $person->student_information, $person->relationships);
+					$person->attrInfo = $attr;
+					array_push($arrCollaborators, $person);
+					continue;
+				}
+				$arrNewAttr[$attr->attrSignifier] = $attr;
+			}
+
+			return [$arrNewAttr, $arrCollaborators];
+		}
+		return [null, null];
+	}
+
+	public function getPolicies() {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'id']],
+				['Column' => ['fieldName' => 'policyName']],
+				['Column' => ['fieldName' => 'body']],
+				['Column' => ['fieldName' => 'inclusionScenario']]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'id'],
+					'Signifier' => ['name' => 'policyName'],
+					'StringAttribute' => [[
+						'Value' => ['name' => 'body'],
+						'labelId' => Configure::read('Collibra.attribute.description')],
+					[
+						'Value' => ['name' => 'inclusionScenario'],
+						'labelId' => Configure::read('Collibra.attribute.inclusionScenario')]],
+					'Vocabulary' => [
+						'Id' => ['name' => 'vocabId']],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+								'name' => 'vocabId',
+								'operator' => 'EQUALS',
+								'value' => Configure::read('Collibra.vocabulary.infoGovPolicies')]]]]]],
+			'displayStart' => 0,
+			'displayLength' => -1]];
+
+		$policies = $this->fullDataTable($tableConfig);
+		return $policies;
+	}
+
 	protected function _updateSessionCookies() {
 		$config = $this->client()->config;
 		if (empty($config['request']['cookies'])) {
@@ -740,7 +1950,7 @@ class CollibraAPI extends Model {
 		}
 	}
 
-	public function request($options=array()){
+	public function request($options=[]){
 		$ch = curl_init();
 		$url = $this->settings['url'].$options['url'];
 		$params = isset($options['params'])?$options['params']:'';
@@ -753,9 +1963,9 @@ class CollibraAPI extends Model {
 		}
 
 		if(isset($options['json'])){
-			curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+			curl_setopt($ch, CURLOPT_HTTPHEADER, [
 				'Content-Type: application/json',
-				'Content-Length: ' . strlen($params))
+				'Content-Length: ' . strlen($params)]
 			);
 		}
 

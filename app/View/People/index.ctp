@@ -1,6 +1,6 @@
 <?php
-	$this->Html->css('secondary', null, array('inline' => false));
-	$this->Html->css('people', null, array('inline' => false));
+	$this->Html->css('secondary', null, ['inline' => false]);
+	$this->Html->css('people', null, ['inline' => false]);
 ?>
 <script>
 	$(document).ready(menuSize);
@@ -10,7 +10,7 @@
 
 	$(document).ready(function() {
 		$("#findLink").addClass('active');
-		
+
 		$(".deptLink").click(function() {
 			$(".deptLink").removeClass('active');
 			$(this).addClass("active");
@@ -105,7 +105,11 @@
 								echo '<strong class="orangeText">Steward<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$stewardDef.'" class="info"><img src="/img/iconInfo.png"></div></strong>';
 								echo '<ul>';
 								foreach($user['stewardRoles'] as $role){
-									echo '<li><a href="/people/dept?c='.$role->parents[0]->subcommunityid.'#'.$role->subcommunityid.'">';
+									if($role->hasNonMetaChildren == 'true'){
+										echo '<li><a href="/search/listTerms/'.$role->vocabularyid.'">';
+									}else{
+										echo '<li><a href="/search/noGlossary">';
+									}
 									foreach($role->parents as $parent){
 										echo $parent->subcommunity.' <span class="arrow-separator">&gt;</span> ';
 									}
@@ -120,7 +124,11 @@
 								echo '<strong class="greenText">Custodian<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$custodianDef.'" class="info"><img src="/img/iconInfo.png"></div></strong>';
 								echo '<ul>';
 								foreach($user['custodianRoles'] as $role){
-									echo '<li><a href="/people/dept?c='.$role->parents[0]->subcommunityid.'#'.$role->subcommunityid.'">';
+									if ($role->hasNonMetaChildren == 'true') {
+										echo '<li><a href="/search/listTerms/'.$role->vocabularyid.'">';
+									} else {
+										echo '<li><a href="/search/noGlossary">';
+									}
 									foreach($role->parents as $parent){
 										echo $parent->subcommunity.' <span class="arrow-separator">&gt;</span> ';
 									}
@@ -130,7 +138,7 @@
 								echo '</ul>';
 							}
 							echo '	</div>'.
-								'</div>'; 
+								'</div>';
 						}
 						echo '</div>';
 					}

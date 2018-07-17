@@ -30,50 +30,116 @@ if (!function_exists('denv')) {
 
 	Configure::write('Collibra', [
 		'community' => [
-			'byu' => '4e756e1e-11ee-4d1e-bfaa-fb0ada974fc5',
-			'api' => '9091816c-9b8b-45ba-8422-5e9fa36088be'
+			'api' => 'd9f1c1bb-17cf-4fcb-9046-49d35f839623',
+			'byu' => 'c690b823-4341-4125-8a81-22d592c23773',
+			'academicRecords' => 'e467b5c3-c497-4fb6-a0d0-cf48815e9bec',
+			'dataWarehouse' => 'ad297c25-ddde-42f3-a534-bd73818cbef7',
+			'saml' => 'ab07c21b-c27f-470f-942f-102686753057'
 		],
 		'vocabulary' => [
-			'isaRequest' => 'b1ae53a6-46a1-4fdc-a4fb-5dcfcd9c61a1'
+			'dataSharingRequests' => '00000000-0000-0000-0000-000000006016',
+			'newBusinessTerms' => '00000000-0000-0000-0000-000000006013',
+			'infoGovPolicies' => '2a1eaea2-62b0-45c0-b499-177f3ddf0551'
 		],
-		'isaWorkflow' => [
-			'id' => '62d6b6a4-0fa6-4335-89c7-e822beb920d6',
-			'requiredElementsString' => 'informationElements',
-			'additionalElementsString' => ''
+		'workflow' => [
+			'intakeDSR' => '8bfbed57-c387-4717-8f5d-c3cfebb485de',
+			'newBusinessTerms' => '27028f8b-3d2b-4286-a567-b9658418be51',
+			'updateDataWarehouse' => 'c5063f9b-47f4-4c59-92fd-947878d7b5d2',
+			'changeDSRRelations' => '987d74a5-1968-4177-90ce-41d9ebac3548',
+			'changeAttributes' => '7ee55a00-a355-4066-a65c-f4df27184646',
+			'createDSRDraft' => 'ecdb22aa-f091-42b8-9b63-4303e82ee7cf',
+			'createRelationsAsync' => 'c1934dda-c1c8-4ad2-8e53-18303fb06545'
 		],
-		'dataAssetDomainTypeId' => '00000000-0000-0000-0000-000000030001',
+		'requiredElementsString' => 'requiredElements',
+		'additionalElementsString' => 'additionalElements',
+		'dataAssetDomainTypeId' => '00000000-0000-0000-0000-000000030011',
+		'glossaryTypeId' => '00000000-0000-0000-0000-000000010001',
 		'techAssetDomainTypeId' => '00000000-0000-0000-0000-000000030004',
 		'businessTermTypeId' => '00000000-0000-0000-0000-000000011001',
-		'standardDataElementLabelTypeId' => '3de2b1d8-1c88-444f-b2e1-d0fb29ebabed',
+		'standardFieldNameTypeId' => 'ea92faa8-685d-4cb0-8665-14808de08dd2',
 		'relationship' => [
-			'termToSynonym' => 'c06ed0b7-032f-4d0f-ae40-5824c12f94a6',
-			'isaRequestToTerm' => 'f4a6a8fe-8509-458a-9b60-417141a9abd4',
-			'isaRequestToApproval' => '8750ed82-b3be-4a61-92ac-6df2e41b408c',
-			'termToField' => 'f5891dd0-3f80-44a2-ad87-882558fd0d71'
+			'termToSynonym' => '00000000-0000-0000-0000-000000007001',
+			'DSRtoTerm' => 'edc9e81b-98dc-4bde-8191-1ae75161ab67',
+			'termToDataAsset' => '00000000-0000-0000-0000-000000007038',
+			'DSAtoDSR' => '00000000-0000-0000-0000-000000007055',
+			'DSAtoPolicy' => 'd22051bf-af3e-4771-862c-c2b3f10bce05',
+			'DSRtoPolicy' => '0cd17138-7610-48fc-8d11-616a376d44c5',
+			'termToPolicy' => '0b8404c5-b0f2-4109-89ab-374c5f775c14',
+			'DSRtoAdditionallyIncludedAsset' => '71be0418-dbb7-4ee0-ad9e-ef9d5eca13ab',
+			'DSRtoNecessaryAPI' => '5f4d65ab-ab89-4ed2-a2e7-a628ee7ba4ba',
+			'DSRtoNecessaryTable' => 'ec73bc13-c215-42f2-911b-76a345ec9ed5',
+			'DSRtoNecessarySAML' => 'dca012a1-e752-4299-bf61-925358efe83c',
+			'schemaToTable' => '00000000-0000-0000-0000-000000007043',
+			'columnToTable' => '00000000-0000-0000-0000-000000007042',
+			'fieldToSaml' => 'cee630bb-e1c0-471b-91c2-727397f10d0b'
 		],
 		'type' => [
-			'synonym' => 'ed82f17f-c1e7-4d6d-83cc-50f6b529c296',
+			'dataSharingRequest' => '00000000-0000-0000-0000-000000031231',
+			'dataSharingRequestDraft' => '6bee7c91-3f51-4db6-b2d1-f1a3411fad49',
+			'synonym' => '2c2d6491-a41c-4e9e-af52-759b43948951',
 			'term' => '00000000-0000-0000-0000-000000011001',
-			'field' => '069a3e64-e2ca-4225-83b2-a67ebde07805',
-			'fieldSet' => '66338390-f105-47ef-b7f9-02c71a84c300'
+			'api' => '43efdd9e-8173-4f42-8055-9ae73d6134b1',
+			'field' => '00000000-0000-0000-0001-000400000008',
+			'fieldSet' => '73bae222-220d-4342-94ba-6a8369797eac',
+			'samlResponse' => 'fbe6f14c-38a0-4926-aa0c-42f2c3b04018',
+			'glossary' => ''
 		],
 		'attribute' => [
 			'definition' => '00000000-0000-0000-0000-000000000202',
-			'classification' => 'e0937764-544a-4d21-98ce-dc0c1936b465',
-			'requestable' => '0d798f70-b3ca-4af2-b283-54f84c4714aa',
-			'isaRequestPersonId' => 'f1d5726a-32a2-47c4-b48c-d3be43880462',
+			'description' => '00000000-0000-0000-0000-000000003114',
+			'descriptiveExample' => '00000000-0000-0000-0000-000000003115',
+			'standardFieldName' => 'ea92faa8-685d-4cb0-8665-14808de08dd2',
+			'classification' => '80cae8d4-856f-4b9a-971a-164514e79744',
+			'concept' => '00fd4187-ffbd-4419-acd0-74fd9f16598a',
+			'requesterNetId' => 'a368134f-ab44-4ce6-ac1d-1b69bfa37d6e',
 			'stewardPhone' => '9a18e247-c090-40c3-896e-ab97335ae759',
 			'stewardEmail' => '0cbbfd32-fc97-47ce-bef1-a89ae4e77ee8',
-			'stewardName' => '4331ec09-88a2-48e6-b096-9ece6648aff3'
+			'stewardName' => '4331ec09-88a2-48e6-b096-9ece6648aff3',
+			'notes' => '00000000-0000-0000-0000-000000003116',
+			'inclusionScenario' => '00000000-0000-0000-0001-000500000026'
+		],
+		'status' => [
+			'deleted' => '5ed07772-862c-4898-aa31-9c781ab13a1e'
 		],
 		'term' => [
-			'custodian' => '8ed41506-3eaf-47e1-b076-76bb49022059',
-			'steward' => 'f6b8b3cd-373c-43d7-8cbd-d8f03ff9048b'
+			'custodian' => '6f666b9e-be07-4521-95fa-36fecfe2ff71',
+			'steward' => 'c43795f0-5450-41ec-90fb-55d1d84a0efe'
 		],
 		'role' => [
-			'trustee' => 'fb97305e-00c0-459a-84cb-b3f5ea62d411',
-			'steward' => '8a0a6c89-106c-4adb-9936-f09f29b747ac',
-			'custodian' => 'f86d1d3a-bc2e-4bee-b17f-e0e9985d5afb'
+			'requestCoordinator' => 'b79020f5-ff56-400f-8882-35f968e1712d',
+			'steward' => '00000000-0000-0000-0000-000000005016',
+			'custodian' => '00000000-0000-0000-0000-000000005041',
+			'trustee' => 'f55b47bc-973a-462d-9a37-35395f20e52d'
+		],
+		'formFields' => [
+			'requesterNetId' => 'a368134f-ab44-4ce6-ac1d-1b69bfa37d6e',
+			'name' => 'f7ebce1f-c0b5-48c8-bc62-bddd976994fc',
+			'phone' => 'c3252e20-c566-405d-8bfe-dd69377042c2',
+			'role' => '688e8cf3-0db8-4ad1-b577-215f09b8e613',
+			'email' => '52404e00-7448-456a-8eac-bad31aea7e61',
+			'requestingOrganization' => '97a41292-5627-49cc-bc36-efad1b996d37',
+			'sponsorName' => '81e2e950-e9f7-4340-9d39-7faa7e88733a',
+			'sponsorPhone' => 'd16d9253-e1fc-4d3b-a5a7-39d2ffb92560',
+			'sponsorRole' => '2791b03b-464a-4bc9-b97d-2b70d4274a1e',
+			'sponsorEmail' => '51e3cd5e-9aa9-4953-8a29-31cfd0492d0c',
+			'applicationOrProjectName' => 'c70f71fb-a92b-4034-b8b6-9f042c0a39ea',
+			'descriptionOfInformation' => '6b41a821-2a26-4fe8-8202-23442c1e54bb',
+			'descriptionOfApplicationOrProject' => '459f3f5c-2904-47f7-b91d-005a02ad2fce',
+			'necessityOfData' => '12d99132-6845-48f9-89b6-e4c74e1ab978',
+			'scopeAndControl' => 'dc4f0171-a69e-4168-87e6-35e38547e96c',
+			'readWriteAccess' => '275fd60d-4b40-487e-b425-db2d208886a3',
+			'dataStewardResponse' => 'e35fa2ba-e89a-4cd5-9744-cfe216427396',
+			'requestedInformationMap' => '26e7c03e-9a6a-4ce3-baa7-5d31ad5505c2',
+			'technologyType' => '5ab6d7fb-811b-418c-8273-08d28bc4e1d1',
+			'draftUserCart' => '9368b76d-6fa8-4402-8bf4-a45051d40752',
+			'descriptionOfIntendedUse' => 'cfdc107a-c949-465e-810e-13296a5759dc',
+			'accessRights' => '8d12adef-0584-4bb6-97b5-5f9e1e3ec4ad',
+			'accessMethod' => '42fc793b-70e1-4860-9846-8c67c1c49d50',
+			'impactOnSystem' => '3931e9bf-b904-4232-930e-af70b0895611'
+		],
+		'policy' => [
+			'standardDataUsagePolicies' => '76c92ba2-6930-4946-809b-e559bb247587',
+			'trustedPartnerSecurityStandards' => '712bd956-0c58-4724-bc12-69b1ee12bddf'
 		]
 	]);
 
@@ -129,11 +195,11 @@ if (!function_exists('denv')) {
  *
  * @see ErrorHandler for more information on error handling and configuration.
  */
-	Configure::write('Error', array(
+	Configure::write('Error', [
 		'handler' => 'ErrorHandler::handleError',
 		'level' => E_ALL & ~E_DEPRECATED,
 		'trace' => true
-	));
+	]);
 
 /**
  * Configure the Exception handler used for uncaught exceptions. By default,
@@ -155,11 +221,11 @@ if (!function_exists('denv')) {
  *
  * @see ErrorHandler for more information on exception handling and configuration.
  */
-	Configure::write('Exception', array(
+	Configure::write('Exception', [
 		'handler' => 'ErrorHandler::handleException',
 		'renderer' => 'ExceptionRenderer',
 		'log' => true
-	));
+	]);
 
 /**
  * Application wide charset encoding
@@ -296,9 +362,9 @@ if (!function_exists('denv')) {
  * the cake shell command: cake schema create Sessions
  *
  */
-	Configure::write('Session', array(
+	Configure::write('Session', [
 		'defaults' => 'php'
-	));
+	]);
 
 /**
  * A random string used in security hashing methods.
@@ -318,7 +384,7 @@ if (!function_exists('denv')) {
  * Set to `true` to apply timestamps when debug > 0. Set to 'force' to always enable
  * timestamping regardless of debug value.
  */
-	//Configure::write('Asset.timestamp', true);
+	Configure::write('Asset.timestamp', 'force');
 
 /**
  * Compress CSS output by removing comments, whitespace, repeating tags, etc.
