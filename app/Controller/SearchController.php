@@ -250,7 +250,7 @@ class SearchController extends AppController {
 		$this->autoRender = false;
 		$termrid = $this->request->query['resource'];
 
-		$resp = json_decode($this->CollibraAPI->get('/member/find/all?resource='.$termrid));
+		$resp = json_decode($this->CollibraAPI->get('member/find/all?resource='.$termrid));
 		$steward = null;
 		$custodian = null;
 		$members = $resp->memberReference;
