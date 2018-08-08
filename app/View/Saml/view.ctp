@@ -61,7 +61,7 @@
 								<?php endif ?>
 							</td>
 							<td><?= $field->fieldName ?></td>
-							<td style="white-space:nowrap;">
+							<td>
 								<?php if (!empty($field->businessTerm[0])): ?>
 									<?php $termDef = nl2br(str_replace("\n\n\n", "\n\n", htmlentities(strip_tags(str_replace(['<div>', '<br>', '<br/>'], "\n", $field->businessTerm[0]->termDescription))))); ?>
 									<?= $this->Html->link($field->businessTerm[0]->term, ['controller' => 'search', 'action' => 'term', $field->businessTerm[0]->termId]) ?>

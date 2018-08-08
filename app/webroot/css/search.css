@@ -1446,7 +1446,7 @@ img.resultBodyLoading {
 #apiBody .api-fields .termColumn,
 #apiBody .table-columns .termColumn,
 #apiBody .saml-fields .termColumn {
-  min-width: 150px;
+  min-width: 300px;
 }
 #apiBody .api-fields a,
 #apiBody .table-columns a,
