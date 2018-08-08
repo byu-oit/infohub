@@ -53,7 +53,6 @@
 							<?php if (Configure::read('debug') == 0): ?>
 								$('#email').val(data.requester.email);
 							<?php endif ?>
-							$('#requestingOrganization').val(data.requester.department);
 
 							$('#sponsorName').val(data.supervisor.name);
 							$('#sponsorPhone').val(data.supervisor.phone);
@@ -61,6 +60,7 @@
 							<?php if (Configure::read('debug') == 0): ?>
 								$('#sponsorEmail').val(data.supervisor.email);
 							<?php endif ?>
+							$('#requestingOrganization').val(data.supervisor.department);
 
 							$('#net-id-input-wrapper').fadeOut('fast');
 						}
@@ -76,6 +76,195 @@
 					$('.save').click();
 				}
 			}
+		});
+
+		var developmentShopIndex = -1;
+		$('#developmentShop').keypress(function(event) { return event.keyCode != 13; });
+		$('#developmentShop').on({
+			keyup: function(e) {
+				var move;
+
+				if ($.trim($('#developmentShop').val()) == '') {
+					$('.developmentShopAutoComplete').hide();
+					$('.developmentShopAutoComplete .results').html('');
+				} else if  (e == true) {
+					$('.developmentShopAutoComplete').hide();
+					$('.developmentShopAutoComplete .results').html('');
+				} else {
+					switch (e.which) {
+
+						case 27: // escape
+							$('.developmentShopAutoComplete').hide();
+							$('.developmentShopAutoComplete .results').html('');
+							developmentShopIndex = -1;
+							break;
+
+						case 13: // enter
+							if ($('.developmentShopAutoComplete li').hasClass('active')) {
+								$('.developmentShopAutoComplete li.active').click();
+							} else {
+								$('.developmentShopAutoComplete li').eq(0).click();
+							}
+							break;
+
+						case 38: // up
+							e.preventDefault();
+							if (developmentShopIndex == -1) {
+								developmentShopIndex = $('.developmentShopAutoComplete li').length - 1;
+							} else {
+								developmentShopIndex--;
+							}
+
+							if (developmentShopIndex > $('.developmentShopAutoComplete li').length ) {
+								developmentShopIndex = $('.developmentShopAutoComplete li').length + 1;
+							}
+							move = true;
+							break;
+
+						case 40: // down
+							e.preventDefault();
+							if (developmentShopIndex >= $('.developmentShopAutoComplete li').length - 1) {
+								developmentShopIndex = 0;
+							} else {
+								developmentShopIndex++;
+							}
+							move = true;
+							break;
+
+						default:
+							var val = $('#developmentShop').val();
+							setTimeout(function() {
+								if (val != $('#developmentShop').val()) {
+									// User continued typing, so throw this out
+									return;
+								}
+								$.getJSON( "/developmentShop/search/"+val )
+									.done(function( data ) {
+										if (val != $('#developmentShop').val()) {
+											// User continued typing, so throw this out
+											return;
+										}
+										$('.developmentShopAutoComplete .results').html('');
+										for (var i in data) {
+											$('.developmentShopAutoComplete .results').append('<li>'+data[i].name+'</li>');
+										}
+									});
+							}, 300);
+
+							$('.developmentShopAutoComplete').show();
+							break;
+
+					}
+				}
+
+				if (move) {
+					$('.developmentShopAutoComplete li.active').removeClass('active');
+					$('.developmentShopAutoComplete li').eq(developmentShopIndex).addClass('active');
+				}
+			}
+		});
+		$('.developmentShopAutoComplete').on('click', 'li', function() {
+			$('#developmentShop').val($(this).text());
+			$('#developmentShop').focusout();
+			$('.developmentShopAutoComplete').hide();
+			$('.developmentShopAutoComplete .results').html('');
+		});
+
+		var applicationOrProjectNameIndex = -1;
+		$('#applicationOrProjectName').keypress(function(event) { return event.keyCode != 13; });
+		$('#applicationOrProjectName').on({
+			keyup: function(e) {
+				if ($('#developmentShop').val() == '') {
+					return;
+				}
+				var move;
+
+				if ($.trim($('#applicationOrProjectName').val()) == '') {
+					$('.applicationOrProjectNameAutoComplete').hide();
+					$('.applicationOrProjectNameAutoComplete .results').html('');
+				} else if  (e == true) {
+					$('.applicationOrProjectNameAutoComplete').hide();
+					$('.applicationOrProjectNameAutoComplete .results').html('');
+				} else {
+					switch (e.which) {
+
+						case 27: // escape
+							$('.applicationOrProjectNameAutoComplete').hide();
+							$('.applicationOrProjectNameAutoComplete .results').html('');
+							applicationOrProjectNameIndex = -1;
+							break;
+
+						case 13: // enter
+							if ($('.applicationOrProjectNameAutoComplete li').hasClass('active')) {
+								$('.applicationOrProjectNameAutoComplete li.active').click();
+							} else {
+								$('.applicationOrProjectNameAutoComplete li').eq(0).click();
+							}
+							break;
+
+						case 38: // up
+							e.preventDefault();
+							if (applicationOrProjectNameIndex == -1) {
+								applicationOrProjectNameIndex = $('.applicationOrProjectNameAutoComplete li').length - 1;
+							} else {
+								applicationOrProjectNameIndex--;
+							}
+
+							if (applicationOrProjectNameIndex > $('.applicationOrProjectNameAutoComplete li').length ) {
+								applicationOrProjectNameIndex = $('.applicationOrProjectNameAutoComplete li').length + 1;
+							}
+							move = true;
+							break;
+
+						case 40: // down
+							e.preventDefault();
+							if (applicationOrProjectNameIndex >= $('.applicationOrProjectNameAutoComplete li').length - 1) {
+								applicationOrProjectNameIndex = 0;
+							} else {
+								applicationOrProjectNameIndex++;
+							}
+							move = true;
+							break;
+
+						default:
+							var val = $('#applicationOrProjectName').val();
+							setTimeout(function() {
+								if (val != $('#applicationOrProjectName').val()) {
+									// User continued typing, so throw this out
+									return;
+								}
+								$.getJSON( "/developmentShop/getDetails/"+$('#developmentShop').val() )
+									.done(function( data ) {
+										if (val != $('#applicationOrProjectName').val()) {
+											// User continued typing, so throw this out
+											return;
+										}
+										$('.applicationOrProjectNameAutoComplete .results').html('');
+										for (var i in data[0].applications) {
+											if (data[0].applications[i].appName.toLowerCase().search(val.toLowerCase()) !== -1) {
+												$('.applicationOrProjectNameAutoComplete .results').append('<li>'+data[0].applications[i].appName+'</li>');
+											}
+										}
+									});
+							}, 300);
+
+							$('.applicationOrProjectNameAutoComplete').show();
+							break;
+
+					}
+				}
+
+				if (move) {
+					$('.applicationOrProjectNameAutoComplete li.active').removeClass('active');
+					$('.applicationOrProjectNameAutoComplete li').eq(applicationOrProjectNameIndex).addClass('active');
+				}
+			}
+		});
+		$('.applicationOrProjectNameAutoComplete').on('click', 'li', function() {
+			$('#applicationOrProjectName').val($(this).text());
+			$('#applicationOrProjectName').focusout();
+			$('.applicationOrProjectNameAutoComplete').hide();
+			$('.applicationOrProjectNameAutoComplete .results').html('');
 		});
 
 		$('.radioBox').click(function() {
@@ -113,7 +302,7 @@
 				postData[$(this).prop('name')] = $(this).prop('value');
 			});
 
-			$.post('request/saveDraft', postData)
+			$.post('/request/saveDraft', postData)
 				.done(function(data) {
 					data = JSON.parse(data);
 					clearInterval(savingTextInterval);
@@ -139,16 +328,16 @@
 		}
 	}
 
-	function validate(){
+	function validate() {
 		var isValid = true;
 		$('#request input').each(function() {
-			if($(this).val()==''){
+			if (!$(this).val()) {
 				isValid = false;
 				$(this).focus();
 				return false;
 			}
 		});
-		if(!isValid) alert('Requester and Sponsor Information and Application or Project Name are required.');
+		if (!isValid) alert('Requester and Sponsor Information, Development Shop, and Application or Project Name are required.');
 		return isValid;
 	}
 
@@ -223,7 +412,6 @@
 				</div>
 				<div class="clear"></div>
 				<div class="fieldGroup">
-					<!-- <div class="infoCol"> -->
 						<div class="field-container">
 							<label for="name">Requester Name*</label>
 							<input type="text" id="name" name="name" class="inputShade noPlaceHolder" value="<?= empty($preFilled['name']) ? h($psName) : h($preFilled['name']) ?>">
@@ -232,8 +420,6 @@
 							<label for="phone">Requester Phone*</label>
 							<input type="text" id="phone" name="phone" class="inputShade noPlaceHolder" value="<?= empty($preFilled['phone']) ? h($psPhone) : h($preFilled['phone']) ?>">
 						</div>
-					<!-- </div>
-					<div class="infoCol"> -->
 						<div class="field-container">
 							<label for="role">Requester Role*</label>
 							<input type="text" id="role" name="role" class="inputShade noPlaceHolder" value="<?= empty($preFilled['role']) ? h($psRole) : h($preFilled['role']) ?>">
@@ -242,15 +428,11 @@
 							<label for="email">Requester Email*</label>
 							<input type="text" id="email" name="email" class="inputShade noPlaceHolder" value="<?= (Configure::read('debug') == 0) ? ( empty($preFilled['email']) ? h($psEmail) : h($preFilled['email']) ) : h('null@example.com') ?>">
 						</div>
-						<div class="field-container">
-							<label for="requestingOrganization">Requester Organization*</label>
-							<input type="text" id="requestingOrganization" name="requestingOrganization" class="inputShade noPlaceHolder" value="<?= empty($preFilled['requestingOrganization']) ? h($psDepartment) : h($preFilled['requestingOrganization']) ?>">
-						</div>
-					<!-- </div> -->
 				</div>
 
 				<h3 class="headerTab">Sponsor Information*</h3>
 				<div class="clear"></div>
+				<div class="orgNotification">If the organization requesting the application is not the organization developing it, change the information below to that of the requesting party.</div>
 				<div class="fieldGroup">
 					<div class="field-container">
 						<label for="sponsorName">Sponsor Name*</label>
@@ -268,9 +450,30 @@
 						<label for="sponsorEmail">Sponsor Email*</label>
 						<input type="text" id="sponsorEmail" name="sponsorEmail" class="inputShade noPlaceHolder" value="<?= (Configure::read('debug') == 0) ? ( empty($preFilled['sponsorEmail']) ? ( empty($supervisorInfo->email) ? '' : h($supervisorInfo->email) ) : $preFilled['sponsorEmail'] ) : h('null@example.com') ?>">
 					</div>
+					<div class="field-container">
+						<label for="requestingOrganization">Requesting Organization*</label>
+						<input type="text" id="requestingOrganization" name="requestingOrganization" class="inputShade noPlaceHolder" value="<?= empty($preFilled['requestingOrganization']) ? h($psDepartment) : h($preFilled['requestingOrganization']) ?>">
+					</div>
 
 				</div>
 
+				<label class="headerTab" for="developmentShop">Development Shop*</label>
+				<div class="clear"></div>
+				<div class="taBox">
+					<input type="text" name="developmentShop" id="developmentShop" class="inputShade full noPlaceHolder" placeholder="Type to search existing development shops or name a new one." value="<?= empty($preFilled['developmentShop']) ? '' : h($preFilled['developmentShop']) ?>" autocomplete="off" />
+					<div class="developmentShopAutoComplete">
+						<ul class="results"></ul>
+					</div>
+				</div>
+
+				<label class="headerTab" for="applicationOrProjectName">Application or Project Name*</label>
+				<div class="clear"></div>
+				<div class="taBox">
+					<input type="text" name="applicationOrProjectName" id="applicationOrProjectName" class="inputShade full noPlaceHolder" placeholder="Type to search existing applications or name a new one. This name will be included in the title of this request to help you easily find it in the future." value="<?= empty($preFilled['applicationOrProjectName']) ? '' : h($preFilled['applicationOrProjectName']) ?>" autocomplete="off" />
+					<div class="applicationOrProjectNameAutoComplete">
+						<ul class="results"></ul>
+					</div>
+				</div>
 
 				<?php
 					$arrNonDisplay = [
@@ -280,11 +483,13 @@
 						"requesterRole",
 						"requesterPersonId",
 						"requesterNetId",
-						"requestingOrganization",
 						"sponsorName",
 						"sponsorRole",
 						"sponsorEmail",
 						"sponsorPhone",
+						"requestingOrganization",
+						"developmentShop",
+						"applicationOrProjectName",
 						"readWriteAccess",
 						"requestedInformationMap",
 						"technologyType",

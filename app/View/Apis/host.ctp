@@ -36,15 +36,6 @@ $(document).ready(function() {
 });
 </script>
 
-<style>
-.ui-autocomplete {
-	display: none !important;
-}
-.autoCompleteApis {
-	width: 490px;
-}
-</style>
-
 <!-- Background image div -->
 <div id="searchBg" class="searchBg">
 </div>

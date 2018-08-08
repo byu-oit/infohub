@@ -602,6 +602,14 @@ $(document).on( 'click', function ( e ) {
 	if ( $( e.target ).closest('.autoComplete').length === 0 ) {
 		$('.autoComplete').hide();
 	}
+	if ( $( e.target ).closest('.developmentShopAutoComplete').length === 0 ) {
+		$('.developmentShopAutoComplete').hide();
+		$('.developmentShopAutoComplete .results').html('');
+	}
+	if ( $( e.target ).closest('.applicationOrProjectNameAutoComplete').length === 0 ) {
+		$('.applicationOrProjectNameAutoComplete').hide();
+		$('.applicationOrProjectNameAutoComplete .results').html('');
+	}
 	if ( $( e.target ).closest('#browse-tab').length === 0 && $('#drop-down-menu').hasClass('open') ) {
 		$('#browse-tab').removeClass('open');
 		$('#drop-down-menu').removeClass('open');

@@ -776,8 +776,8 @@ textarea.error {
   transform: translate(10px);
 }
 .autoComplete,
-.autoCompleteApis,
-.autoCompleteTables {
+.developmentShopAutoComplete,
+.applicationOrProjectNameAutoComplete {
   display: none;
   position: absolute;
   top: 30px;
@@ -788,31 +788,36 @@ textarea.error {
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
+.developmentShopAutoComplete,
+.applicationOrProjectNameAutoComplete {
+  top: 61px;
+  width: 94%;
+}
 .autoComplete ul,
-.autoCompleteApis ul,
-.autoCompleteTables ul {
+.developmentShopAutoComplete ul,
+.applicationOrProjectNameAutoComplete ul {
   margin: 0;
   padding: 8px 0px 13px;
   list-style-type: none;
 }
 .autoComplete ul li,
-.autoCompleteApis ul li,
-.autoCompleteTables ul li {
+.developmentShopAutoComplete ul li,
+.applicationOrProjectNameAutoComplete ul li {
   font-size: 12px;
   padding: 0 12px;
   cursor: pointer;
 }
 .autoComplete ul li:hover,
 .autoComplete ul li.active,
-.autoCompleteApis ul li:hover,
-.autoCompleteApis ul li.active,
-.autoCompleteTables ul li:hover,
-.autoCompleteTables ul li.active {
+.developmentShopAutoComplete ul li:hover,
+.developmentShopAutoComplete ul li.active,
+.applicationOrProjectNameAutoComplete ul li:hover,
+.applicationOrProjectNameAutoComplete ul li.active {
   background-color: #ebebeb;
 }
 .autoComplete span,
-.autoCompleteApis span,
-.autoCompleteTables span {
+.developmentShopAutoComplete span,
+.applicationOrProjectNameAutoComplete span {
   font-size: 14px;
   width: 100%;
   padding: 5px 0;

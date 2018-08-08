@@ -1486,6 +1486,53 @@ class CollibraAPI extends Model {
 		return $results->results;
 	}
 
+	public function getDevelopmentShopDetails($developmentShopName, $exact = true) {
+		$nameOperator = $exact ? 'EQUALS' : 'CONTAINS';
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'id']],
+				['Column' => ['fieldName' => 'name']],
+				['Group' => [
+					'name' => 'applications',
+					'Columns' => [
+						['Column' => ['fieldName' => 'appId']],
+						['Column' => ['fieldName' => 'appName']],
+						['Column' => ['fieldName' => 'applicationIdentity']]]]]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'id'],
+					'Signifier' => ['name' => 'name'],
+					'Vocabulary' => [
+						'Id' => ['name' => 'vocabularyId']],
+					'Relation' => [
+						'typeId' => Configure::read('Collibra.relationship.developmentShopToApplicationOrProject'),
+						'type' => 'SOURCE',
+						'Target' => [
+							'Id' => ['name' => 'appId'],
+							'Signifier' => ['name' => 'appName'],
+							'StringAttribute' => [[
+								'Value' => ['name' => 'applicationIdentity'],
+								'labelId' => Configure::read('Collibra.attribute.applicationIdentity')]]]],
+					'Filter' => [
+						'AND' => [
+							['Field' => [
+								'name' => 'vocabularyId',
+								'operator' => 'EQUALS',
+								'value' => Configure::read('Collibra.vocabulary.developmentShops')]],
+							['Field' => [
+								'name' => 'name',
+								'operator' => $nameOperator,
+								'value' => $developmentShopName]]]]]]]];
+
+		$results = $this->fullDataTable($tableConfig);
+		foreach ($results as $i => $devShop) {
+			foreach ($devShop->applications as $j => $app) {
+				$results[$i]->applications[$j]->applicationIdentity = strip_tags($app->applicationIdentity);
+			}
+		}
+		return $results;
+	}
+
 	public function getResponsibilities($resourceId) {
 		if (!empty($this->_rolesCache[$resourceId])) {
 			return $this->_rolesCache[$resourceId];
@@ -1531,6 +1578,7 @@ class CollibraAPI extends Model {
 				['Column' => ['fieldName' => 'statusId']],
 				['Column' => ['fieldName' => 'vocabularyId']],
 				['Column' => ['fieldName' => 'communityId']],
+				['Column' => ['fieldName' => 'developmentShop']],
 				['Column' => ['fieldName' => 'conceptTypeId']],
 				['Column' => ['fieldName' => 'createdOn']],
 				['Group' => [
@@ -1722,31 +1770,40 @@ class CollibraAPI extends Model {
 								'Id' => ['name' => 'apiCommId'],
 								'Name' => ['name' => 'apiCommName']]]]],
 
-					[
-						'typeId' => Configure::read('Collibra.relationship.DSRtoNecessaryTable'),
-						'type' => 'SOURCE',
-						'Target' => [
-							'Id' => ['name' => 'tableId'],
-							'Signifier' => ['name' => 'tableName'],
-							'Vocabulary' => [
-								'Id' => ['name' => 'tableVocabId'],
-								'Name' => ['name' => 'tableVocabName'],
-								'Community' => [
-									'Id' => ['name' => 'tableCommId'],
-									'Name' => ['name' => 'tableCommName']]]]],
+				[
+					'typeId' => Configure::read('Collibra.relationship.DSRtoNecessaryTable'),
+					'type' => 'SOURCE',
+					'Target' => [
+						'Id' => ['name' => 'tableId'],
+						'Signifier' => ['name' => 'tableName'],
+						'Vocabulary' => [
+							'Id' => ['name' => 'tableVocabId'],
+							'Name' => ['name' => 'tableVocabName'],
+							'Community' => [
+								'Id' => ['name' => 'tableCommId'],
+								'Name' => ['name' => 'tableCommName']]]]],
 
-					[
-						'typeId' => Configure::read('Collibra.relationship.DSRtoNecessarySAML'),
-						'type' => 'SOURCE',
-						'Target' => [
-							'Id' => ['name' => 'responseId'],
-							'Signifier' => ['name' => 'responseName'],
-							'Vocabulary' => [
-								'Id' => ['name' => 'responseVocabId'],
-								'Name' => ['name' => 'responseVocabName'],
-								'Community' => [
-									'Id' => ['name' => 'responseCommId'],
-									'Name' => ['name' => 'responseCommName']]]]]);
+				[
+					'typeId' => Configure::read('Collibra.relationship.DSRtoNecessarySAML'),
+					'type' => 'SOURCE',
+					'Target' => [
+						'Id' => ['name' => 'responseId'],
+						'Signifier' => ['name' => 'responseName'],
+						'Vocabulary' => [
+							'Id' => ['name' => 'responseVocabId'],
+							'Name' => ['name' => 'responseVocabName'],
+							'Community' => [
+								'Id' => ['name' => 'responseCommId'],
+								'Name' => ['name' => 'responseCommName']]]]],
+				[
+					'typeId' => Configure::read('Collibra.relationship.applicationOrProjectToDSR'),
+					'type' => 'TARGET',
+					'Source' => [
+						'Relation' => [[
+							'typeId' => Configure::read('Collibra.relationship.developmentShopToApplicationOrProject'),
+							'type' => 'TARGET',
+							'Source' => [
+								'Signifier' => ['name' => 'developmentShop']]]]]]);
 		} else {
 			array_push($tableConfig['TableViewConfig']['Columns'],
 				['Column' => ['fieldName' => 'parentId']],
@@ -1837,7 +1894,17 @@ class CollibraAPI extends Model {
 									'Name' => ['name' => 'responseVocabName'],
 									'Community' => [
 										'Id' => ['name' => 'responseCommId'],
-										'Name' => ['name' => 'responseCommName']]]]]]]]);
+										'Name' => ['name' => 'responseCommName']]]]],
+
+						[
+							'typeId' => Configure::read('Collibra.relationship.applicationOrProjectToDSR'),
+							'type' => 'TARGET',
+							'Source' => [
+								'Relation' => [
+									'typeId' => Configure::read('Collibra.relationship.developmentShopToApplicationOrProject'),
+									'type' => 'TARGET',
+									'Source' => [
+										'Signifier' => ['name' => 'developmentShop']]]]]]]]);
 		}
 
 		$results = $this->fullDataTable($tableConfig);
