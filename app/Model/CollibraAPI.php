@@ -1161,12 +1161,14 @@ class CollibraAPI extends Model {
 		$existentTerms = [];
 		if (!empty($vocabulary)) {
 			$vocabularyId = $vocabulary[0]->resourceId;
+			$createdVocabulary = false;
 			foreach ($vocabulary[0]->termReferences->termReference as $term) {
 				$existentTerms[$term->resourceId] = $term->signifier;
 			}
 		}
 		else {
 			$vocabularyId = $this->createVocabulary("{$swagger['basePath']}/{$swagger['version']}", $hostCommunity->resourceId);
+			$createdVocabulary = true;
 			if (empty($vocabularyId)) {
 				$this->errors[] = "Unable to create vocabulary \"{$swagger['basePath']}/{$swagger['version']}\" in community \"{$swagger['host']}\"";
 				return false;
@@ -1199,7 +1201,7 @@ class CollibraAPI extends Model {
 			$apiResult = $this->addTermstoVocabulary($vocabularyId, Configure::read('Collibra.type.api'), ["{$swagger['basePath']}/{$swagger['version']}"]);
 			if (empty($apiResult) || !$apiResult->isOk()) {
 				$this->errors[] = "Error creating an object representing \"{$swagger['basePath']}/{$swagger['version']}\"";
-				$this->deleteVocabulary($vocabularyId);
+				if ($createdVocabulary) $this->deleteVocabulary($vocabularyId);
 				return false;
 			}
 		}
@@ -1208,7 +1210,7 @@ class CollibraAPI extends Model {
 			$fieldsResult = $this->addTermsToVocabulary($vocabularyId, Configure::read('Collibra.type.field'), $fields);
 			if (empty($fieldsResult) || !$fieldsResult->isOk()) {
 				$this->errors[] = "Error adding fields to \"{$swagger['basePath']}/{$swagger['version']}\"";
-				$this->deleteVocabulary($vocabularyId);
+				if ($createdVocabulary) $this->deleteVocabulary($vocabularyId);
 				return false;
 			}
 		}
@@ -1216,7 +1218,7 @@ class CollibraAPI extends Model {
 			$fieldSetsResult = $this->addTermsToVocabulary($vocabularyId, Configure::read('Collibra.type.fieldSet'), $fieldSets);
 			if (empty($fieldSetsResult) || !$fieldSetsResult->isOk()) {
 				$this->errors[] = "Error adding fieldSets to \"{$swagger['basePath']}/{$swagger['version']}\"";
-				$this->deleteVocabulary($vocabularyId);
+				if ($createdVocabulary) $this->deleteVocabulary($vocabularyId);
 				return false;
 			}
 		}
