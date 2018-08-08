@@ -48,7 +48,8 @@ class DirectoryController extends AppController {
 				'name' => '',
 				'phone' => '',
 				'role' => '',
-				'email' => ''
+				'email' => '',
+				'department' => ''
 			]
 		];
 
@@ -70,6 +71,7 @@ class DirectoryController extends AppController {
 		if (isset($supervisor->phone)) $arrReturn['supervisor']['phone'] = $supervisor->phone;
 		if (isset($supervisor->job_title)) $arrReturn['supervisor']['role'] = $supervisor->job_title;
 		if (isset($supervisor->email)) $arrReturn['supervisor']['email'] = $supervisor->email;
+		if (isset($supervisor->department)) $arrReturn['supervisor']['department'] = $supervisor->department;
 
 		$arrReturn['success'] = 1;
 		return json_encode($arrReturn);

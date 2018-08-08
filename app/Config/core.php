@@ -39,7 +39,10 @@ if (!function_exists('denv')) {
 		'vocabulary' => [
 			'dataSharingRequests' => '00000000-0000-0000-0000-000000006016',
 			'newBusinessTerms' => '00000000-0000-0000-0000-000000006013',
-			'infoGovPolicies' => '2a1eaea2-62b0-45c0-b499-177f3ddf0551'
+			'infoGovPolicies' => '2a1eaea2-62b0-45c0-b499-177f3ddf0551',
+			'developmentShops' => '2ffdd301-35e9-44f5-aef4-c4f7881e0e8d',
+			'businessGroups' => 'a806940e-c094-4ab6-95af-dde2b664e9f1',
+			'applicationsAndProjects' => '51cff8e0-ea5b-4b29-abb1-1cbcf1d26899'
 		],
 		'workflow' => [
 			'intakeDSR' => '8bfbed57-c387-4717-8f5d-c3cfebb485de',
@@ -69,9 +72,13 @@ if (!function_exists('denv')) {
 			'DSRtoNecessaryAPI' => '5f4d65ab-ab89-4ed2-a2e7-a628ee7ba4ba',
 			'DSRtoNecessaryTable' => 'ec73bc13-c215-42f2-911b-76a345ec9ed5',
 			'DSRtoNecessarySAML' => 'dca012a1-e752-4299-bf61-925358efe83c',
+			'applicationOrProjectToDSR' => '7ff3a292-a33a-47fd-b549-4b9b5a66da3b',
+			'applicationOrProjectToDSA' => '029c9294-3bdc-4ceb-a922-e2186fb5df30',
 			'schemaToTable' => '00000000-0000-0000-0000-000000007043',
 			'columnToTable' => '00000000-0000-0000-0000-000000007042',
-			'fieldToSaml' => 'cee630bb-e1c0-471b-91c2-727397f10d0b'
+			'fieldToSaml' => 'cee630bb-e1c0-471b-91c2-727397f10d0b',
+			'developmentShopToApplicationOrProject' => '3e4e1b35-4cc2-43b3-a624-d753f14347c2',
+			'businessGroupToApplicationOrProject' => '4e041daf-1a20-4962-bc43-134649c7d3b0'
 		],
 		'type' => [
 			'dataSharingRequest' => '00000000-0000-0000-0000-000000031231',
@@ -82,6 +89,9 @@ if (!function_exists('denv')) {
 			'field' => '00000000-0000-0000-0001-000400000008',
 			'fieldSet' => '73bae222-220d-4342-94ba-6a8369797eac',
 			'samlResponse' => 'fbe6f14c-38a0-4926-aa0c-42f2c3b04018',
+			'developmentShop' => 'f8d30393-9f7f-4236-8e8d-828805a569d9',
+			'applicationOrProject' => '4d9178d0-ff3d-4e7e-8dba-4dca9e0f8343',
+			'businessGroup' => '00b946c2-9bf1-449b-a528-20f9a0700e95',
 			'glossary' => ''
 		],
 		'attribute' => [
@@ -96,7 +106,8 @@ if (!function_exists('denv')) {
 			'stewardEmail' => '0cbbfd32-fc97-47ce-bef1-a89ae4e77ee8',
 			'stewardName' => '4331ec09-88a2-48e6-b096-9ece6648aff3',
 			'notes' => '00000000-0000-0000-0000-000000003116',
-			'inclusionScenario' => '00000000-0000-0000-0001-000500000026'
+			'inclusionScenario' => '00000000-0000-0000-0001-000500000026',
+			'applicationIdentity' => '0a607e95-4e85-4b86-beac-e2b74cd9e89a'
 		],
 		'status' => [
 			'deleted' => '5ed07772-862c-4898-aa31-9c781ab13a1e'
@@ -117,11 +128,12 @@ if (!function_exists('denv')) {
 			'phone' => 'c3252e20-c566-405d-8bfe-dd69377042c2',
 			'role' => '688e8cf3-0db8-4ad1-b577-215f09b8e613',
 			'email' => '52404e00-7448-456a-8eac-bad31aea7e61',
-			'requestingOrganization' => '97a41292-5627-49cc-bc36-efad1b996d37',
 			'sponsorName' => '81e2e950-e9f7-4340-9d39-7faa7e88733a',
 			'sponsorPhone' => 'd16d9253-e1fc-4d3b-a5a7-39d2ffb92560',
 			'sponsorRole' => '2791b03b-464a-4bc9-b97d-2b70d4274a1e',
 			'sponsorEmail' => '51e3cd5e-9aa9-4953-8a29-31cfd0492d0c',
+			'requestingOrganization' => '97a41292-5627-49cc-bc36-efad1b996d37',
+			'developmentShop' => '064fe8d8-bcd8-42b6-8b85-af984c14714d',
 			'applicationOrProjectName' => 'c70f71fb-a92b-4034-b8b6-9f042c0a39ea',
 			'descriptionOfInformation' => '6b41a821-2a26-4fe8-8202-23442c1e54bb',
 			'descriptionOfApplicationOrProject' => '459f3f5c-2904-47f7-b91d-005a02ad2fce',

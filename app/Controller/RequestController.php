@@ -519,7 +519,6 @@ class RequestController extends AppController {
 		$postData['attributeIds'] = [];
 		$postData['values'] = [];
 		$arrQueue = $this->Session->read('queue');
-		$queueSize = count($arrQueue, COUNT_RECURSIVE);
 		array_push($postData['attributeIds'], Configure::read('Collibra.formFields.draftUserCart'));
 		array_push($postData['values'], json_encode($arrQueue).'  ');
 
@@ -1403,6 +1402,8 @@ class RequestController extends AppController {
 					'sponsorRole',
 					'sponsorEmail',
 					'sponsorPhone',
+					'developmentShop',
+					'applicationOrProjectName',
 					'api',
 					'tables',
 					'saml',
@@ -1995,11 +1996,12 @@ class RequestController extends AppController {
 				'Requester Phone' => 'phone',
 				'Requester Role' => 'role',
 				'Requester Email' => 'email',
-				'Requesting Organization' => 'requestingOrganization',
 				'Sponsor Name' => 'sponsorName',
 				'Sponsor Phone' => 'sponsorPhone',
 				'Sponsor Role' => 'sponsorRole',
 				'Sponsor Email' => 'sponsorEmail',
+				'Requesting Organization' => 'requestingOrganization',
+				'Development Shop Name' => 'developmentShop',
 				'Application or Project Name' => 'applicationOrProjectName',
 				'Additional Information Requested' => 'descriptionOfInformation',
 				'Scope and Control' => 'scopeAndControl',

@@ -266,12 +266,16 @@ img.resultBodyLoading {
   margin-right: 10px;
   padding-right: 5px;
 }
-#searchBody #requestForm #srLower .saveNotification {
+#searchBody #requestForm #srLower .saveNotification,
+#searchBody #requestForm #srLower .orgNotification {
   color: rgba(14, 50, 100, 0.85);
   font-size: 18px;
   line-height: 22px;
   width: auto;
   padding-bottom: 18px;
+}
+#searchBody #requestForm #srLower .orgNotification {
+  font-size: 15px;
 }
 #searchBody #searchResults #srLower .resultItem,
 #apiBody #searchResults #srLower .resultItem,

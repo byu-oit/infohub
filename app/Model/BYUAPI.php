@@ -76,6 +76,7 @@ class BYUAPI extends Model {
 			$supervisor->email = empty($data->contact_information->email_address) ? '' : $data->contact_information->email_address;
 		}
 		$supervisor->job_title = empty($data->employee_information->job_title) ? '' : $data->employee_information->job_title;
+		$supervisor->department = empty($data->employee_information->department) ? '' : $data->employee_information->department;
 		return $supervisor;
 	}
 

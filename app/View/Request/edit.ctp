@@ -72,7 +72,6 @@
 				<h3 class="headerTab">Requester Information</h3>
 				<div class="clear"></div>
 				<div class="fieldGroup">
-					<!-- <div class="infoCol"> -->
 						<div class="field-container">
 							<label for="name">Requester Name*</label>
 							<input type="text" id="name" name="<?= Configure::read('Collibra.formFields.name') ?>" class="inputShade noPlaceHolder" value="<?= h($asset->attributes['Requester Name']->attrValue) ?>">
@@ -81,8 +80,6 @@
 							<label for="phone">Requester Phone*</label>
 							<input type="text" id="phone" name="<?= Configure::read('Collibra.formFields.phone') ?>" class="inputShade noPlaceHolder" value="<?= h($asset->attributes['Requester Phone']->attrValue) ?>">
 						</div>
-					<!-- </div>
-					<div class="infoCol"> -->
 						<div class="field-container">
 							<label for="role">Requester Role*</label>
 							<input type="text" id="role" name="<?= Configure::read('Collibra.formFields.role') ?>" class="inputShade noPlaceHolder" value="<?= h($asset->attributes['Requester Role']->attrValue) ?>">
@@ -91,11 +88,6 @@
 							<label for="email">Requester Email*</label>
 							<input type="text" id="email" name="<?= Configure::read('Collibra.formFields.email') ?>" class="inputShade noPlaceHolder" value="<?= h($asset->attributes['Requester Email']->attrValue) ?>">
 						</div>
-						<div class="field-container">
-							<label for="requestingOrganization">Requester Organization*</label>
-							<input type="text" id="requestingOrganization" name="<?= Configure::read('Collibra.formFields.requestingOrganization') ?>" class="inputShade noPlaceHolder" value="<?= h($asset->attributes['Requesting Organization']->attrValue) ?>">
-						</div>
-					<!-- </div> -->
 				</div>
 
 				<h3 class="headerTab">Sponsor Information</h3>
@@ -117,13 +109,11 @@
 						<label for="sponsorEmail">Sponsor Email*</label>
 						<input type="text" id="sponsorEmail" name="<?= Configure::read('Collibra.formFields.sponsorEmail') ?>" class="inputShade noPlaceHolder" value="<?= h($asset->attributes['Sponsor Email']->attrValue) ?>">
 					</div>
-
 				</div>
 				<?php endif;
 
 					foreach($formFields as $field){
 						echo '<label class="headerTab" for="'.$field->id.'">'.$field->name;
-						if ($field->id == 'applicationOrProjectName') echo '*';
 						echo '</label>'.
 							'<div class="clear"></div>'.
 							'<div class="taBox">';

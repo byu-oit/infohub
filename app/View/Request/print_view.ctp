@@ -77,6 +77,11 @@
 	<h3>Application or Project Name</h3>
 	<div class="form-field"><?= $asset->attributes['Application or Project Name']->attrValue ?></div>
 
+	<?php if (!empty($asset->developmentShop)): ?>
+		<h3>Development Shop</h3>
+		<div class="form-field"><?= $asset->developmentShop ?></div>
+	<?php endif ?>
+
 <?php
 	$arrOrderedFormFields = [
 		"Description of Intended Use",
@@ -112,13 +117,13 @@
 		<?php $attrs = $asset->attributes; ?>
 		<p class="data-col">
 			<strong><?= $attrs['Requester Name']->attrValue ?></strong><br>
-			<?= $attrs['Requester Role']->attrValue.' | '.$attrs['Requesting Organization']->attrValue ?><br>
+			<?= $attrs['Requester Role']->attrValue ?><br>
 			<?= $attrs['Requester Email']->attrValue ?><br>
 			<?= $attrs['Requester Phone']->attrValue ?>
 		</p>
 		<p class="data-col">
 			<strong><?= $attrs['Sponsor Name']->attrValue ?></strong><br>
-			<?= $attrs['Sponsor Role']->attrValue ?><br>
+			<?= $attrs['Sponsor Role']->attrValue.' | '.$attrs['Requesting Organization']->attrValue ?><br>
 			<?= $attrs['Sponsor Email']->attrValue ?><br>
 			<?= $attrs['Sponsor Phone']->attrValue ?>
 		</p>

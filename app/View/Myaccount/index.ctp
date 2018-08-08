@@ -216,7 +216,6 @@
 		<div id="canceled" class="atTab">Canceled</div>
 	</div>
 	<div class="clear"></div>
-	<!-- <div class="accountMain whiteBox"> -->
 <?php
 	foreach ($requestStatuses as $status => $requests) {
 		echo '<div id="'.$status.'View" class="accountMain whiteBox">';
@@ -349,10 +348,6 @@
 					<h5>Email:</h5>
 					<div class="attrValue"><?php echo $req->attributes['Requester Email']->attrValue ?></div>
 				</div>
-				<div class="data-col">
-					<h5>Requesting Organization:</h5>
-					<div class="attrValue"><?php echo $req->attributes['Requesting Organization']->attrValue ?></div>
-				</div>
 				<div class="clear"></div>
 
 				<h3 class="headerTab">Sponsor</h3>
@@ -372,6 +367,10 @@
 				<div class="data-col">
 					<h5>Sponsor Email:</h5>
 					<div class="attrValue"><?php echo $req->attributes['Sponsor Email']->attrValue ?></div>
+				</div>
+				<div class="data-col">
+					<h5>Requesting Organization:</h5>
+					<div class="attrValue"><?php echo $req->attributes['Requesting Organization']->attrValue ?></div>
 				</div>
 				<div class="clear"></div>
 
@@ -397,6 +396,13 @@
 					<div class="lower-btn close grow">Close</div>
 				</div>
 				<div class="clear"></div>
+
+				<?php if (!empty($req->developmentShop)): ?>
+					<h3 class="headerTab">Development Shop</h3>
+					<div class="clear"></div>
+					<div class="attrValue"><?= $req->developmentShop ?></div>
+					<div class="clear"></div>
+				<?php endif ?>
 
 				<h3 class="headerTab">Application or Project Name</h3>
 				<div class="clear"></div>
