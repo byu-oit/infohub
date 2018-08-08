@@ -148,12 +148,15 @@
 										for (var i in data) {
 											$('.developmentShopAutoComplete .results').append('<li>'+data[i].name+'</li>');
 										}
+										if ($('.developmentShopAutoComplete li').size()) {
+											$('.developmentShopAutoComplete').show();
+										} else {
+											$('.developmentShopAutoComplete').hide();
+										}
 									});
 							}, 300);
 
-							$('.developmentShopAutoComplete').show();
 							break;
-
 					}
 				}
 
@@ -245,12 +248,15 @@
 												$('.applicationOrProjectNameAutoComplete .results').append('<li>'+data[0].applications[i].appName+'</li>');
 											}
 										}
+										if ($('.applicationOrProjectNameAutoComplete li').size()) {
+											$('.applicationOrProjectNameAutoComplete').show();
+										} else {
+											$('.applicationOrProjectNameAutoComplete').hide();
+										}
 									});
 							}, 300);
 
-							$('.applicationOrProjectNameAutoComplete').show();
 							break;
-
 					}
 				}
 
