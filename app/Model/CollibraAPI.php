@@ -1162,8 +1162,9 @@ class CollibraAPI extends Model {
 		if (!empty($vocabulary)) {
 			$vocabularyId = $vocabulary[0]->resourceId;
 			$createdVocabulary = false;
-			foreach ($vocabulary[0]->termReferences->termReference as $term) {
-				$existentTerms[$term->resourceId] = $term->signifier;
+			$vocabularyTerms = $this->getApiFields($swagger['host'], "{$swagger['basePath']}/{$swagger['version']}");
+			foreach ($vocabularyTerms as $term) {
+				$existentTerms[$term->id] = $term->name;
 			}
 		}
 		else {
@@ -1197,7 +1198,7 @@ class CollibraAPI extends Model {
 			}
 		}
 		//Create API object
-		if (!in_array("{$swagger['basePath']}/{$swagger['version']}", $existentTerms)) {
+		if ($createdVocabulary) {
 			$apiResult = $this->addTermstoVocabulary($vocabularyId, Configure::read('Collibra.type.api'), ["{$swagger['basePath']}/{$swagger['version']}"]);
 			if (empty($apiResult) || !$apiResult->isOk()) {
 				$this->errors[] = "Error creating an object representing \"{$swagger['basePath']}/{$swagger['version']}\"";
