@@ -245,7 +245,9 @@
 										$('.applicationOrProjectNameAutoComplete .results').html('');
 										for (var i in data[0].applications) {
 											if (data[0].applications[i].appName.toLowerCase().search(val.toLowerCase()) !== -1) {
-												$('.applicationOrProjectNameAutoComplete .results').append('<li>'+data[0].applications[i].appName+'</li>');
+												$('<li>'+data[0].applications[i].appName+'</li>')
+													.appendTo('.applicationOrProjectNameAutoComplete .results')
+													.data('description', data[0].applications[i].appDescription);
 											}
 										}
 										if ($('.applicationOrProjectNameAutoComplete li').size()) {
@@ -268,6 +270,7 @@
 		});
 		$('.applicationOrProjectNameAutoComplete').on('click', 'li', function() {
 			$('#applicationOrProjectName').val($(this).text());
+			$('#descriptionOfApplicationOrProject').val($(this).data('description'));
 			$('#applicationOrProjectName').focusout();
 			$('.applicationOrProjectNameAutoComplete').hide();
 			$('.applicationOrProjectNameAutoComplete .results').html('');

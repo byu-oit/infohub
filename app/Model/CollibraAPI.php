@@ -1500,6 +1500,7 @@ class CollibraAPI extends Model {
 					'Columns' => [
 						['Column' => ['fieldName' => 'appId']],
 						['Column' => ['fieldName' => 'appName']],
+						['Column' => ['fieldName' => 'appDescription']],
 						['Column' => ['fieldName' => 'applicationIdentity']]]]]],
 			'Resources' => [
 				'Term' => [
@@ -1515,7 +1516,10 @@ class CollibraAPI extends Model {
 							'Signifier' => ['name' => 'appName'],
 							'StringAttribute' => [[
 								'Value' => ['name' => 'applicationIdentity'],
-								'labelId' => Configure::read('Collibra.attribute.applicationIdentity')]]]],
+								'labelId' => Configure::read('Collibra.attribute.applicationIdentity')],
+							[
+								'Value' => ['name' => 'appDescription'],
+								'labelId' => Configure::read('Collibra.attribute.description')]]]],
 					'Filter' => [
 						'AND' => [
 							['Field' => [
