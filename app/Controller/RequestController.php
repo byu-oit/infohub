@@ -1979,6 +1979,7 @@ class RequestController extends AppController {
 			empty($arrQueue['concepts']) &&
 			empty($arrQueue['apiFields']) &&
 			empty($arrQueue['dbColumns']) &&
+			empty($arrQueue['samlFields']) &&
 			empty($arrQueue['emptyApis'])
 		) {
 			header('location: /search');
