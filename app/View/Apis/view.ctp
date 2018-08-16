@@ -105,7 +105,7 @@
 					<?php if ($containsFieldset): ?>
 						<a class="fieldset-btn grow" onclick="toggleFieldsetCollapseAll(true)">Collapse All</a><a class="fieldset-btn grow" onclick="toggleFieldsetCollapseAll(false)">Expand All</a>
 					<?php endif ?>
-					<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" api="<?= empty($fields) ? 'true' : 'false' ?>" onclick="addToQueue(this, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
+					<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" api="<?= empty($fields) ? 'true' : 'false' ?>" onclick="addToQueueAPI(this, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
 					<table class="api-fields checkBoxes view">
 						<tr class="header">
 							<th></th>
@@ -119,7 +119,7 @@
 						} ?>
 					</table>
 				<?php endif ?>
-				<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" api="<?= empty($fields) ? 'true' : 'false' ?>" onclick="addToQueue(this, true)" class="requestAccess grow mainRequestBtn" value="Add To Request">
+				<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" api="<?= empty($fields) ? 'true' : 'false' ?>" onclick="addToQueueAPI(this, true)" class="requestAccess grow mainRequestBtn" value="Add To Request">
 			</div>
 		</div>
 	</div>

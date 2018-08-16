@@ -21,6 +21,7 @@ class FieldsetHelper extends AppHelper {
                      ' class="chk'; if ($field->assetType == 'Fieldset') echo ' fieldset'; echo '"'.
                      ' id="chk'.h($field->businessTerm[0]->termId).'"'.
                      ' data-name="'.$field->name.'"'.
+                     ' data-field-id="'.$field->id.'"'.
                      ' data-fieldset-path="';
                      $path = explode('.', $field->name);
                      array_pop($path);
@@ -32,6 +33,7 @@ class FieldsetHelper extends AppHelper {
                      ' value=""'.
                      ' class="chk'; if ($field->assetType == 'Fieldset') echo ' fieldset'; echo '"'.
                      ' data-name="'.$field->name.'"'.
+                     ' data-field-id="'.$field->id.'"'.
                      ' data-fieldset-path="';
                      $path = explode('.', $field->name);
                      array_pop($path);

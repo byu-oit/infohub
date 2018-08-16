@@ -49,7 +49,8 @@
 									value="<?= h($field->businessTerm[0]->termId) ?>"
 									class="chk"
 									id="chk<?= h($field->businessTerm[0]->termId) ?>"
-									data-name="<?= $field->fieldName ?>">
+									data-name="<?= $field->fieldName ?>"
+									data-field-id="<?= $field->fieldId ?>">
 								<?php else: ?>
 									<input
 									type="checkbox"
@@ -57,7 +58,8 @@
 									data-vocabID=""
 									value=""
 									class="chk"
-									data-name="<?= $field->fieldName ?>">
+									data-name="<?= $field->fieldName ?>"
+									data-field-id="<?= $field->fieldId ?>">
 								<?php endif ?>
 							</td>
 							<td><?= $field->fieldName ?></td>

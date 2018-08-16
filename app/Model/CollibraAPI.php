@@ -1623,6 +1623,34 @@ class CollibraAPI extends Model {
 						['Column' => ['fieldName' => 'addTermConceptTypeName']]]]],
 
 				['Group' => [
+					'name' => 'requestedDataAssets',
+					'Columns' => [
+						['Column' => ['fieldName' => 'reqDataId']],
+						['Column' => ['fieldName' => 'reqDataSignifier']],
+						['Column' => ['fieldName' => 'reqDataRelationId']],
+						['Column' => ['fieldName' => 'reqDataBusinessTermId']],
+						['Column' => ['fieldName' => 'reqDataVocabId']],
+						['Column' => ['fieldName' => 'reqDataVocabName']],
+						['Column' => ['fieldName' => 'reqDataCommId']],
+						['Column' => ['fieldName' => 'reqDataCommName']],
+						['Column' => ['fieldName' => 'reqDataConceptTypeId']],
+						['Column' => ['fieldName' => 'reqDataConceptTypeName']]]]],
+
+				['Group' => [
+					'name' => 'additionallyIncludedDataAssets',
+					'Columns' => [
+						['Column' => ['fieldName' => 'addDataId']],
+						['Column' => ['fieldName' => 'addDataSignifier']],
+						['Column' => ['fieldName' => 'addDataRelationId']],
+						['Column' => ['fieldName' => 'addDataBusinessTermId']],
+						['Column' => ['fieldName' => 'addDataVocabId']],
+						['Column' => ['fieldName' => 'addDataVocabName']],
+						['Column' => ['fieldName' => 'addDataCommId']],
+						['Column' => ['fieldName' => 'addDataCommName']],
+						['Column' => ['fieldName' => 'addDataConceptTypeId']],
+						['Column' => ['fieldName' => 'addDataConceptTypeName']]]]],
+
+				['Group' => [
 					'name' => 'necessaryApis',
 					'Columns' => [
 						['Column' => ['fieldName' => 'apiId']],
@@ -1630,7 +1658,8 @@ class CollibraAPI extends Model {
 						['Column' => ['fieldName' => 'apiVocabId']],
 						['Column' => ['fieldName' => 'apiVocabName']],
 						['Column' => ['fieldName' => 'apiCommId']],
-						['Column' => ['fieldName' => 'apiCommName']]]]],
+						['Column' => ['fieldName' => 'apiCommName']],
+						['Column' => ['fieldName' => 'apiRelationId']]]]],
 
 				['Group' => [
 					'name' => 'necessaryTables',
@@ -1640,7 +1669,8 @@ class CollibraAPI extends Model {
 						['Column' => ['fieldName' => 'tableVocabId']],
 						['Column' => ['fieldName' => 'tableVocabName']],
 						['Column' => ['fieldName' => 'tableCommId']],
-						['Column' => ['fieldName' => 'tableCommName']]]]],
+						['Column' => ['fieldName' => 'tableCommName']],
+						['Column' => ['fieldName' => 'tableRelationId']]]]],
 
 				['Group' => [
 					'name' => 'necessarySamlResponses',
@@ -1650,7 +1680,8 @@ class CollibraAPI extends Model {
 						['Column' => ['fieldName' => 'responseVocabId']],
 						['Column' => ['fieldName' => 'responseVocabName']],
 						['Column' => ['fieldName' => 'responseCommId']],
-						['Column' => ['fieldName' => 'responseCommName']]]]],
+						['Column' => ['fieldName' => 'responseCommName']],
+						['Column' => ['fieldName' => 'responseRelationId']]]]],
 
 				['Group' => [
 					'name' => 'policies',
@@ -1731,7 +1762,7 @@ class CollibraAPI extends Model {
 								'Name' => ['name' => 'dsaCommunityName']]]]],
 
 				[
-					'typeId' => Configure::read('Collibra.relationship.DSRtoTerm'),
+					'typeId' => Configure::read('Collibra.relationship.DSRtoRequestedTerm'),
 					'Id' => ['name' => 'reqTermRelationId'],
 					'type' => 'SOURCE',
 					'Target' => [
@@ -1748,7 +1779,7 @@ class CollibraAPI extends Model {
 							'Signifier' => ['name' => 'reqTermConceptTypeName']]]],
 
 				[
-					'typeId' => Configure::read('Collibra.relationship.DSRtoAdditionallyIncludedAsset'),
+					'typeId' => Configure::read('Collibra.relationship.DSRtoAdditionallyIncludedTerm'),
 					'Id' => ['name' => 'addTermRelationId'],
 					'type' => 'SOURCE',
 					'Target' => [
@@ -1765,7 +1796,52 @@ class CollibraAPI extends Model {
 							'Signifier' => ['name' => 'addTermConceptTypeName']]]],
 
 				[
+					'typeId' => Configure::read('Collibra.relationship.DSRtoRequestedDataAsset'),
+					'Id' => ['name' => 'reqDataRelationId'],
+					'type' => 'SOURCE',
+					'Target' => [
+						'Id' => ['name' => 'reqDataId'],
+						'Signifier' => ['name' => 'reqDataSignifier'],
+						'Vocabulary' => [
+							'Id' => ['name' => 'reqDataVocabId'],
+							'Name' => ['name' => 'reqDataVocabName'],
+							'Community' => [
+								'Id' => ['name' => 'reqDataCommId'],
+								'Name' => ['name' => 'reqDataCommName']]],
+						'ConceptType' => [
+							'Id' => ['name' => 'reqDataConceptTypeId'],
+							'Signifier' => ['name' => 'reqDataConceptTypeName']],
+						'Relation' => [[
+							'typeId' => Configure::read('Collibra.relationship.termToDataAsset'),
+							'type' => 'TARGET',
+							'Source' => [
+								'Id' => ['name' => 'reqDataBusinessTermId']]]]]],
+
+				[
+					'typeId' => Configure::read('Collibra.relationship.DSRtoAdditionallyIncludedDataAsset'),
+					'Id' => ['name' => 'addDataRelationId'],
+					'type' => 'SOURCE',
+					'Target' => [
+						'Id' => ['name' => 'addDataId'],
+						'Signifier' => ['name' => 'addDataSignifier'],
+						'Vocabulary' => [
+							'Id' => ['name' => 'addDataVocabId'],
+							'Name' => ['name' => 'addDataVocabName'],
+							'Community' => [
+								'Id' => ['name' => 'addDataCommId'],
+								'Name' => ['name' => 'addDataCommName']]],
+						'ConceptType' => [
+							'Id' => ['name' => 'addDataConceptTypeId'],
+							'Signifier' => ['name' => 'addDataConceptTypeName']],
+						'Relation' => [[
+							'typeId' => Configure::read('Collibra.relationship.termToDataAsset'),
+							'type' => 'TARGET',
+							'Source' => [
+								'Id' => ['name' => 'addDataBusinessTermId']]]]]],
+
+				[
 					'typeId' => Configure::read('Collibra.relationship.DSRtoNecessaryAPI'),
+					'Id' => ['name' => 'apiRelationId'],
 					'type' => 'SOURCE',
 					'Target' => [
 						'Id' => ['name' => 'apiId'],
@@ -1779,6 +1855,7 @@ class CollibraAPI extends Model {
 
 				[
 					'typeId' => Configure::read('Collibra.relationship.DSRtoNecessaryTable'),
+					'Id' => ['name' => 'tableRelationId'],
 					'type' => 'SOURCE',
 					'Target' => [
 						'Id' => ['name' => 'tableId'],
@@ -1792,6 +1869,7 @@ class CollibraAPI extends Model {
 
 				[
 					'typeId' => Configure::read('Collibra.relationship.DSRtoNecessarySAML'),
+					'Id' => ['name' => 'responseRelationId'],
 					'type' => 'SOURCE',
 					'Target' => [
 						'Id' => ['name' => 'responseId'],
@@ -1831,7 +1909,7 @@ class CollibraAPI extends Model {
 							'Signifier' => ['name' => 'parentStatus']],
 
 						'Relation' => [[
-							'typeId' => Configure::read('Collibra.relationship.DSRtoTerm'),
+							'typeId' => Configure::read('Collibra.relationship.DSRtoRequestedTerm'),
 							'Id' => ['name' => 'reqTermRelationId'],
 							'type' => 'SOURCE',
 							'Target' => [
@@ -1848,7 +1926,7 @@ class CollibraAPI extends Model {
 									'Signifier' => ['name' => 'reqTermConceptTypeName']]]],
 
 						[
-							'typeId' => Configure::read('Collibra.relationship.DSRtoAdditionallyIncludedAsset'),
+							'typeId' => Configure::read('Collibra.relationship.DSRtoAdditionallyIncludedTerm'),
 							'Id' => ['name' => 'addTermRelationId'],
 							'type' => 'SOURCE',
 							'Target' => [
@@ -1865,7 +1943,52 @@ class CollibraAPI extends Model {
 									'Signifier' => ['name' => 'addTermConceptTypeName']]]],
 
 						[
+							'typeId' => Configure::read('Collibra.relationship.DSRtoRequestedDataAsset'),
+							'Id' => ['name' => 'reqDataRelationId'],
+							'type' => 'SOURCE',
+							'Target' => [
+								'Id' => ['name' => 'reqDataId'],
+								'Signifier' => ['name' => 'reqDataSignifier'],
+								'Vocabulary' => [
+									'Id' => ['name' => 'reqDataVocabId'],
+									'Name' => ['name' => 'reqDataVocabName'],
+									'Community' => [
+										'Id' => ['name' => 'reqDataCommId'],
+										'Name' => ['name' => 'reqDataCommName']]],
+								'ConceptType' => [
+									'Id' => ['name' => 'reqDataConceptTypeId'],
+									'Signifier' => ['name' => 'reqDataConceptTypeName']],
+								'Relation' => [[
+									'typeId' => Configure::read('Collibra.relationship.termToDataAsset'),
+									'type' => 'TARGET',
+									'Source' => [
+										'Id' => ['name' => 'reqDataBusinessTermId']]]]]],
+
+						[
+							'typeId' => Configure::read('Collibra.relationship.DSRtoAdditionallyIncludedDataAsset'),
+							'Id' => ['name' => 'addDataRelationId'],
+							'type' => 'SOURCE',
+							'Target' => [
+								'Id' => ['name' => 'addDataId'],
+								'Signifier' => ['name' => 'addDataSignifier'],
+								'Vocabulary' => [
+									'Id' => ['name' => 'addDataVocabId'],
+									'Name' => ['name' => 'addDataVocabName'],
+									'Community' => [
+										'Id' => ['name' => 'addDataCommId'],
+										'Name' => ['name' => 'addDataCommName']]],
+								'ConceptType' => [
+									'Id' => ['name' => 'addDataConceptTypeId'],
+									'Signifier' => ['name' => 'addDataConceptTypeName']],
+								'Relation' => [[
+									'typeId' => Configure::read('Collibra.relationship.termToDataAsset'),
+									'type' => 'TARGET',
+									'Source' => [
+										'Id' => ['name' => 'addDataBusinessTermId']]]]]],
+
+						[
 							'typeId' => Configure::read('Collibra.relationship.DSRtoNecessaryAPI'),
+							'Id' => ['name' => 'apiRelationId'],
 							'type' => 'SOURCE',
 							'Target' => [
 								'Id' => ['name' => 'apiId'],
@@ -1879,6 +2002,7 @@ class CollibraAPI extends Model {
 
 						[
 							'typeId' => Configure::read('Collibra.relationship.DSRtoNecessaryTable'),
+							'Id' => ['name' => 'tableRelationId'],
 							'type' => 'SOURCE',
 							'Target' => [
 								'Id' => ['name' => 'tableId'],
@@ -1892,6 +2016,7 @@ class CollibraAPI extends Model {
 
 						[
 							'typeId' => Configure::read('Collibra.relationship.DSRtoNecessarySAML'),
+							'Id' => ['name' => 'responseRelationId'],
 							'type' => 'SOURCE',
 							'Target' => [
 								'Id' => ['name' => 'responseId'],

@@ -66,11 +66,10 @@ class AppController extends Controller {
 				if (!isset($arrQueue['samlFields'])) {
 					$arrQueue['samlFields'] = [];
 				}
-				$cartEmpty = empty($arrQueue['businessTerms']) &&
-							 empty($arrQueue['concepts']) &&
-							 empty($arrQueue['apiFields']) &&
+				$cartEmpty = empty($arrQueue['apiFields']) &&
 							 empty($arrQueue['dbColumns']) &&
 							 empty($arrQueue['samlFields']) &&
+							 empty($arrQueue['businessTerms']) &&
 							 empty($arrQueue['emptyApis']);
 			}
 			if (!$this->Session->check('cartLoaded') && $cartEmpty) {
@@ -83,15 +82,12 @@ class AppController extends Controller {
 			$_SESSION["byuUserDepartment"] = '';
 		}
 
-		//$this->disableCache();
-
 		if (!$this->Session->check('queue')) {
 			$arrQueue = [];
-			$arrQueue['businessTerms'] = [];
-			$arrQueue['concepts'] = [];
 			$arrQueue['apiFields'] = [];
 			$arrQueue['dbColumns'] = [];
 			$arrQueue['samlFields'] = [];
+			$arrQueue['businessTerms'] = [];
 			$arrQueue['emptyApis'] = [];
 			$this->Session->write('queue', $arrQueue);
 		}
@@ -101,11 +97,10 @@ class AppController extends Controller {
 		if (!isset($arrQueue['samlFields'])) {
 			$arrQueue['samlFields'] = [];
 		}
-		$requestedTermCount = count($arrQueue['businessTerms']) +
-							  count($arrQueue['concepts']) +
-							  count($arrQueue['apiFields']) +
+		$requestedTermCount = count($arrQueue['apiFields']) +
 							  count($arrQueue['dbColumns']) +
 							  count($arrQueue['samlFields']) +
+							  count($arrQueue['businessTerms']) +
 							  count($arrQueue['emptyApis']);
 
 		$this->set('byuUsername', $byuUsername);
