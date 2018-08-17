@@ -74,6 +74,14 @@
 	}
 
 	function removeTerms(elem) {
+		var i = 0;
+		var loadingTexts = ['Working on it   ','Working on it.  ','Working on it.. ','Working on it...'];
+		var loadingTextInterval = setInterval(function() {
+			$(elem).html(loadingTexts[i]);
+			i++;
+			if (i == loadingTexts.length) i = 0;
+		}, 250);
+
         var dsrId = $(elem).closest('#requestForm').find('h2.headerTab').attr('id');
         var arrIds = [];
 		var arrNames = [];
@@ -88,6 +96,7 @@
 
         $.post("/request/editTermsSubmit", {action:"remove",dsrId:dsrId,arrIds:arrIds,arrNames:arrNames,arrRelIds:arrRelIds})
             .done(function(data) {
+				clearInterval(loadingTextInterval);
                 data = JSON.parse(data);
                 if (data.success == 1) {
                     location.reload();
