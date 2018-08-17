@@ -3,6 +3,11 @@
 class DatabasesController extends AppController {
 	public $uses = ['CollibraAPI', 'BYUAPI'];
 
+	function beforeFilter() {
+		parent::beforeFilter();
+		$this->Auth->deny();
+	}
+
 	public function index() {
 		if ($this->Session->check('recentTables')) {
 			$this->set('recent', $this->Session->read('recentTables'));
