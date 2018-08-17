@@ -756,7 +756,6 @@ class RequestController extends AppController {
 					}
 				}
 			}
-
 			foreach ($addedSamlResponses as $responseName => $_) {
 				$response = $this->CollibraAPI->getSamlResponseObject($responseName);
 				array_push($relationsPostData['saml'], $response->id);
@@ -778,7 +777,6 @@ class RequestController extends AppController {
 							array_push($relationsPostData['requestedDataAssets'], $field->fieldId);
 						} else {
 							$addedSamlResponses[$responseName]['unmapped']['unrequested'][] = $field->fieldName;
-							array_push($relationsPostData['additionalDataAssets'], $field->fieldId);
 						}
 					} else {
 						if ($requestedField) {
@@ -787,8 +785,6 @@ class RequestController extends AppController {
 							array_push($requestedTerms, $field->businessTerm[0]);
 						} else {
 							$addedSamlResponses[$responseName]['unrequested'][] = '('.$field->businessTerm[0]->termCommunityName.') '.$field->businessTerm[0]->term;
-							array_push($relationsPostData['additionalDataAssets'], $field->fieldId);
-							array_push($additionalTerms, $field->businessTerm[0]);
 						}
 					}
 				}
@@ -1112,16 +1108,13 @@ class RequestController extends AppController {
 				}
 			}
 			foreach ($request->necessarySamlResponses as $response) {
-				$thisResponseDeletedFieldIds = [];
 				$thisResponseAllFieldIds = [];
 				$responseStillRequested = false;
 				$response->fields = $this->CollibraAPI->getSamlResponseFields($response->responseName);
 
 				foreach ($response->fields as $field) {
 					array_push($thisResponseAllFieldIds, $field->fieldId);
-					if (in_array($field->fieldId, $this->request->data['arrIds'])) {
-						array_push($thisResponseDeletedFieldIds, $field->fieldId);
-					} else {
+					if (!in_array($field->fieldId, $this->request->data['arrIds'])) {
 						foreach ($request->requestedDataAssets as $dataAsset) {
 							if ($field->fieldId == $dataAsset->reqDataId) {
 								$responseStillRequested = true;
@@ -1130,9 +1123,7 @@ class RequestController extends AppController {
 					}
 				}
 
-				if ($responseStillRequested) {
-					$nowAdditionallyIncluded = array_merge($nowAdditionallyIncluded, $thisResponseDeletedFieldIds);
-				} else {
+				if (!$responseStillRequested) {
 					foreach ($request->additionallyIncludedDataAssets as $dataAsset) {
 						if (in_array($dataAsset->addDataId, $thisResponseAllFieldIds)) {
 							array_push($toDeleteIds, $dataAsset->addDataRelationId);
@@ -1734,7 +1725,6 @@ class RequestController extends AppController {
 						array_push($dataAssetIds, $field->fieldId);
 						$samlResponses[$responseName]['unmapped']['requested'][] = $field->fieldName;
 					} else {
-						array_push($addDataAssetIds, $field->fieldId);
 						$samlResponses[$responseName]['unmapped']['unrequested'][] = $field->fieldName;
 					}
 				} else {
@@ -1743,8 +1733,6 @@ class RequestController extends AppController {
 						array_push($businessTermIds, $field->businessTerm[0]->termId);
 						$samlResponses[$responseName]['requestedBusinessTerm'][] = '('.$field->businessTerm[0]->termCommunityName.') '.$field->businessTerm[0]->term;
 					} else {
-						array_push($addDataAssetIds, $field->fieldId);
-						array_push($addBusinessTermIds, $field->businessTerm[0]->termId);
 						$samlResponses[$responseName]['unrequested'][] = '('.$field->businessTerm[0]->termCommunityName.') '.$field->businessTerm[0]->term;
 					}
 				}
