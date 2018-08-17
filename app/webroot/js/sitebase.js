@@ -278,6 +278,7 @@ function clearRequestQueue(){
 			$('#request-popup').find('.clearQueue').fadeOut('fast');
 			$('#request-popup').find('h3').html('Requested Items: 0');
 			$('.irLower').find('ul.cart').find('li').fadeOut('fast');
+			$('.irLower').find('ul.cart').find('h4').fadeOut('fast');
 			$('.irLower').find('#request-undo').fadeOut('fast');
 			$('<div class="cart-cleared">Request items removed.</div>').insertBefore('.irLower ul.cart');
 		});
