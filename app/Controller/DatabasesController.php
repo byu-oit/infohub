@@ -8,7 +8,22 @@ class DatabasesController extends AppController {
 		$this->Auth->deny();
 	}
 
+	private function checkAuthorized() {
+		if (!($this->Auth->user('activeFulltimeEmployee') == 'true' ||
+			  $this->Auth->user('activeParttimeEmployee') == 'true' ||
+			  $this->Auth->user('activeFulltimeInstructor') == 'true' ||
+			  $this->Auth->user('activeParttimeInstructor') == 'true' ||
+			  $this->Auth->user('activeFulltimeNonBYUEmployee') == 'true' ||
+			  $this->Auth->user('activeParttimeNonBYUEmployee') == 'true' ||
+			  $this->Auth->user('activeEligibletoRegisterStudent') == 'true')) {
+
+			$this->Flash->error('You must be an active BYU student or employee to browse databases.');
+			$this->redirect(['controller' => 'search', 'action' => 'index']);
+		}
+	}
+
 	public function index() {
+		$this->checkAuthorized();
 		if ($this->Session->check('recentTables')) {
 			$this->set('recent', $this->Session->read('recentTables'));
 		}
@@ -24,6 +39,7 @@ class DatabasesController extends AppController {
 	}
 
 	public function database($dbId) {
+		$this->checkAuthorized();
 		if ($this->Session->check('recentTables')) {
 			$this->set('recent', $this->Session->read('recentTables'));
 		}
@@ -48,6 +64,7 @@ class DatabasesController extends AppController {
 	}
 
 	public function schema($schemaName) {
+		$this->checkAuthorized();
 		if ($this->Session->check('recentTables')) {
 			$this->set('recent', $this->Session->read('recentTables'));
 		}
@@ -60,6 +77,7 @@ class DatabasesController extends AppController {
 	}
 
 	public function view($schemaName, $tableName) {
+		$this->checkAuthorized();
 		$tableNameOnly = substr($tableName, strpos($tableName, '>') + 2);
 		$columns = $this->CollibraAPI->getTableColumns($tableName);
 
