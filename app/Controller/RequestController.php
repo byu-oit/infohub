@@ -1017,8 +1017,7 @@ class RequestController extends AppController {
 
 			$this->Session->write('queue', $arrQueue);
 			return $success ? json_encode(['success' => 1]) : json_encode(['success' => 0]);
-		}
-		else if ($this->request->data['action'] == 'remove') {
+		} else if ($this->request->data['action'] == 'remove') {
 			$postString = http_build_query(['resource' => $this->request->data['arrRelIds']]);
 			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
 			$resp = $this->CollibraAPI->deleteJSON('relation', $postString);
@@ -1204,6 +1203,38 @@ class RequestController extends AppController {
 			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
 			$resp = $this->CollibraAPI->deleteJSON('relation', $postString);
 			if ($resp->code != '200') $success = false;
+
+			// If all of a request's APIs, tables, or SAML responses have been removed, edit the technologyType attribute
+			if (empty($request->necessaryApis) || empty($request->necessaryTables) || empty($request->necessarySamlResponses)) {
+				foreach ($request->attributes as $attr) {
+					if ($attr->attrTypeId == Configure::read('Collibra.formFields.technologyType')) {
+						$arrOldValue = explode(';', $attr->attrValue);
+						sort($arrOldValue);
+						$oldValue = implode(';', $arrOldValue);
+						$attrId = $attr->attrResourceId;
+						break;
+					}
+				}
+
+				$arrNewValue = [];
+				if (!empty($request->necessaryApis)) {
+					array_push($arrNewValue, 'API');
+				}
+				if (!empty($request->necessaryTables)) {
+					array_push($arrNewValue, 'Data Warehouse');
+				}
+				if (!empty($request->necessarySamlResponses)) {
+					array_push($arrNewValue, 'SAML');
+				}
+				$newValue = implode(';', $arrNewValue);
+
+				if ($newValue !== $oldValue) {
+					$postString = http_build_query(['value' => $newValue]);
+					$postString = preg_replace('/%5B[0-9]*%5D/', '', $postString);
+					$resp = $this->CollibraAPI->post('attribute/'.$attrId, $postString);
+					if ($resp->code != '200') $success = false;
+				}
+			}
 
 			// If the request no longer contains terms from the Academic Records glossary, remove the corresponding policy
 			$trustedPartnerPolicyRelation = '';
