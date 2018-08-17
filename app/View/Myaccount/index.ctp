@@ -308,7 +308,7 @@
 					} ?>
 				</div>
 				<?php if (isset($req->addTermGlossaries)): ?>
-					<h3 class="headerTab">Additionally Included Data</h3><img class="infoIcon" src="/img/icon-question.png" onmouseover="displayHelpText(this)" onmouseout="hideHelpText()" helpText="These are data elements that you didn't request but are included in the APIs to which you requested access.">
+					<h3 class="headerTab">Additionally Included Data</h3><img class="infoIcon" src="/img/icon-question.png" onmouseover="displayHelpText(this)" onmouseout="hideHelpText()" helpText="These are data elements that you didn't request but are included in the data sets to which you requested access.">
 					<div class="clear"></div>
 					<div class="attrValue">
 						<?php $glossaryCount = 0;
