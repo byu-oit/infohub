@@ -17,18 +17,17 @@ class ApisController extends AppController {
 			$this->set('recent', $this->Session->read('recentAPIs'));
 		}
 
-		$community = $this->CollibraAPI->findTypeByName('community', $hostname, ['full' => true]);
+		$community = $this->CollibraAPI->findTypeByName('community', $hostname);
 		if (empty($community->resourceId)) {
 			$this->redirect(['action' => 'index']);
 		}
-		if (!empty($community->vocabularyReferences->vocabularyReference)) {
-			usort(
-				$community->vocabularyReferences->vocabularyReference,
-				function ($a, $b) {
-					return strcmp(strtolower($a->name), strtolower($b->name));
-				});
+		$apis = $this->CollibraAPI->getHostApis($community->resourceId);
+		if (!empty($apis)) {
+			usort($apis, function ($a, $b) {
+				return strcmp(strtolower($a->name), strtolower($b->name));
+			});
 		}
-		$this->set(compact('hostname', 'community'));
+		$this->set(compact('hostname', 'community', 'apis'));
 	}
 
 	public function view() {
@@ -66,8 +65,9 @@ class ApisController extends AppController {
 				break;
 			}
 		}
+		$apiObject = $this->CollibraAPI->getApiObject($hostname, $basePath);
 		$isOITEmployee = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04');
-		$this->set(compact('hostname', 'basePath', 'fields', 'isOITEmployee', 'containsFieldset'));
+		$this->set(compact('hostname', 'basePath', 'fields', 'apiObject', 'isOITEmployee', 'containsFieldset'));
 
 		$arrRecent = $this->Session->check('recentAPIs') ? $this->Session->read('recentAPIs') : [];
 		array_unshift($arrRecent, ['host' => $hostname, 'basePath' => $basePath]);

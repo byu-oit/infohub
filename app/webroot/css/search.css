@@ -141,6 +141,10 @@ img.resultBodyLoading {
   color: #888888;
   font-size: 10px;
 }
+#searchBody.apis #searchMain #smLower ul li a span.pre-production {
+  color: #ff0000;
+  font-size: 11px;
+}
 #searchBody #searchMain #smLower ul li a:hover,
 #apiBody #searchMain #smLower ul li a:hover {
   text-decoration: underline;
@@ -1401,7 +1405,8 @@ img.resultBodyLoading {
 }
 #apiBody .apiHelp,
 #apiBody .tableHelp,
-#smLower .samlHelp {
+#smLower .samlHelp,
+#apiBody .apiHelpStatus {
   margin-top: 15px;
   color: rgba(14, 50, 100, 0.85);
   font-size: 18px;
@@ -1410,12 +1415,21 @@ img.resultBodyLoading {
   cursor: pointer;
   padding-bottom: 8px;
 }
+#apiBody .apiHelpStatus {
+  color: #de0202;
+  cursor: auto;
+}
 #apiBody .apiHelpSml,
-#smLower .samlHelpSml {
+#smLower .samlHelpSml,
+#apiBody .apiHelpSmlStatus {
   font-size: 14px;
   width: 100%;
   display: none;
   padding-bottom: 8px;
+}
+#apiBody .apiHelpSmlStatus {
+  color: #c54f4f;
+  display: block;
 }
 #apiBody .fieldset-btn {
   margin: 5px;

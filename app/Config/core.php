@@ -114,6 +114,11 @@ if (!function_exists('denv')) {
 			'applicationIdentity' => '0a607e95-4e85-4b86-beac-e2b74cd9e89a'
 		],
 		'status' => [
+			'testing' => '4eb2eaf1-faa5-4e89-9129-3203fc5eafa4',
+			'preProduction' => '744e30a0-5152-406c-98a6-7db92d3b8522',
+			'production' => 'cb7feadd-bfe8-4c01-bcb1-7ad955bc58a1',
+			'deprecated' => 'de263699-db33-4762-9330-943049eeec55',
+			'retired' => '982bf7ce-25b4-4903-b932-36091434514c',
 			'deleted' => '5ed07772-862c-4898-aa31-9c781ab13a1e'
 		],
 		'term' => [

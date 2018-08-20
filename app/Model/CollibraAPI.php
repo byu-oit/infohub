@@ -431,6 +431,39 @@ class CollibraAPI extends Model {
 		return $hosts;
 	}
 
+	public function getHostApis($hostCommunityId) {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'id']],
+				['Column' => ['fieldName' => 'name']],
+				['Column' => ['fieldName' => 'statusId']],
+				['Column' => ['fieldName' => 'status']]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'id'],
+					'Signifier' => ['name' => 'name'],
+					'Status' => [
+						'Id' => ['name' => 'statusId'],
+						'Signifier' => ['name' => 'status']],
+					'Vocabulary' => [
+						'Community' => [
+							'Id' => ['name' => 'communityId']]],
+					'ConceptType' => [
+						'Id' => ['name' => 'assetTypeId']],
+					'Filter' => [
+						'AND' => [
+							['Field' => [
+								'name' => 'communityId',
+								'operator' => 'EQUALS',
+								'value' => $hostCommunityId]],
+							['Field' => [
+								'name' => 'assetTypeId',
+								'operator' => 'EQUALS',
+								'value' => Configure::read('Collibra.type.api')]]]]]]]];
+		$results = $this->fullDataTable($tableConfig);
+		return $results;
+	}
+
 	public function getApiObject($host, $path) {
 		$hostCommunity = $this->findTypeByName('community', $host);
 		if (empty($hostCommunity->resourceId)) {
@@ -444,12 +477,15 @@ class CollibraAPI extends Model {
 			'Columns' => [
 				['Column' => ['fieldName' => 'id']],
 				['Column' => ['fieldName' => 'name']],
+				['Column' => ['fieldName' => 'statusId']],
 				['Column' => ['fieldName' => 'status']]],
 			'Resources' => [
 				'Term' => [
 					'Id' => ['name' => 'id'],
 					'Signifier' => ['name' => 'name'],
-					'Status' => ['name' => 'status'],
+					'Status' => [
+						'Id' => ['name' => 'statusId'],
+						'Signifier' => ['name' => 'status']],
 					'Vocabulary' => [
 						'Id' => ['name' => 'vocabId']],
 					'ConceptType' => [
