@@ -9,15 +9,16 @@ class DatabasesController extends AppController {
 	}
 
 	private function checkAuthorized() {
-		if (!($this->Auth->user('activeFulltimeEmployee') == 'true' ||
-			  $this->Auth->user('activeParttimeEmployee') == 'true' ||
-			  $this->Auth->user('activeFulltimeInstructor') == 'true' ||
-			  $this->Auth->user('activeParttimeInstructor') == 'true' ||
-			  $this->Auth->user('activeFulltimeNonBYUEmployee') == 'true' ||
-			  $this->Auth->user('activeParttimeNonBYUEmployee') == 'true' ||
-			  $this->Auth->user('activeEligibletoRegisterStudent') == 'true')) {
+		if (!(
+			$this->Auth->user('activeFulltimeEmployee') == 'true' ||
+			$this->Auth->user('activeParttimeEmployee') == 'true' ||
+			$this->Auth->user('activeFulltimeInstructor') == 'true' ||
+			$this->Auth->user('activeParttimeInstructor') == 'true' ||
+			$this->Auth->user('activeFulltimeNonBYUEmployee') == 'true' ||
+			$this->Auth->user('activeParttimeNonBYUEmployee') == 'true'
+		)) {
 
-			$this->Flash->error('You must be an active BYU student or employee to browse databases.');
+			$this->Flash->error('You must be an active BYU employee to browse databases.');
 			$this->redirect(['controller' => 'search', 'action' => 'index']);
 		}
 	}
