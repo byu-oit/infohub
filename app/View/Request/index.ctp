@@ -20,6 +20,9 @@
 		$('#srLower').find('input, textarea').on('input', function() {
 			autoSave();
 		});
+		$('#srLower').find('select').on('change', function() {
+			autoSave();
+		});
 		$('.irLower').find('a').on('click', function() {
 			autoSave();
 		});
@@ -78,203 +81,68 @@
 			}
 		});
 
-		var developmentShopIndex = -1;
-		$('#developmentShop').keypress(function(event) { return event.keyCode != 13; });
-		$('#developmentShop').on({
-			keyup: function(e) {
-				var move;
+		var applicationOrProjectSelectInnerHTML = '<option value="">Select an application or project...</option>'+
+												  '<option value="new">Name a new application or project</option>';
+		$('#applicationOrProjectSelect').html(applicationOrProjectSelectInnerHTML);
+		$('#developmentShopToggle').click(function() {
+			if (!$(this).hasClass('onText')) {
+				$(this).addClass('onText');
+				$('#developmentShopSelect').hide().val('');
+				$('#developmentShop').val('').show();
 
-				if ($.trim($('#developmentShop').val()) == '') {
-					$('.developmentShopAutoComplete').hide();
-					$('.developmentShopAutoComplete .results').html('');
-				} else if  (e == true) {
-					$('.developmentShopAutoComplete').hide();
-					$('.developmentShopAutoComplete .results').html('');
-				} else {
-					switch (e.which) {
+				$('#applicationOrProjectToggle').hide().addClass('onText');
+				$('#applicationOrProjectSelect').hide().html(applicationOrProjectSelectInnerHTML).prop('disabled', true);
+				$('#applicationOrProjectName').val('').show();
+			} else {
+				$(this).removeClass('onText');
+				$('#developmentShop').hide().val('');
+				$('#developmentShopSelect').val('').show();
 
-						case 27: // escape
-							$('.developmentShopAutoComplete').hide();
-							$('.developmentShopAutoComplete .results').html('');
-							developmentShopIndex = -1;
-							break;
-
-						case 13: // enter
-							if ($('.developmentShopAutoComplete li').hasClass('active')) {
-								$('.developmentShopAutoComplete li.active').click();
-							} else {
-								$('.developmentShopAutoComplete li').eq(0).click();
-							}
-							break;
-
-						case 38: // up
-							e.preventDefault();
-							if (developmentShopIndex == -1) {
-								developmentShopIndex = $('.developmentShopAutoComplete li').length - 1;
-							} else {
-								developmentShopIndex--;
-							}
-
-							if (developmentShopIndex > $('.developmentShopAutoComplete li').length ) {
-								developmentShopIndex = $('.developmentShopAutoComplete li').length + 1;
-							}
-							move = true;
-							break;
-
-						case 40: // down
-							e.preventDefault();
-							if (developmentShopIndex >= $('.developmentShopAutoComplete li').length - 1) {
-								developmentShopIndex = 0;
-							} else {
-								developmentShopIndex++;
-							}
-							move = true;
-							break;
-
-						default:
-							var val = $('#developmentShop').val();
-							setTimeout(function() {
-								if (val != $('#developmentShop').val()) {
-									// User continued typing, so throw this out
-									return;
-								}
-								$.getJSON( "/developmentShop/search/"+val )
-									.done(function( data ) {
-										if (val != $('#developmentShop').val()) {
-											// User continued typing, so throw this out
-											return;
-										}
-										$('.developmentShopAutoComplete .results').html('');
-										for (var i in data) {
-											$('.developmentShopAutoComplete .results').append('<li>'+data[i].name+'</li>');
-										}
-										if ($('.developmentShopAutoComplete li').size()) {
-											$('.developmentShopAutoComplete').show();
-										} else {
-											$('.developmentShopAutoComplete').hide();
-										}
-									});
-							}, 300);
-
-							break;
-					}
-				}
-
-				if (move) {
-					$('.developmentShopAutoComplete li.active').removeClass('active');
-					$('.developmentShopAutoComplete li').eq(developmentShopIndex).addClass('active');
-				}
+				$('#applicationOrProjectToggle').hide().removeClass('onText');
+				$('#applicationOrProjectSelect').html(applicationOrProjectSelectInnerHTML).prop('disabled', true).show();
+				$('#applicationOrProjectName').hide().val('');
 			}
 		});
-		$('.developmentShopAutoComplete').on('click', 'li', function() {
-			$('#developmentShop').val($(this).text());
-			$('#developmentShop').focusout();
-			$('.developmentShopAutoComplete').hide();
-			$('.developmentShopAutoComplete .results').html('');
-		});
+		$('#developmentShopSelect').change(function() {
+			if (!$(this).val()) {
+				$('#applicationOrProjectToggle').hide().removeClass('onText');
+				$('#applicationOrProjectSelect').html(applicationOrProjectSelectInnerHTML).prop('disabled', true).show();
+				$('#applicationOrProjectName').hide().val('');
+			} else if ($(this).val() === 'new') {
+				$('#developmentShopToggle').addClass('onText');
+				$('#developmentShopSelect').hide().val('');
+				$('#developmentShop').val('').show();
 
-		var applicationOrProjectNameIndex = -1;
-		$('#applicationOrProjectName').keypress(function(event) { return event.keyCode != 13; });
-		$('#applicationOrProjectName').on({
-			keyup: function(e) {
-				if ($('#developmentShop').val() == '') {
-					return;
-				}
-				var move;
-
-				if ($.trim($('#applicationOrProjectName').val()) == '') {
-					$('.applicationOrProjectNameAutoComplete').hide();
-					$('.applicationOrProjectNameAutoComplete .results').html('');
-				} else if  (e == true) {
-					$('.applicationOrProjectNameAutoComplete').hide();
-					$('.applicationOrProjectNameAutoComplete .results').html('');
-				} else {
-					switch (e.which) {
-
-						case 27: // escape
-							$('.applicationOrProjectNameAutoComplete').hide();
-							$('.applicationOrProjectNameAutoComplete .results').html('');
-							applicationOrProjectNameIndex = -1;
-							break;
-
-						case 13: // enter
-							if ($('.applicationOrProjectNameAutoComplete li').hasClass('active')) {
-								$('.applicationOrProjectNameAutoComplete li.active').click();
-							} else {
-								$('.applicationOrProjectNameAutoComplete li').eq(0).click();
-							}
-							break;
-
-						case 38: // up
-							e.preventDefault();
-							if (applicationOrProjectNameIndex == -1) {
-								applicationOrProjectNameIndex = $('.applicationOrProjectNameAutoComplete li').length - 1;
-							} else {
-								applicationOrProjectNameIndex--;
-							}
-
-							if (applicationOrProjectNameIndex > $('.applicationOrProjectNameAutoComplete li').length ) {
-								applicationOrProjectNameIndex = $('.applicationOrProjectNameAutoComplete li').length + 1;
-							}
-							move = true;
-							break;
-
-						case 40: // down
-							e.preventDefault();
-							if (applicationOrProjectNameIndex >= $('.applicationOrProjectNameAutoComplete li').length - 1) {
-								applicationOrProjectNameIndex = 0;
-							} else {
-								applicationOrProjectNameIndex++;
-							}
-							move = true;
-							break;
-
-						default:
-							var val = $('#applicationOrProjectName').val();
-							setTimeout(function() {
-								if (val != $('#applicationOrProjectName').val()) {
-									// User continued typing, so throw this out
-									return;
-								}
-								$.getJSON( "/developmentShop/getDetails/"+$('#developmentShop').val() )
-									.done(function( data ) {
-										if (val != $('#applicationOrProjectName').val()) {
-											// User continued typing, so throw this out
-											return;
-										}
-										$('.applicationOrProjectNameAutoComplete .results').html('');
-										for (var i in data[0].applications) {
-											if (data[0].applications[i].appName.toLowerCase().search(val.toLowerCase()) !== -1) {
-												$('<li>'+data[0].applications[i].appName+'</li>')
-													.appendTo('.applicationOrProjectNameAutoComplete .results')
-													.data('description', data[0].applications[i].appDescription);
-											}
-										}
-										if ($('.applicationOrProjectNameAutoComplete li').size()) {
-											$('.applicationOrProjectNameAutoComplete').show();
-										} else {
-											$('.applicationOrProjectNameAutoComplete').hide();
-										}
-									});
-							}, 300);
-
-							break;
-					}
-				}
-
-				if (move) {
-					$('.applicationOrProjectNameAutoComplete li.active').removeClass('active');
-					$('.applicationOrProjectNameAutoComplete li').eq(applicationOrProjectNameIndex).addClass('active');
-				}
+				$('#applicationOrProjectToggle').hide().addClass('onText');
+				$('#applicationOrProjectSelect').hide().html(applicationOrProjectSelectInnerHTML).prop('disabled', true);
+				$('#applicationOrProjectName').val('').show();
+			} else {
+				$('#applicationOrProjectToggle').removeClass('onText').show();
+				$('#applicationOrProjectSelect').html(applicationOrProjectSelectInnerHTML).prop('disabled', false).show();
+				$.getJSON('/developmentShop/getDetails/'+$('#developmentShopSelect option:selected').text())
+					.done(function(data) {
+						data[0].applications.forEach(function(app) {
+							$('#applicationOrProjectSelect').append('<option value="'+app.appId+'">'+app.appName+'</option>');
+						});
+					});
+				$('#applicationOrProjectName').hide().val('');
 			}
 		});
-		$('.applicationOrProjectNameAutoComplete').on('click', 'li', function() {
-			$('#applicationOrProjectName').val($(this).text());
-			$('#descriptionOfApplicationOrProject').val($(this).data('description'));
-			$('#applicationOrProjectName').focusout();
-			$('.applicationOrProjectNameAutoComplete').hide();
-			$('.applicationOrProjectNameAutoComplete .results').html('');
+
+		$('#applicationOrProjectToggle').click(function() {
+			$(this).toggleClass('onText');
+			$('#applicationOrProjectSelect').toggle();
+			$('#applicationOrProjectSelect').val('');
+			$('#applicationOrProjectName').toggle();
+			$('#applicationOrProjectName').val('');
 		});
+		$('#applicationOrProjectSelect').change(function() {
+			if ($(this).val() === 'new') {
+				$('#applicationOrProjectToggle').click();
+			}
+		});
+
+		setupDevelopmentShopAndApplicationOrProject();
 
 		$('.radioBox').click(function() {
 			if ($(this).hasClass('selected')) {
@@ -307,9 +175,11 @@
 			$('#saving').slideDown();
 
 			var postData = {};
-			$('#srLower').find('input, textarea').each(function() {
+			$('#srLower').find('input, textarea, select').each(function() {
 				postData[$(this).prop('name')] = $(this).prop('value');
 			});
+			if (postData.developmentShopId === 'new') delete postData.developmentShopId;
+			if (postData.applicationOrProjectId === 'new') delete postData.applicationOrProjectId;
 
 			$.post('/request/saveDraft', postData)
 				.done(function(data) {
@@ -337,17 +207,75 @@
 		}
 	}
 
+	function setupDevelopmentShopAndApplicationOrProject() {
+		<?php if (!empty($preFilled['developmentShopId'])):	?>
+
+			$('#developmentShopSelect').val('<?=$preFilled['developmentShopId']?>');
+			$('#applicationOrProjectToggle').show();
+			$('#applicationOrProjectSelect').prop('disabled', false);
+			$.getJSON('/developmentShop/getDetails/'+$('#developmentShopSelect option:selected').text())
+				.done(function(data) {
+					data[0].applications.forEach(function(app) {
+						$('#applicationOrProjectSelect').append('<option value="'+app.appId+'">'+app.appName+'</option>');
+					});
+					<?php if (!empty($preFilled['applicationOrProjectId'])): ?>
+						$('#applicationOrProjectSelect').val('<?=$preFilled['applicationOrProjectId']?>');
+					<?php endif ?>
+				});
+
+			<?php if (!empty($preFilled['applicationOrProjectName'])): ?>
+				$('#applicationOrProjectToggle').addClass('onText');
+				$('#applicationOrProjectSelect').hide().val('');
+				$('#applicationOrProjectName').val('<?=$preFilled['applicationOrProjectName']?>').show();
+			<?php endif ?>
+
+		<?php elseif (!empty($preFilled['developmentShop'])): ?>
+
+			$('#developmentShopToggle').addClass('onText');
+			$('#developmentShopSelect').hide();
+			$('#developmentShop').val('<?=$preFilled['developmentShop']?>').show();
+
+			$('#applicationOrProjectToggle').hide().addClass('onText');
+			$('#applicationOrProjectSelect').hide();
+			$('#applicationOrProjectName').val('<?= empty($preFilled['applicationOrProjectName']) ? '' : $preFilled['applicationOrProjectName']?>').show();
+
+		<?php endif ?>
+	}
+
 	function validate() {
 		var isValid = true;
 		$('#request input').each(function() {
+			if ($(this).attr('id') == 'developmentShop' || $(this).attr('id') == 'applicationOrProjectName') return true;
 			if (!$(this).val()) {
 				isValid = false;
 				$(this).focus();
 				return false;
 			}
 		});
-		if (!isValid) alert('Requester and Sponsor Information, Development Shop, and Application or Project Name are required.');
-		return isValid;
+		if (!isValid) {
+			alert('Requester and Sponsor Information are required.');
+			return false;
+		}
+
+		if (!($('#developmentShopSelect').val() || $('#developmentShop').val())) {
+			if ($('#developmentShopToggle').hasClass('onText')) {
+				$('#developmentShop').focus();
+			} else {
+				$('#developmentShopSelect').focus();
+			}
+			alert('Development Shop is a required field.');
+			return false;
+		}
+
+		if (!($('#applicationOrProjectSelect').val() || $('#applicationOrProjectName').val())) {
+			if ($('#applicationOrProjectToggle').hasClass('onText')) {
+				$('#applicationOrProjectName').focus();
+			} else {
+				$('#applicationOrProjectSelect').focus();
+			}
+			alert('Application or Project is a required field.');
+			return false;
+		}
 	}
 
 	function toggleDataNeeded(chk){
@@ -457,25 +385,38 @@
 						<label for="requestingOrganization">Requesting Organization*</label>
 						<input type="text" id="requestingOrganization" name="requestingOrganization" class="inputShade noPlaceHolder" value="<?= empty($preFilled['requestingOrganization']) ? h($psDepartment) : h($preFilled['requestingOrganization']) ?>">
 					</div>
-
 				</div>
 
-				<label class="headerTab" for="developmentShop">Development Shop*</label>
-				<div class="clear"></div>
-				<div class="taBox">
-					<input type="text" name="developmentShop" id="developmentShop" class="inputShade full noPlaceHolder" placeholder="Type to search existing development shops or name a new one." value="<?= empty($preFilled['developmentShop']) ? '' : h($preFilled['developmentShop']) ?>" autocomplete="off" />
-					<div class="developmentShopAutoComplete">
-						<ul class="results"></ul>
+				<div class="request-form-header-wrapper">
+					<label class="headerTab" for="developmentShop">Development Shop*</label>
+					<div class="select-toggle-btn grow" id="developmentShopToggle">
+						<span class="toText">New value</span>
+						<span class="toSelect">Select existing</span>
 					</div>
 				</div>
-
-				<label class="headerTab" for="applicationOrProjectName">Application or Project Name*</label>
 				<div class="clear"></div>
 				<div class="taBox">
-					<input type="text" name="applicationOrProjectName" id="applicationOrProjectName" class="inputShade full noPlaceHolder" placeholder="Type to search existing applications or name a new one. This name will be included in the title of this request to help you easily find it in the future." value="<?= empty($preFilled['applicationOrProjectName']) ? '' : h($preFilled['applicationOrProjectName']) ?>" autocomplete="off" />
-					<div class="applicationOrProjectNameAutoComplete">
-						<ul class="results"></ul>
+					<select name="developmentShopId" id="developmentShopSelect" class="inputShade">
+						<option value="">Select a development shop...</option>
+						<option value="new">Name a new development shop</option>
+						<?php foreach ($developmentShops as $devShop): ?>
+							<option value="<?= $devShop->id ?>"><?= $devShop->name ?></option>
+						<?php endforeach ?>
+					</select>
+					<input type="text" name="developmentShop" id="developmentShop" class="inputShade full noPlaceHolder" placeholder="Type to name a new development shop." value="" autocomplete="off" style="display:none;" />
+				</div>
+
+				<div class="request-form-header-wrapper" style="width:375px;">
+					<label class="headerTab" for="applicationOrProjectName">Application or Project Name*</label>
+					<div class="select-toggle-btn grow" id="applicationOrProjectToggle" style="display:none;">
+						<span class="toText">New value</span>
+						<span class="toSelect">Select existing</span>
 					</div>
+				</div>
+				<div class="clear"></div>
+				<div class="taBox">
+					<select name="applicationOrProjectId" id="applicationOrProjectSelect" class="inputShade" disabled></select>
+					<input type="text" name="applicationOrProjectName" id="applicationOrProjectName" class="inputShade full noPlaceHolder" placeholder="Type to name a new application or project. This name will be included in the title of this request to help you easily find it in the future." value="" autocomplete="off" style="display:none;" />
 				</div>
 
 				<?php
@@ -491,7 +432,9 @@
 						"sponsorEmail",
 						"sponsorPhone",
 						"requestingOrganization",
+						"developmentShopId",
 						"developmentShop",
+						"applicationOrProjectId",
 						"applicationOrProjectName",
 						"readWriteAccess",
 						"requestedInformationMap",
@@ -546,7 +489,7 @@
 
 					<?php
 					if (!empty($policies)) {
-						echo '<div class="policy-header-wrapper"><label class="headerTab">Data Usage Policies</label>
+						echo '<div class="request-form-header-wrapper"><label class="headerTab">Data Usage Policies</label>
 								  <div class="policies-btn grow">
 								  	<span class="policiesHide">Collapse</span>
 									<span class="policiesShow">Expand</span>

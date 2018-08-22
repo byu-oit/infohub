@@ -1113,13 +1113,15 @@ img.resultBodyLoading {
 #request #searchBody #requestForm #net-id-input-wrapper input {
   margin: 0 0 12px 0;
 }
-#searchBody #requestForm #srLower .policy-header-wrapper {
+#searchBody #requestForm #srLower .request-form-header-wrapper {
   width: 300px;
   display: flex;
   justify-content: space-between;
   align-items: baseline;
 }
-#searchBody #requestForm #srLower .policy-header-wrapper .policies-btn {
+#searchBody #requestForm #srLower .request-form-header-wrapper .policies-btn,
+#searchBody #requestForm #srLower .request-form-header-wrapper .select-toggle-btn {
+  display: inline;
   padding: 2px 10px;
   font-size: 12px;
   font-weight: 600;
@@ -1131,13 +1133,16 @@ img.resultBodyLoading {
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   text-decoration: none;
 }
-#searchBody #requestForm #srLower .policy-header-wrapper .policies-btn .policiesShow {
+#searchBody #requestForm #srLower .request-form-header-wrapper .policies-btn .policiesShow,
+#searchBody #requestForm #srLower .request-form-header-wrapper .select-toggle-btn .toSelect {
   display: none;
 }
-#searchBody #requestForm #srLower .policy-header-wrapper .policies-btn.collapsed .policiesHide {
+#searchBody #requestForm #srLower .request-form-header-wrapper .policies-btn.collapsed .policiesHide,
+#searchBody #requestForm #srLower .request-form-header-wrapper .select-toggle-btn.onText .toText {
   display: none;
 }
-#searchBody #requestForm #srLower .policy-header-wrapper .policies-btn.collapsed .policiesShow {
+#searchBody #requestForm #srLower .request-form-header-wrapper .policies-btn.collapsed .policiesShow,
+#searchBody #requestForm #srLower .request-form-header-wrapper .select-toggle-btn.onText .toSelect {
   display: inline;
 }
 #searchBody #requestForm #srLower .taBox div.info {

@@ -1526,7 +1526,7 @@ class CollibraAPI extends Model {
 	}
 
 	public function getDevelopmentShopDetails($developmentShopName, $exact = true) {
-		$nameOperator = $exact ? 'EQUALS' : 'CONTAINS';
+		$allShops = empty($developmentShopName);
 		$tableConfig = ['TableViewConfig' => [
 			'Columns' => [
 				['Column' => ['fieldName' => 'id']],
@@ -1561,11 +1561,16 @@ class CollibraAPI extends Model {
 							['Field' => [
 								'name' => 'vocabularyId',
 								'operator' => 'EQUALS',
-								'value' => Configure::read('Collibra.vocabulary.developmentShops')]],
-							['Field' => [
-								'name' => 'name',
-								'operator' => $nameOperator,
-								'value' => $developmentShopName]]]]]]]];
+								'value' => Configure::read('Collibra.vocabulary.developmentShops')]]]]]]]];
+
+		if (!$allShops) {
+			$nameOperator = $exact ? 'EQUALS' : 'CONTAINS';
+			array_push($tableConfig['TableViewConfig']['Resources']['Term']['Filter']['AND'],
+					['Field' => [
+						'name' => 'name',
+						'operator' => $nameOperator,
+						'value' => $developmentShopName]]);
+		}
 
 		$results = $this->fullDataTable($tableConfig);
 		foreach ($results as $i => $devShop) {

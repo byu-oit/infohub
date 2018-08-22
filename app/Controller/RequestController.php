@@ -2097,7 +2097,7 @@ class RequestController extends AppController {
 		$byuUser = $this->BYUAPI->personalSummary($netID);
 		$supervisorInfo = $this->BYUAPI->supervisorLookup($netID);
 
-		// make sure terms have been added to the users's queue
+		// make sure terms have been added to the user's queue
 		$arrQueue = $this->Session->read('queue');
 		if(
 			empty($arrQueue['apiFields']) &&
@@ -2126,7 +2126,9 @@ class RequestController extends AppController {
 				'Sponsor Role' => 'sponsorRole',
 				'Sponsor Email' => 'sponsorEmail',
 				'Requesting Organization' => 'requestingOrganization',
+				'Development Shop Id' => 'developmentShopId',
 				'Development Shop Name' => 'developmentShop',
+				'Application or Project Id' => 'applicationOrProjectId',
 				'Application or Project Name' => 'applicationOrProjectName',
 				'Additional Information Requested' => 'descriptionOfInformation',
 				'Scope and Control' => 'scopeAndControl',
@@ -2212,7 +2214,12 @@ class RequestController extends AppController {
 			$psDepartment = $byuUser->employee_information->department;
 		}
 
-		$this->set(compact('preFilled', 'arrQueue', 'netId', 'psName', 'psPhone', 'psEmail', 'psRole', 'psDepartment', 'psReportsToName', 'supervisorInfo', 'policies'));
+		$developmentShops = $this->CollibraAPI->getDevelopmentShopDetails('');
+		usort($developmentShops, function($a, $b) {
+			return strcmp(strtolower($a->name), strtolower($b->name));
+		});
+
+		$this->set(compact('preFilled', 'arrQueue', 'netId', 'psName', 'psPhone', 'psEmail', 'psRole', 'psDepartment', 'psReportsToName', 'supervisorInfo', 'policies', 'developmentShops'));
 		$this->set('submitErr', isset($this->request->query['err']));
 	}
 }
