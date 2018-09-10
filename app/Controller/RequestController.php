@@ -2140,7 +2140,7 @@ class RequestController extends AppController {
 			];
 			foreach ($arrLabelMatch as $signifier => $label) {
 				if (!empty($draft->attributes[$signifier])) {
-					$preFilled[$label] = $draft->attributes[$signifier]->attrValue;
+					$preFilled[$label] = html_entity_decode($draft->attributes[$signifier]->attrValue);
 				}
 			}
 			if (!empty($draft->collaborators)) {
