@@ -1484,7 +1484,10 @@ img.resultBodyLoading {
 }
 #apiBody .api-fields tr.automatic-match,
 #apiBody .table-columns tr.automatic-match,
-#apiBody .saml-fields tr.automatic-match {
+#apiBody .saml-fields tr.automatic-match,
+#apiBody .api-fields tr.requested,
+#apiBody .table-columns tr.requested,
+#apiBody .saml-fields tr.requested {
   background-color: #ffdd99;
 }
 #apiBody .api-fields.view td:nth-child(3),

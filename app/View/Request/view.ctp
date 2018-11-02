@@ -359,6 +359,25 @@
 				} ?>
 			</div>
 		<?php endif ?>
+		<?php if (!empty($asset->requestedDataAssets)): ?>
+			<h3 class="headerTab">Requested Data Sets</h3>
+			<div class="clear"></div>
+			<div class="attrValue">
+				<ul>
+					<?php foreach ($asset->necessaryApis as $api) {
+						echo '<li><a href="/apis/';
+						echo isset($asset->parentId) ? $asset->parentId : $asset->id;
+						echo '/'.$api->apiCommName.$api->apiName.'" title="View which elements were requested from this API">'.$api->apiName.'</a></li>';
+					}
+					foreach ($asset->necessaryTables as $table) {
+						$tableNameOnly = substr($table->tableName, strpos($table->tableName, '>') + 2);
+						echo '<li><a href="/databases/viewRequested/';
+						echo isset($asset->parentId) ? $asset->parentId : $asset->id;
+						echo '/'.$table->tableVocabName.'/'.$tableNameOnly.'" title="View which elements were requested from this table">'.$table->tableName.'</a></li>';
+					} ?>
+				</ul>
+			</div>
+		<?php endif ?>
 		<h3 class="headerTab">Requester</h3>
 		<div class="clear"></div>
 		<div class="data-col">

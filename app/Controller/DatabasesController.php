@@ -95,6 +95,18 @@ class DatabasesController extends AppController {
 		}
 	}
 
+	public function viewRequested($requestId, $schemaName, $tableName) {
+		$this->checkAuthorized();
+		$columns = $this->CollibraAPI->getTableColumns($schemaName.' > '.$tableName);
+
+		$request = $this->CollibraAPI->getRequestDetails($requestId);
+		$requestedAssetIds = [];
+		foreach ($request->requestedDataAssets as $asset) {
+			array_push($requestedAssetIds, $asset->reqDataId);
+		}
+		$this->set(compact('schemaName', 'tableName', 'columns', 'request', 'requestedAssetIds'));
+	}
+
 	protected function _autoCheckout($schemaName, $tableName, $columns) {
 		$queue = $this->Session->read('queue');
 		foreach ($columns as $column) {

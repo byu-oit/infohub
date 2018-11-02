@@ -103,6 +103,80 @@ class FieldsetHelper extends AppHelper {
         }
     }
 
+    public function printApiViewRequested($field, $requestedAssetIds) {
+        echo '<tr data-num-collapsed="0" data-name="'.$field->name.'" data-fieldset-path="';
+        $path = explode('.', $field->name);
+        array_pop($path);
+        echo implode('.', $path).'"';
+        if (in_array($field->id, $requestedAssetIds)) echo ' class="requested"';
+        echo '><td>';
+            if (!empty($field->descendantFields)) {
+                echo '<a class="fieldset-collapse" onclick="toggleFieldsetCollapse(this)" data-collapsed="false"></a>';
+            }
+        echo '</td>';
+        echo '<td>';
+            $fieldPath = explode('.', $field->name);
+            for ($i = 0; $i < count($fieldPath) - 1; $i++) {
+                echo str_repeat('&nbsp;', 12);
+            }
+            echo end($fieldPath);
+        echo '</td>';
+        echo '<td>';
+            if (!empty($field->businessTerm[0])) {
+                $fieldDef = nl2br(str_replace("\n\n\n", "\n\n", htmlentities(strip_tags(str_replace(['<div>', '<br>', '<br/>'], "\n", $field->businessTerm[0]->termDescription)))));
+                echo '<a href="/search/term/'.$field->businessTerm[0]->termId.'">'.$field->businessTerm[0]->term.'</a>';
+                echo '<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="'.$fieldDef.'" class="info"><img src="/img/iconInfo.png"></div>';
+            }
+        echo '</td>';
+        echo '<td style="white-space:nowrap;">';
+            if (!empty($field->businessTerm[0])) {
+                $classification = $field->businessTerm[0]->termClassification;
+                switch($classification) {
+                    case 'Public':
+                    case '1 - Public':
+                        $classificationTitle = 'Public';
+                        $classification = 'Public';
+                        break;
+                    case 'Internal':
+                    case '2 - Internal':
+                        $classificationTitle = 'Internal';
+                        $classification = 'Internal';
+                        break;
+                    case 'Confidential':
+                    case '3 - Confidential':
+                        $classificationTitle = 'Confidential';
+                        $classification = 'Classified';
+                        break;
+                    case 'Highly Confidential':
+                    case '4 - Highly Confidential':
+                        $classificationTitle = 'Highly Confidential';
+                        $classification = 'HighClassified';
+                        break;
+                    case 'Not Applicable':
+                    case '0 - N/A':
+                        $classificationTitle = 'Not Applicable';
+                        $classification = 'NotApplicable';
+                        break;
+                    default:
+                        $classificationTitle = 'Unspecified';
+                        $classification = 'NoClassification2';
+                        break;
+                }
+                echo '<img class="classIcon" src="/img/icon'.$classification.'.png">&nbsp;'.$classificationTitle;
+
+                if ($field->businessTerm[0]->approvalStatus != 'Approved') {
+                    echo '&nbsp;&nbsp;<img class="pendingApprovalIcon" src="/img/alert.png" onmouseover="displayPendingApproval(this)" onmouseout="hidePendingAproval()">';
+                }
+            }
+        echo '</td></tr>';
+
+        if (!empty($field->descendantFields)) {
+            foreach ($field->descendantFields as $field) {
+                $this->printApiViewRequested($field, $requestedAssetIds);
+            }
+        }
+    }
+
     public function printApiAdminUpdate($field, &$index, $glossaries) {
         echo '<tr id="tr'.$index.'"><td>';
             $fieldPath = explode('.', $field->name);

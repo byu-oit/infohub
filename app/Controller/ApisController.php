@@ -79,6 +79,51 @@ class ApisController extends AppController {
 		}
 	}
 
+	public function viewRequested() {
+		$args = func_get_args();
+		$requestId = array_shift($args);
+		$hostname = array_shift($args);
+		$basePath = '/' . implode('/', $args);
+		if (!isset($this->request->query['upper'])) {
+			$basePath = strtolower($basePath);
+		}
+		$fields = $this->CollibraAPI->getApiFields($hostname, $basePath, true);
+		if (empty($fields) && !isset($this->request->query['upper'])) {
+			return $this->redirect($hostname.'/'.implode('/', $args).'?upper=1');
+		}
+		if (empty($fields)) {
+			//Check if non-existent API, or simply empty API
+			$community = $this->CollibraAPI->findTypeByName('community', $hostname, ['full' => true]);
+			if (empty($community->vocabularyReferences->vocabularyReference)) {
+				return $this->redirect(['action' => 'host', 'hostname' => $hostname]);
+			}
+			$found = false;
+			foreach ($community->vocabularyReferences->vocabularyReference as $endpoint) {
+				if ($endpoint->name == $basePath) {
+					$found = true;
+					break;
+				}
+			}
+			if (!$found) {
+				return $this->redirect(['action' => 'host', 'hostname' => $hostname]);
+			}
+		}
+		$containsFieldset = false;
+		foreach ($fields as $field) {
+			if (!empty($field->descendantFields)) {
+				$containsFieldset = true;
+				break;
+			}
+		}
+		$apiObject = $this->CollibraAPI->getApiObject($hostname, $basePath);
+		$request = $this->CollibraAPI->getRequestDetails($requestId);
+		$requestedAssetIds = [];
+		foreach ($request->requestedDataAssets as $asset) {
+			array_push($requestedAssetIds, $asset->reqDataId);
+		}
+		$this->set(compact('hostname', 'basePath', 'fields', 'apiObject', 'request', 'requestedAssetIds', 'containsFieldset'));
+	}
+
 	protected function _autoCheckout($hostname, $basePath, $fields) {
 		$queue = $this->Session->read('queue');
 		foreach ($fields as $field) {
