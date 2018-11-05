@@ -89,7 +89,7 @@ class ApisController extends AppController {
 		}
 		$fields = $this->CollibraAPI->getApiFields($hostname, $basePath, true);
 		if (empty($fields) && !isset($this->request->query['upper'])) {
-			return $this->redirect($hostname.'/'.implode('/', $args).'?upper=1');
+			return $this->redirect($requestId.'/'.$hostname.'/'.implode('/', $args).'?upper=1');
 		}
 		if (empty($fields)) {
 			//Check if non-existent API, or simply empty API
