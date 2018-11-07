@@ -55,6 +55,7 @@ class ApisController extends AppController {
 				}
 			}
 			if (!$found) {
+				$this->Flash->error('We couldn\'t find that API in our database.');
 				return $this->redirect(['action' => 'host', 'hostname' => $hostname]);
 			}
 		}
@@ -105,6 +106,7 @@ class ApisController extends AppController {
 				}
 			}
 			if (!$found) {
+				$this->Flash->error('We couldn\'t find that API in our database.');
 				return $this->redirect(['action' => 'host', 'hostname' => $hostname]);
 			}
 		}
