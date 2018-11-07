@@ -51,7 +51,8 @@ if (!function_exists('denv')) {
 			'changeDSRRelations' => '987d74a5-1968-4177-90ce-41d9ebac3548',
 			'changeAttributes' => '7ee55a00-a355-4066-a65c-f4df27184646',
 			'createDSRDraft' => 'ecdb22aa-f091-42b8-9b63-4303e82ee7cf',
-			'createRelationsAsync' => 'c1934dda-c1c8-4ad2-8e53-18303fb06545'
+			'createRelationsAsync' => 'c1934dda-c1c8-4ad2-8e53-18303fb06545',
+			'resetUserEmails' => '576ed9a6-bd40-4df6-b11e-e28cdaa8cefe'
 		],
 		'requiredTermsString' => 'requiredTerms',
 		'additionalTermsString' => 'additionalTerms',
