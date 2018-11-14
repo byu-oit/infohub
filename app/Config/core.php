@@ -112,7 +112,8 @@ if (!function_exists('denv')) {
 			'stewardName' => '4331ec09-88a2-48e6-b096-9ece6648aff3',
 			'notes' => '00000000-0000-0000-0000-000000003116',
 			'inclusionScenario' => '00000000-0000-0000-0001-000500000026',
-			'applicationIdentity' => '0a607e95-4e85-4b86-beac-e2b74cd9e89a'
+			'applicationIdentity' => '0a607e95-4e85-4b86-beac-e2b74cd9e89a',
+			'apiStoreLink' => '84895173-c033-47df-af56-3ae38a4b4081'
 		],
 		'status' => [
 			'testing' => '4eb2eaf1-faa5-4e89-9129-3203fc5eafa4',

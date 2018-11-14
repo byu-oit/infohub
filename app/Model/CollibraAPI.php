@@ -1235,11 +1235,20 @@ class CollibraAPI extends Model {
 		}
 		//Create API object
 		if ($createdVocabulary) {
-			$apiResult = $this->addTermstoVocabulary($vocabularyId, Configure::read('Collibra.type.api'), ["{$swagger['basePath']}/{$swagger['version']}"]);
+			$apiResult = $this->addTermsToVocabulary($vocabularyId, Configure::read('Collibra.type.api'), ["{$swagger['basePath']}/{$swagger['version']}"]);
 			if (empty($apiResult) || !$apiResult->isOk()) {
 				$this->errors[] = "Error creating an object representing \"{$swagger['basePath']}/{$swagger['version']}\"";
 				if ($createdVocabulary) $this->deleteVocabulary($vocabularyId);
 				return false;
+			}
+			$apiResult = json_decode($apiResult);
+			$BYUAPI = ClassRegistry::init('BYUAPI');
+			$linksResponse = $BYUAPI->deepLinks($swagger['basePath'].'/'.$swagger['version']);
+			if (!empty($linksResponse)) {
+				$postData['label'] = Configure::read('Collibra.attribute.apiStoreLink');
+				$postData['value'] = '<a class="link" href="'.$linksResponse['link'].'" target="_blank">'.$linksResponse['link'].'</a>';
+				$postString = http_build_query($postData);
+				$resp = $this->post('term/'.$apiResult->termReference[0]->resourceId.'/attributes', $postString);
 			}
 		}
 		//Add fields
