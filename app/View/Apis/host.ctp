@@ -7,7 +7,16 @@
 $(document).ready(function() {
 	$("#browse-tab").addClass('active')
 
-	var apis = [<?php foreach ($apis as $api) { echo '"'.$api->name.'",'; } ?> ""];
+	var apis = [
+		<?php foreach ($apis as $api) {
+			if (
+				$api->statusId != Configure::read('Collibra.status.testing') &&
+				$api->statusId != Configure::read('Collibra.status.deprecated') &&
+				$api->statusId != Configure::read('Collibra.status.retired')
+			) {
+				echo '"'.$api->name.'",';
+			}
+		} ?> ""];
 	$('#apiFilter').on('input', function() {
 		var filterValue = $(this).val().toLowerCase();
 		for (var i = 0; i < apis.length; i++) {
