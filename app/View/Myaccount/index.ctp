@@ -340,7 +340,7 @@
 							}
 							foreach ($req->necessaryTables as $table) {
 								$tableNameOnly = substr($table->tableName, strpos($table->tableName, '>') + 2);
-								echo '<li><a href="/databases/viewRequested/'.$req->id.'/'.$table->tableVocabName.'/'.$tableNameOnly.'" title="View which elements were requested from this table">'.$table->tableName.'</a></li>';
+								echo '<li><a href="/databases/viewRequested/'.$req->id.'/'.$table->tableCommName.'/'.$table->tableVocabName.'/'.$tableNameOnly.'" title="View which elements were requested from this table">'.$table->tableCommName.' > '.$table->tableName.'</a></li>';
 							} ?>
 						</ul>
 					</div>

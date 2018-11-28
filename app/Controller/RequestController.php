@@ -272,6 +272,7 @@ class RequestController extends AppController {
 				$arrSamlFieldIds = empty($this->request->data['si']) ? null : $this->request->data['si'];
 				$apiHost = empty($this->request->data['apiHost']) ? null : $this->request->data['apiHost'];
 				$apiPath = empty($this->request->data['apiPath']) ? null : $this->request->data['apiPath'];
+				$databaseName = empty($this->request->data['databaseName']) ? null : $this->request->data['databaseName'];
 				$schemaName = empty($this->request->data['schemaName']) ? null : $this->request->data['schemaName'];
 				$tableName = empty($this->request->data['tableName']) ? null : $this->request->data['tableName'];
 				$responseName = empty($this->request->data['responseName']) ? null : $this->request->data['responseName'];
@@ -290,7 +291,7 @@ class RequestController extends AppController {
 					foreach ($arrColumnIds as $index => $columnId) {
 						if (empty($arrQueue['dbColumns'][$columnId])) {
 							$newTermsAdded++;
-							$arrQueue['dbColumns'][$columnId] = ['name' => end((explode(" > ", $arrColumns[$index]))), 'fullName' => $arrColumns[$index], 'schemaName' => $schemaName, 'tableName' => $tableName];
+							$arrQueue['dbColumns'][$columnId] = ['name' => end((explode(" > ", $arrColumns[$index]))), 'fullName' => $arrColumns[$index], 'databaseName' => $databaseName, 'schemaName' => $schemaName, 'tableName' => $tableName];
 						}
 					}
 				}
@@ -612,7 +613,7 @@ class RequestController extends AppController {
 			}
 			if (isset($this->request->data['arrDbColumns'])) {
 				foreach ($this->request->data['arrDbColumns'] as $column) {
-					$addedTables[$column['tableName']] = [];
+					$addedTables[$column['databaseName'].' > '.$column['tableName']] = [];
 					$additionString .= "<br/>{$arrQueue['dbColumns'][$column['id']]['fullName']}";
 					unset($arrQueue['dbColumns'][$column['id']]);
 				}
@@ -671,7 +672,7 @@ class RequestController extends AppController {
 				}
 			}
 			foreach ($request->necessaryTables as $alreadyListed) {
-				unset($addedTables[$alreadyListed->tableName]);
+				unset($addedTables[$alreadyList->tableCommName.' > '.$alreadyListed->tableName]);
 			}
 			foreach ($request->necessarySamlResponses as $alreadyListed) {
 				unset($addedSamlResponses[$alreadyListed->responseName]);
@@ -721,10 +722,12 @@ class RequestController extends AppController {
 				}
 			}
 			foreach ($addedTables as $tableName => $_) {
-				$table = $this->CollibraAPI->getTableObject($tableName);
+				$databaseName = substr($tableName, 0, strpos($tableName, '>') - 1);
+				$schemaAndTableNameOnly = substr($tableName, strpos($tableName, '>') + 2);
+				$table = $this->CollibraAPI->getTableObject($databaseName, $schemaAndTableNameOnly);
 				array_push($relationsPostData['tables'], $table->id);
 
-				$columns = $this->CollibraAPI->getTableColumns($tableName);
+				$columns = $this->CollibraAPI->getTableColumns($databaseName, $schemaAndTableNameOnly);
 				foreach ($columns as $column) {
 					$requestedColumn = false;
 					if (isset($this->request->data['arrDbColumns'])) {
@@ -1081,7 +1084,7 @@ class RequestController extends AppController {
 				$thisTableDeletedColumnIds = [];
 				$thisTableAllColumnIds = [];
 				$tableStillRequested = false;
-				$table->columns = $this->CollibraAPI->getTableColumns($table->tableName);
+				$table->columns = $this->CollibraAPI->getTableColumns($table->tableCommName, $table->tableName);
 
 				foreach ($table->columns as $column) {
 					array_push($thisTableAllColumnIds, $column->columnId);
@@ -1653,7 +1656,7 @@ class RequestController extends AppController {
 		}
 		foreach ($arrQueue['dbColumns'] as $id => $column) {
 			if (!empty($column['tableName'])) {
-				$tables[$column['tableName']] = [];
+				$tables[$column['databaseName'].' > '.$column['tableName']] = [];
 			}
 		}
 		foreach ($arrQueue['samlFields'] as $id => $field) {
@@ -1696,7 +1699,9 @@ class RequestController extends AppController {
 			}
 		}
 		foreach ($tables as $tableName => $_) {
-			$tableColumns = $this->CollibraAPI->getTableColumns($tableName);
+			$databaseName = substr($tableName, 0, strpos($tableName, '>') - 1);
+			$schemaAndTableNameOnly = substr($tableName, strpos($tableName, '>') + 2);
+			$tableColumns = $this->CollibraAPI->getTableColumns($databaseName, $schemaAndTableNameOnly);
 			foreach ($tableColumns as $column) {
 				if (empty($column->businessTerm[0]->termId)) {
 					if (array_key_exists($column->columnId, $arrQueue['dbColumns'])) {
@@ -1907,7 +1912,9 @@ class RequestController extends AppController {
 			}
 		}
 		foreach ($tables as $tableName => $_) {
-			$tableObject = $this->CollibraAPI->getTableObject($tableName);
+			$databaseName = substr($tableName, 0, strpos($tableName, '>') - 1);
+			$schemaAndTableNameOnly = substr($tableName, strpos($tableName, '>') + 2);
+			$tableObject = $this->CollibraAPI->getTableObject($databaseName, $schemaAndTableNameOnly);
 			array_push($postData['tables'], $tableObject->id);
 		}
 		foreach ($samlResponses as $responseName => $_) {

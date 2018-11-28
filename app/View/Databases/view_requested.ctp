@@ -26,7 +26,7 @@
 </style>
 <div id="apiBody" class="innerLower">
 	<div id="searchResults">
-		<h1 class="headerTab"><a href="/databases/schema/<?= $schemaName ?>"><?= $schemaName ?></a> > <?= $tableName ?></h1>
+		<h1 class="headerTab"><a href="/databases/database/<?= $databaseName ?>"><?= $databaseName ?></a> > <a href="/databases/schema/<?= $databaseName.'/'.$schemaName ?>"><?= $schemaName ?></a> > <?= $tableName ?></h1>
 		<div class="clear" style="height:20px;"></div>
         <h2 class="headerTab">Requested in <?= $request->assetName ?></h2>
         <div class="clear"></div>

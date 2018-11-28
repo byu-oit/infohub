@@ -94,7 +94,7 @@ class BYUAPI extends Model {
 		];
 	}
 
-	public function oracleColumns($schema = null, $table = null, $db = null) {
+	public function oracleColumns($db = null, $schema = null, $table = null) {
 		$url = 'domains/infohub/infohub-utils/v1/columns';
 		if (!empty($schema)) {
 			$url .= "/{$schema}";

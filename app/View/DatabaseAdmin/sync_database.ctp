@@ -47,7 +47,7 @@
                     alert(data.message);
 
                     if (data.redirect) {
-                        window.location.href = '/databases/view/'+schema+'/'+schema+' > '+table;
+                        window.location.href = '/databases/view/'+database+'/'+schema+'/'+schema+' > '+table;
                     }
                 });
         });

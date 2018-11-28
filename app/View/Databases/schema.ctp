@@ -26,7 +26,7 @@ $(document).ready(function() {
 				var filterValue = $(this).val().toLowerCase();
 				for (var i = 0; i < tables.length; i++) {
 					if (tables[i].toLowerCase().includes(filterValue)) {
-						window.location.href = window.location.origin+'/databases/view/<?=$schema->schemaName?>/'+$('#catalogIndex-'+i).data('name');
+						window.location.href = window.location.origin+'/databases/view/<?=$schema->databaseName.'/'.$schema->schemaName?>/'+$('#catalogIndex-'+i).data('name');
 						break;
 					}
 				}
@@ -48,10 +48,9 @@ $(document).ready(function() {
 			<div class="clear"></div>
 			<div id="smLower" class="whiteBox">
 				<ul class="catalogParent">
-					<?php foreach ($recent as $tableName):
-						$schemaName = rtrim(substr($tableName, 0, strpos($tableName, '>'))); ?>
+					<?php foreach ($recent as $table): ?>
 						<li class="catalogItem">
-							<?= $this->Html->link($tableName, ['action' => 'view', $schemaName, $tableName]) ?>
+							<?= $this->Html->link($table['databaseName'].' > '.$table['tableName'], ['action' => 'view', $table['databaseName'], $table['schemaName'], $table['tableName']]) ?>
 						</li>
 					<?php endforeach ?>
 				</ul>
@@ -63,7 +62,7 @@ $(document).ready(function() {
 		<h1 class="headerTab">Filter Tables</h1>
 		<div class="clear"></div>
 		<div id="stLower" class="whiteBox">
-			<form action="#" onsubmit="document.location='/databases/view/<?=$schema->schemaName?>/'+this.searchInput.value; return false;" method="post">
+			<form action="#" onsubmit="document.location='/databases/view/<?=$schema->databaseName.'/'.$schema->schemaName?>/'+this.searchInput.value; return false;" method="post">
 				<input id="tableFilter" name="searchInput" type="text" class="inputShade" placeholder="Enter table name" maxlength="50" autocomplete="off" style="width: 490px;" />
 			</form>
 			<div class="clear"></div>
@@ -71,7 +70,7 @@ $(document).ready(function() {
 	</div>
 
 	<div id="searchMain">
-		<h2 class="headerTab"><a href="/databases/database/<?=$schema->databaseId?>?noredirect=1"><?=$schema->databaseName?></a> > <?=$schema->schemaName?></h2>
+		<h2 class="headerTab"><a href="/databases/database/<?=$schema->databaseName?>?noredirect=1"><?=$schema->databaseName?></a> > <?=$schema->schemaName?></h2>
 		<div class="clear"></div>
 		<div id="smLower" class="whiteBox">
 			<ul class="catalogParent">
@@ -82,7 +81,7 @@ $(document).ready(function() {
 						<?php $i = 0;
 						foreach ($schema->tables as $table): ?>
 							<li id="catalogIndex-<?=$i?>" class="catalogItem" data-name="<?=$table->tableName?>">
-								<?= $this->Html->link($table->tableName, ['action' => 'view', $schema->schemaName, $table->tableName]) ?>
+								<?= $this->Html->link($schema->databaseName.' > '.$table->tableName, ['action' => 'view', $schema->databaseName, $schema->schemaName, $table->tableName]) ?>
 							</li>
 						<?php $i++;
 						endforeach; ?>

@@ -3,13 +3,13 @@
 App::uses('Component', 'Controller');
 
 class DataWarehouseComponent extends Component {
-    public function syncDataWarehouse($schemaName, $tableName, $oracleColumns, $database) {
+    public function syncDataWarehouse($databaseName, $schemaName, $tableName, $oracleColumns) {
         $this->CollibraAPI = ClassRegistry::init('CollibraAPI');
-        $table = $this->CollibraAPI->getTableObject($schemaName.' > '.$tableName);
+        $table = $this->CollibraAPI->getTableObject($databaseName, $schemaName.' > '.$tableName);
 
         if (empty($oracleColumns) && !empty($table)) {
             // drop the table from Collibra
-            $table->columns = $this->CollibraAPI->getTableColumns($schemaName.' > '.$tableName);
+            $table->columns = $this->CollibraAPI->getTableColumns($databaseName, $schemaName.' > '.$tableName);
             $toDeleteIds = [];
             foreach ($table->columns as $column) {
                 array_push($toDeleteIds, $column->columnId);
@@ -28,7 +28,7 @@ class DataWarehouseComponent extends Component {
             }
         } else if (!empty($oracleColumns) && empty($table)) {
             // add the table to Collibra
-            $postData = ['database' => $database, 'schemaName' => $schemaName, 'tableName' => $schemaName.' > '.$tableName, 'columns' => $oracleColumns, 'newTable' => 'true'];
+            $postData = ['database' => $databaseName, 'schemaName' => $schemaName, 'tableName' => $schemaName.' > '.$tableName, 'columns' => $oracleColumns, 'newTable' => 'true'];
 
             $postString = http_build_query($postData);
             $postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
@@ -45,7 +45,7 @@ class DataWarehouseComponent extends Component {
             }
         } else if (!empty($oracleColumns) && !empty($table)) {
             // run through the columns and make sure everything matches up
-            $table->columns = $this->CollibraAPI->getTableColumns($schemaName.' > '.$tableName);
+            $table->columns = $this->CollibraAPI->getTableColumns($databaseName, $schemaName.' > '.$tableName);
             $i = 0;
             $j = 0;
             $toDeleteIds = [];

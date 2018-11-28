@@ -607,7 +607,33 @@ class CollibraAPI extends Model {
 		return $terms;
 	}
 
-	public function getSchemaTables($schemaName) {
+	public function getDatabaseSchemas($databaseName) {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'name']]],
+			'Resources' => [
+				'Vocabulary' => [
+					'Name' => ['name' => 'name'],
+					'Meta' => ['name' => 'isMeta'],
+					'Community' => [
+						'Name' => ['name' => 'databaseName']],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+								'name' => 'databaseName',
+								'operator' => 'EQUALS',
+								'value' => $databaseName]],
+						[
+							'Field' => [
+								'name' => 'isMeta',
+								'operator' => 'EQUALS',
+								'value' => 'false']]]]]]]];
+
+		$results = $this->fullDataTable($tableConfig);
+		return $results;
+	}
+
+	public function getSchemaTables($databaseName, $schemaName) {
 		$tableConfig = ['TableViewConfig' => [
 			'Columns' => [
 				['Column' => ['fieldName' => 'schemaName']],
@@ -647,6 +673,11 @@ class CollibraAPI extends Model {
 								'value' => $schemaName]],
 						[
 							'Field' => [
+								'name' => 'databaseName',
+								'operator' => 'EQUALS',
+								'value' => $databaseName]],
+						[
+							'Field' => [
 								'name' => 'dataWarehouseId',
 								'operator' => 'EQUALS',
 								'value' => Configure::read('Collibra.community.dataWarehouse')]]]]]]]];
@@ -655,7 +686,7 @@ class CollibraAPI extends Model {
 		return $results[0];
 	}
 
-	public function getTableObject($tableName) {
+	public function getTableObject($databaseName, $tableName) {
 		$tableConfig = ['TableViewConfig' => [
 			'Columns' => [
 				['Column' => ['fieldName' => 'id']],
@@ -687,7 +718,12 @@ class CollibraAPI extends Model {
 							'Field' => [
 								'name' => 'name',
 								'operator' => 'EQUALS',
-								'value' => $tableName]]]]]]]];
+								'value' => $tableName]],
+						[
+							'Field' => [
+								'name' => 'databaseName',
+								'operator' => 'EQUALS',
+								'value' => $databaseName]]]]]]]];
 
 		$results = $this->fullDataTable($tableConfig);
 		if (isset($results[0])) {
@@ -696,7 +732,7 @@ class CollibraAPI extends Model {
 		return [];
 	}
 
-	public function getTableColumns($tableName) {
+	public function getTableColumns($databaseName, $tableName) {
 		$tableConfig = ['TableViewConfig' => [
 			'Columns' => [
 				['Column' => ['fieldName' => 'columnName']],
@@ -720,6 +756,9 @@ class CollibraAPI extends Model {
 					'StringAttribute' => [[
 						'Value' => ['name' => 'columnDescription'],
 						'labelId' => Configure::read('Collibra.attribute.description')]],
+					'Vocabulary' => [
+						'Community' => [
+							'Name' => ['name' => 'databaseName']]],
 					'Relation' => [[
 						'typeId' => Configure::read('Collibra.relationship.termToDataAsset'),
 						'type' => 'TARGET',
@@ -749,7 +788,12 @@ class CollibraAPI extends Model {
 							'Field' => [
 								'name' => 'tableName',
 								'operator' => 'EQUALS',
-								'value' => $tableName]]]]]]]];
+								'value' => $tableName]],
+						[
+							'Field' => [
+								'name' => 'databaseName',
+								'operator' => 'EQUALS',
+								'value' => $databaseName]]]]]]]];
 
 		$results = $this->fullDataTable($tableConfig);
 		usort($results, function($a, $b) {

@@ -373,7 +373,7 @@
 						$tableNameOnly = substr($table->tableName, strpos($table->tableName, '>') + 2);
 						echo '<li><a href="/databases/viewRequested/';
 						echo isset($asset->parentId) ? $asset->parentId : $asset->id;
-						echo '/'.$table->tableVocabName.'/'.$tableNameOnly.'" title="View which elements were requested from this table">'.$table->tableName.'</a></li>';
+						echo '/'.$table->tableCommName.'/'.$table->tableVocabName.'/'.$tableNameOnly.'" title="View which elements were requested from this table">'.$table->tableCommName.' > '.$table->tableName.'</a></li>';
 					} ?>
 				</ul>
 			</div>

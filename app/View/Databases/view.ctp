@@ -26,21 +26,21 @@
 </style>
 <div id="apiBody" class="innerLower">
 	<div id="searchResults">
-		<h1 class="headerTab"><a href="/databases/schema/<?= $schemaName ?>"><?= $schemaName ?></a> > <?= $tableNameOnly ?></h1>
+		<h1 class="headerTab"><a href="/databases/database/<?= $databaseName ?>"><?= $databaseName ?></a> > <a href="/databases/schema/<?= $databaseName.'/'.$schemaName ?>"><?= $schemaName ?></a> > <?= $tableNameOnly ?></h1>
 		<div class="clear"></div>
 		<div class="btnLinks">
 			<?php if ($isOITEmployee): ?>
 				<div style="float: right">
 					<?= $this->Html->link(
 						'Update Unlinked Columns',
-						array_merge(['controller' => 'database_admin', 'action' => 'update', $schemaName, $tableName]),
+						array_merge(['controller' => 'database_admin', 'action' => 'update', $databaseName, $schemaName, $tableName]),
 						['class' => 'inputButton dbTable', 'id' => 'admin']) ?>
 				</div>
 			<?php endif ?>
 		</div>
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
-				<input type="button" data-schemaName="<?= h($schemaName) ?>" data-tableName="<?= h($tableName) ?>" api="false" onclick="addToQueueDBTable(this, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
+				<input type="button" data-databaseName="<?= h($databaseName) ?>" data-schemaName="<?= h($schemaName) ?>" data-tableName="<?= h($tableName) ?>" api="false" onclick="addToQueueDBTable(this, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
 				<table class="table-columns checkBoxes view">
 					<tr class="header">
 						<th><input type="checkbox" onclick="toggleAllCheckboxes(this)" name="toggleCheckboxes"/></th>
@@ -127,7 +127,7 @@
 						</tr>
 					<?php endforeach ?>
 				</table>
-				<input type="button" data-schemaName="<?= h($schemaName) ?>" data-tableName="<?= h($tableName) ?>" api="false" onclick="addToQueueDBTable(this, true)" class="requestAccess grow mainRequestBtn" value="Add To Request">
+				<input type="button" data-databaseName="<?= h($databaseName) ?>" data-schemaName="<?= h($schemaName) ?>" data-tableName="<?= h($tableName) ?>" api="false" onclick="addToQueueDBTable(this, true)" class="requestAccess grow mainRequestBtn" value="Add To Request">
 			</div>
 		</div>
 	</div>

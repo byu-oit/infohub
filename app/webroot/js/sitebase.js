@@ -220,6 +220,7 @@ function removeFromRequestQueue(id){
 					var vocabId = elem.data('vocabID');
 					var apiHost = elem.attr('api-host');
 					var apiPath = elem.attr('api-path');
+					var databaseName = elem.attr('database-name');
 					var schemaName = elem.attr('schema-name');
 					var tableName = elem.attr('table-name');
 					var responseName = elem.attr('response-name');
@@ -243,10 +244,11 @@ function removeFromRequestQueue(id){
 				case 'column':
 					var columnName = elem.data('name');
 					var columnId = elem.data('title');
+					var databaseName = elem.attr('database-name');
 					var schemaName = elem.attr('schema-name');
 					var tableName = elem.attr('table-name');
 
-					var undoData = {emptyApi:'false',c:[columnName],ci:[columnId],schemaName:schemaName,tableName:tableName};
+					var undoData = {emptyApi:'false',c:[columnName],ci:[columnId],databaseName:databaseName,schemaName:schemaName,tableName:tableName};
 					break;
 				case 'samlField':
 					var fieldName = elem.data('name');
@@ -452,6 +454,7 @@ function addToQueueDBTable(elem, displayCart) {
 
 	var arrColumns = [];
 	var arrColumnIds = [];
+	var databaseName = $(elem).data('databasename');
 	var schemaName = $(elem).data('schemaname');
 	var tableName = $(elem).data('tablename');
 
@@ -462,7 +465,7 @@ function addToQueueDBTable(elem, displayCart) {
 		}
 	});
 	if (arrColumns.length < 500) {
-		$.post("/request/addToQueue", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, schemaName:schemaName, tableName:tableName})
+		$.post("/request/addToQueue", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, databaseName:databaseName, schemaName:schemaName, tableName:tableName})
 			.done(function(data) {
 				clearInterval(loadingTextInterval);
 				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
@@ -474,7 +477,7 @@ function addToQueueDBTable(elem, displayCart) {
 		});
 	} else {
 		largeAddProgressSetUp(arrColumns.length);
-		largeAddToQueueDBTable(arrColumns, arrColumnIds, schemaName, tableName)
+		largeAddToQueueDBTable(arrColumns, arrColumnIds, databaseName, schemaName, tableName)
 			.then(function(data) {
 				clearInterval(loadingTextInterval);
 				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
@@ -486,21 +489,21 @@ function addToQueueDBTable(elem, displayCart) {
 			});
 	}
 }
-function largeAddToQueueDBTable(arrColumns, arrColumnIds, schemaName, tableName, columnsStride = 150) {
+function largeAddToQueueDBTable(arrColumns, arrColumnIds, databaseName, schemaName, tableName, columnsStride = 150) {
 	if (arrColumns.length > columnsStride) {
 		return new Promise(function(resolve) {
-			var request = $.post("/request/addToQueue", {emptyApi:'false', c:arrColumns.slice(0, columnsStride), ci:arrColumnIds.slice(0, columnsStride), schemaName:schemaName, tableName:tableName})
+			var request = $.post("/request/addToQueue", {emptyApi:'false', c:arrColumns.slice(0, columnsStride), ci:arrColumnIds.slice(0, columnsStride), databaseName:databaseName, schemaName:schemaName, tableName:tableName})
 				.then(() => {
 					largeAddProgressIncrement();
 				});
-			var recur = largeAddToQueueDBTable(arrColumns.slice(columnsStride), arrColumnIds.slice(columnsStride), schemaName, tableName, termsStride, columnsStride);
+			var recur = largeAddToQueueDBTable(arrColumns.slice(columnsStride), arrColumnIds.slice(columnsStride), databaseName, schemaName, tableName, termsStride, columnsStride);
 
 			Promise.all([request, recur]).then(() => resolve());
 			});
 	}
 	else {
 		return new Promise(function(resolve) {
-			$.post("/request/addToQueue", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, schemaName:schemaName, tableName:tableName})
+			$.post("/request/addToQueue", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, databaseName:databaseName, schemaName:schemaName, tableName:tableName})
 				.then(() => {
 					largeAddProgressIncrement();
 					resolve();

@@ -9,10 +9,9 @@ class DatabaseAdminController extends AppController {
 		$this->Auth->deny();
 	}
 
-	public function update($schemaName, $tableName) {
+	public function update($databaseName, $schemaName, $tableName) {
 		$this->autoRender = false;
-
-		$this->set(compact('schemaName', 'tableName'));
+		$this->set(compact('databaseName', 'schemaName', 'tableName'));
 
 		if ($this->request->is('post')) {
 			$success = $this->CollibraAPI->updateTableBusinessTermLinks($this->request->data('Table.elements'));
@@ -24,7 +23,7 @@ class DatabaseAdminController extends AppController {
 			return json_encode(['success' => '0']);
 		}
 
-		$columns = $this->CollibraAPI->getTableColumns($tableName);
+		$columns = $this->CollibraAPI->getTableColumns($databaseName, $tableName);
 		if (empty($columns)) {
 			return $this->redirect(['controller' => 'databases', 'action' => 'schema', $schemaName]);
 		}
@@ -33,6 +32,7 @@ class DatabaseAdminController extends AppController {
 
 		$this->request->data = [
 			'Table' => [
+				'databaseName' => $databaseName,
 				'schemaName' => $schemaName,
 				'tableName' => $tableName,
 				'elements' => []]];
@@ -51,11 +51,11 @@ class DatabaseAdminController extends AppController {
 		if (!$this->request->is('post')) {
 			$this->render();
 		} else {
+			$databaseName = $this->request->data['database'];
 			$schemaName = $this->request->data['schema'];
 			$tableName = $this->request->data['table'];
-			$database = $this->request->data['database'];
-			$oracleColumns = $this->BYUAPI->oracleColumns($schemaName, $tableName, $database);
-			return json_encode($this->DataWarehouse->syncDataWarehouse($schemaName, $tableName, $oracleColumns, $database));
+			$oracleColumns = $this->BYUAPI->oracleColumns($databaseName, $schemaName, $tableName);
+			return json_encode($this->DataWarehouse->syncDataWarehouse($databaseName, $schemaName, $tableName, $oracleColumns));
 		}
 	}
 }
