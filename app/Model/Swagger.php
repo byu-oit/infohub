@@ -25,22 +25,6 @@ class Swagger extends AppModel {
 			return false;
 		}
 
-		$this->elements = [];
-		foreach ($paths as $pathName => $path) {
-			foreach ($path as $method => $operation) {
-				$response = empty($operation['responses'][200]['$ref']) ? $operation['responses'][200] : $this->_getRef($operation['responses'][200]['$ref']);
-				if (empty($response['schema'])) {
-					continue;
-				}
-				$schema = $response['schema'];
-
-				if (!empty($schema['$ref'])) {
-					$schema = $this->_getRef($schema['$ref']);
-				}
-				$this->_addElements([], ['schema' => $schema]);
-			}
-		}
-
 		$host = $this->_getRef('/host');
 		if (preg_match('/:443$/', $host)) {
 			$host = substr($host, 0, strlen($host) - 4);
@@ -54,6 +38,38 @@ class Swagger extends AppModel {
 			$basePath = substr($basePath, 0, -strlen(end($versionMatches[0])));
 		}
 		$version = $this->_getRef('/info/version');
+
+		$this->elements = [];
+		if (strpos($basePath, 'byuapi') !== false) {
+			$rootPath = isset($paths['/']) ? '/' : '/*';
+			foreach ($paths[$rootPath] as $method => $operation) {
+				$response = empty($operation['responses'][200]['$ref']) ? $operation['responses'][200] : $this->_getRef($operation['responses'][200]['$ref']);
+				if (empty($response['schema'])) {
+					continue;
+				}
+				$schema = $response['schema'];
+
+				if (!empty($schema['$ref'])) {
+					$schema = $this->_getRef($schema['$ref']);
+				}
+				$this->_addElements([], ['schema' => $schema]);
+			}
+		} else {
+			foreach ($paths as $pathName => $path) {
+				foreach ($path as $method => $operation) {
+					$response = empty($operation['responses'][200]['$ref']) ? $operation['responses'][200] : $this->_getRef($operation['responses'][200]['$ref']);
+					if (empty($response['schema'])) {
+						continue;
+					}
+					$schema = $response['schema'];
+
+					if (!empty($schema['$ref'])) {
+						$schema = $this->_getRef($schema['$ref']);
+					}
+					$this->_addElements([], ['schema' => $schema]);
+				}
+			}
+		}
 
 		if (empty($this->elements)) {
 			$this->parseErrors[] = "No fields found in Swagger";
