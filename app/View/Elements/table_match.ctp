@@ -84,8 +84,8 @@
 			.each(function() {
 				var $this = $(this);
 				var full = $this.val();
-				var period = full.lastIndexOf('.');
-				var label = full.substring(period + 1);
+				var greaterThan = full.lastIndexOf('>');
+				var label = full.substring(greaterThan + 2);
 				$this.data('label', label);
 
 				$this.closest('tr').find('.term-wrapper').removeClass('display-search').addClass('display-loading');
