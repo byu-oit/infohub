@@ -42,7 +42,7 @@
 		</div>
 	</div>
 
-	<?php if ($isOITEmployee): ?>
+	<?php if ($matchAuthorized): ?>
 		<div style="padding-top: 35px;">
 			<div style="float: right">
 				<?= $this->Html->link(

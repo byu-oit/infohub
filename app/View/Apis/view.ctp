@@ -86,7 +86,7 @@
 		<div class="btnLinks">
 			<a href="https://developer.byu.edu/" id="doc_link" class="inputButton" target="_blank">Read API documentation</a>
 			<a href="https://api.byu.edu/store/" id="store_link" class="inputButton" target="_blank">View this API in the store</a>
-			<?php if ($isOITEmployee): ?>
+			<?php if ($matchAuthorized): ?>
 				<div style="float: right">
 					<?= $this->Html->link(
 						'Update Unlinked Fields',

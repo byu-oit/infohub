@@ -29,7 +29,7 @@
 		<h1 class="headerTab"><a href="/databases/database/<?= $databaseName ?>"><?= $databaseName ?></a> > <a href="/databases/schema/<?= $databaseName.'/'.$schemaName ?>"><?= $schemaName ?></a> > <?= $tableNameOnly ?></h1>
 		<div class="clear"></div>
 		<div class="btnLinks">
-			<?php if ($isOITEmployee): ?>
+			<?php if ($matchAuthorized): ?>
 				<div style="float: right">
 					<?= $this->Html->link(
 						'Update Unlinked Columns',

@@ -34,8 +34,8 @@ class DatabasesController extends AppController {
 			return $this->redirect(['action' => 'database', 'dbId' => $databases->subCommunityReferences->communityReference[0]->resourceId]);
 		}
 
-		$isOITEmployee = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04');
-		$this->set('isOITEmployee', $isOITEmployee);
+		$matchAuthorized = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04', 'infohub-match');
+		$this->set('matchAuthorized', $matchAuthorized);
 		$this->set('databases', $databases);
 	}
 
@@ -52,8 +52,8 @@ class DatabasesController extends AppController {
 		usort($schemas, function ($a, $b) {
 			return strcmp($a->name, $b->name);
 		});
-		$isOITEmployee = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04');
-		$this->set(compact('isOITEmployee', 'databaseName', 'schemas'));
+		$matchAuthorized = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04', 'infohub-match');
+		$this->set(compact('matchAuthorized', 'databaseName', 'schemas'));
 	}
 
 	public function schema($databaseName, $schemaName) {
@@ -74,8 +74,8 @@ class DatabasesController extends AppController {
 		$columns = $this->CollibraAPI->getTableColumns($databaseName, $tableName);
 
 		$tableNameOnly = substr($tableName, strpos($tableName, '>') + 2);
-		$isOITEmployee = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04');
-		$this->set(compact('databaseName', 'schemaName', 'tableName', 'columns', 'tableNameOnly', 'isOITEmployee'));
+		$matchAuthorized = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04', 'infohub-match');
+		$this->set(compact('databaseName', 'schemaName', 'tableName', 'columns', 'tableNameOnly', 'matchAuthorized'));
 
 		$arrRecent = $this->Session->check('recentTables') ? $this->Session->read('recentTables') : [];
 		array_unshift($arrRecent, ['databaseName' => $databaseName, 'schemaName' => $schemaName, 'tableName' => $tableName]);

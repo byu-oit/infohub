@@ -67,8 +67,8 @@ class ApisController extends AppController {
 			}
 		}
 		$apiObject = $this->CollibraAPI->getApiObject($hostname, $basePath);
-		$isOITEmployee = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04');
-		$this->set(compact('hostname', 'basePath', 'fields', 'apiObject', 'isOITEmployee', 'containsFieldset'));
+		$matchAuthorized = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04', 'infohub-match');
+		$this->set(compact('hostname', 'basePath', 'fields', 'apiObject', 'matchAuthorized', 'containsFieldset'));
 
 		$arrRecent = $this->Session->check('recentAPIs') ? $this->Session->read('recentAPIs') : [];
 		array_unshift($arrRecent, ['host' => $hostname, 'basePath' => $basePath]);
