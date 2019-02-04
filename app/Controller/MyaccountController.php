@@ -12,7 +12,7 @@ class MyaccountController extends AppController {
 	}
 
 	private static function sortRequests($a, $b){
-		return strcmp($a->createdOn, $b->createdOn);
+		return strcmp($b->createdOn, $a->createdOn);
 	}
 
 	private static function sortAttributes($a, $b){
@@ -94,15 +94,15 @@ class MyaccountController extends AppController {
 			// add to request data array
 			array_push($arrRequests, $request);
 		}
-		// sort results by date added
-		usort($arrRequests, 'self::sortRequests');
-
 		// Temporary fix for a mysterious bug in Collibra that sometimes
 		// returns two copies of the most recently created DSR
 		$numRequests = count($arrRequests);
 		if ($numRequests > 1 && $arrRequests[$numRequests - 1]->id == $arrRequests[$numRequests - 2]->id) {
 			array_pop($arrRequests);
 		}
+
+		// sort results by date added
+		usort($arrRequests, 'self::sortRequests');
 
 		$sortedRequests = [
 			'inProgress' => [],
