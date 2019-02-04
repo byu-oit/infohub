@@ -589,6 +589,7 @@ class RequestController extends AppController {
 			$request = $this->CollibraAPI->getRequestDetails($this->request->data['dsrId']);
 
 			$addedApis = [];
+			$addedByuapis = [];
 			$addedTables = [];
 			$addedSamlResponses = [];
 			$additionString = "<br/><br/>Addition, ".date('Y-m-d').":";
@@ -606,8 +607,16 @@ class RequestController extends AppController {
 
 			if (isset($this->request->data['arrApiFields'])) {
 				foreach ($this->request->data['arrApiFields'] as $field) {
-					$addedApis[$field['apiHost']][$field['apiPath']] = [];
 					$additionString .= "<br/>".$arrQueue['apiFields'][$field['id']]['fullName'].", from API: ".$field['apiPath'];
+					if (strpos($field['apiPath'], 'byuapi') !== false) {
+						if (strpos($field['fullName'], '.') === false) {		// is fieldset
+		   					 $addedByuapis[$field['apiHost']][$field['apiPath']][$field['fullName']] = [];
+		   				 } else {												// is field
+		   					 $addedByuapis[$field['apiHost']][$field['apiPath']][substr($field['fullName'],0,strpos($field['fullName'],'.'))] = [];
+		   				 }
+					} else {
+						$addedApis[$field['apiHost']][$field['apiPath']] = [];
+					}
 					unset($arrQueue['apiFields'][$field['id']]);
 				}
 			}
@@ -665,14 +674,28 @@ class RequestController extends AppController {
 		 		}
 		 	}
 
-			foreach ($request->necessaryApis as $alreadyListed) {
-				unset($addedApis[$alreadyListed->apiCommName][substr($alreadyListed->apiName, 1)]);
-				if (empty($addedApis[$alreadyListed->apiCommName])) {
-					unset($addedApis[$alreadyListed->apiCommName]);
+			foreach ($request->requestedDataAssets as $alreadyListed) {
+				if (strpos($alreadyListed->reqDataVocabName, 'byuapi') !== false) {
+					$fieldset = substr($alreadyListed->reqDataSignifier,0,strpos($alreadyListed->reqDataSignifier,'.'));
+					if (array_key_exists($fieldset, $addedByuapis[$alreadyListed->reqDataCommName][substr($alreadyListed->reqDataVocabName, 1)])) {
+						unset($addedByuapis[$alreadyListed->reqDataCommName][substr($alreadyListed->reqDataVocabName, 1)][$fieldset]);
+					}
+					if (empty($addedByuapis[$alreadyListed->reqDataCommName][substr($alreadyListed->reqDataVocabName, 1)])) {
+						unset($addedByuapis[$alreadyListed->reqDataCommName][substr($alreadyListed->reqDataVocabName, 1)]);
+					}
+					if (empty($addedByuapis[$alreadyListed->reqDataCommName])) {
+						unset($addedByuapis[$alreadyListed->reqDataCommName]);
+					}
+				}
+				if (empty($addedApis[$alreadyListed->reqDataCommName][substr($alreadyListed->reqDataVocabName, 1)])) {
+					unset($addedApis[$alreadyListed->reqDataCommName][substr($alreadyListed->reqDataVocabName, 1)]);
+				}
+				if (empty($addedApis[$alreadyListed->reqDataCommName])) {
+					unset($addedApis[$alreadyListed->reqDataCommName]);
 				}
 			}
 			foreach ($request->necessaryTables as $alreadyListed) {
-				unset($addedTables[$alreadyList->tableCommName.' > '.$alreadyListed->tableName]);
+				unset($addedTables[$alreadyListed->tableCommName.' > '.$alreadyListed->tableName]);
 			}
 			foreach ($request->necessarySamlResponses as $alreadyListed) {
 				unset($addedSamlResponses[$alreadyListed->responseName]);
@@ -716,6 +739,53 @@ class RequestController extends AppController {
 								$addedApis[$apiHost][$apiPath]['unrequested'][] = '('.$apiField->businessTerm[0]->termCommunityName.') '.$apiField->businessTerm[0]->term;
 								array_push($relationsPostData['additionalDataAssets'], $apiField->id);
 								array_push($additionalTerms, $apiField->businessTerm[0]);
+							}
+						}
+					}
+				}
+			}
+			foreach ($addedByuapis as $apiHost => $apiPaths) {
+				foreach ($apiPaths as $apiPath => $fieldsets) {
+					$apiObject = $this->CollibraAPI->getApiObject($apiHost, $apiPath);
+					$related = false;
+					foreach ($request->necessaryApis as $alreadyRequested) {
+						if ($apiObject->id == $alreadyRequested->apiId) {
+							$related = true;
+							break;
+						}
+					}
+					if (!$related) array_push($relationsPostData['apis'], $apiObject->id);
+
+					$apiFields = $this->CollibraAPI->getApiFields($apiHost, $apiPath, true);
+					foreach ($fieldsets as $fieldset => $_) {
+						foreach ($apiFields[$fieldset]->descendantFields as $apiField) {
+							$requestedField = false;
+							if (isset($this->request->data['arrApiFields'])) {
+								foreach ($this->request->data['arrApiFields'] as $field) {
+									if ($apiField->id == $field['id']) {
+										$requestedField = true;
+										break;
+									}
+								}
+							}
+							if (empty($apiField->businessTerm[0]->termId)) {
+								if ($requestedField) {
+									$addedByuapis[$apiHost][$apiPath][$fieldset]['unmapped']['requested'][] = $apiField->name;
+									array_push($relationsPostData['requestedDataAssets'], $apiField->id);
+								} else {
+									$addedByuapis[$apiHost][$apiPath][$fieldset]['unmapped']['unrequested'][] = $apiField->name;
+									array_push($relationsPostData['additionalDataAssets'], $apiField->id);
+								}
+							} else {
+								if ($requestedField) {
+									$addedByuapis[$apiHost][$apiPath][$fieldset]['requestedBusinessTerm'][] = '('.$apiField->businessTerm[0]->termCommunityName.') '.$apiField->businessTerm[0]->term;
+									array_push($relationsPostData['requestedDataAssets'], $apiField->id);
+									array_push($requestedTerms, $apiField->businessTerm[0]);
+								} else {
+									$addedByuapis[$apiHost][$apiPath][$fieldset]['unrequested'][] = '('.$apiField->businessTerm[0]->termCommunityName.') '.$apiField->businessTerm[0]->term;
+									array_push($relationsPostData['additionalDataAssets'], $apiField->id);
+									array_push($additionalTerms, $apiField->businessTerm[0]);
+								}
 							}
 						}
 					}
@@ -814,7 +884,7 @@ class RequestController extends AppController {
 							$additionString .= "<br/>. . . . <b>Requested business terms:</b><br/>. . . . . . " . implode("<br/>. . . . . . ", $term['requestedBusinessTerm']) . "<br/>";
 						}
 						if (!empty($term['unrequested'])) {
-							$term['unrequested'] = array_unique($term['unrequested']);
+							$term['unrequested'] = array_unique(array_diff($term['unrequested'], $term['requestedBusinessTerm']));
 							sort($term['unrequested']);
 							$additionString .= "<br/>. . . . <b>Unrequested terms:</b><br/>. . . . . . " . implode("<br/>. . . . . . ", $term['unrequested']) . "<br/>";
 						}
@@ -828,6 +898,46 @@ class RequestController extends AppController {
 							}
 						}
 						$additionString .= "<br/>";
+					}
+				}
+			}
+
+			if (!empty($addedByuapis)) {
+				if (!$legacy && strpos($request->attributes['Technology Type']->attrValue, 'API') === false) {
+					$attr = $request->attributes['Technology Type'];
+					$newValues = array_merge(explode(';', $attr->attrValue), ['API']);
+					$postString = http_build_query(['value' => $newValues]);
+					$postString = preg_replace('/%5B[0-9]*%5D/', '', $postString);
+					$resp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $postString);
+					if ($resp->code != '200') $success = false;
+				}
+
+				$additionString .= "<br/><br/><b>Newly Requested University API Fieldsets:</b><br/>";
+				foreach ($addedByuapis as $apiHost => $apiPaths) {
+					foreach ($apiPaths as $apiPath => $fieldsets) {
+						foreach ($fieldsets as $fieldset => $term) {
+							$additionString .= ". . <u><b>{$apiHost}/{$apiPath}, {$fieldset}</u></b><br/>";
+							if (!empty($term['requestedBusinessTerm'])) {
+								$term['requestedBusinessTerm'] = array_unique($term['requestedBusinessTerm']);
+								sort($term['requestedBusinessTerm']);
+								$additionString .= "<br/>. . . . <b>Requested business terms:</b><br/>. . . . . . " . implode("<br/>. . . . . . ", $term['requestedBusinessTerm']) . "<br/>";
+							}
+							if (!empty($term['unrequested'])) {
+								$term['unrequested'] = array_unique(array_diff($term['unrequested'], $term['requestedBusinessTerm']));
+								sort($term['unrequested']);
+								$additionString .= "<br/>. . . . <b>Unrequested terms:</b><br/>. . . . . . " . implode("<br/>. . . . . . ", $term['unrequested']) . "<br/>";
+							}
+							if (!empty($term['unmapped'])) {
+								$additionString .= "<br/>. . . . <b>*Fields with no Business Terms:</b><br/>";
+								if (!empty($term['unmapped']['requested'])) {
+									$additionString .= ". . . . . . Requested:<br/>. . . . . . . . " . implode("<br/>. . . . . . . . ", $term['unmapped']['requested']) . "<br/>";
+								}
+								if (!empty($term['unmapped']['unrequested'])) {
+									$additionString .= ". . . . . . Unrequested:<br/>. . . . . . . . " . implode("<br/>. . . . . . . . ", $term['unmapped']['unrequested']) . "<br/>";
+								}
+							}
+							$additionString .= "<br/>";
+						}
 					}
 				}
 			}
@@ -1051,33 +1161,72 @@ class RequestController extends AppController {
 			$toDeleteIds = [];
 			$nowAdditionallyIncluded = [];
 			foreach ($request->necessaryApis as $api) {
-				$thisApiDeletedFieldIds = [];
-				$thisApiAllFieldIds = [];
-				$apiStillRequested = false;
-				$api->fields = $this->CollibraAPI->getApiFields($api->apiCommName, $api->apiName);
+				if (strpos($api->apiName, 'byuapi') === false) {
+					$thisApiDeletedFieldIds = [];
+					$thisApiAllFieldIds = [];
+					$apiStillRequested = false;
+					$api->fields = $this->CollibraAPI->getApiFields($api->apiCommName, $api->apiName);
 
-				foreach ($api->fields as $field) {
-					array_push($thisApiAllFieldIds, $field->id);
-					if (in_array($field->id, $this->request->data['arrIds'])) {
-						array_push($thisApiDeletedFieldIds, $field->id);
-					} else {
-						foreach ($request->requestedDataAssets as $dataAsset) {
-							if ($field->id == $dataAsset->reqDataId) {
-								$apiStillRequested = true;
+					foreach ($api->fields as $field) {
+						array_push($thisApiAllFieldIds, $field->id);
+						if (in_array($field->id, $this->request->data['arrIds'])) {
+							array_push($thisApiDeletedFieldIds, $field->id);
+						} else {
+							foreach ($request->requestedDataAssets as $dataAsset) {
+								if ($field->id == $dataAsset->reqDataId) {
+									$apiStillRequested = true;
+								}
 							}
 						}
 					}
-				}
 
-				if ($apiStillRequested) {
-					$nowAdditionallyIncluded = array_merge($nowAdditionallyIncluded, $thisApiDeletedFieldIds);
+					if ($apiStillRequested) {
+						$nowAdditionallyIncluded = array_merge($nowAdditionallyIncluded, $thisApiDeletedFieldIds);
+					} else {
+						foreach ($request->additionallyIncludedDataAssets as $dataAsset) {
+							if (in_array($dataAsset->addDataId, $thisApiAllFieldIds)) {
+								array_push($toDeleteIds, $dataAsset->addDataRelationId);
+							}
+						}
+						array_push($toDeleteIds, $api->apiRelationId);
+					}
 				} else {
-					foreach ($request->additionallyIncludedDataAssets as $dataAsset) {
-						if (in_array($dataAsset->addDataId, $thisApiAllFieldIds)) {
-							array_push($toDeleteIds, $dataAsset->addDataRelationId);
+					$api->fields = $this->CollibraAPI->getApiFields($api->apiCommName, $api->apiName, true);
+					$apiStillRequested = false;
+
+					foreach ($api->fields as $fieldset) {
+						$fieldsetDeletedFieldIds = [];
+						$fieldsetAllFieldIds = [];
+						$fieldsetStillRequested = false;
+
+						foreach ($fieldset->descendantFields as $field) {
+							array_push($fieldsetAllFieldIds, $field->id);
+							if (in_array($field->id, $this->request->data['arrIds'])) {
+								array_push($fieldsetDeletedFieldIds, $field->id);
+							} else {
+								foreach ($request->requestedDataAssets as $dataAsset) {
+									if ($field->id == $dataAsset->reqDataId) {
+										$fieldsetStillRequested = true;
+										$apiStillRequested = true;
+									}
+								}
+							}
+						}
+
+						if ($fieldsetStillRequested) {
+							$nowAdditionallyIncluded = array_merge($nowAdditionallyIncluded, $fieldsetDeletedFieldIds);
+						} else {
+							foreach ($request->additionallyIncludedDataAssets as $dataAsset) {
+								if (in_array($dataAsset->addDataId, $fieldsetAllFieldIds)) {
+									array_push($toDeleteIds, $dataAsset->addDataRelationId);
+								}
+							}
 						}
 					}
-					array_push($toDeleteIds, $api->apiRelationId);
+
+					if (!$apiStillRequested) {
+						array_push($toDeleteIds, $api->apiRelationId);
+					}
 				}
 			}
 			foreach ($request->necessaryTables as $table) {
@@ -1193,10 +1342,12 @@ class RequestController extends AppController {
 			$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.changeDSRRelations').'/start', $postString);
 			if ($resp->code != '200') $success = false;
 
-			$postString = http_build_query(['resource' => $toDeleteIds]);
-			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
-			$resp = $this->CollibraAPI->deleteJSON('relation', $postString);
-			if ($resp->code != '200') $success = false;
+			if (!empty($toDeleteIds)) {
+				$postString = http_build_query(['resource' => $toDeleteIds]);
+				$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
+				$resp = $this->CollibraAPI->deleteJSON('relation', $postString);
+				if ($resp->code != '200') $success = false;
+			}
 
 			// If all of a request's APIs, tables, or SAML responses have been removed, edit the technologyType attribute
 			if (empty($request->necessaryApis) || empty($request->necessaryTables) || empty($request->necessarySamlResponses)) {
@@ -1642,6 +1793,7 @@ class RequestController extends AppController {
 		}
 
 		$apis = [];
+		$byuapis = [];
 		$tables = [];
 		$samlResponses = [];
 		$individualTerms = [];
@@ -1651,7 +1803,15 @@ class RequestController extends AppController {
 		$addBusinessTermIds = [];
 		foreach ($arrQueue['apiFields'] as $id => $field) {
 			if (!empty($field['apiPath']) && !empty($field['apiHost'])) {
-				$apis[$field['apiHost']][$field['apiPath']] = [];
+				if (strpos($field['apiPath'], 'byuapi') !== false) {
+					if (strpos($field['fullName'], '.') === false) {		// is fieldset
+						$byuapis[$field['apiHost']][$field['apiPath']][$field['name']] = [];
+					} else {												// is field
+						$byuapis[$field['apiHost']][$field['apiPath']][substr($field['fullName'],0,strpos($field['fullName'],'.'))] = [];
+					}
+				} else {
+					$apis[$field['apiHost']][$field['apiPath']] = [];
+				}
 			}
 		}
 		foreach ($arrQueue['dbColumns'] as $id => $column) {
@@ -1693,6 +1853,37 @@ class RequestController extends AppController {
 							array_push($addDataAssetIds, $field->id);
 							array_push($addBusinessTermIds, $field->businessTerm[0]->termId);
 							$apis[$apiHost][$apiPath]['unrequested'][] = '('.$field->businessTerm[0]->termCommunityName.') '.$field->businessTerm[0]->term;
+						}
+					}
+				}
+			}
+		}
+		foreach ($byuapis as $apiHost => $apiPaths) {
+			foreach ($apiPaths as $apiPath => $fieldsets) {
+				$apiFields = $this->CollibraAPI->getApiFields($apiHost, $apiPath, true);
+				foreach ($fieldsets as $fieldset => $_) {
+					foreach ($apiFields[$fieldset]->descendantFields as $field) {
+						if (!empty($field->assetType) && strtolower($field->assetType) == 'fieldset') {
+							continue;
+						}
+						if (empty($field->businessTerm[0]->termId)) {
+							if (array_key_exists($field->id, $arrQueue['apiFields'])) {
+								array_push($dataAssetIds, $field->id);
+								$byuapis[$apiHost][$apiPath][$fieldset]['unmapped']['requested'][] = $field->name;
+							} else {
+								array_push($addDataAssetIds, $field->id);
+								$byuapis[$apiHost][$apiPath][$fieldset]['unmapped']['unrequested'][] = $field->name;
+							}
+						} else {
+							if (array_key_exists($field->id, $arrQueue['apiFields'])) {
+								array_push($dataAssetIds, $field->id);
+								array_push($businessTermIds, $field->businessTerm[0]->termId);
+								$byuapis[$apiHost][$apiPath][$fieldset]['requestedBusinessTerm'][] = '('.$field->businessTerm[0]->termCommunityName.') '.$field->businessTerm[0]->term;
+							} else {
+								array_push($addDataAssetIds, $field->id);
+								array_push($addBusinessTermIds, $field->businessTerm[0]->termId);
+								$byuapis[$apiHost][$apiPath][$fieldset]['unrequested'][] = '('.$field->businessTerm[0]->termCommunityName.') '.$field->businessTerm[0]->term;
+							}
 						}
 					}
 				}
@@ -1749,7 +1940,7 @@ class RequestController extends AppController {
 		if (!empty($individualTerms)) {
 			$postData['requestedInformationMap'] .= "<b>Individual Business Terms:</b><br/>. . " . implode("<br/>. . ", $individualTerms) . "<br/><br/>";
 		}
-		if (!empty($apis) || !empty($arrQueue['emptyApis'])) {
+		if (!empty($apis) || !empty($byuapis) || !empty($arrQueue['emptyApis'])) {
 			$postData['requestedInformationMap'] .= "<b>Requested APIs:</b><br/>";
 		}
 		foreach ($arrQueue['emptyApis'] as $path => $api) {
@@ -1767,7 +1958,7 @@ class RequestController extends AppController {
 						$apiList .= "<br/>. . . . <b>Requested business terms:</b><br/>. . . . . . " . implode("<br/>. . . . . . ", $term['requestedBusinessTerm']) . "<br/>";
 					}
 					if (!empty($term['unrequested'])) {
-						$term['unrequested'] = array_unique($term['unrequested']);
+						$term['unrequested'] = array_unique(array_diff($term['unrequested'], $term['requestedBusinessTerm']));
 						sort($term['unrequested']);
 						$apiList .= "<br/>. . . . <b>Unrequested terms:</b><br/>. . . . . . " . implode("<br/>. . . . . . ", $term['unrequested']) . "<br/>";
 					}
@@ -1784,6 +1975,37 @@ class RequestController extends AppController {
 				}
 			}
 			$postData['requestedInformationMap'] .= $apiList;
+		}
+		if (!empty($byuapis)) {
+			$byuapiList = "";
+			foreach ($byuapis as $apiHost => $apiPaths) {
+				foreach ($apiPaths as $apiPath => $fieldsets) {
+					foreach ($fieldsets as $fieldset => $term) {
+						$byuapiList .= ". . <u><b>{$apiHost}/{$apiPath}, {$fieldset}</u></b><br/>";
+						if (!empty($term['requestedBusinessTerm'])) {
+							$term['requestedBusinessTerm'] = array_unique($term['requestedBusinessTerm']);
+							sort($term['requestedBusinessTerm']);
+							$byuapiList .= "<br/>. . . . <b>Requested business terms:</b><br/>. . . . . . " . implode("<br/>. . . . . . ", $term['requestedBusinessTerm']) . "<br/>";
+						}
+						if (!empty($term['unrequested'])) {
+							$term['unrequested'] = array_unique(array_diff($term['unrequested'], $term['requestedBusinessTerm']));
+							sort($term['unrequested']);
+							$byuapiList .= "<br/>. . . . <b>Unrequested terms:</b><br/>. . . . . . " . implode("<br/>. . . . . . ", $term['unrequested']) . "<br/>";
+						}
+						if (!empty($term['unmapped'])) {
+							$byuapiList .= "<br/>. . . . <b>*Fields with no Business Terms:</b><br/>";
+							if (!empty($term['unmapped']['requested'])) {
+								$byuapiList .= ". . . . . . Requested:<br/>. . . . . . . . " . implode("<br/>. . . . . . . . ", $term['unmapped']['requested']) . "<br/>";
+							}
+							if (!empty($term['unmapped']['unrequested'])) {
+								$byuapiList .= ". . . . . . Unrequested:<br/>. . . . . . . . " . implode("<br/>. . . . . . . . ", $term['unmapped']['unrequested']) . "<br/>";
+							}
+						}
+						$byuapiList .= "<br/><br/>";
+					}
+				}
+			}
+			$postData['requestedInformationMap'] .= $byuapiList;
 		}
 		if (!empty($tables)) {
 			$tableList = "<b>Requested Tables:</b><br/>";
@@ -1864,7 +2086,7 @@ class RequestController extends AppController {
 		$postData['requesterPhone'] = $phone;
 		$postData['requesterRole'] = $role;
 
-		if (!empty($apis)) {
+		if (!empty($apis) || !empty($byuapis)) {
 			$postData['technologyType'][] = 'API';
 		}
 		if (!empty($tables)) {
@@ -1906,6 +2128,12 @@ class RequestController extends AppController {
 		$postData['tables'] = [];
 		$postData['saml'] = [];
 		foreach ($apis as $apiHost => $apiPaths) {
+			foreach ($apiPaths as $apiPath => $ignore) {
+				$apiObject = $this->CollibraAPI->getApiObject($apiHost, $apiPath);
+				array_push($postData['api'], $apiObject->id);
+			}
+		}
+		foreach ($byuapis as $apiHost => $apiPaths) {
 			foreach ($apiPaths as $apiPath => $ignore) {
 				$apiObject = $this->CollibraAPI->getApiObject($apiHost, $apiPath);
 				array_push($postData['api'], $apiObject->id);

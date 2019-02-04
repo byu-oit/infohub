@@ -63,7 +63,7 @@
 	<div id="searchResults">
 		<h1 class="headerTab"><?= $hostname . '/' . trim($basePath, '/') ?></h1>
 		<div class="clear" style="height:20px;"></div>
-        <h2 class="headerTab">Requested in <?= $request->assetName ?></h2>
+        <h2 class="headerTab">Requested in <?= $this->Html->link($request->assetName, array_merge(['controller' => 'request', 'action' => 'view', $request->id])) ?></h2>
         <div class="clear"></div>
 		<?php if ($apiObject->statusId == Configure::read('Collibra.status.preProduction')): ?>
 			<div class="apiHelpStatus">This API is <strong>in pre-production.</strong></div>
