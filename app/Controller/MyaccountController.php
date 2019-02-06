@@ -1,6 +1,8 @@
 <?php
 
 class MyaccountController extends AppController {
+	public $components = ['Post'];
+
 	function beforeFilter() {
 		parent::beforeFilter();
 		$this->Auth->deny();
@@ -158,11 +160,9 @@ class MyaccountController extends AppController {
 
 		if (!empty($arrChangedAttrIds)) {
 			// Here update all the attributes Collibra inserted HTML tags into
-			$postData['attributes'] = $arrChangedAttrIds;
-			$postData['values'] = $arrChangedAttrValues;
-			$postString = http_build_query($postData);
-			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
-			$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.changeAttributes').'/start', $postString);
+			$resp = $this->CollibraAPI->post(
+				'workflow/'.Configure::read('Collibra.workflow.changeAttributes').'/start',
+				$this->Post->preparePostData(['attributes' => $arrChangedAttrIds, 'values' => $arrChangedAttrValues]));
 		}
 
 		$psName = '';

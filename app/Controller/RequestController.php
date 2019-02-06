@@ -5,6 +5,7 @@ require 'fpdf' . DIRECTORY_SEPARATOR . 'fpdf.php';
 class RequestController extends AppController {
 	public $helpers = ['Html', 'Form'];
 	public $uses = ['CollibraAPI', 'BYUAPI'];
+	public $components = ['Post'];
 
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -484,10 +485,7 @@ class RequestController extends AppController {
 			}
 		}
 
-		$postString = http_build_query(['resource' => $toDeleteIds]);
-		$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
-		$resp = $this->CollibraAPI->deleteJSON('attribute', $postString);
-
+		$resp = $this->CollibraAPI->deleteJSON('attribute', $this->Post->preparePostData(['resource' => $toDeleteIds]));
 		if ($resp->code != '200') {
 			$resp = json_decode($resp);
 			return json_encode(['success' => 0, 'message' => $resp->message]);
@@ -520,9 +518,9 @@ class RequestController extends AppController {
 		}
 
 		$success = true;
-		$postString = http_build_query($postData);
-		$postString = preg_replace("/%5B[0-9]+%5D/", "", $postString);
-		$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.createDSRDraft').'/start', rtrim($postString, '+'));
+		$resp = $this->CollibraAPI->post(
+			'workflow/'.Configure::read('Collibra.workflow.createDSRDraft').'/start',
+			rtrim($this->Post->preparePostData($postData), '+'));
 		if ($resp->code != '200') $success = false;
 
 		if (!$success) {
@@ -868,9 +866,7 @@ class RequestController extends AppController {
 				if (!$legacy && strpos($request->attributes['Technology Type']->attrValue, 'API') === false) {
 					$attr = $request->attributes['Technology Type'];
 					$newValues = array_merge(explode(';', $attr->attrValue), ['API']);
-					$postString = http_build_query(['value' => $newValues]);
-					$postString = preg_replace('/%5B[0-9]*%5D/', '', $postString);
-					$resp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $postString);
+					$resp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $this->Post->preparePostData(['value' => $newValues]));
 					if ($resp->code != '200') $success = false;
 				}
 
@@ -906,9 +902,7 @@ class RequestController extends AppController {
 				if (!$legacy && strpos($request->attributes['Technology Type']->attrValue, 'API') === false) {
 					$attr = $request->attributes['Technology Type'];
 					$newValues = array_merge(explode(';', $attr->attrValue), ['API']);
-					$postString = http_build_query(['value' => $newValues]);
-					$postString = preg_replace('/%5B[0-9]*%5D/', '', $postString);
-					$resp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $postString);
+					$resp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $this->Post->preparePostData(['value' => $newValues]));
 					if ($resp->code != '200') $success = false;
 				}
 
@@ -946,9 +940,7 @@ class RequestController extends AppController {
 				if (!$legacy && strpos($request->attributes['Technology Type']->attrValue, 'Data Warehouse') === false) {
 					$attr = $request->attributes['Technology Type'];
 					$newValues = array_merge(explode(';', $attr->attrValue), ['Data Warehouse']);
-					$postString = http_build_query(['value' => $newValues]);
-					$postString = preg_replace('/%5B[0-9]*%5D/', '', $postString);
-					$resp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $postString);
+					$resp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $this->Post->preparePostData(['value' => $newValues]));
 					if ($resp->code != '200') $success = false;
 				}
 
@@ -982,9 +974,7 @@ class RequestController extends AppController {
 				if (!$legacy && strpos($request->attributes['Technology Type']->attrValue, 'SAML') === false) {
 					$attr = $request->attributes['Technology Type'];
 					$newValues = array_merge(explode(';', $attr->attrValue), ['SAML']);
-					$postString = http_build_query(['value' => $newValues]);
-					$postString = preg_replace('/%5B[0-9]*%5D/', '', $postString);
-					$resp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $postString);
+					$resp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $this->Post->preparePostData(['value' => $newValues]));
 					if ($resp->code != '200') $success = false;
 				}
 
@@ -1017,18 +1007,15 @@ class RequestController extends AppController {
 			$attrKey = $legacy ? 'Additional Information Requested' : 'Requested Information Map';
 			$attrName = $legacy ? 'descriptionOfInformation' : 'requestedInformationMap';
 			if (!empty($request->attributes[$attrKey])) {
-				$postString = http_build_query(['value' => $request->attributes[$attrKey]->attrValue . $additionString]);
-				$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
-				$formResp = $this->CollibraAPI->post('attribute/'.$request->attributes[$attrKey]->attrResourceId, $postString);
+				$formResp = $this->CollibraAPI->post(
+					'attribute/'.$request->attributes[$attrKey]->attrResourceId,
+					$this->Post->preparePostData(['value' => $request->attributes[$attrKey]->attrValue . $additionString], '/%0D%0A/', '<br/>'));
 				$formResp = json_decode($formResp);
 				if (!isset($formResp)) $success = false;
 			} else {
-				$postString = http_build_query([
-					'label' => Configure::read('Collibra.formFields.'.$attrName),
-					'value' => $additionString
-				]);
-				$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
-				$resp = $this->CollibraAPI->post('term/'.$this->request->data['dsrId'].'/attributes', $postString);
+				$resp = $this->CollibraAPI->post(
+					'term/'.$this->request->data['dsrId'].'/attributes',
+					$this->Post->preparePostData(['label' => Configure::read('Collibra.formFields.'.$attrName), 'value' => $additionString], '/%0D%0A/', '<br/>'));
 				if ($resp->code != '201') $success = false;
 			}
 
@@ -1113,23 +1100,17 @@ class RequestController extends AppController {
 			}
 
 			if (!empty($toDeleteIds)) {
-				$postString = http_build_query(['resource' => $toDeleteIds]);
-				$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
-				$resp = $this->CollibraAPI->deleteJSON('relation', $postString);
+				$resp = $this->CollibraAPI->deleteJSON('relation', $this->Post->preparePostData(['resource' => $toDeleteIds]));
 				if ($resp->code != '200') $success = false;
 			}
 
-			$postString = http_build_query($relationsPostData);
-			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
-			$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.changeDSRRelations').'/start', $postString);
+			$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.changeDSRRelations').'/start', $this->Post->preparePostData($relationsPostData));
 			if ($resp->code != '200') $success = false;
 
 			$this->Session->write('queue', $arrQueue);
 			return $success ? json_encode(['success' => 1]) : json_encode(['success' => 0]);
 		} else if ($this->request->data['action'] == 'remove') {
-			$postString = http_build_query(['resource' => $this->request->data['arrRelIds']]);
-			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
-			$resp = $this->CollibraAPI->deleteJSON('relation', $postString);
+			$resp = $this->CollibraAPI->deleteJSON('relation', $this->Post->preparePostData(['resource' => $this->request->data['arrRelIds']]));
 			if ($resp->code != '200') $success = false;
 
 			$deletionString = "<br/><br/>Removal, ".date('Y-m-d').":";
@@ -1143,18 +1124,15 @@ class RequestController extends AppController {
 			$attrName = $legacy ? 'descriptionOfInformation' : 'requestedInformationMap';
 
 			if (!empty($request->attributes[$attrKey])) {
-				$postString = http_build_query(['value' => $request->attributes[$attrKey]->attrValue . $deletionString]);
-				$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
-				$resp = $this->CollibraAPI->post('attribute/'.$request->attributes[$attrKey]->attrResourceId, $postString);
+				$resp = $this->CollibraAPI->post(
+					'attribute/'.$request->attributes[$attrKey]->attrResourceId,
+					$this->Post->preparePostData(['value' => $request->attributes[$attrKey]->attrValue.$deletionString], '/%0D%0A/', '<br/>'));
 				$resp = json_decode($resp);
 				if (!isset($resp)) $success = false;
 			} else {
-				$postString = http_build_query([
-					'label' => Configure::read('Collibra.formFields.'.$attrName),
-					'value' => $deletionString
-				]);
-				$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
-				$resp = $this->CollibraAPI->post('term/'.$this->request->data['dsrId'].'/attributes', $postString);
+				$resp = $this->CollibraAPI->post(
+					'term/'.$this->request->data['dsrId'].'/attributes',
+					$this->Post->preparePostData(['label' => Configure::read('Collibra.formFields.'.$attrName),'value' => $deletionString], '/%0D%0A/', '<br/>'));
 				if ($resp->code != '201') $success = false;
 			}
 
@@ -1285,18 +1263,13 @@ class RequestController extends AppController {
 				}
 			}
 
-			$postString = http_build_query([
-				'dsrId' => $this->request->data['dsrId'],
-				'additionalDataAssets' => $nowAdditionallyIncluded
-			]);
-			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
-			$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.changeDSRRelations').'/start', $postString);
+			$resp = $this->CollibraAPI->post(
+				'workflow/'.Configure::read('Collibra.workflow.changeDSRRelations').'/start',
+				$this->Post->preparePostData(['dsrId' => $this->request->data['dsrId'], 'additionalDataAssets' => $nowAdditionallyIncluded]));
 			if ($resp->code != '200') $success = false;
 
 			if (!empty($toDeleteIds)) {
-				$postString = http_build_query(['resource' => $toDeleteIds]);
-				$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
-				$resp = $this->CollibraAPI->deleteJSON('relation', $postString);
+				$resp = $this->CollibraAPI->deleteJSON('relation', $this->Post->preparePostData(['resource' => $toDeleteIds]));
 				if ($resp->code != '200') $success = false;
 			}
 
@@ -1334,18 +1307,13 @@ class RequestController extends AppController {
 				}
 			}
 
-			$postString = http_build_query([
-				'dsrId' => $this->request->data['dsrId'],
-				'additionalTerms' => $nowAdditionallyIncluded
-			]);
-			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
-			$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.changeDSRRelations').'/start', $postString);
+			$resp = $this->CollibraAPI->post(
+				'workflow/'.Configure::read('Collibra.workflow.changeDSRRelations').'/start',
+				$this->Post->preparePostData(['dsrId' => $this->request->data['dsrId'], 'additionalTerms' => $nowAdditionallyIncluded]));
 			if ($resp->code != '200') $success = false;
 
 			if (!empty($toDeleteIds)) {
-				$postString = http_build_query(['resource' => $toDeleteIds]);
-				$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
-				$resp = $this->CollibraAPI->deleteJSON('relation', $postString);
+				$resp = $this->CollibraAPI->deleteJSON('relation', $this->Post->preparePostData(['resource' => $toDeleteIds]));
 				if ($resp->code != '200') $success = false;
 			}
 
@@ -1374,9 +1342,7 @@ class RequestController extends AppController {
 				$newValue = implode(';', $arrNewValue);
 
 				if ($newValue !== $oldValue) {
-					$postString = http_build_query(['value' => $newValue]);
-					$postString = preg_replace('/%5B[0-9]*%5D/', '', $postString);
-					$resp = $this->CollibraAPI->post('attribute/'.$attrId, $postString);
+					$resp = $this->CollibraAPI->post('attribute/'.$attrId, $this->Post->preparePostData(['value' => $newValue]));
 					if ($resp->code != '200') $success = false;
 				}
 			}
@@ -1575,9 +1541,7 @@ class RequestController extends AppController {
 				$postData['value'] = $val;
 				$postData['representation'] = $asset->id;
 				$postData['label'] = $id;
-				$postString = http_build_query($postData);
-				$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
-				$formResp = $this->CollibraAPI->post('term/'.$asset->id.'/attributes', $postString);
+				$formResp = $this->CollibraAPI->post('term/'.$asset->id.'/attributes', $this->Post->preparePostData($postData, '/%0D%0A/', '<br/>'));
 				$formResp = json_decode($formResp);
 
 				if (!isset($formResp)) {
@@ -1587,13 +1551,10 @@ class RequestController extends AppController {
 		}
 
 		if (!empty($wfPostData['attributes'])) {
-			$postString = http_build_query($wfPostData);
-			$postString = preg_replace('/%0D%0A/', '<br/>', $postString);
-			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
-			$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.changeAttributes').'/start', $postString);
-			if ($resp->code != '200') {
-				$err = true;
-			}
+			$resp = $this->CollibraAPI->post(
+				'workflow/'.Configure::read('Collibra.workflow.changeAttributes').'/start',
+				$this->Post->preparePostData($wfPostData, ['/%0D%0A/', '/%5B[0-9]*%5D/'], ['<br/>', '']));
+			if ($resp->code != '200') $err = true;
 		}
 
 		if (!$err) {
@@ -2161,14 +2122,9 @@ class RequestController extends AppController {
 			$postData['saml'] = '';
 		}
 
-		//For array data, PHP's http_build_query creates query/POST string in a format Collibra doesn't like,
-		//so we have to tweak the output a bit
-		$postString = http_build_query($postData);
-		$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
-
 		$formResp = $this->CollibraAPI->post(
 			'workflow/'.Configure::read('Collibra.workflow.intakeDSR').'/start',
-			$postString
+			$this->Post->preparePostData($postData)
 		);
 		$formResp = json_decode($formResp);
 
@@ -2266,11 +2222,9 @@ class RequestController extends AppController {
 
 		if (!empty($arrChangedAttrIds)) {
 			// Here update all the attributes Collibra inserted HTML tags into
-			$postData['attributes'] = $arrChangedAttrIds;
-			$postData['values'] = $arrChangedAttrValues;
-			$postString = http_build_query($postData);
-			$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
-			$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.changeAttributes').'/start', $postString);
+			$resp = $this->CollibraAPI->post(
+				'workflow/'.Configure::read('Collibra.workflow.changeAttributes').'/start',
+				$this->Post->preparePostData(['attributes' => $arrChangedAttrIds, 'values' => $arrChangedAttrValues]));
 		}
 
 		$this->set(compact('netID', 'asset', 'parent', 'expand'));

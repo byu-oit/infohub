@@ -3,6 +3,8 @@
 App::uses('Component', 'Controller');
 
 class DataWarehouseComponent extends Component {
+    public $components = ['Post'];
+
     public function syncDataWarehouse($databaseName, $schemaName, $tableName, $oracleColumns) {
         $this->CollibraAPI = ClassRegistry::init('CollibraAPI');
         $table = $this->CollibraAPI->getTableObject($databaseName, $schemaName.' > '.$tableName);
@@ -16,9 +18,7 @@ class DataWarehouseComponent extends Component {
             }
             array_push($toDeleteIds, $table->id);
 
-            $postString = http_build_query(['resource' => $toDeleteIds]);
-            $postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
-            $resp = $this->CollibraAPI->deleteJSON('term/remove/async', $postString);
+            $resp = $this->CollibraAPI->deleteJSON('term/remove/async', $this->Post->preparePostData(['resource' => $toDeleteIds]));
 
             if ($resp->code != '200') {
                 $resp = json_decode($resp);
@@ -30,11 +30,9 @@ class DataWarehouseComponent extends Component {
             // add the table to Collibra
             $postData = ['database' => $databaseName, 'schemaName' => $schemaName, 'tableName' => $schemaName.' > '.$tableName, 'columns' => $oracleColumns, 'newTable' => 'true'];
 
-            $postString = http_build_query($postData);
-            $postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
             $resp = $this->CollibraAPI->post(
                 'workflow/'.Configure::read('Collibra.workflow.updateDataWarehouse').'/start',
-                $postString,
+                $this->Post->preparePostData($postData),
                 ['header' => ['Accept' => 'application/json']]);
 
             if ($resp->code != '200') {
@@ -82,9 +80,7 @@ class DataWarehouseComponent extends Component {
             }
 
             if (!empty($toDeleteIds)) {
-                $postString = http_build_query(['resource' => $toDeleteIds]);
-                $postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
-                $resp = $this->CollibraAPI->deleteJSON('term/remove/async', $postString);
+                $resp = $this->CollibraAPI->deleteJSON('term/remove/async', $this->Post->preparePostData(['resource' => $toDeleteIds]));
 
                 if ($resp->code != '200') {
                     $success = false;
@@ -94,12 +90,9 @@ class DataWarehouseComponent extends Component {
 
             if (!empty($toCreateNames)) {
                 $postData = ['schemaName' => $schemaName, 'tableName' => $schemaName.' > '.$tableName, 'columns' => $toCreateNames, 'newTable' => 'false'];
-                $postString = http_build_query($postData);
-                $postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
-
                 $resp = $this->CollibraAPI->post(
                     'workflow/'.Configure::read('Collibra.workflow.updateDataWarehouse').'/start',
-                    $postString,
+                    $this->Post->preparePostData($postData),
                     ['header' => ['Accept' => 'application/json']]);
 
                 if ($resp->code != '200') {
