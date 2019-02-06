@@ -32,7 +32,8 @@
 					arrDbColumns.push({
 						id:$(this).val(),
 						tableName:$(this).attr('tableName'),
-						schemaName:$(this).attr('schemaName')
+						schemaName:$(this).attr('schemaName'),
+						databaseName:$(this).attr('databaseName')
 					});
 				}
 				else if ($(this).attr('name') == 'samlFields[]') {
@@ -159,7 +160,7 @@
 								foreach ($organizedDbColumns as $tableName => $columns) {
 									echo '<h4>'.$tableName.'</h4>';
 									foreach ($columns as $id => $column) {
-										echo '<li id="requestItem'.$id.'"><input type="checkbox" name="dbColumns[]" value="'.$id.'" schemaName="'.$column['schemaName'].'" tableName="'.$column['tableName'].'" checked="checked">'.$column['name'].'</li>';
+										echo '<li id="requestItem'.$id.'"><input type="checkbox" name="dbColumns[]" value="'.$id.'" databaseName="'.$column['databaseName'].'" schemaName="'.$column['schemaName'].'" tableName="'.$column['tableName'].'" checked="checked">'.$column['name'].'</li>';
 									}
 								}
 							}
