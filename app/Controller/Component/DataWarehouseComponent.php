@@ -3,7 +3,7 @@
 App::uses('Component', 'Controller');
 
 class DataWarehouseComponent extends Component {
-    public $components = ['Post'];
+    public $components = ['Collibra'];
 
     public function syncDataWarehouse($databaseName, $schemaName, $tableName, $oracleColumns) {
         $this->CollibraAPI = ClassRegistry::init('CollibraAPI');
@@ -18,7 +18,7 @@ class DataWarehouseComponent extends Component {
             }
             array_push($toDeleteIds, $table->id);
 
-            $resp = $this->CollibraAPI->deleteJSON('term/remove/async', $this->Post->preparePostData(['resource' => $toDeleteIds]));
+            $resp = $this->CollibraAPI->deleteJSON('term/remove/async', $this->Collibra->preparePostData(['resource' => $toDeleteIds]));
 
             if ($resp->code != '200') {
                 $resp = json_decode($resp);
@@ -32,7 +32,7 @@ class DataWarehouseComponent extends Component {
 
             $resp = $this->CollibraAPI->post(
                 'workflow/'.Configure::read('Collibra.workflow.updateDataWarehouse').'/start',
-                $this->Post->preparePostData($postData),
+                $this->Collibra->preparePostData($postData),
                 ['header' => ['Accept' => 'application/json']]);
 
             if ($resp->code != '200') {
@@ -80,7 +80,7 @@ class DataWarehouseComponent extends Component {
             }
 
             if (!empty($toDeleteIds)) {
-                $resp = $this->CollibraAPI->deleteJSON('term/remove/async', $this->Post->preparePostData(['resource' => $toDeleteIds]));
+                $resp = $this->CollibraAPI->deleteJSON('term/remove/async', $this->Collibra->preparePostData(['resource' => $toDeleteIds]));
 
                 if ($resp->code != '200') {
                     $success = false;
@@ -92,7 +92,7 @@ class DataWarehouseComponent extends Component {
                 $postData = ['schemaName' => $schemaName, 'tableName' => $schemaName.' > '.$tableName, 'columns' => $toCreateNames, 'newTable' => 'false'];
                 $resp = $this->CollibraAPI->post(
                     'workflow/'.Configure::read('Collibra.workflow.updateDataWarehouse').'/start',
-                    $this->Post->preparePostData($postData),
+                    $this->Collibra->preparePostData($postData),
                     ['header' => ['Accept' => 'application/json']]);
 
                 if ($resp->code != '200') {

@@ -3,8 +3,6 @@
 App::uses('Component', 'Controller');
 
 class CollibraComponent extends Component {
-    public $components = ['Post'];
-
     public function cleanEdits(&$asset, $parent) {
         $this->CollibraAPI = ClassRegistry::init('CollibraAPI');
 
@@ -32,7 +30,7 @@ class CollibraComponent extends Component {
 		if (!empty($this->arrChangedAttrIds)) {
 			$resp = $this->CollibraAPI->post(
 				'workflow/'.Configure::read('Collibra.workflow.changeAttributes').'/start',
-				$this->Post->preparePostData(['attributes' => $this->arrChangedAttrIds, 'values' => $this->arrChangedAttrValues]));
+				$this->preparePostData(['attributes' => $this->arrChangedAttrIds, 'values' => $this->arrChangedAttrValues]));
 		}
     }
 
@@ -43,5 +41,11 @@ class CollibraComponent extends Component {
 
         // After updating the value in Collibra, just replace the value for current page load
         return $newValue;
+    }
+
+    public function preparePostData($postData, $match='/%5B[0-9]*%5D/', $replacement='') {
+        $postString = http_build_query($postData);
+        $postString = preg_replace($match, $replacement, $postString);
+        return $postString;
     }
 }

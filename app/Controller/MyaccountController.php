@@ -1,7 +1,7 @@
 <?php
 
 class MyaccountController extends AppController {
-	public $components = ['Post', 'Collibra'];
+	public $components = ['Collibra'];
 
 	function beforeFilter() {
 		parent::beforeFilter();

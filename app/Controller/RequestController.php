@@ -5,7 +5,7 @@ require 'fpdf' . DIRECTORY_SEPARATOR . 'fpdf.php';
 class RequestController extends AppController {
 	public $helpers = ['Html', 'Form'];
 	public $uses = ['CollibraAPI', 'BYUAPI'];
-	public $components = ['Post', 'Collibra'];
+	public $components = ['Collibra'];
 
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -485,7 +485,7 @@ class RequestController extends AppController {
 			}
 		}
 
-		$resp = $this->CollibraAPI->deleteJSON('attribute', $this->Post->preparePostData(['resource' => $toDeleteIds]));
+		$resp = $this->CollibraAPI->deleteJSON('attribute', $this->Collibra->preparePostData(['resource' => $toDeleteIds]));
 		if ($resp->code != '200') {
 			$resp = json_decode($resp);
 			return json_encode(['success' => 0, 'message' => $resp->message]);
@@ -520,7 +520,7 @@ class RequestController extends AppController {
 		$success = true;
 		$resp = $this->CollibraAPI->post(
 			'workflow/'.Configure::read('Collibra.workflow.createDSRDraft').'/start',
-			rtrim($this->Post->preparePostData($postData), '+'));
+			rtrim($this->Collibra->preparePostData($postData), '+'));
 		if ($resp->code != '200') $success = false;
 
 		if (!$success) {
@@ -866,7 +866,7 @@ class RequestController extends AppController {
 				if (!$legacy && strpos($request->attributes['Technology Type']->attrValue, 'API') === false) {
 					$attr = $request->attributes['Technology Type'];
 					$newValues = array_merge(explode(';', $attr->attrValue), ['API']);
-					$resp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $this->Post->preparePostData(['value' => $newValues]));
+					$resp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $this->Collibra->preparePostData(['value' => $newValues]));
 					if ($resp->code != '200') $success = false;
 				}
 
@@ -902,7 +902,7 @@ class RequestController extends AppController {
 				if (!$legacy && strpos($request->attributes['Technology Type']->attrValue, 'API') === false) {
 					$attr = $request->attributes['Technology Type'];
 					$newValues = array_merge(explode(';', $attr->attrValue), ['API']);
-					$resp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $this->Post->preparePostData(['value' => $newValues]));
+					$resp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $this->Collibra->preparePostData(['value' => $newValues]));
 					if ($resp->code != '200') $success = false;
 				}
 
@@ -940,7 +940,7 @@ class RequestController extends AppController {
 				if (!$legacy && strpos($request->attributes['Technology Type']->attrValue, 'Data Warehouse') === false) {
 					$attr = $request->attributes['Technology Type'];
 					$newValues = array_merge(explode(';', $attr->attrValue), ['Data Warehouse']);
-					$resp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $this->Post->preparePostData(['value' => $newValues]));
+					$resp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $this->Collibra->preparePostData(['value' => $newValues]));
 					if ($resp->code != '200') $success = false;
 				}
 
@@ -974,7 +974,7 @@ class RequestController extends AppController {
 				if (!$legacy && strpos($request->attributes['Technology Type']->attrValue, 'SAML') === false) {
 					$attr = $request->attributes['Technology Type'];
 					$newValues = array_merge(explode(';', $attr->attrValue), ['SAML']);
-					$resp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $this->Post->preparePostData(['value' => $newValues]));
+					$resp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $this->Collibra->preparePostData(['value' => $newValues]));
 					if ($resp->code != '200') $success = false;
 				}
 
@@ -1009,13 +1009,13 @@ class RequestController extends AppController {
 			if (!empty($request->attributes[$attrKey])) {
 				$formResp = $this->CollibraAPI->post(
 					'attribute/'.$request->attributes[$attrKey]->attrResourceId,
-					$this->Post->preparePostData(['value' => $request->attributes[$attrKey]->attrValue . $additionString], '/%0D%0A/', '<br/>'));
+					$this->Collibra->preparePostData(['value' => $request->attributes[$attrKey]->attrValue . $additionString], '/%0D%0A/', '<br/>'));
 				$formResp = json_decode($formResp);
 				if (!isset($formResp)) $success = false;
 			} else {
 				$resp = $this->CollibraAPI->post(
 					'term/'.$this->request->data['dsrId'].'/attributes',
-					$this->Post->preparePostData(['label' => Configure::read('Collibra.formFields.'.$attrName), 'value' => $additionString], '/%0D%0A/', '<br/>'));
+					$this->Collibra->preparePostData(['label' => Configure::read('Collibra.formFields.'.$attrName), 'value' => $additionString], '/%0D%0A/', '<br/>'));
 				if ($resp->code != '201') $success = false;
 			}
 
@@ -1100,17 +1100,17 @@ class RequestController extends AppController {
 			}
 
 			if (!empty($toDeleteIds)) {
-				$resp = $this->CollibraAPI->deleteJSON('relation', $this->Post->preparePostData(['resource' => $toDeleteIds]));
+				$resp = $this->CollibraAPI->deleteJSON('relation', $this->Collibra->preparePostData(['resource' => $toDeleteIds]));
 				if ($resp->code != '200') $success = false;
 			}
 
-			$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.changeDSRRelations').'/start', $this->Post->preparePostData($relationsPostData));
+			$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.changeDSRRelations').'/start', $this->Collibra->preparePostData($relationsPostData));
 			if ($resp->code != '200') $success = false;
 
 			$this->Session->write('queue', $arrQueue);
 			return $success ? json_encode(['success' => 1]) : json_encode(['success' => 0]);
 		} else if ($this->request->data['action'] == 'remove') {
-			$resp = $this->CollibraAPI->deleteJSON('relation', $this->Post->preparePostData(['resource' => $this->request->data['arrRelIds']]));
+			$resp = $this->CollibraAPI->deleteJSON('relation', $this->Collibra->preparePostData(['resource' => $this->request->data['arrRelIds']]));
 			if ($resp->code != '200') $success = false;
 
 			$deletionString = "<br/><br/>Removal, ".date('Y-m-d').":";
@@ -1126,13 +1126,13 @@ class RequestController extends AppController {
 			if (!empty($request->attributes[$attrKey])) {
 				$resp = $this->CollibraAPI->post(
 					'attribute/'.$request->attributes[$attrKey]->attrResourceId,
-					$this->Post->preparePostData(['value' => $request->attributes[$attrKey]->attrValue.$deletionString], '/%0D%0A/', '<br/>'));
+					$this->Collibra->preparePostData(['value' => $request->attributes[$attrKey]->attrValue.$deletionString], '/%0D%0A/', '<br/>'));
 				$resp = json_decode($resp);
 				if (!isset($resp)) $success = false;
 			} else {
 				$resp = $this->CollibraAPI->post(
 					'term/'.$this->request->data['dsrId'].'/attributes',
-					$this->Post->preparePostData(['label' => Configure::read('Collibra.formFields.'.$attrName),'value' => $deletionString], '/%0D%0A/', '<br/>'));
+					$this->Collibra->preparePostData(['label' => Configure::read('Collibra.formFields.'.$attrName),'value' => $deletionString], '/%0D%0A/', '<br/>'));
 				if ($resp->code != '201') $success = false;
 			}
 
@@ -1265,11 +1265,11 @@ class RequestController extends AppController {
 
 			$resp = $this->CollibraAPI->post(
 				'workflow/'.Configure::read('Collibra.workflow.changeDSRRelations').'/start',
-				$this->Post->preparePostData(['dsrId' => $this->request->data['dsrId'], 'additionalDataAssets' => $nowAdditionallyIncluded]));
+				$this->Collibra->preparePostData(['dsrId' => $this->request->data['dsrId'], 'additionalDataAssets' => $nowAdditionallyIncluded]));
 			if ($resp->code != '200') $success = false;
 
 			if (!empty($toDeleteIds)) {
-				$resp = $this->CollibraAPI->deleteJSON('relation', $this->Post->preparePostData(['resource' => $toDeleteIds]));
+				$resp = $this->CollibraAPI->deleteJSON('relation', $this->Collibra->preparePostData(['resource' => $toDeleteIds]));
 				if ($resp->code != '200') $success = false;
 			}
 
@@ -1309,11 +1309,11 @@ class RequestController extends AppController {
 
 			$resp = $this->CollibraAPI->post(
 				'workflow/'.Configure::read('Collibra.workflow.changeDSRRelations').'/start',
-				$this->Post->preparePostData(['dsrId' => $this->request->data['dsrId'], 'additionalTerms' => $nowAdditionallyIncluded]));
+				$this->Collibra->preparePostData(['dsrId' => $this->request->data['dsrId'], 'additionalTerms' => $nowAdditionallyIncluded]));
 			if ($resp->code != '200') $success = false;
 
 			if (!empty($toDeleteIds)) {
-				$resp = $this->CollibraAPI->deleteJSON('relation', $this->Post->preparePostData(['resource' => $toDeleteIds]));
+				$resp = $this->CollibraAPI->deleteJSON('relation', $this->Collibra->preparePostData(['resource' => $toDeleteIds]));
 				if ($resp->code != '200') $success = false;
 			}
 
@@ -1342,7 +1342,7 @@ class RequestController extends AppController {
 				$newValue = implode(';', $arrNewValue);
 
 				if ($newValue !== $oldValue) {
-					$resp = $this->CollibraAPI->post('attribute/'.$attrId, $this->Post->preparePostData(['value' => $newValue]));
+					$resp = $this->CollibraAPI->post('attribute/'.$attrId, $this->Collibra->preparePostData(['value' => $newValue]));
 					if ($resp->code != '200') $success = false;
 				}
 			}
@@ -1541,7 +1541,7 @@ class RequestController extends AppController {
 				$postData['value'] = $val;
 				$postData['representation'] = $asset->id;
 				$postData['label'] = $id;
-				$formResp = $this->CollibraAPI->post('term/'.$asset->id.'/attributes', $this->Post->preparePostData($postData, '/%0D%0A/', '<br/>'));
+				$formResp = $this->CollibraAPI->post('term/'.$asset->id.'/attributes', $this->Collibra->preparePostData($postData, '/%0D%0A/', '<br/>'));
 				$formResp = json_decode($formResp);
 
 				if (!isset($formResp)) {
@@ -1553,7 +1553,7 @@ class RequestController extends AppController {
 		if (!empty($wfPostData['attributes'])) {
 			$resp = $this->CollibraAPI->post(
 				'workflow/'.Configure::read('Collibra.workflow.changeAttributes').'/start',
-				$this->Post->preparePostData($wfPostData, ['/%0D%0A/', '/%5B[0-9]*%5D/'], ['<br/>', '']));
+				$this->Collibra->preparePostData($wfPostData, ['/%0D%0A/', '/%5B[0-9]*%5D/'], ['<br/>', '']));
 			if ($resp->code != '200') $err = true;
 		}
 
@@ -2124,7 +2124,7 @@ class RequestController extends AppController {
 
 		$formResp = $this->CollibraAPI->post(
 			'workflow/'.Configure::read('Collibra.workflow.intakeDSR').'/start',
-			$this->Post->preparePostData($postData)
+			$this->Collibra->preparePostData($postData)
 		);
 		$formResp = json_decode($formResp);
 
@@ -2198,7 +2198,7 @@ class RequestController extends AppController {
 			// Here update all the attributes Collibra inserted HTML tags into
 			$resp = $this->CollibraAPI->post(
 				'workflow/'.Configure::read('Collibra.workflow.changeAttributes').'/start',
-				$this->Post->preparePostData(['attributes' => $arrChangedAttrIds, 'values' => $arrChangedAttrValues]));
+				$this->Collibra->preparePostData(['attributes' => $arrChangedAttrIds, 'values' => $arrChangedAttrValues]));
 		}
 
 		$this->set(compact('netID', 'asset', 'parent', 'expand'));
