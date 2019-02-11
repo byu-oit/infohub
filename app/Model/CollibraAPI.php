@@ -20,6 +20,11 @@ class CollibraAPI extends Model {
 		return strcmp($a->name, $b->name);
 	}
 
+	private function prepData($postData) {
+		$postString = http_build_query($postData);
+		return preg_replace("/%5B[0-9]*%5D/", "", $postString);
+	}
+
 	public function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
 		$this->settings = $this->getDataSource()->config;
@@ -851,9 +856,7 @@ class CollibraAPI extends Model {
 			return true;
 		}
 
-		$postString = http_build_query($wfPostData);
-		$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
-		$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', $postString);
+		$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', prepData($wfPostData));
 
 		return true;
 	}
@@ -1354,9 +1357,7 @@ class CollibraAPI extends Model {
 			array_push($wfPostData['target'], $id);
 		}
 
-		$postString = http_build_query($wfPostData);
-		$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
-		$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', $postString);
+		$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', prepData($wfPostData));
 
 		return true;
 	}
@@ -1422,9 +1423,7 @@ class CollibraAPI extends Model {
 			return true;
 		}
 
-		$postString = http_build_query($wfPostData);
-		$postString = preg_replace("/%5B[0-9]*%5D/", "", $postString);
-		$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', $postString);
+		$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', prepData($wfPostData));
 
 		return true;
 	}
