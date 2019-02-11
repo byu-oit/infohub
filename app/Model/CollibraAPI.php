@@ -478,7 +478,8 @@ class CollibraAPI extends Model {
 				['Column' => ['fieldName' => 'id']],
 				['Column' => ['fieldName' => 'name']],
 				['Column' => ['fieldName' => 'statusId']],
-				['Column' => ['fieldName' => 'status']]],
+				['Column' => ['fieldName' => 'status']],
+				['Column' => ['fieldName' => 'authorizedByFieldset']]],
 			'Resources' => [
 				'Term' => [
 					'Id' => ['name' => 'id'],
@@ -486,6 +487,9 @@ class CollibraAPI extends Model {
 					'Status' => [
 						'Id' => ['name' => 'statusId'],
 						'Signifier' => ['name' => 'status']],
+					'BooleanAttribute' => [
+						'Value' => ['name' => 'authorizedByFieldset'],
+						'labelId' => Configure::read('Collibra.attribute.authorizedByFieldset')],
 					'Vocabulary' => [
 						'Id' => ['name' => 'vocabId']],
 					'ConceptType' => [
@@ -1294,6 +1298,12 @@ class CollibraAPI extends Model {
 				$postString = http_build_query($postData);
 				$resp = $this->post('term/'.$apiResult->termReference[0]->resourceId.'/attributes', $postString);
 			}
+			if ($swagger['authorizedByFieldset']) {
+				$postData['label'] = Configure::read('Collibra.attribute.authorizedByFieldset');
+				$postData['value'] = 'true';
+				$postString = http_build_query($postData);
+				$resp = $this->post('term/'.$apiResult->termReference[0]->resourceId.'/attributes', $postString);
+			}
 		}
 		//Add fields
 		if (!empty($fields)) {
@@ -1753,6 +1763,7 @@ class CollibraAPI extends Model {
 						['Column' => ['fieldName' => 'apiVocabName']],
 						['Column' => ['fieldName' => 'apiCommId']],
 						['Column' => ['fieldName' => 'apiCommName']],
+						['Column' => ['fieldName' => 'apiAuthorizedByFieldset']],
 						['Column' => ['fieldName' => 'apiRelationId']]]]],
 
 				['Group' => [
@@ -1940,6 +1951,9 @@ class CollibraAPI extends Model {
 					'Target' => [
 						'Id' => ['name' => 'apiId'],
 						'Signifier' => ['name' => 'apiName'],
+						'BooleanAttribute' => [
+							'Value' => ['name' => 'apiAuthorizedByFieldset'],
+							'labelId' => Configure::read('Collibra.attribute.authorizedByFieldset')],
 						'Vocabulary' => [
 							'Id' => ['name' => 'apiVocabId'],
 							'Name' => ['name' => 'apiVocabName'],
@@ -2087,6 +2101,9 @@ class CollibraAPI extends Model {
 							'Target' => [
 								'Id' => ['name' => 'apiId'],
 								'Signifier' => ['name' => 'apiName'],
+								'BooleanAttribute' => [
+									'Value' => ['name' => 'apiAuthorizedByFieldset'],
+									'labelId' => Configure::read('Collibra.attribute.authorizedByFieldset')],
 								'Vocabulary' => [
 									'Id' => ['name' => 'apiVocabId'],
 									'Name' => ['name' => 'apiVocabName'],

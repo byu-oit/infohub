@@ -352,6 +352,7 @@ function addToQueueAPI(elem, displayCart){
 		var arrFieldIds = [];
 		var apiHost = $(elem).attr('data-apiHost');
 		var apiPath = $(elem).attr('data-apiPath');
+		var authorizedByFieldset = $(elem).attr('data-authorizedByFieldset');
 
 		$(elem).parent().find('.checkBoxes').find('input').each(function(){
 			if($(this).prop("checked") && $(this).prop("name") != "toggleCheckboxes"){
@@ -360,7 +361,7 @@ function addToQueueAPI(elem, displayCart){
 			}
 		});
 		if (arrFields.length < 500) {
-			$.post("/request/addToQueue", {emptyApi:'false', f:arrFields, fi:arrFieldIds, apiHost:apiHost, apiPath:apiPath})
+			$.post("/request/addToQueue", {emptyApi:'false', f:arrFields, fi:arrFieldIds, apiHost:apiHost, apiPath:apiPath, afs:authorizedByFieldset})
 				.done(function(data) {
 					clearInterval(loadingTextInterval);
 					$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
@@ -372,7 +373,7 @@ function addToQueueAPI(elem, displayCart){
 			});
 		} else {
 			largeAddProgressSetUp(arrFields.length);
-			largeAddToQueueAPI(arrFields, arrFieldIds, apiHost, apiPath)
+			largeAddToQueueAPI(arrFields, arrFieldIds, apiHost, apiPath, authorizedByFieldset)
 				.then(function(data) {
 					clearInterval(loadingTextInterval);
 					$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
@@ -398,26 +399,26 @@ function addToQueueAPI(elem, displayCart){
 		});
 	}
 }
-function largeAddToQueueAPI(arrFields, arrFieldIds, apiHost, apiPath, fieldsStride = 150) {
+function largeAddToQueueAPI(arrFields, arrFieldIds, apiHost, apiPath, authorizedByFieldset, fieldsStride = 150) {
 	if (arrFields.length > fieldsStride) {
 		return new Promise(function(resolve) {
-			var request = $.post("/request/addToQueue", {emptyApi:'false', f:arrFields.slice(0, fieldsStride), fi:arrFieldIds.slice(0, fieldsStride), apiHost:apiHost, apiPath:apiPath})
+			var request = $.post("/request/addToQueue", {emptyApi:'false', f:arrFields.slice(0, fieldsStride), fi:arrFieldIds.slice(0, fieldsStride), apiHost:apiHost, apiPath:apiPath, afs:authorizedByFieldset})
 				.then(() => {
 					largeAddProgressIncrement();
 				});
-			var recur = largeAddToQueueAPI(arrFields.slice(fieldsStride), arrFieldIds.slice(fieldsStride), apiHost, apiPath, fieldsStride);
+			var recur = largeAddToQueueAPI(arrFields.slice(fieldsStride), arrFieldIds.slice(fieldsStride), apiHost, apiPath, authorizedByFieldset, fieldsStride);
 
 			Promise.all([request, recur]).then(() => resolve());
-			});
+		});
 	}
 	else {
 		return new Promise(function(resolve) {
-			$.post("/request/addToQueue", {emptyApi:'false', f:arrFields, fi:arrFieldIds, apiHost:apiHost, apiPath:apiPath})
+			$.post("/request/addToQueue", {emptyApi:'false', f:arrFields, fi:arrFieldIds, apiHost:apiHost, apiPath:apiPath, afs:authorizedByFieldset})
 				.then(() => {
 					largeAddProgressIncrement();
 					resolve();
 				});
-			});
+		});
 	}
 }
 function largeAddProgressSetUp(fieldsSize, fieldsStride = 150) {

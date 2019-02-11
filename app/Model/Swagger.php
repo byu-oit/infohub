@@ -1,5 +1,6 @@
 <?php
 use Rs\Json\Pointer;
+use Rs\Json\Pointer\NonexistentValueReferencedException;
 
 class Swagger extends AppModel {
 
@@ -39,8 +40,14 @@ class Swagger extends AppModel {
 		}
 		$version = $this->_getRef('/info/version');
 
+		try {
+			$uapiParse = strpos($basePath, 'byuapi') !== false || $this->swag->get('/x-infohub-parse-like-uapi-v1');
+		} catch (NonexistentValueReferencedException $e) {
+			$uapiParse = false;
+		}
+
 		$this->elements = [];
-		if (strpos($basePath, 'byuapi') !== false) {
+		if ($uapiParse) {
 			$rootPath = isset($paths['/']) ? '/' : '/*';
 			foreach ($paths[$rootPath] as $method => $operation) {
 				$response = empty($operation['responses'][200]['$ref']) ? $operation['responses'][200] : $this->_getRef($operation['responses'][200]['$ref']);
@@ -76,11 +83,14 @@ class Swagger extends AppModel {
 			return false;
 		}
 
+		$authorizedByFieldset = strpos($basePath, 'byuapi') !== false || $this->swag->get('/x-infohub-authorization-by-fieldset');
+
 		return [
 			'host' => $host,
 			'basePath' => $basePath,
 			'version' => $version,
-			'elements' => array_values($this->elements)
+			'elements' => array_values($this->elements),
+			'authorizedByFieldset' => $authorizedByFieldset
 		];
 	}
 
