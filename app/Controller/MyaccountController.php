@@ -1,7 +1,7 @@
 <?php
 
 class MyaccountController extends AppController {
-	public $components = ['Post'];
+	public $components = ['Post', 'Collibra'];
 
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -116,37 +116,14 @@ class MyaccountController extends AppController {
 		$arrChangedAttrIds = [];
 		$arrChangedAttrValues = [];
 		foreach($arrRequests as $r){
-			// Making edits in Collibra inserts weird html into the attributes; if an
-			// edit was made in Collibra, we replace their html with some more cooperative tags
-			foreach($r->attributes as $label => $attr) {
-				if ($label == 'Request Date') continue;
-				if (preg_match('/<div>/', $attr->attrValue)) {
-					array_push($arrChangedAttrIds, $attr->attrResourceId);
-					$newValue = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->attrValue);
-					array_push($arrChangedAttrValues, $newValue.'  ');
-
-					// After updating the value in Collibra, just replace the value for this page load
-					$attr->attrValue = $newValue;
-				}
-			}
-
 			for ($i = 0; $i < sizeof($r->dsas); $i++) {
 				list($r->dsas[$i]->attributes, $r->dsas[$i]->collaborators) = $this->CollibraAPI->getAttributes($r->dsas[$i]->dsaId);
-				foreach($r->dsas[$i]->attributes as $attr) {
-					if (preg_match('/<div>/', $attr->attrValue)) {
-						array_push($arrChangedAttrIds, $attr->attrResourceId);
-						$newValue = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->attrValue);
-						array_push($arrChangedAttrValues, $newValue.'  ');
-
-						// After updating the value in Collibra, just replace the value for this page load
-						$attr->attrValue = $newValue;
-					}
-				}
-
 				$resp = $this->CollibraAPI->get('term/'.$r->dsas[$i]->dsaId.'/attachments');
 				$resp = json_decode($resp);
 				$r->dsas[$i]->attachments = $resp->attachment;
 			}
+
+			$this->Collibra->cleanEdits($r, true);
 
 			$pendingStatuses = ['In Progress', 'Request In Progress', 'Agreement Review', 'In Provisioning'];
 			if (in_array($r->statusName, $pendingStatuses)) {
@@ -156,13 +133,6 @@ class MyaccountController extends AppController {
 			} else if ($r->statusName == 'Canceled') {
 				array_push($sortedRequests['canceled'], $r);
 			}
-		}
-
-		if (!empty($arrChangedAttrIds)) {
-			// Here update all the attributes Collibra inserted HTML tags into
-			$resp = $this->CollibraAPI->post(
-				'workflow/'.Configure::read('Collibra.workflow.changeAttributes').'/start',
-				$this->Post->preparePostData(['attributes' => $arrChangedAttrIds, 'values' => $arrChangedAttrValues]));
 		}
 
 		$psName = '';

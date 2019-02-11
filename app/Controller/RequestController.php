@@ -5,7 +5,7 @@ require 'fpdf' . DIRECTORY_SEPARATOR . 'fpdf.php';
 class RequestController extends AppController {
 	public $helpers = ['Html', 'Form'];
 	public $uses = ['CollibraAPI', 'BYUAPI'];
-	public $components = ['Post'];
+	public $components = ['Post', 'Collibra'];
 
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -2182,43 +2182,17 @@ class RequestController extends AppController {
 			}
 		}
 
-		// Making edits in Collibra inserts weird html into the attributes; if an
-		// edit was made in Collibra, we replace their html with some more cooperative tags
-		$arrChangedAttrIds = [];
-		$arrChangedAttrValues = [];
-		foreach($asset->attributes as $label => $attr) {
-			if ($label == 'Request Date') continue;
-			if (preg_match('/<div>/', $attr->attrValue)) {
-				array_push($arrChangedAttrIds, $attr->attrResourceId);
-				$newValue = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->attrValue);
-				array_push($arrChangedAttrValues, $newValue.'  ');
-
-				// After updating the value in Collibra, just replace the value for this page load
-				$attr->attrValue = $newValue;
-			}
-		}
-
 		if ($parent) {
 			for ($i = 0; $i < sizeof($asset->dsas); $i++) {
 				list($asset->dsas[$i]->attributes, $asset->dsas[$i]->collaborators) = $this->CollibraAPI->getAttributes($asset->dsas[$i]->dsaId);
-
-				foreach($asset->dsas[$i]->attributes as $attr) {
-					if (preg_match('/<div>/', $attr->attrValue)) {
-						array_push($arrChangedAttrIds, $attr->attrResourceId);
-						$newValue = preg_replace(['/<div><br\/>/', '/<\/div>/', '/<div>/'], ['<br/>', '', '<br/>'], $attr->attrValue);
-						array_push($arrChangedAttrValues, $newValue.'  ');
-
-						// After updating the value in Collibra, just replace the value for this page load
-						$attr->attrValue = $newValue;
-					}
-				}
-
 				$asset->dsas[$i]->roles = $this->CollibraAPI->getResponsibilities($asset->dsas[$i]->dsaVocabularyId);
 				$resp = $this->CollibraAPI->get('term/'.$asset->dsas[$i]->dsaId.'/attachments');
 				$resp = json_decode($resp);
 				$asset->dsas[$i]->attachments = $resp->attachment;
 			}
 		}
+
+		$this->Collibra->cleanEdits($asset, $parent);
 
 		if (!empty($arrChangedAttrIds)) {
 			// Here update all the attributes Collibra inserted HTML tags into
