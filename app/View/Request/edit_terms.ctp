@@ -62,7 +62,7 @@
 			return;
 		}
 
-		$.post("/request/editTermsSubmit", {action:"add",dsrId:dsrId,arrApiFields:arrApiFields,arrDbColumns:arrDbColumns,arrSamlFields:arrSamlFields,arrBusinessTerms:arrBusinessTerms,arrApis:arrApis})
+		$.post("/request/editTermsSubmitAdd", {dsrId:dsrId,arrApiFields:arrApiFields,arrDbColumns:arrDbColumns,arrSamlFields:arrSamlFields,arrBusinessTerms:arrBusinessTerms,arrApis:arrApis})
 			.done(function(data) {
 				clearInterval(loadingTextInterval);
 				data = JSON.parse(data);
@@ -96,7 +96,7 @@
             }
         });
 
-        $.post("/request/editTermsSubmit", {action:"remove",dsrId:dsrId,arrIds:arrIds,arrNames:arrNames,arrRelIds:arrRelIds})
+        $.post("/request/editTermsSubmitRemove", {dsrId:dsrId,arrIds:arrIds,arrNames:arrNames,arrRelIds:arrRelIds})
             .done(function(data) {
 				clearInterval(loadingTextInterval);
                 data = JSON.parse(data);
