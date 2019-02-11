@@ -312,7 +312,7 @@
 						<?php
 					if (!empty($arrQueue['apiFields']) || !empty($arrQueue['dbColumns']) || !empty($arrQueue['samlFields']) || !empty($termDetails) || !empty($arrQueue['emptyApis'])) {
 							foreach ($arrQueue['apiFields'] as $fieldId => $field) {
-								echo '<li id="requestItem'.$fieldId.'" data-title="'.$fieldId.'" data-name="'.$field['name'].'" api-host="'.$field['apiHost'].'" api-path="'.$field['apiPath'].'" data-type="field"><a class="delete" href="javascript:removeFromRequestQueue(\''.$fieldId.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$field['name'].'</li>';
+								echo '<li id="requestItem'.$fieldId.'" data-title="'.$fieldId.'" data-name="'.$field['fullName'].'" data-api-host="'.$field['apiHost'].'" data-api-path="'.$field['apiPath'].'" data-authorized-by-fieldset="'.$field['authorizedByFieldset'].'" data-type="field"><a class="delete" href="javascript:removeFromRequestQueue(\''.$fieldId.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$field['name'].'</li>';
 							}
 							foreach ($arrQueue['dbColumns'] as $columnId => $column) {
 								echo '<li id="requestItem'.$columnId.'" data-title="'.$columnId.'" data-name="'.$column['name'].'" database-name="'.$column['databaseName'].'" schema-name="'.$column['schemaName'].'" table-name="'.$column['tableName'].'" data-type="column"><a class="delete" href="javascript:removeFromRequestQueue(\''.$columnId.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$column['name'].'</li>';
@@ -321,7 +321,7 @@
 								echo '<li id="requestItem'.$fieldId.'" data-title="'.$fieldId.'" data-name="'.$field['name'].'" response-name="'.$field['responseName'].'" data-type="samlField"><a class="delete" href="javascript:removeFromRequestQueue(\''.$fieldId.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$field['name'].'</li>';
 							}
 							foreach ($termDetails as $term){
-								echo '<li id="requestItem'.$term->termrid.'" data-title="'.$term->termsignifier.'" data-id="'.$term->termrid.'" data-vocabID="'.$term->commrid.'" api-host="'.$term->apihost.'" api-path="'.$term->apipath.'" database-name="'.$column['databaseName'].'" schema-name="'.$term->schemaname.'" table-name="'.$term->tablename.'" response-name="'.$term->responsename.'" data-type="term"><a class="delete" href="javascript:removeFromRequestQueue(\''.$term->termrid.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$term->termsignifier.'</li>';
+								echo '<li id="requestItem'.$term->termrid.'" data-title="'.$term->termsignifier.'" data-id="'.$term->termrid.'" data-vocabID="'.$term->commrid.'" data-type="term"><a class="delete" href="javascript:removeFromRequestQueue(\''.$term->termrid.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$term->termsignifier.'</li>';
 							}
 							foreach ($arrQueue['emptyApis'] as $path => $api){
 								$displayName = strlen($path) > 28 ? substr($path, 0, 28) . "..." : $path;

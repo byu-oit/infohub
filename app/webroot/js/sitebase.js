@@ -218,28 +218,23 @@ function removeFromRequestQueue(id){
 					var title = elem.data('title');
 					var dataId = elem.data('id');
 					var vocabId = elem.data('vocabID');
-					var apiHost = elem.attr('api-host');
-					var apiPath = elem.attr('api-path');
-					var databaseName = elem.attr('database-name');
-					var schemaName = elem.attr('schema-name');
-					var tableName = elem.attr('table-name');
-					var responseName = elem.attr('response-name');
 
-					var undoData = {emptyApi:'false',t:[{title:title,id:dataId,vocabId:vocabId}]};
+					var undoData = {emptyApi:'false',t:[{title:title,id:dataId,vocabId:vocabId}],url:'BusinessTerms'};
 					break;
 				case 'api':
 					var title = elem.data('title');
 					var apiHost = elem.attr('api-host');
 
-					var undoData = {emptyApi:'true',t:[title],apiHost:apiHost};
+					var undoData = {emptyApi:'true',t:[title],apiHost:apiHost,url:'EmptyAPI'};
 					break;
 				case 'field':
 					var fieldName = elem.data('name');
-					var fieldId = elem.data('title')
-					var apiHost = elem.attr('api-host');
-					var apiPath = elem.attr('api-path');
+					var fieldId = elem.data('title');
+					var apiHost = elem.data('apiHost');
+					var apiPath = elem.data('apiPath');
+					var authorizedByFieldset = elem.data('authorizedByFieldset');
 
-					var undoData = {emptyApi:'false',f:[fieldName],fi:[fieldId],apiHost:apiHost,apiPath:apiPath};
+					var undoData = {emptyApi:'false',f:[fieldName],fi:[fieldId],apiHost:apiHost,apiPath:apiPath,afs:authorizedByFieldset,url:'API'};
 					break;
 				case 'column':
 					var columnName = elem.data('name');
@@ -248,14 +243,14 @@ function removeFromRequestQueue(id){
 					var schemaName = elem.attr('schema-name');
 					var tableName = elem.attr('table-name');
 
-					var undoData = {emptyApi:'false',c:[columnName],ci:[columnId],databaseName:databaseName,schemaName:schemaName,tableName:tableName};
+					var undoData = {emptyApi:'false',c:[tableName+' > '+columnName],ci:[columnId],databaseName:databaseName,schemaName:schemaName,tableName:tableName,url:'DBTable'};
 					break;
 				case 'samlField':
 					var fieldName = elem.data('name');
 					var fieldId = elem.data('title');
 					var responseName = elem.attr('response-name');
 
-					var undoData = {emptyApi:'false',s:[fieldName],si:[fieldId],responseName:responseName};
+					var undoData = {emptyApi:'false',s:[fieldName],si:[fieldId],responseName:responseName,url:'SAMLResponse'};
 					break;
 			}
 
@@ -265,7 +260,7 @@ function removeFromRequestQueue(id){
 
 				$(html).insertBefore('.irLower ul');
 				$('#request-undo').click(function(){
-					$.post("request/addToQueue", undoData);
+					$.post("request/addToQueue"+undoData.url, undoData);
 					$(this).remove();
 					elem.fadeIn('fast');
 				});
@@ -327,7 +322,7 @@ function addToQueue(elem, displayCart){
 		}
 	});
 
-	$.post("/request/addToQueue", {emptyApi:'false',t:arrTerms})
+	$.post("/request/addToQueueBusinessTerms", {emptyApi:'false',t:arrTerms})
 		.done(function(data) {
 			clearInterval(loadingTextInterval);
 			$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
@@ -361,7 +356,7 @@ function addToQueueAPI(elem, displayCart){
 			}
 		});
 		if (arrFields.length < 500) {
-			$.post("/request/addToQueue", {emptyApi:'false', f:arrFields, fi:arrFieldIds, apiHost:apiHost, apiPath:apiPath, afs:authorizedByFieldset})
+			$.post("/request/addToQueueAPI", {emptyApi:'false', f:arrFields, fi:arrFieldIds, apiHost:apiHost, apiPath:apiPath, afs:authorizedByFieldset})
 				.done(function(data) {
 					clearInterval(loadingTextInterval);
 					$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
@@ -388,7 +383,7 @@ function addToQueueAPI(elem, displayCart){
 		// Add an API without specified fields to cart.
 		var arrTitle = [$(elem).attr('data-apiPath')];
 		var apiHost = $(elem).attr('data-apiHost');
-		$.post("/request/addToQueue", {emptyApi:'true', t:arrTitle, apiHost:apiHost})
+		$.post("/request/addToQueueEmptyAPI", {emptyApi:'true', t:arrTitle, apiHost:apiHost})
 			.done(function(data) {
 				clearInterval(loadingTextInterval);
 				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
@@ -402,7 +397,7 @@ function addToQueueAPI(elem, displayCart){
 function largeAddToQueueAPI(arrFields, arrFieldIds, apiHost, apiPath, authorizedByFieldset, fieldsStride = 150) {
 	if (arrFields.length > fieldsStride) {
 		return new Promise(function(resolve) {
-			var request = $.post("/request/addToQueue", {emptyApi:'false', f:arrFields.slice(0, fieldsStride), fi:arrFieldIds.slice(0, fieldsStride), apiHost:apiHost, apiPath:apiPath, afs:authorizedByFieldset})
+			var request = $.post("/request/addToQueueAPI", {emptyApi:'false', f:arrFields.slice(0, fieldsStride), fi:arrFieldIds.slice(0, fieldsStride), apiHost:apiHost, apiPath:apiPath, afs:authorizedByFieldset})
 				.then(() => {
 					largeAddProgressIncrement();
 				});
@@ -413,7 +408,7 @@ function largeAddToQueueAPI(arrFields, arrFieldIds, apiHost, apiPath, authorized
 	}
 	else {
 		return new Promise(function(resolve) {
-			$.post("/request/addToQueue", {emptyApi:'false', f:arrFields, fi:arrFieldIds, apiHost:apiHost, apiPath:apiPath, afs:authorizedByFieldset})
+			$.post("/request/addToQueueAPI", {emptyApi:'false', f:arrFields, fi:arrFieldIds, apiHost:apiHost, apiPath:apiPath, afs:authorizedByFieldset})
 				.then(() => {
 					largeAddProgressIncrement();
 					resolve();
@@ -466,7 +461,7 @@ function addToQueueDBTable(elem, displayCart) {
 		}
 	});
 	if (arrColumns.length < 500) {
-		$.post("/request/addToQueue", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, databaseName:databaseName, schemaName:schemaName, tableName:tableName})
+		$.post("/request/addToQueueDBTable", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, databaseName:databaseName, schemaName:schemaName, tableName:tableName})
 			.done(function(data) {
 				clearInterval(loadingTextInterval);
 				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
@@ -493,7 +488,7 @@ function addToQueueDBTable(elem, displayCart) {
 function largeAddToQueueDBTable(arrColumns, arrColumnIds, databaseName, schemaName, tableName, columnsStride = 150) {
 	if (arrColumns.length > columnsStride) {
 		return new Promise(function(resolve) {
-			var request = $.post("/request/addToQueue", {emptyApi:'false', c:arrColumns.slice(0, columnsStride), ci:arrColumnIds.slice(0, columnsStride), databaseName:databaseName, schemaName:schemaName, tableName:tableName})
+			var request = $.post("/request/addToQueueDBTable", {emptyApi:'false', c:arrColumns.slice(0, columnsStride), ci:arrColumnIds.slice(0, columnsStride), databaseName:databaseName, schemaName:schemaName, tableName:tableName})
 				.then(() => {
 					largeAddProgressIncrement();
 				});
@@ -504,7 +499,7 @@ function largeAddToQueueDBTable(arrColumns, arrColumnIds, databaseName, schemaNa
 	}
 	else {
 		return new Promise(function(resolve) {
-			$.post("/request/addToQueue", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, databaseName:databaseName, schemaName:schemaName, tableName:tableName})
+			$.post("/request/addToQueueDBTable", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, databaseName:databaseName, schemaName:schemaName, tableName:tableName})
 				.then(() => {
 					largeAddProgressIncrement();
 					resolve();
@@ -531,7 +526,7 @@ function addToQueueSAMLResponse(elem, displayCart) {
 			arrFieldIds.push($(this).data('fieldId'));
 		}
 	});
-	$.post("/request/addToQueue", {emptyApi:'false', s:arrFields, si:arrFieldIds, responseName:responseName})
+	$.post("/request/addToQueueSAMLResponse", {emptyApi:'false', s:arrFields, si:arrFieldIds, responseName:responseName})
 		.done(function(data) {
 			clearInterval(loadingTextInterval);
 			$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');

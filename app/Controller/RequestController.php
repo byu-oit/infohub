@@ -240,97 +240,133 @@ class RequestController extends AppController {
 		return json_encode(['success' => '1']);
 	}
 
-	public function addToQueue() {
+	public function addToQueueAPI() {
 		$this->autoRender = false;
-		if($this->request->is('post')){
-			if($this->request->data['emptyApi'] == 'true') {
-				$newTermsAdded = 1;
-				$apiPath = $this->request->data['t'][0];
-				$apiHost = $this->request->data['apiHost'];
+		if ($this->request->is('post')) {
+			$newTermsAdded = 0;
+			$arrFields = $this->request->data['f'];
+			$arrFieldIds = $this->request->data['fi'];
+			$apiHost = $this->request->data['apiHost'];
+			$apiPath = $this->request->data['apiPath'];
+			$authorizedByFieldset = $this->request->data['afs'];
 
-				$arrQueue = $this->Session->read('queue');
-				foreach ($arrQueue['emptyApis'] as $path => $host) {
-					if ($path == $apiPath) {
-						$newTermsAdded = 0;
-					}
+			$arrQueue = $this->Session->read('queue');
+
+			foreach ($arrFieldIds as $index => $fieldId) {
+				if (empty($arrQueue['apiFields'][$fieldId])) {
+					$newTermsAdded++;
+					$arrQueue['apiFields'][$fieldId] = ['name' => end((explode(".", $arrFields[$index]))), 'fullName' => $arrFields[$index], 'apiHost' => $apiHost, 'apiPath' => $apiPath, 'authorizedByFieldset' => $authorizedByFieldset];
 				}
-
-				if ($newTermsAdded) {
-					$arrQueue['emptyApis'][$apiPath] = ['apiHost' => $apiHost];
-				}
-
-				$this->Session->write('queue', $arrQueue);
-				$this->updateDraftCart();
-				echo $newTermsAdded;
-			} else {
-				$newTermsAdded = 0;
-				$arrTerms = empty($this->request->data['t']) ? null : $this->request->data['t'];
-				$arrFields = empty($this->request->data['f']) ? null : $this->request->data['f'];
-				$arrFieldIds = empty($this->request->data['fi']) ? null : $this->request->data['fi'];
-				$arrColumns = empty($this->request->data['c']) ? null : $this->request->data['c'];
-				$arrColumnIds = empty($this->request->data['ci']) ? null : $this->request->data['ci'];
-				$arrSamlFields = empty($this->request->data['s']) ? null : $this->request->data['s'];
-				$arrSamlFieldIds = empty($this->request->data['si']) ? null : $this->request->data['si'];
-				$apiHost = empty($this->request->data['apiHost']) ? null : $this->request->data['apiHost'];
-				$apiPath = empty($this->request->data['apiPath']) ? null : $this->request->data['apiPath'];
-				$authorizedByFieldset = empty($this->request->data['afs']) ? null : $this->request->data['afs'];
-				$databaseName = empty($this->request->data['databaseName']) ? null : $this->request->data['databaseName'];
-				$schemaName = empty($this->request->data['schemaName']) ? null : $this->request->data['schemaName'];
-				$tableName = empty($this->request->data['tableName']) ? null : $this->request->data['tableName'];
-				$responseName = empty($this->request->data['responseName']) ? null : $this->request->data['responseName'];
-
-				$arrQueue = $this->Session->read('queue');
-
-				if (isset($arrFieldIds)) {
-					foreach ($arrFieldIds as $index => $fieldId) {
-						if (empty($arrQueue['apiFields'][$fieldId])) {
-							$newTermsAdded++;
-							$arrQueue['apiFields'][$fieldId] = ['name' => end((explode(".", $arrFields[$index]))), 'fullName' => $arrFields[$index], 'apiHost' => $apiHost, 'apiPath' => $apiPath, 'authorizedByFieldset' => $authorizedByFieldset];
-						}
-					}
-				}
-				if (isset($arrColumnIds)) {
-					foreach ($arrColumnIds as $index => $columnId) {
-						if (empty($arrQueue['dbColumns'][$columnId])) {
-							$newTermsAdded++;
-							$arrQueue['dbColumns'][$columnId] = ['name' => end((explode(" > ", $arrColumns[$index]))), 'fullName' => $arrColumns[$index], 'databaseName' => $databaseName, 'schemaName' => $schemaName, 'tableName' => $tableName];
-						}
-					}
-				}
-				if (isset($arrSamlFieldIds)) {
-					foreach ($arrSamlFieldIds as $index => $fieldId) {
-						if (empty($arrQueue['samlFields'][$fieldId])) {
-							$newTermsAdded++;
-							$arrQueue['samlFields'][$fieldId] = ['name' => $arrSamlFields[$index], 'responseName' => $responseName];
-						}
-					}
-				}
-				if (isset($arrTerms)) {
-					$arrTermIds = [];
-					foreach ($arrTerms as $term) {
-						$arrTermIds[$term['id']] = 'ignore';
-					}
-					$arrTermDetails = $this->CollibraAPI->getBusinessTermDetails($arrTermIds);
-
-					foreach ($arrTermDetails as $term) {
-						if (empty($arrQueue['businessTerms'][$term->termrid])) {
-							$requestable = true;
-							if (!Configure::read('allowUnapprovedTerms')) {
-								$requestable = $term->statusname == 'Accepted';
-							}
-
-							if ($requestable) {
-								$newTermsAdded++;
-								$arrQueue['businessTerms'][$term->termrid] = ['term' => $term->termsignifier, 'communityId' => $term->commrid];
-							}
-						}
-					}
-				}
-
-				$this->Session->write('queue', $arrQueue);
-				$this->updateDraftCart();
-				echo $newTermsAdded;
 			}
+
+			$this->Session->write('queue', $arrQueue);
+			$this->updateDraftCart();
+			echo $newTermsAdded;
+		}
+	}
+
+	public function addToQueueDBTable() {
+		$this->autoRender = false;
+		if ($this->request->is('post')) {
+			$newTermsAdded = 0;
+			$arrColumns = $this->request->data['c'];
+			$arrColumnIds = $this->request->data['ci'];
+			$databaseName = $this->request->data['databaseName'];
+			$schemaName = $this->request->data['schemaName'];
+			$tableName = $this->request->data['tableName'];
+
+			$arrQueue = $this->Session->read('queue');
+
+			foreach ($arrColumnIds as $index => $columnId) {
+				if (empty($arrQueue['dbColumns'][$columnId])) {
+					$newTermsAdded++;
+					$arrQueue['dbColumns'][$columnId] = ['name' => end((explode(" > ", $arrColumns[$index]))), 'fullName' => $arrColumns[$index], 'databaseName' => $databaseName, 'schemaName' => $schemaName, 'tableName' => $tableName];
+				}
+			}
+
+			$this->Session->write('queue', $arrQueue);
+			$this->updateDraftCart();
+			echo $newTermsAdded;
+		}
+	}
+
+	public function addToQueueSAMLResponse() {
+		$this->autoRender = false;
+		if ($this->request->is('post')) {
+			$newTermsAdded = 0;
+			$arrSamlFields = $this->request->data['s'];
+			$arrSamlFieldIds = $this->request->data['si'];
+			$responseName = $this->request->data['responseName'];
+
+			$arrQueue = $this->Session->read('queue');
+
+			foreach ($arrSamlFieldIds as $index => $fieldId) {
+				if (empty($arrQueue['samlFields'][$fieldId])) {
+					$newTermsAdded++;
+					$arrQueue['samlFields'][$fieldId] = ['name' => $arrSamlFields[$index], 'responseName' => $responseName];
+				}
+			}
+
+			$this->Session->write('queue', $arrQueue);
+			$this->updateDraftCart();
+			echo $newTermsAdded;
+		}
+	}
+
+	public function addToQueueEmptyAPI() {
+		$this->autoRender = false;
+		if ($this->request->is('post')) {
+			$newTermsAdded = 1;
+			$apiPath = $this->request->data['t'][0];
+			$apiHost = $this->request->data['apiHost'];
+
+			$arrQueue = $this->Session->read('queue');
+			foreach ($arrQueue['emptyApis'] as $path => $host) {
+				if ($path == $apiPath) {
+					$newTermsAdded = 0;
+				}
+			}
+
+			if ($newTermsAdded) {
+				$arrQueue['emptyApis'][$apiPath] = ['apiHost' => $apiHost];
+				$this->Session->write('queue', $arrQueue);
+				$this->updateDraftCart();
+			}
+
+			echo $newTermsAdded;
+		}
+	}
+
+	public function addToQueueBusinessTerms() {
+		$this->autoRender = false;
+		if ($this->request->is('post')) {
+			$newTermsAdded = 0;
+			$arrTerms = $this->request->data['t'];
+			$arrQueue = $this->Session->read('queue');
+
+			$arrTermIds = [];
+			foreach ($arrTerms as $term) {
+				$arrTermIds[$term['id']] = 'ignore';
+			}
+			$arrTermDetails = $this->CollibraAPI->getBusinessTermDetails($arrTermIds);
+
+			foreach ($arrTermDetails as $term) {
+				if (empty($arrQueue['businessTerms'][$term->termrid])) {
+					$requestable = true;
+					if (!Configure::read('allowUnapprovedTerms')) {
+						$requestable = $term->statusname == 'Accepted';
+					}
+
+					if ($requestable) {
+						$newTermsAdded++;
+						$arrQueue['businessTerms'][$term->termrid] = ['term' => $term->termsignifier, 'communityId' => $term->commrid];
+					}
+				}
+			}
+
+			$this->Session->write('queue', $arrQueue);
+			$this->updateDraftCart();
+			echo $newTermsAdded;
 		}
 	}
 
