@@ -321,7 +321,7 @@
 								echo '<li id="requestItem'.$fieldId.'" data-title="'.$fieldId.'" data-name="'.$field['name'].'" response-name="'.$field['responseName'].'" data-type="samlField"><a class="delete" href="javascript:removeFromRequestQueue(\''.$fieldId.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$field['name'].'</li>';
 							}
 							foreach ($termDetails as $term){
-								echo '<li id="requestItem'.$term->termrid.'" data-title="'.$term->termsignifier.'" data-id="'.$term->termrid.'" data-vocabID="'.$term->commrid.'" data-type="term"><a class="delete" href="javascript:removeFromRequestQueue(\''.$term->termrid.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$term->termsignifier.'</li>';
+								echo '<li id="requestItem'.$term->termrid.'" data-title="'.$term->termsignifier.'" data-id="'.$term->termrid.'" data-vocabID="'.$term->commrid.'" data-type="term"><a class="delete" href="javascript:removeFromRequestQueue(\''.$term->termrid.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$term->termsignifier; if ($customSAML) echo " (SAML)"; echo '</li>';
 							}
 							foreach ($arrQueue['emptyApis'] as $path => $api){
 								$displayName = strlen($path) > 28 ? substr($path, 0, 28) . "..." : $path;

@@ -436,6 +436,12 @@ class RequestController extends AppController {
 		echo $responseHTML;
 	}
 
+	public function addCustomSAML() {
+		$this->Session->write('customSAML', true);
+		$this->Flash->success('You\'re requesting Custom SAML, Use this page to search for the Business Terms you need.');
+		$this->redirect(array('controller' => 'search'));
+	}
+
 	public function success() {
 	}
 
@@ -1945,7 +1951,12 @@ class RequestController extends AppController {
 		}
 		$postData['requestedInformationMap'] = '';
 		if (!empty($individualTerms)) {
-			$postData['requestedInformationMap'] .= "<b>Individual Business Terms:</b><br/>. . " . implode("<br/>. . ", $individualTerms) . "<br/><br/>";
+			if ($this->Session->read('customSAML')) {
+				$postData['requestedInformationMap'] .= "<b>Custom SAML Business Terms:</b><br/>. . " . implode("<br/>. . ", $individualTerms) . "<br/><br/>";
+			}
+			else {
+				$postData['requestedInformationMap'] .= "<b>Individual Business Terms:</b><br/>. . " . implode("<br/>. . ", $individualTerms) . "<br/><br/>";
+			}
 		}
 		if (!empty($apis) || !empty($fieldsetApis) || !empty($arrQueue['emptyApis'])) {
 			$postData['requestedInformationMap'] .= "<b>Requested APIs:</b><br/>";
@@ -2103,7 +2114,7 @@ class RequestController extends AppController {
 			$postData['technologyType'][] = 'SAML';
 		}
 		if (!isset($postData['technologyType']) || !in_array('SAML', $postData['technologyType'])) {
-			if (strpos($this->request->data['descriptionOfInformation'], 'SAML') !== false) {
+			if ($this->Session->read('customSAML')) {
 				$postData['technologyType'][] = 'SAML';
 			}
 		}
@@ -2425,12 +2436,14 @@ class RequestController extends AppController {
 			$psDepartment = $byuUser->employee_information->department;
 		}
 
+		$customSAML = $this->Session->read('customSAML');
+
 		$developmentShops = $this->CollibraAPI->getDevelopmentShopDetails('');
 		usort($developmentShops, function($a, $b) {
 			return strcmp(strtolower($a->name), strtolower($b->name));
 		});
 
-		$this->set(compact('preFilled', 'arrQueue', 'netId', 'psName', 'psPhone', 'psEmail', 'psRole', 'psDepartment', 'psReportsToName', 'supervisorInfo', 'policies', 'developmentShops'));
+		$this->set(compact('preFilled', 'arrQueue', 'netId', 'psName', 'psPhone', 'psEmail', 'psRole', 'psDepartment', 'psReportsToName', 'supervisorInfo', 'policies', 'developmentShops', 'customSAML'));
 		$this->set('submitErr', isset($this->request->query['err']));
 	}
 }
