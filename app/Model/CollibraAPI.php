@@ -856,7 +856,7 @@ class CollibraAPI extends Model {
 			return true;
 		}
 
-		$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', prepData($wfPostData));
+		$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', $this->prepData($wfPostData));
 
 		return true;
 	}
@@ -1357,7 +1357,7 @@ class CollibraAPI extends Model {
 			array_push($wfPostData['target'], $id);
 		}
 
-		$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', prepData($wfPostData));
+		$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', $this->prepData($wfPostData));
 
 		return true;
 	}
@@ -1423,7 +1423,7 @@ class CollibraAPI extends Model {
 			return true;
 		}
 
-		$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', prepData($wfPostData));
+		$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', $this->prepData($wfPostData));
 
 		return true;
 	}
