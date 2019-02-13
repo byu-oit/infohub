@@ -35,6 +35,15 @@ class RequestController extends AppController {
 		}
 	}
 
+	private function needsTrustedPartnerPolicy($communityIds) {
+		foreach ($communityIds as $commId) {
+			if ($commId == Configure::read('Collibra.community.academicRecords')) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	// Called by a Collibra workflow upon approval of a DSA
 	public function generatePDF() {
 		$this->autoRender = false;
@@ -1106,28 +1115,10 @@ class RequestController extends AppController {
 		}
 		$additionalTerms = array_values($_tmp);
 
-		$addPolicy = false;
-		foreach ($requestedTerms as $term) {
-			if ($term->termCommunityId == Configure::read('Collibra.community.academicRecords')) {
-				$addPolicy = true;
-				break;
-			}
-		}
-		if (!$addPolicy) {
-			foreach ($additionalTerms as $term) {
-				if ($term->termCommunityId == Configure::read('Collibra.community.academicRecords')) {
-					$addPolicy = true;
-					break;
-				}
-			}
-		}
-		if ($addPolicy) {
-			foreach ($request->policies as $policy) {
-				if ($policy->policyId == Configure::read('Collibra.policy.trustedPartnerSecurityStandards')) {
-					$addPolicy = false;
-					break;
-				}
-			}
+		$containsPolicy = in_array(Configure::read('Collibra.policy.trustedPartnerSecurityStandards'), array_column($request->policies, 'policyId'));
+		if (!$containsPolicy) {
+			$communityIds = array_merge(array_unique(array_column($requestedTerms, 'termCommunityId')), array_unique(array_column($additionalTerms, 'termCommunityId')));
+			$addPolicy = $this->needsTrustedPartnerPolicy($communityIds);
 
 			if ($addPolicy) {
 				array_push($relationsPostData['policies'], Configure::read('Collibra.policy.trustedPartnerSecurityStandards'));
@@ -1410,21 +1401,18 @@ class RequestController extends AppController {
 			}
 		}
 		if (!empty($trustedPartnerPolicyRelation)) {
-			$keepPolicy = false;
-			foreach ($request->requestedTerms as $reqTerm) {
-				if ($reqTerm->reqTermCommId == Configure::read('Collibra.community.academicRecords')) {
-					$keepPolicy = true;
-					break;
+			$communityIds = [];
+			foreach ($request->requestedTerms as $term) {
+				if (!in_array($term->reqTermRelationId, $toDeleteIds) || in_array($term->reqTermId, $nowAdditionallyIncluded)) {
+					array_push($communityIds, $term->reqTermCommId);
 				}
 			}
-			if (!$keepPolicy) {
-				foreach ($request->additionallyIncludedTerms as $addTerm) {
-					if ($addTerm->addTermCommId == Configure::read('Collibra.community.academicRecords')) {
-						$keepPolicy = true;
-						break;
-					}
+			foreach ($request->additionallyIncludedTerms as $term) {
+				if (!in_array($term->addTermRelationId, $toDeleteIds)) {
+					array_push($communityIds, $term->addTermCommId);
 				}
 			}
+			$keepPolicy = $this->needsTrustedPartnerPolicy(array_unique($communityIds));
 			if (!$keepPolicy) {
 				$resp = $this->CollibraAPI->delete('relation/'.$trustedPartnerPolicyRelation);
 				if ($resp->code != '200') $success = false;
