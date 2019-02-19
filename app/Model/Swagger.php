@@ -83,7 +83,11 @@ class Swagger extends AppModel {
 			return false;
 		}
 
-		$authorizedByFieldset = strpos($basePath, 'byuapi') !== false || $this->swag->get('/x-infohub-authorization-by-fieldset');
+		try {
+			$authorizedByFieldset = strpos($basePath, 'byuapi') !== false || $this->swag->get('/x-infohub-authorization-by-fieldset');
+		} catch (NonexistentValueReferencedException $e) {
+			$authorizedByFieldset = false;
+		}
 
 		return [
 			'host' => $host,
