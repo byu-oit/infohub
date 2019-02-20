@@ -1,0 +1,37 @@
+version: 1
+
+name: infohub
+
+tags:
+  data-sensitivity: public
+  team: OIT-Tools
+
+  environments:
+  dev:
+    app:
+      type: ecs-fargate
+      max_mb: 512
+      cpu_units: 256
+      containers:
+        - name: infohub
+          image_name: <account>/infohub:latest
+          port_mappings:
+            - 80
+          routing:
+            base_path: /
+            health_check_path: /
+      auto_scaling:
+        min_tasks: 1
+        max_tasks: 2
+      load_balancer:
+        type: https
+        https_certificate: 37df28aa-128f-4d3e-a728-1a3716ca333e
+        dns_names:
+          - infohub-dev.tools.byu.edu
+    db:
+      type: mysql
+      mysql_version: 5.7.23
+      database_name: infohub
+      instance_type: db.t2.micro
+      storage_type: gp2
+
