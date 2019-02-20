@@ -47,25 +47,13 @@ class ApisController extends AppController {
 			if (empty($community->vocabularyReferences->vocabularyReference)) {
 				return $this->redirect(['action' => 'host', 'hostname' => $hostname]);
 			}
-			$found = false;
-			foreach ($community->vocabularyReferences->vocabularyReference as $endpoint) {
-				if ($endpoint->name == $basePath) {
-					$found = true;
-					break;
-				}
-			}
+			$found = in_array($basePath, array_column($community->vocabularyReferences->vocabularyReference, 'name'));
 			if (!$found) {
 				$this->Flash->error('We couldn\'t find that API in our database.');
 				return $this->redirect(['action' => 'host', 'hostname' => $hostname]);
 			}
 		}
-		$containsFieldset = false;
-		foreach ($fields as $field) {
-			if (!empty($field->descendantFields)) {
-				$containsFieldset = true;
-				break;
-			}
-		}
+		$containsFieldset = count(array_filter(array_column($fields, 'descendantFields')));
 		$apiObject = $this->CollibraAPI->getApiObject($hostname, $basePath);
 		$matchAuthorized = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04', 'infohub-match');
 		$this->set(compact('hostname', 'basePath', 'fields', 'apiObject', 'matchAuthorized', 'containsFieldset'));
@@ -98,25 +86,13 @@ class ApisController extends AppController {
 			if (empty($community->vocabularyReferences->vocabularyReference)) {
 				return $this->redirect(['action' => 'host', 'hostname' => $hostname]);
 			}
-			$found = false;
-			foreach ($community->vocabularyReferences->vocabularyReference as $endpoint) {
-				if ($endpoint->name == $basePath) {
-					$found = true;
-					break;
-				}
-			}
+			$found = in_array($basePath, array_column($community->vocabularyReferences->vocabularyReference, 'name'));
 			if (!$found) {
 				$this->Flash->error('We couldn\'t find that API in our database.');
 				return $this->redirect(['action' => 'host', 'hostname' => $hostname]);
 			}
 		}
-		$containsFieldset = false;
-		foreach ($fields as $field) {
-			if (!empty($field->descendantFields)) {
-				$containsFieldset = true;
-				break;
-			}
-		}
+		$containsFieldset = count(array_filter(array_column($fields, 'descendantFields')));
 		$apiObject = $this->CollibraAPI->getApiObject($hostname, $basePath);
 		$request = $this->CollibraAPI->getRequestDetails($requestId);
 		$requestedAssetIds = [];

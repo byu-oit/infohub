@@ -762,15 +762,7 @@ class RequestController extends AppController {
 					if (!empty($apiField->assetType) && strtolower($apiField->assetType) == 'fieldset') {
 						continue;
 					}
-					$requestedField = false;
-					if (isset($this->request->data['arrApiFields'])) {
-						foreach ($this->request->data['arrApiFields'] as $field) {
-							if ($apiField->id == $field['id']) {
-								$requestedField = true;
-								break;
-							}
-						}
-					}
+					$requestedField = in_array($apiField->id, array_column($this->request->data['arrApiFields'], 'id'));
 					if (empty($apiField->businessTerm[0]->termId)) {
 						if ($requestedField) {
 							$addedApis[$apiHost][$apiPath]['unmapped']['requested'][] = $apiField->name;
@@ -796,27 +788,13 @@ class RequestController extends AppController {
 		foreach ($addedFieldsetApis as $apiHost => $apiPaths) {
 			foreach ($apiPaths as $apiPath => $fieldsets) {
 				$apiObject = $this->CollibraAPI->getApiObject($apiHost, $apiPath);
-				$related = false;
-				foreach ($request->necessaryApis as $alreadyRequested) {
-					if ($apiObject->id == $alreadyRequested->apiId) {
-						$related = true;
-						break;
-					}
-				}
+				$related = in_array($apiObject->id, array_column($request->necessaryApis, 'apiId'));
 				if (!$related) array_push($relationsPostData['apis'], $apiObject->id);
 
 				$apiFields = $this->CollibraAPI->getApiFields($apiHost, $apiPath, true);
 				foreach ($fieldsets as $fieldset => $_) {
 					foreach ($apiFields[$fieldset]->descendantFields as $apiField) {
-						$requestedField = false;
-						if (isset($this->request->data['arrApiFields'])) {
-							foreach ($this->request->data['arrApiFields'] as $field) {
-								if ($apiField->id == $field['id']) {
-									$requestedField = true;
-									break;
-								}
-							}
-						}
+						$requestedField = in_array($apiField->id, array_column($this->request->data['arrApiFields'], 'id'));
 						if (empty($apiField->businessTerm[0]->termId)) {
 							if ($requestedField) {
 								$addedFieldsetApis[$apiHost][$apiPath][$fieldset]['unmapped']['requested'][] = $apiField->name;
@@ -848,15 +826,7 @@ class RequestController extends AppController {
 
 			$columns = $this->CollibraAPI->getTableColumns($databaseName, $schemaAndTableNameOnly);
 			foreach ($columns as $column) {
-				$requestedColumn = false;
-				if (isset($this->request->data['arrDbColumns'])) {
-					foreach ($this->request->data['arrDbColumns'] as $requested) {
-						if ($column->columnId == $requested['id']) {
-							$requestedColumn = true;
-							break;
-						}
-					}
-				}
+				$requestedColumn = in_array($column->columnId, array_column($this->request->data['arrDbColumns'], 'id'));
 				if (empty($column->businessTerm[0]->termId)) {
 					if ($requestedColumn) {
 						$addedTables[$tableName]['unmapped']['requested'][] = $column->columnName;
@@ -884,15 +854,7 @@ class RequestController extends AppController {
 
 			$fields = $this->CollibraAPI->getSamlResponseFields($responseName);
 			foreach ($fields as $field) {
-				$requestedField = false;
-				if (isset($this->request->data['arrSamlFields'])) {
-					foreach ($this->request->data['arrSamlFields'] as $requested) {
-						if ($field->fieldId == $requested['id']) {
-							$requestedField = true;
-							break;
-						}
-					}
-				}
+				$requestedField = in_array($field->fieldId, array_column($this->request->data['arrSamlFields'], 'id'));
 				if (empty($field->businessTerm[0]->termId)) {
 					if ($requestedField) {
 						$addedSamlResponses[$responseName]['unmapped']['requested'][] = $field->fieldName;
@@ -1393,13 +1355,7 @@ class RequestController extends AppController {
 		}
 
 		// If the request no longer contains terms from the Academic Records glossary, remove the corresponding policy
-		$trustedPartnerPolicyRelation = '';
-		foreach ($request->policies as $policy) {
-			if ($policy->policyId == Configure::read('Collibra.policy.trustedPartnerSecurityStandards')) {
-				$trustedPartnerPolicyRelation = $policy->policyRelationId;
-				break;
-			}
-		}
+		$trustedPartnerPolicyRelation = array_column($request->policies, 'policyRelationId', 'policyId')[Configure::read('Collibra.policy.trustedPartnerSecurityStandards')];
 		if (!empty($trustedPartnerPolicyRelation)) {
 			$communityIds = [];
 			foreach ($request->requestedTerms as $term) {
@@ -1452,13 +1408,7 @@ class RequestController extends AppController {
 
 		$organizedApiFields = [];
 		foreach ($arrQueue['apiFields'] as $id => $field) {
-			$alreadyRequested = false;
-			foreach ($request->requestedDataAssets as $requestedAsset) {
-				if ($requestedAsset->reqDataId == $id) {
-					$alreadyRequested = true;
-					break;
-				}
-			}
+			$alreadyRequested = in_array($id, array_column($request->requestedDataAssets, 'reqDataId'));
 			if ($alreadyRequested) continue;
 
 			$organizedApiFields[$field['apiPath']][$id] = $field;
@@ -1471,13 +1421,7 @@ class RequestController extends AppController {
 
 		$organizedDbColumns = [];
 		foreach ($arrQueue['dbColumns'] as $id => $column) {
-			$alreadyRequested = false;
-			foreach ($request->requestedDataAssets as $requestedAsset) {
-				if ($requestedAsset->reqDataId == $id) {
-					$alreadyRequested = true;
-					break;
-				}
-			}
+			$alreadyRequested = in_array($id, array_column($request->requestedDataAssets, 'reqDataId'));
 			if ($alreadyRequested) continue;
 
 			$organizedDbColumns[$column['tableName']][$id] = $column;
@@ -1490,13 +1434,7 @@ class RequestController extends AppController {
 
 		$organizedSamlFields = [];
 		foreach ($arrQueue['samlFields'] as $id => $field) {
-			$alreadyRequested = false;
-			foreach ($request->requestedDataAssets as $requestedAsset) {
-				if ($requestedAsset->reqDataId == $id) {
-					$alreadyRequested = true;
-					break;
-				}
-			}
+			$alreadyRequested = in_array($id, array_column($request->requestedDataAssets, 'reqDataId'));
 			if ($alreadyRequested) continue;
 
 			$organizedSamlFields[$field['responseName']][$id] = $field;
@@ -1523,13 +1461,7 @@ class RequestController extends AppController {
 
 		$filteredCartTerms = [];
 		foreach ($arrQueue['businessTerms'] as $id => $term) {
-			$alreadyRequested = false;
-			foreach ($request->requestedTerms as $requestedTerm) {
-				if ($requestedTerm->reqTermId == $id) {
-					$alreadyRequested = true;
-					break;
-				}
-			}
+			$alreadyRequested = in_array($id, array_column($request->requestedTerms, 'reqTermId'));
 			if ($alreadyRequested) continue;
 
 			$filteredCartTerms[$id] = $term;

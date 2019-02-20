@@ -172,15 +172,7 @@ class CollibraAPI extends Model {
 
 		if (!empty($byuInfo->contact_information->work_phone)) {
 			$byuPhone = $byuInfo->contact_information->work_phone;
-			$match = false;
-			if (!empty($collibraInfo->Phone)) {
-				foreach ($collibraInfo->Phone as $phoneInfo) {
-					if ($phoneInfo->PhonePhonenumber == $byuPhone) {
-						$match = true;
-						break;
-					}
-				}
-			}
+			$match = in_array($byuPhone, array_column($collibraInfo->Phone, 'PhonePhonenumber'));	// 'PhonePhonenumber' is not a typo
 			if (!$match) {
 				$this->updateUserPhone($collibraInfo->UserId, $byuPhone, empty($collibraInfo->Phone[0]->PhoneId) ? null : $collibraInfo->Phone[0]->PhoneId);
 			}
@@ -1453,13 +1445,7 @@ class CollibraAPI extends Model {
 			return null;
 		}
 
-		$match = null;
-		foreach ($search->{$key} as $item) {
-			if (!empty($item->name) && $item->name == $name) {
-				$match = $item;
-				break;
-			}
-		}
+		$match = array_column($search->{$key}, null, 'name')[$name];
 		if (!$match && $type == 'vocabulary') {
 			//Slightly looser matching, ignoring leading or trailing "/" character
 			foreach ($search->{$key} as $item) {
