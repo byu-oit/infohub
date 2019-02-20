@@ -14,7 +14,7 @@ environments:
       cpu_units: 256
       containers:
         - name: infohub
-          image_name: <account>/infohub:latest
+          image_name: <account>/infohub:dev
           port_mappings:
             - 80
           routing:
