@@ -6,7 +6,7 @@ tags:
   data-sensitivity: public
   team: OIT-Tools
 
-  environments:
+environments:
   dev:
     app:
       type: ecs-fargate
@@ -34,4 +34,3 @@ tags:
       database_name: infohub
       instance_type: db.t2.micro
       storage_type: gp2
-
