@@ -28,6 +28,8 @@ environments:
         https_certificate: 37df28aa-128f-4d3e-a728-1a3716ca333e
         dns_names:
           - infohub-dev.tools.byu.edu
+      dependencies:
+      - db
     db:
       type: mysql
       mysql_version: 5.7.23
