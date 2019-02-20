@@ -19,7 +19,7 @@ environments:
             - 80
           routing:
             base_path: /
-            health_check_path: /
+            health_check_path: /ping.html
       auto_scaling:
         min_tasks: 1
         max_tasks: 2
