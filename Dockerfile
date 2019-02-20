@@ -9,7 +9,7 @@ RUN apk --no-cache add tzdata \
 RUN apk --no-cache add php7 php7-intl php7-pdo_mysql php7-json php7-curl \
   php7-xml php7-dom php7-ctype php7-openssl php7-pdo_sqlite php7-soap \
   php7-iconv php7-session php7-mbstring php7-simplexml php7-fileinfo \
-  php7-tokenizer php7-zlib \
+  php7-tokenizer php7-zlib aws-cli jq \
   && rm -rf /var/cache/apk/* /var/tmp/* /tmp/*
 
 COPY . /cake
@@ -33,4 +33,4 @@ RUN echo -e "#!/bin/sh\n\nrm -f /run/apache2/httpd.pid\nexec /usr/sbin/httpd -D 
 
 RUN chown -R apache:root /cake/app/tmp
 
-CMD ["/run-apache.sh"]
+CMD ["/bin/sh", "./get_config.sh", "&&", "/run-apache.sh"]
