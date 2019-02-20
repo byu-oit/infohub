@@ -9,7 +9,10 @@ RUN apk --no-cache add tzdata \
 RUN apk --no-cache add php7 php7-intl php7-pdo_mysql php7-json php7-curl \
   php7-xml php7-dom php7-ctype php7-openssl php7-pdo_sqlite php7-soap \
   php7-iconv php7-session php7-mbstring php7-simplexml php7-fileinfo \
-  php7-tokenizer php7-zlib aws-cli jq \
+  php7-tokenizer php7-zlib jq \
+  && rm -rf /var/cache/apk/* /var/tmp/* /tmp/*
+
+RUN apk --no-cache add aws-cli --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ \
   && rm -rf /var/cache/apk/* /var/tmp/* /tmp/*
 
 COPY . /cake
