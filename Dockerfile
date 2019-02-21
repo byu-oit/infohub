@@ -1,3 +1,18 @@
+# Builder Launcher Binary
+FROM golang as builder
+
+ENV GO111MODULE on
+
+WORKDIR /go/src/app
+
+COPY . .
+
+RUN go get -d -v
+
+RUN CGO_ENABLED=0 go build -o launcher
+
+
+# Build App container
 FROM alpine:3.8
 
 RUN apk --no-cache add tzdata \
@@ -9,10 +24,7 @@ RUN apk --no-cache add tzdata \
 RUN apk --no-cache add php7 php7-intl php7-pdo_mysql php7-json php7-curl \
   php7-xml php7-dom php7-ctype php7-openssl php7-pdo_sqlite php7-soap \
   php7-iconv php7-session php7-mbstring php7-simplexml php7-fileinfo \
-  php7-tokenizer php7-zlib jq \
-  && rm -rf /var/cache/apk/* /var/tmp/* /tmp/*
-
-RUN apk --no-cache add aws-cli --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ \
+  php7-tokenizer php7-zlib \
   && rm -rf /var/cache/apk/* /var/tmp/* /tmp/*
 
 COPY . /cake
@@ -36,4 +48,6 @@ RUN echo -e "#!/bin/sh\n\nrm -f /run/apache2/httpd.pid\nexec /usr/sbin/httpd -D 
 
 RUN chown -R apache:root /cake/app/tmp
 
-CMD ["/bin/sh", "./get_config.sh", "&&", "/run-apache.sh"]
+COPY --from=builder /go/src/app/launcher .
+
+CMD ["/cake/launcher"]
