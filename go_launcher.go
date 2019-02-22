@@ -18,7 +18,7 @@ func main() {
 	prefix := os.Getenv("HANDEL_PARAMETER_STORE_PREFIX")
 	if path == "" || prefix == "" {
 		log.Println("No Path/Prefix Enviroment Variable found")
-		os.Exit(0)
+		run()
 	}
 	prefix = fmt.Sprintf("%s.", prefix)
 	log.Println("Path:", path)
@@ -48,11 +48,14 @@ func main() {
 	log.Println("Setting DB HOST")
 	os.Setenv("CAKE_DEFAULT_DB_HOST", os.Getenv("DB_ADDRESS"))
 
+	log.Println("Starting Apache2")
 	run()
 }
 
 func run() {
-	cmd := exec.Command("/run-apache.sh")
+	//Clean up potential conflict
+	os.Remove("/run/apache2/httpd.pid")
+	cmd := exec.Command("/usr/sbin/httpd", "-D", "FOREGROUND")
 	cmd.Stdout = os.Stdout
 	err := cmd.Run()
 	if err != nil {
