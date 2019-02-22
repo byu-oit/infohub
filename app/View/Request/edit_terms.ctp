@@ -152,7 +152,7 @@
 								foreach ($organizedApiFields as $apiPath => $fields) {
 									echo '<h4>/'.$apiPath.'</h4>';
 									foreach ($fields as $id => $field) {
-										echo '<li id="requestItem'.$id.'"><input type="checkbox" name="apiFields[]" value="'.$id.'" fullName="'.$field['fullName'].'" apiHost="'.$field['apiHost'].'" apiPath="'.$field['apiPath'].'" checked="checked">'.$field['name'].'</li>';
+										echo '<li id="requestItem'.$id.'"><input type="checkbox" name="apiFields[]" value="'.$id.'" fullName="'.$field['fullName'].'" apiHost="'.$field['apiHost'].'" apiPath="'.$field['apiPath'].'" checked="checked">'.$field['fullName'].'</li>';
 									}
 								}
 							}
