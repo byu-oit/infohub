@@ -7,6 +7,35 @@
 <script>
 	$(document).ready(function() {
 		$("#browse-tab").addClass('active');
+
+		$('.bt-new-name').focusout(function() {
+			checkDuplicate('#'+$(this).closest('tr').attr('id'));
+		});
+
+		$('.bt-new-glossary').change(function() {
+			checkDuplicate('#'+$(this).closest('tr').attr('id'));
+		});
+
+		function checkDuplicate(rowId) {
+			var name = $(rowId).find('.bt-new-name').val();
+			var glossary = $(rowId).find('.bt-new-glossary').val();
+			if (!glossary) {
+				return;
+			}
+
+			$.getJSON('/search/autoCompleteTerm/1', {q:name}, function(data) {
+				for (let i = 0; i < data.length; i++) {
+					if (data[i].signifier == name && data[i].context.id == glossary) {
+						alert('A business term with this name already exists in this glossary and cannot be duplicated. Check whether the existing term is appropriate for this field. If not, choose a new name for this term.');
+						$(rowId).addClass('duplicate');
+						$(rowId).data('duplicate', true);
+						return;
+					}
+				}
+				$(rowId).removeClass('duplicate');
+				$(rowId).data('duplicate', false);
+			});
+		}
 	});
 
 	function chunkPostData() {
@@ -19,7 +48,7 @@
 		}, 250);
 
 		if (!validateForm()) {
-			alert('You must propose a name for each new business term proposed.');
+			alert('You must propose a valid name for each new business term proposed.');
 			clearInterval(loadingTextInterval);
 			return;
 		}
@@ -100,6 +129,10 @@
 			}
 
 			if (!thisElem.find('.bt-new-name').val()) {
+				valid = false;
+				return false;
+			}
+			if (thisElem.data('duplicate')) {
 				valid = false;
 				return false;
 			}

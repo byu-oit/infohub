@@ -1490,6 +1490,10 @@ img.resultBodyLoading {
 #apiBody .saml-fields tr.requested {
   background-color: #ffdd99;
 }
+#apiBody .api-fields tr.duplicate,
+#apiBody .table-columns tr.duplicate {
+  background-color: #f59797;
+}
 #apiBody .api-fields.view td:nth-child(3),
 #apiBody .table-columns.view td:nth-child(2),
 #apiBody .saml-fields.view td:nth-child(2),
