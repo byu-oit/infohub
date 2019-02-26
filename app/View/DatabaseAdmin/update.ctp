@@ -48,7 +48,7 @@
 		}, 250);
 
 		if (!validateForm()) {
-			alert('You must propose a valid name for each new business term proposed.');
+			alert('You must provide a valid name for each new business term proposed.');
 			clearInterval(loadingTextInterval);
 			return;
 		}

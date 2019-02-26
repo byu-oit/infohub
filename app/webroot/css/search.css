@@ -1492,7 +1492,7 @@ img.resultBodyLoading {
 }
 #apiBody .api-fields tr.duplicate,
 #apiBody .table-columns tr.duplicate {
-  background-color: #f59797;
+  background-color: #f2bfbf;
 }
 #apiBody .api-fields.view td:nth-child(3),
 #apiBody .table-columns.view td:nth-child(2),
