@@ -10,8 +10,8 @@ environments:
   dev:
     app:
       type: ecs-fargate
-      max_mb: 512
-      cpu_units: 256
+      max_mb: 1024
+      cpu_units: 512
       containers:
         - name: infohub
           image_name: <account>/infohub:dev
