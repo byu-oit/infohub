@@ -92,7 +92,7 @@
 
 				$('#applicationOrProjectToggle').hide().addClass('onText');
 				$('#applicationOrProjectSelect').hide().html(applicationOrProjectSelectInnerHTML).prop('disabled', true);
-				$('#applicationOrProjectName').val('').show();
+				$('#applicationOrProjectName').val('').show().change();
 			} else {
 				$(this).removeClass('onText');
 				$('#developmentShop').hide().val('');
@@ -100,14 +100,14 @@
 
 				$('#applicationOrProjectToggle').hide().removeClass('onText');
 				$('#applicationOrProjectSelect').html(applicationOrProjectSelectInnerHTML).prop('disabled', true).show();
-				$('#applicationOrProjectName').hide().val('');
+				$('#applicationOrProjectName').hide().val('').change();
 			}
 		});
 		$('#developmentShopSelect').change(function() {
 			if (!$(this).val()) {
 				$('#applicationOrProjectToggle').hide().removeClass('onText');
 				$('#applicationOrProjectSelect').html(applicationOrProjectSelectInnerHTML).prop('disabled', true).show();
-				$('#applicationOrProjectName').hide().val('');
+				$('#applicationOrProjectName').hide().val('').change();
 			} else if ($(this).val() === 'new') {
 				$('#developmentShopToggle').addClass('onText');
 				$('#developmentShopSelect').hide().val('');
@@ -115,7 +115,7 @@
 
 				$('#applicationOrProjectToggle').hide().addClass('onText');
 				$('#applicationOrProjectSelect').hide().html(applicationOrProjectSelectInnerHTML).prop('disabled', true);
-				$('#applicationOrProjectName').val('').show();
+				$('#applicationOrProjectName').val('').show().change();
 			} else {
 				$('#applicationOrProjectToggle').removeClass('onText').show();
 				$('#applicationOrProjectSelect').html(applicationOrProjectSelectInnerHTML).prop('disabled', false).show();
@@ -125,7 +125,7 @@
 							$('#applicationOrProjectSelect').append('<option value="'+app.appId+'">'+app.appName+'</option>');
 						});
 					});
-				$('#applicationOrProjectName').hide().val('');
+				$('#applicationOrProjectName').hide().val('').change();
 			}
 		});
 
@@ -134,7 +134,7 @@
 			$('#applicationOrProjectSelect').toggle();
 			$('#applicationOrProjectSelect').val('');
 			$('#applicationOrProjectName').toggle();
-			$('#applicationOrProjectName').val('');
+			$('#applicationOrProjectName').val('').change();
 		});
 		$('#applicationOrProjectSelect').change(function() {
 			if ($(this).val() === 'new') {
