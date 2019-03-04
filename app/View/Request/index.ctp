@@ -141,6 +141,20 @@
 				$('#applicationOrProjectToggle').click();
 			}
 		});
+		var applicationsAndProjects = <?= json_encode($applicationsAndProjects) ?>;
+		window.duplicateApp = false;
+		$('#applicationOrProjectName').change(function() {
+			for (let i = 0; i < applicationsAndProjects.length; i++) {
+				if (applicationsAndProjects[i].name == $(this).val()) {
+					alert('An application or project with the name '+applicationsAndProjects[i].name+' already exists. It is associated with the development shop '+applicationsAndProjects[i].devShop+'.');
+					$(this).addClass('invalid');
+					window.duplicateApp = true;
+					return;
+				}
+			}
+			window.duplicateApp = false;
+			$(this).removeClass('invalid');
+		});
 
 		setupDevelopmentShopAndApplicationOrProject();
 
@@ -243,6 +257,12 @@
 	}
 
 	function validate() {
+		if (window.duplicateApp) {
+			alert('An application or project already exists with the name you input. Please change the project name or select the existing project.');
+			$('#applicationOrProjectName').focus();
+			return false;
+		}
+
 		var isValid = true;
 		$('#request input').each(function() {
 			if ($(this).attr('id') == 'developmentShop' || $(this).attr('id') == 'applicationOrProjectName') return true;

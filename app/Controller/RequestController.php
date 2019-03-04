@@ -2365,12 +2365,18 @@ class RequestController extends AppController {
 
 		$customSAML = $this->Session->read('customSAML');
 
-		$developmentShops = $this->CollibraAPI->getDevelopmentShopDetails('');
+		$developmentShops = $this->CollibraAPI->getDevelopmentShopDetails();
 		usort($developmentShops, function($a, $b) {
 			return strcmp(strtolower($a->name), strtolower($b->name));
 		});
+		$applicationsAndProjects = [];
+		foreach ($developmentShops as $devShop) {
+			foreach ($devShop->applications as $app) {
+				array_push($applicationsAndProjects, ['name' => $app->appName, 'devShop' => $devShop->name]);
+			}
+		}
 
-		$this->set(compact('preFilled', 'arrQueue', 'netId', 'psName', 'psPhone', 'psEmail', 'psRole', 'psDepartment', 'psReportsToName', 'supervisorInfo', 'policies', 'developmentShops', 'customSAML'));
+		$this->set(compact('preFilled', 'arrQueue', 'netId', 'psName', 'psPhone', 'psEmail', 'psRole', 'psDepartment', 'psReportsToName', 'supervisorInfo', 'policies', 'developmentShops', 'applicationsAndProjects', 'customSAML'));
 		$this->set('submitErr', isset($this->request->query['err']));
 	}
 }

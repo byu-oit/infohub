@@ -1573,7 +1573,7 @@ class CollibraAPI extends Model {
 		return $results->results;
 	}
 
-	public function getDevelopmentShopDetails($developmentShopName, $exact = true) {
+	public function getDevelopmentShopDetails($developmentShopName = '', $exact = true) {
 		$allShops = empty($developmentShopName);
 		$tableConfig = ['TableViewConfig' => [
 			'Columns' => [
