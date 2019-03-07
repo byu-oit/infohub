@@ -70,7 +70,6 @@ func main() {
 
 	log.Println("Creating core-local.php")
 	makeTemplate(config)
-	os.Exit(1)
 	log.Println("Starting Apache2")
 	run()
 }
