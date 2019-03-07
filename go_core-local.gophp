@@ -1,0 +1,34 @@
+<?php
+
+$config = [
+    'debug' => {{.Debug}},
+    'allowUnrequestableTerms' => false,
+    'App' => [
+        'fullBaseUrl' => '{{.URL}}'
+    ],
+    'Security' => [
+        'salt' => '{{.Salt}}',
+        'cipherSeed' => '{{.CipherSeed}}'
+    ],
+    'Datasources' => [
+        'default' => [
+            'host' => '{{.DBHost}}',
+            'port' => 3306,
+            'login' => '{{.DBUser}}',
+            'password' => '{{.DBPassword}}',
+            'database' => '{{.DBName}}',
+        ],
+        'collibra' => [
+            'url' => '{{.CollibraURL}}',
+            'username' => '{{.CollibraUser}}',
+            'password' => '{{.CollibraPassword}}'
+        ],
+        'byuApi' => [
+            'key' => '{{.ByuAPIKey}}',
+            'secret' => '{{.ByuAPISecret}}'
+        ]
+    ],
+    'github' => [
+        'api_token' => '{{.GithubToken}}'
+    ]
+];

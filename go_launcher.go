@@ -1,32 +1,47 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
+	"text/template"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ssm"
 )
 
+// Config struct stores the config needed for the config-local file
+type Config struct {
+	Debug            int
+	URL              string
+	CollibraURL      string
+	CollibraUser     string
+	CollibraPassword string
+	ByuAPIKey        string
+	ByuAPISecret     string
+	GithubToken      string
+	DBHost           string
+	DBUser           string
+	DBPassword       string
+	DBName           string
+	Salt             string
+	CipherSeed       string
+}
+
 func main() {
 	log.Println("Starting Config Launcher")
 	path := os.Getenv("HANDEL_PARAMETER_STORE_PATH")
-	prefix := os.Getenv("HANDEL_PARAMETER_STORE_PREFIX")
-	if path == "" || prefix == "" {
-		log.Println("No Path/Prefix Enviroment Variable found")
+	if path == "" {
+		log.Println("No Path Enviroment Variable found")
 		run()
 	}
-	prefix = fmt.Sprintf("%s.", prefix)
 	log.Println("Path:", path)
-	log.Println("Prefix:", prefix)
 
-	config := aws.Config{Region: aws.String("us-west-2")}
 	sess, err := session.NewSessionWithOptions(session.Options{
-		Config:            config,
+		Config:            aws.Config{Region: aws.String("us-west-2")},
 		SharedConfigState: session.SharedConfigEnable,
 	})
 	if err != nil {
@@ -35,19 +50,27 @@ func main() {
 	ssmsvc := ssm.New(sess)
 
 	log.Println("Fetching Parameters at path:", path)
-	getPathParameters(ssmsvc, &path)
+	params := getPathParameters(ssmsvc, &path)
+	debug, _ := strconv.Atoi(params["debug"])
+	config := Config{
+		Debug:            debug,
+		URL:              params["url"],
+		CollibraURL:      params["collibra_url"],
+		CollibraPassword: params["collibra_password"],
+		ByuAPIKey:        params["byuapi_key"],
+		ByuAPISecret:     params["byuapi_secret"],
+		GithubToken:      params["github_token"],
+		DBHost:           os.Getenv("DB_ADDRESS"),
+		DBUser:           params["db_username"],
+		DBPassword:       params["db_password"],
+		DBName:           params["db_name"],
+		Salt:             params["salt"],
+		CipherSeed:       params["cipher"],
+	}
 
-	keyname := fmt.Sprintf("%sdb.db_username", prefix)
-	log.Println("Fetching Parameter:", keyname)
-	getParameter(ssmsvc, &keyname, "CAKE_DEFAULT_DB_USERNAME")
-
-	keyname = fmt.Sprintf("%sdb.db_password", prefix)
-	log.Println("Fetching Parameter:", keyname)
-	getParameter(ssmsvc, &keyname, "CAKE_DEFAULT_DB_PASSWORD")
-
-	log.Println("Setting DB HOST")
-	os.Setenv("CAKE_DEFAULT_DB_HOST", os.Getenv("DB_ADDRESS"))
-
+	log.Println("Creating core-local.php")
+	makeTemplate(config)
+	os.Exit(1)
 	log.Println("Starting Apache2")
 	run()
 }
@@ -64,20 +87,35 @@ func run() {
 	log.Println("Finished")
 }
 
-func getPathParameters(ssmsvc *ssm.SSM, path *string) {
-	params, err := ssmsvc.GetParametersByPath(&ssm.GetParametersByPathInput{
+func makeTemplate(config Config) {
+	f, err := os.Create("app/Config/core-local.php")
+	if err != nil {
+		log.Println("Failed to create file: ", err)
+	}
+	defer f.Close()
+	t := template.Must(template.ParseFiles("go_core-local.gophp"))
+	t.Execute(f, config)
+}
+
+func getPathParameters(ssmsvc *ssm.SSM, path *string) map[string]string {
+	m := make(map[string]string, 0)
+	err := ssmsvc.GetParametersByPathPages(&ssm.GetParametersByPathInput{
 		Path:           path,
 		WithDecryption: aws.Bool(true),
+	}, func(params *ssm.GetParametersByPathOutput, lastPage bool) bool {
+		for _, param := range params.Parameters {
+			name := strings.TrimPrefix(*param.Name, *path)
+			m[name] = *param.Value
+		}
+		return !lastPage
 	})
 	if err != nil {
 		log.Fatal(err)
 	}
-	for _, param := range params.Parameters {
-		os.Setenv(strings.TrimPrefix(*param.Name, *path), *param.Value)
-	}
+	return m
 }
 
-func getParameter(ssmsvc *ssm.SSM, paramName *string, envKey string) {
+func getParameter(ssmsvc *ssm.SSM, paramName *string) string {
 	param, err := ssmsvc.GetParameter(&ssm.GetParameterInput{
 		Name:           paramName,
 		WithDecryption: aws.Bool(true),
@@ -85,6 +123,5 @@ func getParameter(ssmsvc *ssm.SSM, paramName *string, envKey string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	value := *param.Parameter.Value
-	os.Setenv(envKey, value)
+	return *param.Parameter.Value
 }
