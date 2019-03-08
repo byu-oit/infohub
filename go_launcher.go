@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -71,6 +72,8 @@ func main() {
 
 	log.Println("Creating core-local.php")
 	makeTemplate(config)
+	log.Println("Checking Directory")
+	listDir()
 	log.Println("Starting Apache2")
 	run()
 }
@@ -78,6 +81,7 @@ func main() {
 func run() {
 	//Clean up potential conflict
 	os.Remove("/run/apache2/httpd.pid")
+
 	cmd := exec.Command("/usr/sbin/httpd", "-D", "FOREGROUND")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -86,6 +90,21 @@ func run() {
 		log.Fatal(err)
 	}
 	log.Println("Finished")
+}
+
+func listDir() {
+	dir := os.Getenv("STORAGE_MOUNT_DIR")
+	log.Println("STORAGE_MOUNT_DIR: ", dir)
+	lscmd := fmt.Sprintf("ls -larth %s", dir)
+	log.Println("CMD: ", lscmd)
+	cmd := exec.Command(lscmd)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("LS Finished")
 }
 
 func makeTemplate(config Config) {
