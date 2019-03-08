@@ -31,6 +31,8 @@ class ApisController extends AppController {
 	}
 
 	public function view() {
+		CakeLog::write('info', 'Loading API Controller, Testing info logging');
+		CakeLog::write('error', 'Testing error logging');
 		$args = func_get_args();
 		$hostname = array_shift($args);
 		$basePath = '/' . implode('/', $args);
