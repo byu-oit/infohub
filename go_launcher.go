@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -37,6 +36,7 @@ func main() {
 	path := os.Getenv("HANDEL_PARAMETER_STORE_PATH")
 	if path == "" {
 		log.Println("No Path Enviroment Variable found")
+		listDir()
 		run()
 	}
 	log.Println("Path:", path)
@@ -72,7 +72,6 @@ func main() {
 
 	log.Println("Creating core-local.php")
 	makeTemplate(config)
-	log.Println("Checking Directory")
 	listDir()
 	log.Println("Starting Apache2")
 	run()
@@ -93,11 +92,10 @@ func run() {
 }
 
 func listDir() {
+	log.Println("Checking Directory")
 	dir := os.Getenv("STORAGE_MOUNT_DIR")
 	log.Println("STORAGE_MOUNT_DIR: ", dir)
-	lscmd := fmt.Sprintf("ls -larth %s", dir)
-	log.Println("CMD: ", lscmd)
-	cmd := exec.Command(lscmd)
+	cmd := exec.Command("/bin/ls", "-larth", dir)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()
