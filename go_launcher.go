@@ -36,7 +36,8 @@ func main() {
 	path := os.Getenv("HANDEL_PARAMETER_STORE_PATH")
 	if path == "" {
 		log.Println("No Path Enviroment Variable found")
-		listDir()
+		log.Println("Linking Uploads Directory")
+		linkDir()
 		run()
 	}
 	log.Println("Path:", path)
@@ -72,7 +73,8 @@ func main() {
 
 	log.Println("Creating core-local.php")
 	makeTemplate(config)
-	listDir()
+	log.Println("Linking Uploads Directory")
+	linkDir()
 	log.Println("Starting Apache2")
 	run()
 }
@@ -91,18 +93,13 @@ func run() {
 	log.Println("Finished")
 }
 
-func listDir() {
-	log.Println("Checking Directory")
-	dir := os.Getenv("STORAGE_MOUNT_DIR")
-	log.Println("STORAGE_MOUNT_DIR: ", dir)
-	cmd := exec.Command("/bin/ls", "-larth", dir)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err := cmd.Run()
+func linkDir() {
+	olddir := os.Getenv("STORAGE_MOUNT_DIR")
+	newdir := "/cake/app/webroot/uploads"
+	err := os.Symlink(olddir, newdir)
 	if err != nil {
 		log.Println(err)
 	}
-	log.Println("LS Finished")
 }
 
 func makeTemplate(config Config) {
