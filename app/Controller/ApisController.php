@@ -1,5 +1,5 @@
 <?php
-
+App::uses('CakeLog', 'Log');
 class ApisController extends AppController {
 	public $uses = ['CollibraAPI', 'BYUAPI'];
 	public $helpers = ['Fieldset'];
@@ -31,6 +31,8 @@ class ApisController extends AppController {
 	}
 
 	public function view() {
+		CakeLog::write('info', 'Testing an Info Message');
+		CakeLog::write('error', 'Testing an error message');
 		$args = func_get_args();
 		$hostname = array_shift($args);
 		$basePath = '/' . implode('/', $args);
