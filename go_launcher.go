@@ -56,6 +56,7 @@ func main() {
 		Debug:            debug,
 		URL:              params["url"],
 		CollibraURL:      params["collibra_url"],
+		CollibraUser:     params["collibra_user"],
 		CollibraPassword: params["collibra_password"],
 		ByuAPIKey:        params["byuapi_key"],
 		ByuAPISecret:     params["byuapi_secret"],
