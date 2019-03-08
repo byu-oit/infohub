@@ -9,9 +9,7 @@ tags:
 environments:
   dev:
     app:
-      type: ecs-fargate
-      max_mb: 1024
-      cpu_units: 512
+      type: ecs
       containers:
         - name: infohub
           image_name: <account>/infohub:dev
@@ -22,7 +20,9 @@ environments:
             health_check_path: /ping.html
       auto_scaling:
         min_tasks: 1
-        max_tasks: 2
+        max_tasks: 1
+      cluster:
+        key_name: ndpete21-oittools
       load_balancer:
         type: https
         https_certificate: 37df28aa-128f-4d3e-a728-1a3716ca333e
@@ -30,9 +30,12 @@ environments:
           - infohub-dev.tools.byu.edu
       dependencies:
       - db
+      - storage
     db:
       type: mysql
       mysql_version: 5.7.23
       database_name: infohub
       instance_type: db.t2.micro
       storage_type: gp2
+    storage:
+      type: efs
