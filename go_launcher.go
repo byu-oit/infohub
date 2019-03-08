@@ -102,7 +102,7 @@ func listDir() {
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	log.Println("LS Finished")
 }
