@@ -47,4 +47,6 @@ COPY --from=builder /go/src/app/launcher .
 
 COPY . /cake
 
+VOLUME /mnt/share/infohub-dev-storage-efs
+
 CMD ["/cake/launcher"]
