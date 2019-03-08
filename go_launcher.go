@@ -80,6 +80,7 @@ func run() {
 	os.Remove("/run/apache2/httpd.pid")
 	cmd := exec.Command("/usr/sbin/httpd", "-D", "FOREGROUND")
 	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 	err := cmd.Run()
 	if err != nil {
 		log.Fatal(err)

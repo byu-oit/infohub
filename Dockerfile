@@ -41,7 +41,6 @@ RUN ln -s /usr/lib /var/www/lib \
   && mkdir -p /cake/app/tmp/swagger \
   && mkdir -p /cake/app/tmp/queue \
   && mkdir -p /cake/app/tmp/attachments \
-  # TODO: Add Swagger directory
   && chown -R apache:root /cake/app/tmp
 
 COPY --from=builder /go/src/app/launcher .
