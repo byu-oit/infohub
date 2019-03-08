@@ -106,10 +106,10 @@ App::uses('CakeLog', 'Log');
 CakeLog::config('debug', array(
 	'engine' => 'File',
 	'types' => array('notice', 'info', 'debug'),
-	'file' => 'debug',
+	'file' => 'php://stdout',
 ));
 CakeLog::config('error', array(
 	'engine' => 'File',
 	'types' => array('warning', 'error', 'critical', 'alert', 'emergency'),
-	'file' => 'error',
+	'file' => 'php://stdout',
 ));
