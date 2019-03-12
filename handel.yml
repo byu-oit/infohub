@@ -15,6 +15,8 @@ environments:
           image_name: <account>/infohub:dev
           port_mappings:
             - 80
+          max_mb: 1024
+          cpu_units: 1024
           routing:
             base_path: /
             health_check_path: /ping.html
@@ -23,6 +25,7 @@ environments:
         max_tasks: 1
       cluster:
         key_name: ndpete21-oittools
+        instance_type: t3.medium
       load_balancer:
         type: https
         https_certificate: 37df28aa-128f-4d3e-a728-1a3716ca333e
