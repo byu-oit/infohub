@@ -92,9 +92,11 @@
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
 				<select name="database" id="databaseName">
-					<option value="DWPRD">DWPRD</option>
-					<option value="CESPRD">CESPRD</option>
-					<option value="DWHRPRD">DWHRPRD</option>
+					<?php
+						foreach ($databases as $db) {
+							echo '<option value="'.$db.'">'.$db.'</option>';
+						}
+					?>
 				</select>
                 <input type="text" id="schemaName" placeholder="Schema name" style="width:100px;">
                 <input type="text" id="tableName" placeholder="Table name" style="width:250px;">

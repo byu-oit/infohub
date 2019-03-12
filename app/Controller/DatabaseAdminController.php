@@ -49,6 +49,9 @@ class DatabaseAdminController extends AppController {
 	public function syncDatabase() {
 		$this->autoRender = false;
 		if (!$this->request->is('post')) {
+			$resp = json_decode($this->CollibraAPI->get('community/'.Configure::read('Collibra.community.dataWarehouse').'/sub-communities'));
+			$databases = array_column($resp->communityReference, 'name');
+			$this->set(compact('databases'));
 			$this->render();
 		} else {
 			$databaseName = $this->request->data['database'];
