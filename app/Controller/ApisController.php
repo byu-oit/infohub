@@ -56,7 +56,10 @@ class ApisController extends AppController {
 		$containsFieldset = count(array_filter(array_column($fields, 'descendantFields')));
 		$apiObject = $this->CollibraAPI->getApiObject($hostname, $basePath);
 		$matchAuthorized = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04', 'infohub-match');
-		$this->set(compact('hostname', 'basePath', 'fields', 'apiObject', 'matchAuthorized', 'containsFieldset'));
+
+		$coordinatorId = $this->CollibraAPI->getResponsibilities(Configure::read('Collibra.community.dataGovernanceCouncil'))['Steward'][0]->resourceId;
+		$coordinator = json_decode($this->CollibraAPI->get('user/'.$coordinatorId));
+		$this->set(compact('hostname', 'basePath', 'fields', 'apiObject', 'matchAuthorized', 'containsFieldset', 'coordinator'));
 
 		$arrRecent = $this->Session->check('recentAPIs') ? $this->Session->read('recentAPIs') : [];
 		array_unshift($arrRecent, ['host' => $hostname, 'basePath' => $basePath]);

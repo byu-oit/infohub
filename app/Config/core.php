@@ -32,6 +32,7 @@ if (!function_exists('denv')) {
 		'community' => [
 			'api' => 'd9f1c1bb-17cf-4fcb-9046-49d35f839623',
 			'byu' => 'c690b823-4341-4125-8a81-22d592c23773',
+			'dataGovernanceCouncil' => '451a4ca9-0ba7-4f23-8b8e-4fa0b60d493f',
 			'academicRecords' => 'e467b5c3-c497-4fb6-a0d0-cf48815e9bec',
 			'dataWarehouse' => 'ad297c25-ddde-42f3-a534-bd73818cbef7',
 			'saml' => 'ab07c21b-c27f-470f-942f-102686753057'

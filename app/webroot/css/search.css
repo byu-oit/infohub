@@ -141,7 +141,8 @@ img.resultBodyLoading {
   color: #888888;
   font-size: 10px;
 }
-#searchBody.apis #searchMain #smLower ul li a span.pre-production {
+#searchBody.apis #searchMain #smLower ul li a span.pre-production,
+#searchBody.apis #searchMain #smLower ul li a span.deprecated {
   color: #ff0000;
   font-size: 11px;
 }
