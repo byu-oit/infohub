@@ -1571,14 +1571,9 @@ class CollibraAPI extends Model {
 		if (empty($results->results)) {
 			return [];
 		}
-		$output = [];
 		foreach ($results->results as $result) {
 			if (!empty($result->attributes)) {
-				foreach ($result->attributes as $attribute) {
-					if ($attribute->type == 'Definition') {
-						$result->definition = $attribute;
-					}
-				}
+				$result->definition = array_column($result->attributes, null, 'type')['Definition'];
 			}
 			unset($result->attributes);
 		}
