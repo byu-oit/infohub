@@ -5,7 +5,8 @@
 
 <script>
 $(document).ready(function() {
-	$("#browse-tab").addClass('active');
+	$('#tableFilter').focus();
+	$('#browse-tab').addClass('active');
 
 	var tables = [<?php foreach ($schema->tables as $table) { echo '"'.$table->tableName.'",'; } ?> ""];
 	$('#tableFilter').on('input', function() {
