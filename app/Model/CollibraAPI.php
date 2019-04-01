@@ -525,6 +525,8 @@ class CollibraAPI extends Model {
 						'Columns' => [
 							['Column' => ['fieldName' => 'termCommunityId']],
 							['Column' => ['fieldName' => 'termCommunityName']],
+							['Column' => ['fieldName' => 'termVocabularyId']],
+							['Column' => ['fieldName' => 'termVocabularyName']],
 							['Column' => ['fieldName' => 'termClassification']],
 							['Column' => ['fieldName' => 'approvalStatus']],
 							['Column' => ['fieldName' => 'termId']],
@@ -553,6 +555,8 @@ class CollibraAPI extends Model {
 									'Value' => ['name' => 'termClassification'],
 									'labelId' => Configure::read('Collibra.attribute.classification')]],
 								'Vocabulary' => [
+									'Id' => ['name' => 'termVocabularyId'],
+									'Name' => ['name' => 'termVocabularyName'],
 									'Community' => [
 										'Id' => ['name' => 'termCommunityId'],
 										'Name' => ['name' => 'termCommunityName']]],
@@ -744,6 +748,8 @@ class CollibraAPI extends Model {
 					'Columns' => [
 						['Column' => ['fieldName' => 'termCommunityId']],
 						['Column' => ['fieldName' => 'termCommunityName']],
+						['Column' => ['fieldName' => 'termVocabularyId']],
+						['Column' => ['fieldName' => 'termVocabularyName']],
 						['Column' => ['fieldName' => 'termClassification']],
 						['Column' => ['fieldName' => 'approvalStatus']],
 						['Column' => ['fieldName' => 'termId']],
@@ -768,6 +774,8 @@ class CollibraAPI extends Model {
 							'Id' => ['name' => 'termId'],
 							'Signifier' => ['name' => 'term'],
 							'Vocabulary' => [
+								'Id' => ['name' => 'termVocabularyId'],
+								'Name' => ['name' => 'termVocabularyName'],
 								'Community' => [
 									'Id' => ['name' => 'termCommunityId'],
 									'Name' => ['name' => 'termCommunityName']]],
@@ -932,6 +940,8 @@ class CollibraAPI extends Model {
 					'Columns' => [
 						['Column' => ['fieldName' => 'termCommunityId']],
 						['Column' => ['fieldName' => 'termCommunityName']],
+						['Column' => ['fieldName' => 'termVocabularyId']],
+						['Column' => ['fieldName' => 'termVocabularyName']],
 						['Column' => ['fieldName' => 'termClassification']],
 						['Column' => ['fieldName' => 'approvalStatus']],
 						['Column' => ['fieldName' => 'termId']],
@@ -953,6 +963,8 @@ class CollibraAPI extends Model {
 							'Id' => ['name' => 'termId'],
 							'Signifier' => ['name' => 'term'],
 							'Vocabulary' => [
+								'Id' => ['name' => 'termVocabularyId'],
+								'Name' => ['name' => 'termVocabularyName'],
 								'Community' => [
 									'Id' => ['name' => 'termCommunityId'],
 									'Name' => ['name' => 'termCommunityName']]],

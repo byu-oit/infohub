@@ -83,6 +83,12 @@
         -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
         box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22)
     }
+	#schemaName {
+		width: 100px;
+	}
+	#tableName {
+		width: 250px;
+	}
 </style>
 <div id="apiBody" class="innerLower">
 	<div id="searchResults" style="margin-bottom:0px;">
@@ -98,8 +104,8 @@
 						}
 					?>
 				</select>
-                <input type="text" id="schemaName" placeholder="Schema name" style="width:100px;">
-                <input type="text" id="tableName" placeholder="Table name" style="width:250px;">
+                <input type="text" id="schemaName" placeholder="Schema name">
+                <input type="text" id="tableName" placeholder="Table name">
 				<div class="sync-btn grow">Sync</div>
 			</div>
 		</div>

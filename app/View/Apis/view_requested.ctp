@@ -59,7 +59,7 @@
 		background-color: inherit;
 	}
 </style>
-<div id="apiBody" class="innerLower">
+<div id="apiBody" class="innerDataSet">
 	<div id="searchResults">
 		<h1 class="headerTab"><?= $hostname . '/' . trim($basePath, '/') ?></h1>
 		<div class="clear" style="height:20px;"></div>
@@ -86,7 +86,8 @@
 						<th></th>
 						<th class="fieldColumn">Field</th>
 						<th class="termColumn">Business Term</th>
-						<th>Classification</th>
+						<th class="classificationColumn">Classification</th>
+						<th class="glossaryColumn">Glossary</th>
 					</tr>
 					<?php foreach ($fields as $field) {
 						$this->Fieldset->printApiViewRequested($field, $requestedAssetIds);

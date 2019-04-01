@@ -18,6 +18,11 @@ body {
   width: 100%;
   margin: 0 auto;
 }
+.innerDataSet {
+  max-width: 1300px;
+  width: 100%;
+  margin: 0 auto;
+}
 #info-win {
   display: none;
   max-width: 300px;

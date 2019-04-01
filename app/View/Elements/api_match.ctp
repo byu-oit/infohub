@@ -137,8 +137,8 @@
 
 		function insertDefinition(text, index) {
 			if (text !== undefined) {
-				if (text.length > 70) {
-					var truncated = text.substring(0, 70);
+				if (text.length > 60) {
+					var truncated = text.substring(0, 60);
 					$('#view-definition' + index).html(
 						'<span class="truncated">'+
 							truncated+

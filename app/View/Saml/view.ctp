@@ -24,7 +24,7 @@
 		background-color: inherit;
 	}
 </style>
-<div id="apiBody" class="innerLower">
+<div id="apiBody" class="innerDataSet">
 	<div id="searchResults">
 		<h1 class="headerTab"><?= $responseName ?></h1>
 		<div class="clear"></div>
@@ -36,7 +36,8 @@
 						<th><input type="checkbox" onclick="toggleAllCheckboxes(this)" name="toggleCheckboxes"/></th>
 						<th class="fieldColumn">Field</th>
 						<th class="termColumn">Business Term</th>
-						<th>Classification</th>
+						<th class="classificationColumn">Classification</th>
+						<th class="glossaryColumn">Glossary</th>
 					</tr>
 					<?php foreach ($fields as $field): ?>
 						<tr>
@@ -110,6 +111,11 @@
 										echo '&nbsp;&nbsp;<img class="pendingApprovalIcon" src="/img/alert.png" onmouseover="displayPendingApproval(this)" onmouseout="hidePendingAproval()">';
 									}
 								endif ?>
+							</td>
+							<td>
+								<?php if (!empty($field->businessTerm[0])) {
+									echo '<a href="/search/listTerms/'.$field->businessTerm[0]->termVocabularyId.'">'.$field->businessTerm[0]->termCommunityName.'</a>';
+								} ?>
 							</td>
 						</tr>
 					<?php endforeach ?>

@@ -389,7 +389,7 @@
 }
 .subrequestNameWrapper {
   display: table;
-  width: 634px;
+  width: 80%;
   height: 65px;
   float: left;
 }
@@ -409,7 +409,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 634px;
+  width: 80%;
 }
 #accountMid .accountMain .requestItem .riBelow .status-details-flex .status-wrapper {
   width: 370px;

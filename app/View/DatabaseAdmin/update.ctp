@@ -156,7 +156,7 @@
 	  text-decoration: none;
 	}
 </style>
-<div id="apiBody" class="innerLower">
+<div id="apiBody" class="innerDataSet">
 	<div id="searchResults">
 		<h1 class="headerTab"><?= $databaseName.' > '.$tableName ?></h1>
 		<div class="clear"></div>
