@@ -14,7 +14,7 @@ class DatabaseAdminController extends AppController {
 		$this->set(compact('databaseName', 'schemaName', 'tableName'));
 
 		if ($this->request->is('post')) {
-			$success = $this->CollibraAPI->updateTableBusinessTermLinks($this->request->data('Table.elements'));
+			$success = $this->CollibraAPI->updateBusinessTermLinks($this->request->data('Table.elements'));
 			if (!empty($success)) {
 				$this->Session->setFlash('Table updated successfully');
 				return json_encode(['success' => '1']);

@@ -23,7 +23,7 @@ class ApiAdminController extends AppController {
 		$this->set(compact('hostname', 'basePath'));
 
 		if ($this->request->is('post')) {
-			$success = $this->CollibraAPI->updateApiBusinessTermLinks($this->request->data('Api.elements'));
+			$success = $this->CollibraAPI->updateBusinessTermLinks($this->request->data('Api.elements'));
 			if (!empty($success)) {
 				$this->Session->setFlash('API updated successfully');
 				return json_encode(['success' => '1']);

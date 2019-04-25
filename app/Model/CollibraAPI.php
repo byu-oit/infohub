@@ -811,56 +811,6 @@ class CollibraAPI extends Model {
 		return $results;
 	}
 
-	public function updateTableBusinessTermLinks($columns) {
-		$wfPostData = [
-			'relationTypeId' => Configure::read('Collibra.relationship.termToDataAsset'),
-			'source' => [],
-			'target' => []
-		];
-		foreach ($columns as $column) {
-			if (empty($column['id'])) {
-				continue;
-			}
-			if (isset($column['new'])) {
-				$glossary = !empty($column['propGlossary']) ? $column['propGlossary'] : Configure::read('Collibra.vocabulary.newBusinessTerms');
-				$resp = $this->post('term', [
-					'vocabulary' => $glossary,
-					'signifier' => $column['propName'],
-					'conceptType' => Configure::read('Collibra.type.term')
-				]);
-				$resp = json_decode($resp);
-
-				$columnId = $resp->resourceId;
-				$column['business_term'] = $columnId;
-
-				$postString = http_build_query([
-					'label' => Configure::read('Collibra.attribute.definition'),
-					'value' => empty($column['propDefinition']) ? '(Definition pending.)' : $column['propDefinition']
-				]);
-				$resp = $this->post('term/'.$columnId.'/attributes', $postString);
-			}
-			if (isset($column['previous_business_term'])) {
-				if ($column['previous_business_term'] == $column['business_term']) {
-					continue;
-				}
-				$this->delete("relation/{$column['previous_business_term_relation']}");
-			}
-			if (empty($column['business_term'])) {
-				continue;
-			}
-			array_push($wfPostData['source'], $column['business_term']);
-			array_push($wfPostData['target'], $column['id']);
-		}
-
-		if (empty($wfPostData['source']) && empty($wfPostData['target'])) {
-			return true;
-		}
-
-		$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', $this->prepData($wfPostData));
-
-		return true;
-	}
-
 	public function getSamlResponses() {
 		$tableConfig = ['TableViewConfig' => [
 			'Columns' => [
@@ -1382,45 +1332,45 @@ class CollibraAPI extends Model {
 		return $this->post('term/multiple', $query);
 	}
 
-	public function updateApiBusinessTermLinks($terms) {
+	public function updateBusinessTermLinks($fields) {
 		$wfPostData = [
 			'relationTypeId' => Configure::read('Collibra.relationship.termToDataAsset'),
 			'source' => [],
 			'target' => []
 		];
-		foreach ($terms as $term) {
-			if (empty($term['id'])) {
+		foreach ($fields as $field) {
+			if (empty($field['id'])) {
 				continue;
 			}
-			if (isset($term['new'])) {
-				$glossary = !empty($term['propGlossary']) ? $term['propGlossary'] : Configure::read('Collibra.vocabulary.newBusinessTerms');
+			if (isset($field['new'])) {
+				$glossary = !empty($field['propGlossary']) ? $field['propGlossary'] : Configure::read('Collibra.vocabulary.newBusinessTerms');
 				$resp = $this->post('term', [
 					'vocabulary' => $glossary,
-					'signifier' => $term['propName'],
+					'signifier' => $field['propName'],
 					'conceptType' => Configure::read('Collibra.type.term')
 				]);
 				$resp = json_decode($resp);
 
 				$termId = $resp->resourceId;
-				$term['business_term'] = $termId;
+				$field['business_term'] = $termId;
 
 				$postString = http_build_query([
 					'label' => Configure::read('Collibra.attribute.definition'),
-					'value' => empty($term['propDefinition']) ? '(Definition pending.)' : $term['propDefinition']
+					'value' => empty($field['propDefinition']) ? '(Definition pending.)' : $field['propDefinition']
 				]);
 				$resp = $this->post('term/'.$termId.'/attributes', $postString);
 			}
-			if (isset($term['previous_business_term'])) {
-				if ($term['previous_business_term'] == $term['business_term']) {
+			if (isset($field['previous_business_term'])) {
+				if ($field['previous_business_term'] == $field['business_term']) {
 					continue;
 				}
-				$this->delete("relation/{$term['previous_business_term_relation']}");
+				$this->delete("relation/{$field['previous_business_term_relation']}");
 			}
-			if (empty($term['business_term'])) {
+			if (empty($field['business_term'])) {
 				continue;
 			}
-			array_push($wfPostData['source'], $term['business_term']);
-			array_push($wfPostData['target'], $term['id']);
+			array_push($wfPostData['source'], $field['business_term']);
+			array_push($wfPostData['target'], $field['id']);
 		}
 
 		if (empty($wfPostData['source']) && empty($wfPostData['target'])) {
