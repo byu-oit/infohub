@@ -492,7 +492,7 @@ function largeAddToQueueDBTable(arrColumns, arrColumnIds, databaseName, schemaNa
 				.then(() => {
 					largeAddProgressIncrement();
 				});
-			var recur = largeAddToQueueDBTable(arrColumns.slice(columnsStride), arrColumnIds.slice(columnsStride), databaseName, schemaName, tableName, termsStride, columnsStride);
+			var recur = largeAddToQueueDBTable(arrColumns.slice(columnsStride), arrColumnIds.slice(columnsStride), databaseName, schemaName, tableName, columnsStride);
 
 			Promise.all([request, recur]).then(() => resolve());
 			});
