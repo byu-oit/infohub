@@ -1164,10 +1164,8 @@ class RequestController extends AppController {
 					if (in_array($field->id, $this->request->data['arrIds'])) {
 						array_push($thisApiDeletedFieldIds, $field->id);
 					} else {
-						foreach ($request->requestedDataAssets as $dataAsset) {
-							if ($field->id == $dataAsset->reqDataId) {
-								$apiStillRequested = true;
-							}
+						if (in_array($field->id, array_column($request->requestedDataAssets, 'reqDataId'))) {
+							$apiStillRequested = true;
 						}
 					}
 				}
@@ -1236,10 +1234,8 @@ class RequestController extends AppController {
 				if (in_array($column->columnId, $this->request->data['arrIds'])) {
 					array_push($thisTableDeletedColumnIds, $column->columnId);
 				} else {
-					foreach ($request->requestedDataAssets as $dataAsset) {
-						if ($column->columnId == $dataAsset->reqDataId) {
-							$tableStillRequested = true;
-						}
+					if (in_array($column->columnId, array_column($request->requestedDataAssets, 'reqDataId'))) {
+						$tableStillRequested = true;
 					}
 				}
 			}
@@ -1263,10 +1259,8 @@ class RequestController extends AppController {
 			foreach ($response->fields as $field) {
 				array_push($thisResponseAllFieldIds, $field->fieldId);
 				if (!in_array($field->fieldId, $this->request->data['arrIds'])) {
-					foreach ($request->requestedDataAssets as $dataAsset) {
-						if ($field->fieldId == $dataAsset->reqDataId) {
-							$responseStillRequested = true;
-						}
+					if (in_array($field->fieldId, array_column($request->requestedDataAssets, 'reqDataId'))) {
+						$responseStillRequested = true;
 					}
 				}
 			}
