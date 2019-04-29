@@ -119,7 +119,8 @@
 			} else {
 				$('#applicationOrProjectToggle').removeClass('onText').show();
 				$('#applicationOrProjectSelect').html(applicationOrProjectSelectInnerHTML).prop('disabled', false).show();
-				$.getJSON('/developmentShop/getDetails/'+$('#developmentShopSelect option:selected').text())
+				var devShopName = $('#developmentShopSelect option:selected').text().replace('/', '%252F');
+				$.getJSON('/developmentShop/getDetails/'+devShopName)
 					.done(function(data) {
 						data[0].applications.forEach(function(app) {
 							$('#applicationOrProjectSelect').append('<option value="'+app.appId+'">'+app.appName+'</option>');
@@ -227,7 +228,8 @@
 			$('#developmentShopSelect').val('<?=$preFilled['developmentShopId']?>');
 			$('#applicationOrProjectToggle').show();
 			$('#applicationOrProjectSelect').prop('disabled', false);
-			$.getJSON('/developmentShop/getDetails/'+$('#developmentShopSelect option:selected').text())
+			var devShopName = $('#developmentShopSelect option:selected').text().replace('/', '%252F');
+			$.getJSON('/developmentShop/getDetails/'+devShopName)
 				.done(function(data) {
 					data[0].applications.forEach(function(app) {
 						$('#applicationOrProjectSelect').append('<option value="'+app.appId+'">'+app.appName+'</option>');
