@@ -35,6 +35,7 @@ if (!function_exists('denv')) {
 			'dataGovernanceCouncil' => '451a4ca9-0ba7-4f23-8b8e-4fa0b60d493f',
 			'academicRecords' => 'e467b5c3-c497-4fb6-a0d0-cf48815e9bec',
 			'dataWarehouse' => 'ad297c25-ddde-42f3-a534-bd73818cbef7',
+			'virtualTables' => '169fac07-e960-4782-92ca-fead181c6e7d',
 			'saml' => 'ab07c21b-c27f-470f-942f-102686753057'
 		],
 		'vocabulary' => [
@@ -77,11 +78,15 @@ if (!function_exists('denv')) {
 			'termToPolicy' => '0b8404c5-b0f2-4109-89ab-374c5f775c14',
 			'DSRtoNecessaryAPI' => '5f4d65ab-ab89-4ed2-a2e7-a628ee7ba4ba',
 			'DSRtoNecessaryTable' => 'ec73bc13-c215-42f2-911b-76a345ec9ed5',
+			'DSRtoNecessaryVirtualTable' => '1cf4ebdf-7594-42b5-b288-b4bd094ff821',
 			'DSRtoNecessarySAML' => 'dca012a1-e752-4299-bf61-925358efe83c',
 			'applicationOrProjectToDSR' => '7ff3a292-a33a-47fd-b549-4b9b5a66da3b',
 			'applicationOrProjectToDSA' => '029c9294-3bdc-4ceb-a922-e2186fb5df30',
 			'schemaToTable' => '00000000-0000-0000-0000-000000007043',
 			'columnToTable' => '00000000-0000-0000-0000-000000007042',
+			'spaceToSubspace' => 'd029cd53-191d-4990-bdb3-dbff2c846933',
+			'spaceToVirtualTable' => 'a4dcea9d-b222-452b-8af2-5c02590ba2df',
+			'columnToVirtualTable' => '39f5bacc-a0eb-4468-9f4e-9623b966e991',
 			'fieldToSaml' => 'cee630bb-e1c0-471b-91c2-727397f10d0b',
 			'developmentShopToApplicationOrProject' => '3e4e1b35-4cc2-43b3-a624-d753f14347c2',
 			'businessGroupToApplicationOrProject' => '4e041daf-1a20-4962-bc43-134649c7d3b0'
@@ -95,6 +100,8 @@ if (!function_exists('denv')) {
 			'field' => '00000000-0000-0000-0001-000400000008',
 			'fieldSet' => '73bae222-220d-4342-94ba-6a8369797eac',
 			'samlResponse' => 'fbe6f14c-38a0-4926-aa0c-42f2c3b04018',
+			'table' => '00000000-0000-0000-0000-000000031007',
+			'dremioSpace' => 'dea44108-f1f3-417f-901d-c3161ac04c91',
 			'developmentShop' => 'f8d30393-9f7f-4236-8e8d-828805a569d9',
 			'applicationOrProject' => '4d9178d0-ff3d-4e7e-8dba-4dca9e0f8343',
 			'businessGroup' => '00b946c2-9bf1-449b-a528-20f9a0700e95',

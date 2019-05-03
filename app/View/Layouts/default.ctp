@@ -157,6 +157,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 						<h6>Technology Types</h6>
 						<a href="/apis" class="drop-down-link">APIs</a>
 						<a href="/databases" class="drop-down-link">Databases</a>
+						<a href="/virtualTables" class="drop-down-link">Virtual Tables</a>
 						<a href="/saml" class="drop-down-link">SAML/Single Sign-On</a>
 					</div>
 				</li>

@@ -245,6 +245,14 @@ function removeFromRequestQueue(id){
 
 					var undoData = {emptyApi:'false',c:[tableName+' > '+columnName],ci:[columnId],databaseName:databaseName,schemaName:schemaName,tableName:tableName,url:'DBTable'};
 					break;
+				case 'virtualColumn':
+					var columnName = elem.data('name');
+					var columnId = elem.data('title');
+					var tableName = elem.attr('table-name');
+					var tableId = elem.attr('table-id');
+
+					var undoData = {emptyApi:'false',c:[tableName+' > '+columnName],ci:[columnId],tableName:tableName,tableId:tableId,url:'VirtualTable'};
+					break;
 				case 'samlField':
 					var fieldName = elem.data('name');
 					var fieldId = elem.data('title');
@@ -500,6 +508,73 @@ function largeAddToQueueDBTable(arrColumns, arrColumnIds, databaseName, schemaNa
 	else {
 		return new Promise(function(resolve) {
 			$.post("/request/addToQueueDBTable", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, databaseName:databaseName, schemaName:schemaName, tableName:tableName})
+				.then(() => {
+					largeAddProgressIncrement();
+					resolve();
+				});
+			});
+	}
+}
+function addToQueueVirtualTable(elem, displayCart) {
+	var i = 0;
+	var loadingTexts = ['Working on it   ','Working on it.  ','Working on it.. ','Working on it...'];
+	var loadingTextInterval = setInterval(function() {
+		$(elem).parent().find('.requestAccess').attr('value', loadingTexts[i]);
+		i++;
+		if (i == loadingTexts.length) i = 0;
+	}, 250);
+
+	var arrColumns = [];
+	var arrColumnIds = [];
+	var tableName = $(elem).data('tablename');
+	var tableId = $(elem).data('tableid');
+
+	$(elem).parent().find('.checkBoxes').find('input').each(function(){
+		if($(this).prop("checked") && $(this).prop("name") != "toggleCheckboxes"){
+			arrColumns.push($(this).data('name'));
+			arrColumnIds.push($(this).data('columnId'));
+		}
+	});
+	if (arrColumns.length < 500) {
+		$.post("/request/addToQueueVirtualTable", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, tableName:tableName, tableId:tableId})
+			.done(function(data) {
+				clearInterval(loadingTextInterval);
+				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
+				$(elem).closest('.resultItem').find('input[type=checkbox]').prop('checked', false);
+				if (displayCart) {
+					showRequestQueue();
+				}
+				updateQueueSize();
+		});
+	} else {
+		largeAddProgressSetUp(arrColumns.length);
+		largeAddToQueueVirtualTable(arrColumns, arrColumnIds, tableName, tableId)
+			.then(function(data) {
+				clearInterval(loadingTextInterval);
+				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
+				$(elem).closest('.resultItem').find('input[type=checkbox]').prop('checked', false);
+				if (displayCart) {
+					showRequestQueue();
+				}
+				updateQueueSize();
+			});
+	}
+}
+function largeAddToQueueVirtualTable(arrColumns, arrColumnIds, tableName, tableId, columnsStride = 150) {
+	if (arrColumns.length > columnsStride) {
+		return new Promise(function(resolve) {
+			var request = $.post("/request/addToQueueVirtualTable", {emptyApi:'false', c:arrColumns.slice(0, columnsStride), ci:arrColumnIds.slice(0, columnsStride), tableName:tableName, tableId:tableId})
+				.then(() => {
+					largeAddProgressIncrement();
+				});
+			var recur = largeAddToQueueVirtualTable(arrColumns.slice(columnsStride), arrColumnIds.slice(columnsStride), tableName, tableId, columnsStride);
+
+			Promise.all([request, recur]).then(() => resolve());
+			});
+	}
+	else {
+		return new Promise(function(resolve) {
+			$.post("/request/addToQueueVirtualTable", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, tableName:tableName, tableId:tableId})
 				.then(() => {
 					largeAddProgressIncrement();
 					resolve();

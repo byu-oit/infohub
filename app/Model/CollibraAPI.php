@@ -945,6 +945,214 @@ class CollibraAPI extends Model {
 		return $results;
 	}
 
+	public function getRootDremioSpaces() {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'spaceId']],
+				['Column' => ['fieldName' => 'spaceName']]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'spaceId'],
+					'Signifier' => ['name' => 'spaceName'],
+					'ConceptType' => [
+						'Id' => ['name' => 'assetTypeId']],
+					'Relation' => [
+						'typeId' => Configure::read('Collibra.relationship.spaceToSubspace'),
+						'type' => 'TARGET',
+						'Source' => [
+							'Id' => ['name' => 'parentSpaceId']]],
+					'Vocabulary' => [
+						'Community' => [
+							'Id' => ['name' => 'communityId']]],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+								'name' => 'parentSpaceId',
+								'operator' => 'NULL']],
+						[
+							'Field' => [
+								'name' => 'assetTypeId',
+								'operator' => 'EQUALS',
+								'value' => Configure::read('Collibra.type.dremioSpace')]],
+						[
+							'Field' => [
+								'name' => 'communityId',
+								'operator' => 'EQUALS',
+								'value' => Configure::read('Collibra.community.virtualTables')]]]]]]]];
+
+		$results = $this->fullDataTable($tableConfig);
+		return $results;
+	}
+
+	public function getDremioSpaceDetails($spaceId) {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'spaceId']],
+				['Column' => ['fieldName' => 'spaceName']],
+				['Column' => ['fieldName' => 'parentSpaceId']],
+				['Column' => ['fieldName' => 'parentSpaceName']],
+				['Column' => ['fieldName' => 'parentSpaceRelId']],
+				['Group' => [
+					'name' => 'subspaces',
+					'Columns' => [
+						['Column' => ['fieldName' => 'subspaceId']],
+						['Column' => ['fieldName' => 'subspaceName']],
+						['Column' => ['fieldName' => 'subspaceRelId']]]]],
+				['Group' => [
+					'name' => 'tables',
+					'Columns' => [
+						['Column' => ['fieldName' => 'tableId']],
+						['Column' => ['fieldName' => 'tableName']],
+						['Column' => ['fieldName' => 'tableRelId']]]]]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'spaceId'],
+					'Signifier' => ['name' => 'spaceName'],
+					'ConceptType' => [
+						'Id' => ['name' => 'assetTypeId']],
+					'Relation' => [[
+						'typeId' => Configure::read('Collibra.relationship.spaceToSubspace'),
+						'type' => 'TARGET',
+						'Id' => ['name' => 'parentSpaceRelId'],
+						'Source' => [
+							'Id' => ['name' => 'parentSpaceId'],
+							'Signifier' => ['name' => 'parentSpaceName']]],
+					[
+						'typeId' => Configure::read('Collibra.relationship.spaceToSubspace'),
+						'type' => 'SOURCE',
+						'Id' => ['name' => 'subspaceRelId'],
+						'Target' => [
+							'Id' => ['name' => 'subspaceId'],
+							'Signifier' => ['name' => 'subspaceName']]],
+					[
+						'typeId' => Configure::read('Collibra.relationship.spaceToVirtualTable'),
+						'type' => 'SOURCE',
+						'Id' => ['name' => 'tableRelId'],
+						'Target' => [
+							'Id' => ['name' => 'tableId'],
+							'Signifier' => ['name' => 'tableName']]]],
+					'Vocabulary' => [
+						'Community' => [
+							'Id' => ['name' => 'communityId']]],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+								'name' => 'spaceId',
+								'operator' => 'EQUALS',
+								'value' => $spaceId]],
+						[
+							'Field' => [
+								'name' => 'assetTypeId',
+								'operator' => 'EQUALS',
+								'value' => Configure::read('Collibra.type.dremioSpace')]],
+						[
+							'Field' => [
+								'name' => 'communityId',
+								'operator' => 'EQUALS',
+								'value' => Configure::read('Collibra.community.virtualTables')]]]]]]]];
+
+		$results = $this->fullDataTable($tableConfig);
+		return $results;
+	}
+
+	public function getVirtualTable($tableId) {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'id']],
+				['Column' => ['fieldName' => 'name']],
+				['Column' => ['fieldName' => 'description']],
+				['Column' => ['fieldName' => 'spaceId']],
+				['Column' => ['fieldName' => 'spaceName']]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'id'],
+					'Signifier' => ['name' => 'name'],
+					'StringAttribute' => [[
+						'labelId' => Configure::read('Collibra.attribute.description'),
+						'Value' => ['name' => 'description']]],
+					'Relation' => [
+						'typeId' => Configure::read('Collibra.relationship.spaceToVirtualTable'),
+						'type' => 'TARGET',
+						'Source' => [
+							'Id' => ['name' => 'spaceId'],
+							'Name' => ['name' => 'spaceName']]],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+								'name' => 'id',
+								'operator' => 'EQUALS',
+								'value' => $tableId]]]]]]]];
+
+		$results = $this->fullDataTable($tableConfig);
+		return $results[0];
+	}
+
+	public function getVirtualTableColumns($tableId) {
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'columnId']],
+				['Column' => ['fieldName' => 'columnName']],
+				['Column' => ['fieldName' => 'columnDescription']],
+				['Group' => [
+					'name' => 'businessTerm',
+					'Columns' => [
+						['Column' => ['fieldName' => 'termCommunityId']],
+						['Column' => ['fieldName' => 'termCommunityName']],
+						['Column' => ['fieldName' => 'termVocabularyId']],
+						['Column' => ['fieldName' => 'termVocabularyName']],
+						['Column' => ['fieldName' => 'termClassification']],
+						['Column' => ['fieldName' => 'approvalStatus']],
+						['Column' => ['fieldName' => 'termId']],
+						['Column' => ['fieldName' => 'termDescription']],
+						['Column' => ['fieldName' => 'termRelationId']],
+						['Column' => ['fieldName' => 'term']]]]]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'columnId'],
+					'Signifier' => ['name' => 'columnName'],
+					'StringAttribute' => [[
+						'Value' => ['name' => 'columnDescription'],
+						'labelId' => Configure::read('Collibra.attribute.description')]],
+					'Relation' => [[
+						'typeId' => Configure::read('Collibra.relationship.termToDataAsset'),
+						'type' => 'TARGET',
+						'Id' => ['name' => 'termRelationId'],
+						'Source' => [
+							'Id' => ['name' => 'termId'],
+							'Signifier' => ['name' => 'term'],
+							'Vocabulary' => [
+								'Id' => ['name' => 'termVocabularyId'],
+								'Name' => ['name' => 'termVocabularyName'],
+								'Community' => [
+									'Id' => ['name' => 'termCommunityId'],
+									'Name' => ['name' => 'termCommunityName']]],
+							'Status' => [
+								'signifier' => ['name' => 'approvalStatus']],
+							'StringAttribute' => [[
+								'Value' => ['name' => 'termDescription'],
+								'labelId' => Configure::read('Collibra.attribute.definition')]],
+							'SingleValueListAttribute' => [[
+								'Value' => ['name' => 'termClassification'],
+								'labelId' => Configure::read('Collibra.attribute.classification')]]]],
+					[
+						'typeId' => Configure::read('Collibra.relationship.columnToVirtualTable'),
+						'type' => 'SOURCE',
+						'Target' => [
+							'Id' => ['name' => 'tableId']]]],
+					'Filter' => [
+						'AND' => [[
+							'Field' => [
+								'name' => 'tableId',
+								'operator' => 'EQUALS',
+								'value' => $tableId]]]]]]]];
+
+		$columns = $this->fullDataTable($tableConfig);
+		usort($columns, function($a, $b) {
+			return strcmp($a->columnName, $b->columnName);
+		});
+		return $columns;
+	}
+
 	public function getBusinessTermDetails($arrQueuedBusinessTerms) {
 		if (empty($arrQueuedBusinessTerms)) {
 			return [];
@@ -1720,6 +1928,17 @@ class CollibraAPI extends Model {
 						['Column' => ['fieldName' => 'tableRelationId']]]]],
 
 				['Group' => [
+					'name' => 'necessaryVirtualTables',
+					'Columns' => [
+						['Column' => ['fieldName' => 'virTableId']],
+						['Column' => ['fieldName' => 'virTableName']],
+						['Column' => ['fieldName' => 'virTableVocabId']],
+						['Column' => ['fieldName' => 'virTableVocabName']],
+						['Column' => ['fieldName' => 'virTableCommId']],
+						['Column' => ['fieldName' => 'virTableCommName']],
+						['Column' => ['fieldName' => 'virTableRelationId']]]]],
+
+				['Group' => [
 					'name' => 'necessarySamlResponses',
 					'Columns' => [
 						['Column' => ['fieldName' => 'responseId']],
@@ -1918,6 +2137,20 @@ class CollibraAPI extends Model {
 								'Name' => ['name' => 'tableCommName']]]]],
 
 				[
+					'typeId' => Configure::read('Collibra.relationship.DSRtoNecessaryVirtualTable'),
+					'Id' => ['name' => 'virTableRelationId'],
+					'type' => 'SOURCE',
+					'Target' => [
+						'Id' => ['name' => 'virTableId'],
+						'Signifier' => ['name' => 'virTableName'],
+						'Vocabulary' => [
+							'Id' => ['name' => 'virTableVocabId'],
+							'Name' => ['name' => 'virTableVocabName'],
+							'Community' => [
+								'Id' => ['name' => 'virTableCommId'],
+								'Name' => ['name' => 'virTableCommName']]]]],
+
+				[
 					'typeId' => Configure::read('Collibra.relationship.DSRtoNecessarySAML'),
 					'Id' => ['name' => 'responseRelationId'],
 					'type' => 'SOURCE',
@@ -2066,6 +2299,20 @@ class CollibraAPI extends Model {
 									'Community' => [
 										'Id' => ['name' => 'tableCommId'],
 										'Name' => ['name' => 'tableCommName']]]]],
+
+						[
+							'typeId' => Configure::read('Collibra.relationship.DSRtoNecessaryVirtualTable'),
+							'Id' => ['name' => 'virTableRelationId'],
+							'type' => 'SOURCE',
+							'Target' => [
+								'Id' => ['name' => 'virTableId'],
+								'Signifier' => ['name' => 'virTableName'],
+								'Vocabulary' => [
+									'Id' => ['name' => 'virTableVocabId'],
+									'Name' => ['name' => 'virTableVocabName'],
+									'Community' => [
+										'Id' => ['name' => 'virTableCommId'],
+										'Name' => ['name' => 'virTableCommName']]]]],
 
 						[
 							'typeId' => Configure::read('Collibra.relationship.DSRtoNecessarySAML'),
