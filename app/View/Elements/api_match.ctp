@@ -124,7 +124,7 @@
 
 			$('.view-context' + index).html(selected.context.val);
 
-			if (!selected.hasOwnProperty('definition')) {
+			if (!selected.hasOwnProperty('definition') || !selected.definition) {
 				$('#view-definition' + index).html('');
 			} else {
 				insertDefinition(stripTags(selected.definition.val), index);
