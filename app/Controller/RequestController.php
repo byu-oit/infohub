@@ -1593,7 +1593,7 @@ class RequestController extends AppController {
 				return strcmp($a->reqDataSignifier, $b->reqDataSignifier);
 			});
 		}
-
+// pr($organizedVirtualColumns);exit();
 		$this->set(compact('request', 'arrQueue', 'organizedApiFields', 'organizedDbColumns', 'organizedVirtualColumns', 'organizedSamlFields', 'filteredApis', 'filteredCartTerms', 'requestedData'));
 		$this->set('submitErr', isset($this->request->query['err']));
 	}
@@ -1988,7 +1988,7 @@ class RequestController extends AppController {
 				if (empty($column->businessTerm[0]->termId)) {
 					if (array_key_exists($column->columnId, $arrQueue['virtualColumns'])) {
 						array_push($postData[$reqAssetsString], $column->columnId);
-						$virtualTables[$tableName]['unmapped']['requested'][] = $column->columnName;
+						$virtualTables[$tableName]['unmapped']['requested'][] = end((explode(' > ', $column->columnName)));
 					}
 				} else {
 					if (array_key_exists($column->columnId, $arrQueue['virtualColumns'])) {

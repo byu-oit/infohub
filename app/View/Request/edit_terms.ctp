@@ -152,7 +152,7 @@
 				<div class="clear"></div>
 				<div class="resultItem">
 					<?php
-					$cartEmpty = empty($organizedApiFields) && empty($organizedDbColumns) && empty($organizedSamlFields) && empty($filteredApis) && empty($filteredCartTerms);
+					$cartEmpty = empty($organizedApiFields) && empty($organizedDbColumns) && empty($organizedVirtualColumns) && empty($organizedSamlFields) && empty($filteredApis) && empty($filteredCartTerms);
 					if (!$cartEmpty): ?>
 					<div class="checkAll"><input type="checkbox" onclick="toggleAllCheckboxes(this)" checked="checked">Check/Uncheck all</div>
 					<div class="irLower"><ul class="cart">

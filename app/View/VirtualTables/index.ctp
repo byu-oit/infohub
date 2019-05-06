@@ -35,7 +35,7 @@
 					for (i=0; i < spaces.length; i++) {
 						var space = spaces[i];
 						html += '<li class="catalogItem" id="'+space.spaceId+'">'+
-						'	   <a href="#" class="hasChildren">'+space.spaceName+'</a>'+
+						'	   <a href="#" class="hasChildren">'+space.spaceName.split(' > ').pop()+'</a>'+
 						'	   <ul data-level="'+level+'" id="categoryList'+space.spaceId+'" class="subList catalogChild '+grandChildClass+'">'+
 						'       	<li><a href=""><img src="/img/dataLoading-sm.gif" alt="Loading..."></a></li>'+
 						'		</ul>'+
@@ -45,7 +45,7 @@
 					for (i=0; i < spaces[0].subspaces.length; i++) {
 						var space = spaces[0].subspaces[i];
 						html += '<li class="catalogItem" id="'+space.subspaceId+'">'+
-						'	   <a href="#" class="hasChildren">'+space.subspaceName+'</a>'+
+						'	   <a href="#" class="hasChildren">'+space.subspaceName.split(' > ').pop()+'</a>'+
 						'	   <ul data-level="'+level+'" id="categoryList'+space.subspaceId+'" class="subList catalogChild '+grandChildClass+'">'+
 						'       	<li><a href=""><img src="/img/dataLoading-sm.gif" alt="Loading..."></a></li>'+
 						'		</ul>'+
@@ -57,7 +57,7 @@
 						for (i=0; i < spaces[0].tables.length; i++) {
 							var table = spaces[0].tables[i];
 							html += '<li class="catalogItem">'+
-							'   	<a class="table" href="/virtualTables/view/'+table.tableId+'">'+table.tableName+'</a>'+
+							'   	<a class="table" href="/virtualTables/view/'+table.tableId+'">'+table.tableName.split(' > ').pop()+'</a>'+
 							'	</li>';
 						}
 					}
