@@ -28,9 +28,9 @@ environments:
         instance_type: t3.medium
       load_balancer:
         type: https
-        https_certificate: 37df28aa-128f-4d3e-a728-1a3716ca333e
+        https_certificate: 13c2b320-38c5-46d4-8c8b-7e2c21501b00
         dns_names:
-          - infohub-dev.tools.byu.edu
+          - infohub-dev.byu.edu
       dependencies:
       - db
       - storage

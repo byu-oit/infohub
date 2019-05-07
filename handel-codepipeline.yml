@@ -10,7 +10,7 @@ pipelines:
         name: Github
         owner: byu-oit
         repo: infohub
-        branch: aws
+        branch: dev
       - type: codebuild
         name: Build
         build_image: aws/codebuild/docker:18.09.0
