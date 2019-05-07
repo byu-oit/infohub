@@ -5,13 +5,13 @@
 
 <script>
 $(document).ready(function() {
-	$("#browse-tab").addClass('active')
+	$('#apiFilter').focus();
+	$('#browse-tab').addClass('active');
 
 	var apis = [
 		<?php foreach ($apis as $api) {
 			if (
 				$api->statusId != Configure::read('Collibra.status.testing') &&
-				$api->statusId != Configure::read('Collibra.status.deprecated') &&
 				$api->statusId != Configure::read('Collibra.status.retired')
 			) {
 				echo '"'.$api->name.'",';
@@ -90,12 +90,12 @@ $(document).ready(function() {
 					foreach ($apis as $endpoint):
 						if (
 							$endpoint->statusId == Configure::read('Collibra.status.testing') ||
-							$endpoint->statusId == Configure::read('Collibra.status.deprecated') ||
 							$endpoint->statusId == Configure::read('Collibra.status.retired')
 						) continue; ?>
 						<li id="catalogIndex-<?=$i?>" class="catalogItem" data-name="<?=$endpoint->name?>">
 							<?php echo '<a href="/apis/'.$hostname.$endpoint->name.'">'.$endpoint->name;
 								  if ($endpoint->statusId == Configure::read('Collibra.status.preProduction')) echo '<span class="pre-production"> (Pre-production)</span>';
+								  if ($endpoint->statusId == Configure::read('Collibra.status.deprecated')) echo '<span class="deprecated"> (Deprecated)</span>';
 								  echo '</a>';
 							?>
 						</li>

@@ -94,6 +94,10 @@ class FieldsetHelper extends AppHelper {
                     echo '&nbsp;&nbsp;<img class="pendingApprovalIcon" src="/img/alert.png" onmouseover="displayPendingApproval(this)" onmouseout="hidePendingAproval()">';
                 }
             }
+        echo '</td><td>';
+            if (!empty($field->businessTerm[0])) {
+                echo '<a href="/search/listTerms/'.$field->businessTerm[0]->termVocabularyId.'">'.$field->businessTerm[0]->termCommunityName.'</a>';
+            }
         echo '</td></tr>';
 
         if (!empty($field->descendantFields)) {
@@ -167,6 +171,10 @@ class FieldsetHelper extends AppHelper {
                 if ($field->businessTerm[0]->approvalStatus != 'Approved') {
                     echo '&nbsp;&nbsp;<img class="pendingApprovalIcon" src="/img/alert.png" onmouseover="displayPendingApproval(this)" onmouseout="hidePendingAproval()">';
                 }
+            }
+        echo '</td><td>';
+            if (!empty($field->businessTerm[0])) {
+                echo '<a href="/search/listTerms/'.$field->businessTerm[0]->termVocabularyId.'">'.$field->businessTerm[0]->termCommunityName.'</a>';
             }
         echo '</td></tr>';
 

@@ -119,7 +119,8 @@
 			} else {
 				$('#applicationOrProjectToggle').removeClass('onText').show();
 				$('#applicationOrProjectSelect').html(applicationOrProjectSelectInnerHTML).prop('disabled', false).show();
-				$.getJSON('/developmentShop/getDetails/'+$('#developmentShopSelect option:selected').text())
+				var devShopName = $('#developmentShopSelect option:selected').text().replace('/', '%252F');
+				$.getJSON('/developmentShop/getDetails/'+devShopName)
 					.done(function(data) {
 						data[0].applications.forEach(function(app) {
 							$('#applicationOrProjectSelect').append('<option value="'+app.appId+'">'+app.appName+'</option>');
@@ -227,7 +228,8 @@
 			$('#developmentShopSelect').val('<?=$preFilled['developmentShopId']?>');
 			$('#applicationOrProjectToggle').show();
 			$('#applicationOrProjectSelect').prop('disabled', false);
-			$.getJSON('/developmentShop/getDetails/'+$('#developmentShopSelect option:selected').text())
+			var devShopName = $('#developmentShopSelect option:selected').text().replace('/', '%252F');
+			$.getJSON('/developmentShop/getDetails/'+devShopName)
 				.done(function(data) {
 					data[0].applications.forEach(function(app) {
 						$('#applicationOrProjectSelect').append('<option value="'+app.appId+'">'+app.appName+'</option>');
@@ -330,12 +332,15 @@
 				<div class="resultItem">
 					<div class="irLower"><ul class="cart">
 						<?php
-					if (!empty($arrQueue['apiFields']) || !empty($arrQueue['dbColumns']) || !empty($arrQueue['samlFields']) || !empty($termDetails) || !empty($arrQueue['emptyApis'])) {
+					if (!empty($arrQueue['apiFields']) || !empty($arrQueue['dbColumns']) || !empty($arrQueue['virtualColumns']) || !empty($arrQueue['samlFields']) || !empty($termDetails) || !empty($arrQueue['emptyApis'])) {
 							foreach ($arrQueue['apiFields'] as $fieldId => $field) {
 								echo '<li id="requestItem'.$fieldId.'" data-title="'.$fieldId.'" data-name="'.$field['fullName'].'" data-api-host="'.$field['apiHost'].'" data-api-path="'.$field['apiPath'].'" data-authorized-by-fieldset="'.$field['authorizedByFieldset'].'" data-type="field"><a class="delete" href="javascript:removeFromRequestQueue(\''.$fieldId.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$field['name'].'</li>';
 							}
 							foreach ($arrQueue['dbColumns'] as $columnId => $column) {
 								echo '<li id="requestItem'.$columnId.'" data-title="'.$columnId.'" data-name="'.$column['name'].'" database-name="'.$column['databaseName'].'" schema-name="'.$column['schemaName'].'" table-name="'.$column['tableName'].'" data-type="column"><a class="delete" href="javascript:removeFromRequestQueue(\''.$columnId.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$column['name'].'</li>';
+							}
+							foreach ($arrQueue['virtualColumns'] as $columnId => $column) {
+								echo '<li id="requestItem'.$columnId.'" data-title="'.$columnId.'" data-name="'.$column['name'].'" table-name="'.$column['tableName'].'" table-id="'.$column['tableId'].'" data-type="virtualColumn"><a class="delete" href="javascript:removeFromRequestQueue(\''.$columnId.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$column['name'].'</li>';
 							}
 							foreach ($arrQueue['samlFields'] as $fieldId => $field) {
 								echo '<li id="requestItem'.$fieldId.'" data-title="'.$fieldId.'" data-name="'.$field['name'].'" response-name="'.$field['responseName'].'" data-type="samlField"><a class="delete" href="javascript:removeFromRequestQueue(\''.$fieldId.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$field['name'].'</li>';
@@ -461,6 +466,7 @@
 						"technologyType",
 						"api",
 						"tables",
+						"virtualTables",
 						"saml",
 						Configure::read('Collibra.requiredTermsString'),
 						Configure::read('Collibra.additionalTermsString'),

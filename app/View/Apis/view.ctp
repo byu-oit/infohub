@@ -17,6 +17,19 @@
 			});
 		});
 
+		$('.apiHelpSmlStatus .contact').on('mouseover', function(){
+			var pos = $(this).offset();
+			var data = '<strong>'+$(this).attr('coordinator-name')+'</strong><br/>'+$(this).attr('coordinator-email')+'<br/>'+$(this).attr('coordinator-phone');
+			$('#info-win .info-win-content').html(data);
+			$('#info-win').show();
+			var winLeft = pos.left + $(this).outerWidth()/2 - $('#info-win').outerWidth()/2 + 5;
+			var winTop = pos.top - $('#info-win').outerHeight() - 5;
+			$('#info-win').css('top',winTop).css('left',winLeft);
+		});
+		$('.apiHelpSmlStatus .contact').mouseout(function(){
+			$('#info-win').hide();
+		});
+
 	});
 
 	function toggleFieldsetCollapse(elem) {
@@ -78,8 +91,12 @@
 	table.api-fields tr.header:hover {
 		background-color: inherit;
 	}
+	.contact {
+		text-decoration: underline;
+		cursor: pointer;
+	}
 </style>
-<div id="apiBody" class="innerLower">
+<div id="apiBody" class="innerDataSet">
 	<div id="searchResults">
 		<h1 class="headerTab"><?= $hostname . '/' . trim($basePath, '/') ?></h1>
 		<div class="clear"></div>
@@ -106,7 +123,7 @@
 			<div class="apiHelpSmlStatus">This API is in InfoHub only for beta testing purposes. If you have not been specifically asked to request this API for testing, it is very unlikely you will be given access.</div>
 		<?php elseif ($apiObject->statusId == Configure::read('Collibra.status.deprecated')): ?>
 			<div class="apiHelpStatus">This API is <strong>deprecated.</strong></div>
-			<div class="apiHelpSmlStatus">Any existing subscriptions to this API will still work, but no new subscriptions can be made, and the API may become inoperational in the future.</div>
+			<div class="apiHelpSmlStatus">Any existing subscriptions to this API will still work. However, no new subscriptions can be made, and the API may become inoperational in the future without notice. If you need the information in this API, you can contact <span class="contact" coordinator-name="<?= $coordinator->firstName.' '.$coordinator->lastName ?>" coordinator-email="<?= $coordinator->emailAddress ?>" coordinator-phone="<?= $coordinator->phoneNumbers->phone[0]->number ?>">our Information Governance Director</span>, and we will consider including this data in a University API.</div>
 		<?php elseif ($apiObject->statusId == Configure::read('Collibra.status.retired')): ?>
 			<div class="apiHelpStatus">This API is <strong>retired.</strong></div>
 			<div class="apiHelpSmlStatus">This API is no longer operational and exists in InfoHub only for record-keeping purposes.</div>
@@ -128,7 +145,8 @@
 							<th><input type="checkbox" onclick="toggleAllCheckboxes(this)" name="toggleCheckboxes"/></th>
 							<th class="fieldColumn">Field</th>
 							<th class="termColumn">Business Term</th>
-							<th>Classification</th>
+							<th class="classificationColumn">Classification</th>
+							<th class="glossaryColumn">Glossary</th>
 						</tr>
 						<?php foreach ($fields as $field) {
 							$this->Fieldset->printApiView($field);

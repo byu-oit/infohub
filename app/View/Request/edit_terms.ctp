@@ -15,6 +15,7 @@
 		var dsrId = $(elem).closest('#requestForm').find('h2.headerTab').attr('id');
 		var arrApiFields = [];
 		var arrDbColumns = [];
+		var arrVirtualColumns = [];
 		var arrSamlFields = [];
 		var arrBusinessTerms = [];
 		var arrApis = [];
@@ -36,6 +37,13 @@
 						databaseName:$(this).attr('databaseName')
 					});
 				}
+				else if ($(this).attr('name') == 'virtualColumns[]') {
+					arrVirtualColumns.push({
+						id:$(this).val(),
+						tableName:$(this).attr('tableName'),
+						tableId:$(this).attr('tableId')
+					});
+				}
 				else if ($(this).attr('name') == 'samlFields[]') {
 					arrSamlFields.push({
 						id:$(this).val(),
@@ -54,6 +62,7 @@
 		if (
 			arrApiFields.length == 0 &&
 			arrDbColumns.length == 0 &&
+			arrVirtualColumns.length == 0 &&
 			arrSamlFields.length == 0 &&
 			arrBusinessTerms.length == 0 &&
 			arrApis.length == 0
@@ -62,7 +71,7 @@
 			return;
 		}
 
-		$.post("/request/editTermsSubmitAdd", {dsrId:dsrId,arrApiFields:arrApiFields,arrDbColumns:arrDbColumns,arrSamlFields:arrSamlFields,arrBusinessTerms:arrBusinessTerms,arrApis:arrApis})
+		$.post("/request/editTermsSubmitAdd", {dsrId:dsrId,arrApiFields:arrApiFields,arrDbColumns:arrDbColumns,arrVirtualColumns:arrVirtualColumns,arrSamlFields:arrSamlFields,arrBusinessTerms:arrBusinessTerms,arrApis:arrApis})
 			.done(function(data) {
 				clearInterval(loadingTextInterval);
 				data = JSON.parse(data);
@@ -143,7 +152,7 @@
 				<div class="clear"></div>
 				<div class="resultItem">
 					<?php
-					$cartEmpty = empty($organizedApiFields) && empty($organizedDbColumns) && empty($organizedSamlFields) && empty($filteredApis) && empty($filteredCartTerms);
+					$cartEmpty = empty($organizedApiFields) && empty($organizedDbColumns) && empty($organizedVirtualColumns) && empty($organizedSamlFields) && empty($filteredApis) && empty($filteredCartTerms);
 					if (!$cartEmpty): ?>
 					<div class="checkAll"><input type="checkbox" onclick="toggleAllCheckboxes(this)" checked="checked">Check/Uncheck all</div>
 					<div class="irLower"><ul class="cart">
@@ -161,6 +170,14 @@
 									echo '<h4>'.$tableName.'</h4>';
 									foreach ($columns as $id => $column) {
 										echo '<li id="requestItem'.$id.'"><input type="checkbox" name="dbColumns[]" value="'.$id.'" databaseName="'.$column['databaseName'].'" schemaName="'.$column['schemaName'].'" tableName="'.$column['tableName'].'" checked="checked">'.$column['name'].'</li>';
+									}
+								}
+							}
+							if (!empty($organizedVirtualColumns)) {
+								foreach ($organizedVirtualColumns as $virtualTableName => $columns) {
+									echo '<h4>'.$virtualTableName.'</h4>';
+									foreach ($columns as $id => $column) {
+										echo '<li id="requestItem'.$id.'"><input type="checkbox" name="virtualColumns[]" value="'.$id.'" tableName="'.$column['tableName'].'" tableId="'.$column['tableId'].'" checked="checked">'.$column['name'].'</li>';
 									}
 								}
 							}

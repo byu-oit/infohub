@@ -14,7 +14,7 @@ class DatabaseAdminController extends AppController {
 		$this->set(compact('databaseName', 'schemaName', 'tableName'));
 
 		if ($this->request->is('post')) {
-			$success = $this->CollibraAPI->updateTableBusinessTermLinks($this->request->data('Table.elements'));
+			$success = $this->CollibraAPI->updateBusinessTermLinks($this->request->data('Table.elements'));
 			if (!empty($success)) {
 				$this->Session->setFlash('Table updated successfully');
 				return json_encode(['success' => '1']);
@@ -49,6 +49,9 @@ class DatabaseAdminController extends AppController {
 	public function syncDatabase() {
 		$this->autoRender = false;
 		if (!$this->request->is('post')) {
+			$resp = json_decode($this->CollibraAPI->get('community/'.Configure::read('Collibra.community.dataWarehouse').'/sub-communities'));
+			$databases = array_column($resp->communityReference, 'name');
+			$this->set(compact('databases'));
 			$this->render();
 		} else {
 			$databaseName = $this->request->data['database'];

@@ -299,6 +299,30 @@ class RequestController extends AppController {
 		}
 	}
 
+	public function addToQueueVirtualTable() {
+		$this->autoRender = false;
+		if ($this->request->is('post')) {
+			$newTermsAdded = 0;
+			$arrColumns = $this->request->data['c'];
+			$arrColumnIds = $this->request->data['ci'];
+			$tableName = $this->request->data['tableName'];
+			$tableId = $this->request->data['tableId'];
+
+			$arrQueue = $this->Session->read('queue');
+
+			foreach ($arrColumnIds as $index => $columnId) {
+				if (empty($arrQueue['virtualColumns'][$columnId])) {
+					$newTermsAdded++;
+					$arrQueue['virtualColumns'][$columnId] = ['name' => end((explode(" > ", $arrColumns[$index]))), 'fullName' => $arrColumns[$index], 'tableName' => $tableName, 'tableId' => $tableId];
+				}
+			}
+
+			$this->Session->write('queue', $arrQueue);
+			$this->updateDraftCart();
+			echo $newTermsAdded;
+		}
+	}
+
 	public function addToQueueSAMLResponse() {
 		$this->autoRender = false;
 		if ($this->request->is('post')) {
@@ -388,6 +412,8 @@ class RequestController extends AppController {
 				unset($arrQueue['apiFields'][$termID]);
 			} else if (array_key_exists($termID, $arrQueue['dbColumns'])) {
 				unset($arrQueue['dbColumns'][$termID]);
+			} else if (array_key_exists($termID, $arrQueue['virtualColumns'])) {
+				unset($arrQueue['virtualColumns'][$termID]);
 			} else if (array_key_exists($termID, $arrQueue['samlFields'])) {
 				unset($arrQueue['samlFields'][$termID]);
 			} else if (array_key_exists($termID, $arrQueue['businessTerms'])) {
@@ -405,6 +431,7 @@ class RequestController extends AppController {
 		$arrQueue = [];
 		$arrQueue['apiFields'] = [];
 		$arrQueue['dbColumns'] = [];
+		$arrQueue['virtualColumns'] = [];
 		$arrQueue['samlFields'] = [];
 		$arrQueue['businessTerms'] = [];
 		$arrQueue['emptyApis'] = [];
@@ -418,6 +445,7 @@ class RequestController extends AppController {
 		$arrQueue = $this->Session->read('queue');
 		echo  count($arrQueue['apiFields']) +
 			  count($arrQueue['dbColumns']) +
+			  count($arrQueue['virtualColumns']) +
 			  count($arrQueue['samlFields']) +
 			  count($arrQueue['businessTerms']) +
 			  count($arrQueue['emptyApis']);
@@ -428,7 +456,7 @@ class RequestController extends AppController {
 		$responseHTML = '';
 
 		$arrQueue = $this->Session->read('queue');
-		$responseHTML = '<h3>Requested Items: '.(count($arrQueue['apiFields']) + count($arrQueue['dbColumns']) + count($arrQueue['samlFields']) + count($arrQueue['businessTerms']) + count($arrQueue['emptyApis'])).'</h3>'.
+		$responseHTML = '<h3>Requested Items: '.(count($arrQueue['apiFields']) + count($arrQueue['dbColumns']) + count($arrQueue['virtualColumns']) + count($arrQueue['samlFields']) + count($arrQueue['businessTerms']) + count($arrQueue['emptyApis'])).'</h3>'.
 			'<a class="close" href="javascript: hideRequestQueue()">X</a>'.
 			'<div class="arrow"></div>'.
 			'<a class="clearQueue" href="javascript: clearRequestQueue()">Empty cart</a>';
@@ -436,6 +464,7 @@ class RequestController extends AppController {
 		if(
 			!empty($arrQueue['apiFields']) ||
 			!empty($arrQueue['dbColumns']) ||
+			!empty($arrQueue['virtualColumns']) ||
 			!empty($arrQueue['samlFields']) ||
 			!empty($arrQueue['businessTerms']) ||
 			!empty($arrQueue['emptyApis'])
@@ -640,6 +669,7 @@ class RequestController extends AppController {
 		$addedApis = [];
 		$addedFieldsetApis = [];
 		$addedTables = [];
+		$addedVirtualTables = [];
 		$addedSamlResponses = [];
 		$additionString = "<br/><br/>Addition, ".date('Y-m-d').":";
 
@@ -651,6 +681,7 @@ class RequestController extends AppController {
 		$relationsPostData['additionalDataAssets'] = [];
 		$relationsPostData['apis'] = [];
 		$relationsPostData['tables'] = [];
+		$relationsPostData['virtualTables'] = [];
 		$relationsPostData['saml'] = [];
 		$relationsPostData['policies'] = [];
 
@@ -674,6 +705,13 @@ class RequestController extends AppController {
 				$addedTables[$column['databaseName'].' > '.$column['tableName']] = [];
 				$additionString .= "<br/>{$arrQueue['dbColumns'][$column['id']]['fullName']}";
 				unset($arrQueue['dbColumns'][$column['id']]);
+			}
+		}
+		if (isset($this->request->data['arrVirtualColumns'])) {
+			foreach ($this->request->data['arrVirtualColumns'] as $column) {
+				$addedVirtualTables[$column['tableName']] = ['tableId' => $column['tableId']];
+				$additionString .= "<br/>{$arrQueue['virtualColumns'][$column['id']]['fullName']}";
+				unset($arrQueue['virtualColumns'][$column['id']]);
 			}
 		}
 		if (isset($this->request->data['arrSamlFields'])) {
@@ -856,6 +894,24 @@ class RequestController extends AppController {
 				}
 			}
 		}
+		foreach ($addedVirtualTables as $tableName => $_) {
+			if (!in_array($addedVirtualTables[$tableName]['tableId'], array_column($request->necessaryVirtualTables, 'virTableId'))) {
+				array_push($relationsPostData['virtualTables'], $addedVirtualTables[$tableName]['tableId']);
+			}
+
+			$columns = $this->CollibraAPI->getVirtualTableColumns($addedVirtualTables[$tableName]['tableId']);
+			foreach ($columns as $column) {
+				if (!in_array($column->columnId, array_column($this->request->data['arrVirtualColumns'], 'id'))) continue;
+				if (empty($column->businessTerm[0]->termId)) {
+					$addedVirtualTables[$tableName]['unmapped']['requested'][] = $column->columnName;
+					array_push($relationsPostData['requestedDataAssets'], $column->columnId);
+				} else {
+					$addedVirtualTables[$tableName]['requestedBusinessTerm'][] = '('.$column->businessTerm[0]->termCommunityName.') '.$column->businessTerm[0]->term;
+					array_push($relationsPostData['requestedDataAssets'], $column->columnId);
+					array_push($requestedTerms, $column->businessTerm[0]);
+				}
+			}
+		}
 		foreach ($addedSamlResponses as $responseName => $_) {
 			$response = $this->CollibraAPI->getSamlResponseObject($responseName);
 			array_push($relationsPostData['saml'], $response->id);
@@ -985,6 +1041,32 @@ class RequestController extends AppController {
 					}
 					if (!empty($table['unmapped']['unrequested'])) {
 						$additionString .= ". . . . . . Unrequested:<br/>. . . . . . . . " . implode("<br/>. . . . . . . . ", $table['unmapped']['unrequested']) . "<br/>";
+					}
+				}
+				$additionString .= "<br/>";
+			}
+		}
+
+		if (!empty($addedVirtualTables)) {
+			if (!$legacy && strpos($request->attributes['Technology Type']->attrValue, 'Virtual Database') === false) {
+				$attr = $request->attributes['Technology Type'];
+				$newValues = array_merge(explode(';', $attr->attrValue), ['Virtual Database']);
+				$resp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $this->Collibra->preparePostData(['value' => $newValues]));
+				if ($resp->code != '200') $success = false;
+			}
+
+			$additionString .= "<br/><br/><b>Newly Requested Virtual Table Columns:</b><br/>";
+			foreach ($addedVirtualTables as $tableName => $table) {
+				$additionString .= ". . <u><b>{$tableName}</u></b><br/>";
+				if (!empty($table['requestedBusinessTerm'])) {
+					$table['requestedBusinessTerm'] = array_unique($table['requestedBusinessTerm']);
+					sort($table['requestedBusinessTerm']);
+					$additionString .= "<br/>. . . . <b>Requested business terms:</b><br/>. . . . . . " . implode("<br/>. . . . . . ", $table['requestedBusinessTerm']) . "<br/>";
+				}
+				if (!empty($table['unmapped'])) {
+					$additionString .= "<br/>. . . . <b>*Columns with no Business Terms:</b><br/>";
+					if (!empty($table['unmapped']['requested'])) {
+						$additionString .= ". . . . . . Requested:<br/>. . . . . . . . " . implode("<br/>. . . . . . . . ", $table['unmapped']['requested']) . "<br/>";
 					}
 				}
 				$additionString .= "<br/>";
@@ -1164,10 +1246,8 @@ class RequestController extends AppController {
 					if (in_array($field->id, $this->request->data['arrIds'])) {
 						array_push($thisApiDeletedFieldIds, $field->id);
 					} else {
-						foreach ($request->requestedDataAssets as $dataAsset) {
-							if ($field->id == $dataAsset->reqDataId) {
-								$apiStillRequested = true;
-							}
+						if (in_array($field->id, array_column($request->requestedDataAssets, 'reqDataId'))) {
+							$apiStillRequested = true;
 						}
 					}
 				}
@@ -1227,19 +1307,15 @@ class RequestController extends AppController {
 		}
 		foreach ($request->necessaryTables as $table) {
 			$thisTableDeletedColumnIds = [];
-			$thisTableAllColumnIds = [];
 			$tableStillRequested = false;
 			$table->columns = $this->CollibraAPI->getTableColumns($table->tableCommName, $table->tableName);
 
 			foreach ($table->columns as $column) {
-				array_push($thisTableAllColumnIds, $column->columnId);
 				if (in_array($column->columnId, $this->request->data['arrIds'])) {
 					array_push($thisTableDeletedColumnIds, $column->columnId);
 				} else {
-					foreach ($request->requestedDataAssets as $dataAsset) {
-						if ($column->columnId == $dataAsset->reqDataId) {
-							$tableStillRequested = true;
-						}
+					if (in_array($column->columnId, array_column($request->requestedDataAssets, 'reqDataId'))) {
+						$tableStillRequested = true;
 					}
 				}
 			}
@@ -1248,12 +1324,27 @@ class RequestController extends AppController {
 				$nowAdditionallyIncluded = array_merge($nowAdditionallyIncluded, $thisTableDeletedColumnIds);
 			} else {
 				foreach ($request->additionallyIncludedDataAssets as $dataAsset) {
-					if (in_array($dataAsset->addDataId, $thisTableAllColumnIds)) {
+					if (in_array($dataAsset->addDataId, array_column($table->columns, 'columnId'))) {
 						array_push($toDeleteIds, $dataAsset->addDataRelationId);
 					}
 				}
 				array_push($toDeleteIds, $table->tableRelationId);
 			}
+		}
+		foreach ($request->necessaryVirtualTables as $virTable) {
+			$tableStillRequested = false;
+			$virTable->columns = $this->CollibraAPI->getVirtualTableColumns($virTable->virTableId);
+
+			foreach ($virTable->columns as $column) {
+				if (!in_array($column->columnId, $this->request->data['arrIds'])) {
+					if (in_array($column->columnId, array_column($request->requestedDataAssets, 'reqDataId'))) {
+						$tableStillRequested = true;
+						break;
+					}
+				}
+			}
+
+			if (!$tableStillRequested) array_push($toDeleteIds, $virTable->virTableRelationId);
 		}
 		foreach ($request->necessarySamlResponses as $response) {
 			$thisResponseAllFieldIds = [];
@@ -1263,10 +1354,8 @@ class RequestController extends AppController {
 			foreach ($response->fields as $field) {
 				array_push($thisResponseAllFieldIds, $field->fieldId);
 				if (!in_array($field->fieldId, $this->request->data['arrIds'])) {
-					foreach ($request->requestedDataAssets as $dataAsset) {
-						if ($field->fieldId == $dataAsset->reqDataId) {
-							$responseStillRequested = true;
-						}
+					if (in_array($field->fieldId, array_column($request->requestedDataAssets, 'reqDataId'))) {
+						$responseStillRequested = true;
 					}
 				}
 			}
@@ -1337,7 +1426,7 @@ class RequestController extends AppController {
 		}
 
 		// If all of a request's APIs, tables, or SAML responses have been removed, edit the technologyType attribute
-		if (empty($request->necessaryApis) || empty($request->necessaryTables) || empty($request->necessarySamlResponses)) {
+		if (empty($request->necessaryApis) || empty($request->necessaryTables) || empty($request->necessaryVirtualTables) || empty($request->necessarySamlResponses)) {
 			foreach ($request->attributes as $attr) {
 				if ($attr->attrTypeId == Configure::read('Collibra.formFields.technologyType')) {
 					$arrOldValue = explode(';', $attr->attrValue);
@@ -1354,6 +1443,9 @@ class RequestController extends AppController {
 			}
 			if (!empty($request->necessaryTables)) {
 				array_push($arrNewValue, 'Data Warehouse');
+			}
+			if (!empty($request->necessaryVirtualTables)) {
+				array_push($arrNewValue, 'Virtual Database');
 			}
 			if (!empty($request->necessarySamlResponses)) {
 				array_push($arrNewValue, 'SAML');
@@ -1444,6 +1536,19 @@ class RequestController extends AppController {
 			});
 		}
 
+		$organizedVirtualColumns = [];
+		foreach ($arrQueue['virtualColumns'] as $id => $column) {
+			$alreadyRequested = in_array($id, array_column($request->requestedDataAssets, 'reqDataId'));
+			if ($alreadyRequested) continue;
+
+			$organizedVirtualColumns[$column['tableName']][$id] = $column;
+		}
+		foreach ($organizedVirtualColumns as $table => $columns) {
+			uasort($organizedVirtualColumns[$table], function($a, $b) {
+				return strcmp($a['fullName'], $b['fullName']);
+			});
+		}
+
 		$organizedSamlFields = [];
 		foreach ($arrQueue['samlFields'] as $id => $field) {
 			$alreadyRequested = in_array($id, array_column($request->requestedDataAssets, 'reqDataId'));
@@ -1488,8 +1593,8 @@ class RequestController extends AppController {
 				return strcmp($a->reqDataSignifier, $b->reqDataSignifier);
 			});
 		}
-
-		$this->set(compact('request', 'arrQueue', 'organizedApiFields', 'organizedDbColumns', 'organizedSamlFields', 'filteredApis', 'filteredCartTerms', 'requestedData'));
+// pr($organizedVirtualColumns);exit();
+		$this->set(compact('request', 'arrQueue', 'organizedApiFields', 'organizedDbColumns', 'organizedVirtualColumns', 'organizedSamlFields', 'filteredApis', 'filteredCartTerms', 'requestedData'));
 		$this->set('submitErr', isset($this->request->query['err']));
 	}
 
@@ -1668,6 +1773,7 @@ class RequestController extends AppController {
 					'applicationOrProjectName',
 					'api',
 					'tables',
+					'virtualTables',
 					'saml',
 					'readWriteAccess',
 					'requestedInformationMap',
@@ -1729,6 +1835,7 @@ class RequestController extends AppController {
 		if (
 			empty($arrQueue['apiFields']) &&
 			empty($arrQueue['dbColumns']) &&
+			empty($arrQueue['virtualColumns']) &&
 			empty($arrQueue['samlFields']) &&
 			empty($arrQueue['businessTerms']) &&
 			empty($arrQueue['emptyApis'])
@@ -1740,6 +1847,7 @@ class RequestController extends AppController {
 		$apis = [];
 		$fieldsetApis = [];
 		$tables = [];
+		$virtualTables = [];
 		$samlResponses = [];
 		$individualTerms = [];
 		$postData = [];
@@ -1767,6 +1875,11 @@ class RequestController extends AppController {
 		foreach ($arrQueue['dbColumns'] as $id => $column) {
 			if (!empty($column['tableName'])) {
 				$tables[$column['databaseName'].' > '.$column['tableName']] = [];
+			}
+		}
+		foreach ($arrQueue['virtualColumns'] as $id => $column) {
+			if (!empty($column['tableName'])) {
+				$virtualTables[$column['tableName']] = ['tableId' => $column['tableId']];
 			}
 		}
 		foreach ($arrQueue['samlFields'] as $id => $field) {
@@ -1869,6 +1982,23 @@ class RequestController extends AppController {
 				}
 			}
 		}
+		foreach ($virtualTables as $tableName => $_) {
+			$columns = $this->CollibraAPI->getVirtualTableColumns($virtualTables[$tableName]['tableId']);
+			foreach ($columns as $column) {
+				if (empty($column->businessTerm[0]->termId)) {
+					if (array_key_exists($column->columnId, $arrQueue['virtualColumns'])) {
+						array_push($postData[$reqAssetsString], $column->columnId);
+						$virtualTables[$tableName]['unmapped']['requested'][] = end((explode(' > ', $column->columnName)));
+					}
+				} else {
+					if (array_key_exists($column->columnId, $arrQueue['virtualColumns'])) {
+						array_push($postData[$reqAssetsString], $column->columnId);
+						array_push($postData[$reqTermsString], $column->businessTerm[0]->termId);
+						$virtualTables[$tableName]['requestedBusinessTerm'][] = '('.$column->businessTerm[0]->termCommunityName.') '.$column->businessTerm[0]->term;
+					}
+				}
+			}
+		}
 		foreach ($samlResponses as $responseName => $_) {
 			$responseFields = $this->CollibraAPI->getSamlResponseFields($responseName);
 			foreach ($responseFields as $field) {
@@ -1967,7 +2097,7 @@ class RequestController extends AppController {
 			$postData['requestedInformationMap'] .= $fieldsetApiList;
 		}
 		if (!empty($tables)) {
-			$tableList = "<b>Requested Tables:</b><br/>";
+			$tableList = "<b>Requested Data Warehouse Tables:</b><br/>";
 			foreach ($tables as $tableName => $term) {
 				$tableList .= ". . <u><b>{$tableName}</u></b><br/>";
 				if (!empty($term['requestedBusinessTerm'])) {
@@ -1992,6 +2122,25 @@ class RequestController extends AppController {
 				$tableList .= "<br/>";
 			}
 			$postData['requestedInformationMap'] .= $tableList;
+		}
+		if (!empty($virtualTables)) {
+			$virtualTableList = "<b>Requested Virtual Tables:</b><br/>";
+			foreach ($virtualTables as $tableName => $virtualTable) {
+				$virtualTableList .= ". . <u><b>{$tableName}</u></b><br/>";
+				if (!empty($virtualTable['requestedBusinessTerm'])) {
+					$virtualTable['requestedBusinessTerm'] = array_unique($virtualTable['requestedBusinessTerm']);
+					sort($virtualTable['requestedBusinessTerm']);
+					$virtualTableList .= "<br/>. . . . <b>Requested business terms:</b><br/>. . . . . . " . implode("<br/>. . . . . . ", $virtualTable['requestedBusinessTerm']) . "<br/>";
+				}
+				if (!empty($virtualTable['unmapped'])) {
+					$virtualTableList .= "<br/>. . . . <b>*Columns with no Business Terms:</b><br/>";
+					if (!empty($virtualTable['unmapped']['requested'])) {
+						$virtualTableList .= ". . . . . . Requested:<br/>. . . . . . . . " . implode("<br/>. . . . . . . . ", $virtualTable['unmapped']['requested']) . "<br/>";
+					}
+				}
+				$virtualTableList .= "<br/>";
+			}
+			$postData['requestedInformationMap'] .= $virtualTableList;
 		}
 		if (!empty($samlResponses)) {
 			$responseList = "<b>Requested SAML Responses:</b><br/>";
@@ -2051,6 +2200,9 @@ class RequestController extends AppController {
 		if (!empty($tables)) {
 			$postData['technologyType'][] = 'Data Warehouse';
 		}
+		if (!empty($virtualTables)) {
+			$postData['technologyType'][] = 'Virtual Database';
+		}
 		if (!empty($samlResponses)) {
 			$postData['technologyType'][] = 'SAML';
 		}
@@ -2071,6 +2223,7 @@ class RequestController extends AppController {
 
 		$postData['api'] = [];
 		$postData['tables'] = [];
+		$postData['virtualTables'] = [];
 		$postData['saml'] = [];
 		foreach ($apis as $apiHost => $apiPaths) {
 			foreach ($apiPaths as $apiPath => $ignore) {
@@ -2090,6 +2243,7 @@ class RequestController extends AppController {
 			$tableObject = $this->CollibraAPI->getTableObject($databaseName, $schemaAndTableNameOnly);
 			array_push($postData['tables'], $tableObject->id);
 		}
+		$postData['virtualTables'] = array_column($virtualTables, 'tableId');
 		foreach ($samlResponses as $responseName => $_) {
 			$responseObject = $this->CollibraAPI->getSamlResponseObject($responseName);
 			array_push($postData['saml'], $responseObject->id);
@@ -2101,6 +2255,9 @@ class RequestController extends AppController {
 		}
 		if (empty($postData['tables'])) {
 			$postData['tables'] = '';
+		}
+		if (empty($postData['virtualTables'])) {
+			$postData['virtualTables'] = '';
 		}
 		if (empty($postData['saml'])) {
 			$postData['saml'] = '';
@@ -2251,6 +2408,7 @@ class RequestController extends AppController {
 		if(
 			empty($arrQueue['apiFields']) &&
 			empty($arrQueue['dbColumns']) &&
+			empty($arrQueue['virtualColumns']) &&
 			empty($arrQueue['samlFields']) &&
 			empty($arrQueue['businessTerms']) &&
 			empty($arrQueue['emptyApis'])

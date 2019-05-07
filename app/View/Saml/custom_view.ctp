@@ -25,7 +25,7 @@
 			<form action="/request/addCustomSAML" method="post">
 				<input type="submit" class="requestAccess grow mainRequestBtn" value="Request Custom SAML">
 			</form>
-				<h3 class="customSAMLText">If you would like to request a custom SAML response, you can <a href="/search">search for the terms you need here</a>. Once you've found the data you need, <a href="/request">fill out the request form</a> and note in the "Additional Information Requested" field that you need the data via SAML.</h3>
+				<h3 class="customSAMLText">Hit the button below if you would like to request custom SAML attributes. You'll be taken to the search page where you can choose the data elements you would like to be delivered. When you submit your request it will be noted that you're requesting a custom SAML response.</h3>
 			</div>
 		</div>
 	</div>

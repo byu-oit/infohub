@@ -68,6 +68,7 @@ class AppController extends Controller {
 				}
 				$cartEmpty = empty($arrQueue['apiFields']) &&
 							 empty($arrQueue['dbColumns']) &&
+ 							 empty($arrQueue['virtualColumns']) &&
 							 empty($arrQueue['samlFields']) &&
 							 empty($arrQueue['businessTerms']) &&
 							 empty($arrQueue['emptyApis']);
@@ -86,6 +87,7 @@ class AppController extends Controller {
 			$arrQueue = [];
 			$arrQueue['apiFields'] = [];
 			$arrQueue['dbColumns'] = [];
+			$arrQueue['virtualColumns'] = [];
 			$arrQueue['samlFields'] = [];
 			$arrQueue['businessTerms'] = [];
 			$arrQueue['emptyApis'] = [];
@@ -99,6 +101,7 @@ class AppController extends Controller {
 		}
 		$requestedTermCount = count($arrQueue['apiFields']) +
 							  count($arrQueue['dbColumns']) +
+							  count($arrQueue['virtualColumns']) +
 							  count($arrQueue['samlFields']) +
 							  count($arrQueue['businessTerms']) +
 							  count($arrQueue['emptyApis']);

@@ -341,6 +341,9 @@
 							foreach ($req->necessaryTables as $table) {
 								$tableNameOnly = substr($table->tableName, strpos($table->tableName, '>') + 2);
 								echo '<li><a href="/databases/viewRequested/'.$req->id.'/'.$table->tableCommName.'/'.$table->tableVocabName.'/'.$tableNameOnly.'" title="View which elements were requested from this table">'.$table->tableCommName.' > '.$table->tableName.'</a></li>';
+							}
+							foreach ($req->necessaryVirtualTables as $virTable) {
+								echo '<li><a href="/virtualTables/viewRequested/'.$req->id.'/'.$virTable->virTableId.'" title="View which elements were requested from this table">'.$virTable->virTableName.'</a></li>';
 							} ?>
 						</ul>
 					</div>
