@@ -28,18 +28,20 @@ class BYUAPI extends Model {
 		return $data->PersonSummaryService->response;
 	}
 
-	public function isGROGroupMember($netid, $group) {
-		if (empty($netid) || empty($group)) {
+	public function isGROGroupMember($netid, ...$groups) {
+		if (empty($netid) || empty($groups)) {
 			return false;
 		}
 
-		$response = $this->_get("domains/legacy/identity/access/ismember/v1/{$group}/{$netid}");
-		$data = json_decode($response);
+		foreach ($groups as $group) {
+			$response = $this->_get("domains/legacy/identity/access/ismember/v1/{$group}/{$netid}");
+			$data = json_decode($response);
 
-		if (!isset($data->{'isMember Service'}->response->isMember) || !$data->{'isMember Service'}->response->isMember) {
-			return false;
+			if (isset($data->{'isMember Service'}->response->isMember) && $data->{'isMember Service'}->response->isMember) {
+				return true;
+			}
 		}
-		return true;
+		return false;
 	}
 
 	public function directorySearch($queryString, $length = 5) {
@@ -94,7 +96,7 @@ class BYUAPI extends Model {
 		];
 	}
 
-	public function oracleColumns($schema = null, $table = null, $db = null) {
+	public function oracleColumns($db = null, $schema = null, $table = null) {
 		$url = 'domains/infohub/infohub-utils/v1/columns';
 		if (!empty($schema)) {
 			$url .= "/{$schema}";

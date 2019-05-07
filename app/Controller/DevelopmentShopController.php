@@ -18,7 +18,7 @@ class DevelopmentShopController extends AppController {
     public function getDetails($developmentShopName) {
         $this->autoRender = false;
 
-        $devShop = $this->CollibraAPI->getDevelopmentShopDetails($developmentShopName);
+        $devShop = $this->CollibraAPI->getDevelopmentShopDetails(urldecode($developmentShopName));
         return json_encode($devShop);
     }
 }

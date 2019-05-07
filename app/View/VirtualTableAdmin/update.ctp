@@ -54,20 +54,18 @@
 		}
 
 		var postData = $('form#tableForm').serializeObject();
-		var databaseName = postData.data.Table.databaseName;
-		var schemaName = postData.data.Table.schemaName;
-		var tableName = postData.data.Table.tableName;
+		var tableId = postData.data.Table.tableId;
 		var numElements = postData.data.Table.elements.length;
 
 		if (numElements < 100) {
 
-			$.post('/database_admin/update/'+databaseName+'/'+schemaName+'/'+tableName, postData)
+			$.post('/virtualTableAdmin/update/'+tableId, postData)
 				.done(function(data) {
 					data = JSON.parse(data);
 					if (!data.success) {
 						window.location.reload(true);
 					}
-					window.location.href = '/databases/view/'+databaseName+'/'+schemaName+'/'+tableName;
+					window.location.href = '/virtualTables/view/'+tableId;
 				});
 
 		} else {
@@ -77,7 +75,7 @@
 					if (!window.postSuccess) {
 						window.location.reload(true);
 					} else {
-						window.location.href = '/databases/view/'+databaseName+'/'+schemaName+'/'+tableName;
+						window.location.href = '/virtualTables/view/'+tableId;
 					}
 				});
 		}
@@ -89,7 +87,7 @@
 				var postDataElements = postData.data.Table.elements;
 
 				postData.data.Table.elements = postDataElements.slice(0, stride);
-				var request = $.post('/database_admin/update/'+postData.data.Table.databaseName+'/'+postData.data.Table.schemaName+'/'+postData.data.Table.tableName, postData)
+				var request = $.post('/virtualTableAdmin/update/'+postData.data.Table.tableId, postData)
 					.then(function(data) {
 						data = JSON.parse(data);
 						if (!data.success) {
@@ -105,7 +103,7 @@
 		}
 		else {
 			return new Promise(function(resolve) {
-				$.post('/database_admin/update/'+postData.data.Table.databaseName+'/'+postData.data.Table.schemaName+'/'+postData.data.Table.tableName, postData)
+				$.post('/virtualTableAdmin/update/'+postData.data.Table.tableId, postData)
 					.then(function(data) {
 						data = JSON.parse(data);
 						if (!data.success) {
@@ -158,15 +156,13 @@
 </style>
 <div id="apiBody" class="innerDataSet">
 	<div id="searchResults">
-		<h1 class="headerTab"><?= $databaseName.' > '.$tableName ?></h1>
+		<h1 class="headerTab"><?= $table->name ?></h1>
 		<div class="clear"></div>
 		<div class="tableHelp" style="cursor:default;">Can't find a matching business term? Check the "New" box to propose a new one.<br>Highlighted rows are automatic suggestions. Be sure to review these before submitting.</div>
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
 				<?= $this->Form->create('Table', ['id' => 'tableForm']) ?>
-					<?= $this->Form->input('databaseName', ['type' => 'hidden']) ?>
-					<?= $this->Form->input('schemaName', ['type' => 'hidden']) ?>
-					<?= $this->Form->input('tableName', ['type' => 'hidden']) ?>
+					<?= $this->Form->input('tableId', ['type' => 'hidden']) ?>
 					<table class="table-columns">
 						<tr class="header">
 							<th>Column</th>
@@ -175,7 +171,7 @@
 							<th>Glossary</th>
 							<th>Definition</th>
 						</tr>
-						<?php foreach ($columns as $index => $column): ?>
+						<?php foreach ($table->columns as $index => $column): ?>
 							<tr id="tr<?=$index?>">
 								<td><?php
 									$columnPath = explode(' > ', $column->columnName);
@@ -226,7 +222,7 @@
 							</tr>
 						<?php endforeach ?>
 					</table>
-					<a class="lower-btn grow" href="/databases/view/<?=$databaseName.'/'.$schemaName.'/'.$tableName?>">Cancel</a>
+					<a class="lower-btn grow" href="/virtualTables/view/<?=$table->id?>">Cancel</a>
 					<div class="update-submit grow" onclick="chunkPostData()">Save</div>
 				<?= $this->Form->end() ?>
 			</div>

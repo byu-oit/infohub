@@ -1,0 +1,18 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - $(aws ecr get-login --no-include-email --region us-west-2)
+  build:
+    commands:
+      - docker build -t infohub .
+  post_build:
+    commands:
+      - export ecrImage="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/infohub:$HANDEL_PIPELINE_NAME"
+      - docker tag infohub $ecrImage
+      - docker push $ecrImage
+
+artifacts:
+  files:
+  - 'handel.yml'

@@ -5,9 +5,18 @@
 
 <script>
 $(document).ready(function() {
-	$("#browse-tab").addClass('active')
+	$('#apiFilter').focus();
+	$('#browse-tab').addClass('active');
 
-	var apis = [<?php foreach ($community->vocabularyReferences->vocabularyReference as $api) { echo '"'.$api->name.'",'; } ?> ""];
+	var apis = [
+		<?php foreach ($apis as $api) {
+			if (
+				$api->statusId != Configure::read('Collibra.status.testing') &&
+				$api->statusId != Configure::read('Collibra.status.retired')
+			) {
+				echo '"'.$api->name.'",';
+			}
+		} ?> ""];
 	$('#apiFilter').on('input', function() {
 		var filterValue = $(this).val().toLowerCase();
 		for (var i = 0; i < apis.length; i++) {
@@ -74,18 +83,21 @@ $(document).ready(function() {
 		<div class="clear"></div>
 		<div id="smLower" class="whiteBox">
 			<ul class="catalogParent">
-				<?php if (empty($community->vocabularyReferences->vocabularyReference)): ?>
+				<?php if (empty($apis)): ?>
 					No endpoints found
 				<?php else: ?>
 					<?php $i = 0;
-					foreach ($community->vocabularyReferences->vocabularyReference as $endpoint): ?>
-						<?php
-							if ($endpoint->meta == 1) {
-								continue;
-							}
-						?>
+					foreach ($apis as $endpoint):
+						if (
+							$endpoint->statusId == Configure::read('Collibra.status.testing') ||
+							$endpoint->statusId == Configure::read('Collibra.status.retired')
+						) continue; ?>
 						<li id="catalogIndex-<?=$i?>" class="catalogItem" data-name="<?=$endpoint->name?>">
-							<?= $this->Html->link($endpoint->name, array_merge(['action' => 'view', 'hostname' => $hostname], explode('/', $endpoint->name))) ?>
+							<?php echo '<a href="/apis/'.$hostname.$endpoint->name.'">'.$endpoint->name;
+								  if ($endpoint->statusId == Configure::read('Collibra.status.preProduction')) echo '<span class="pre-production"> (Pre-production)</span>';
+								  if ($endpoint->statusId == Configure::read('Collibra.status.deprecated')) echo '<span class="deprecated"> (Deprecated)</span>';
+								  echo '</a>';
+							?>
 						</li>
 					<?php $i++;
 					endforeach; ?>

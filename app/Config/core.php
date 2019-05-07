@@ -32,8 +32,10 @@ if (!function_exists('denv')) {
 		'community' => [
 			'api' => 'd9f1c1bb-17cf-4fcb-9046-49d35f839623',
 			'byu' => 'c690b823-4341-4125-8a81-22d592c23773',
+			'dataGovernanceCouncil' => '451a4ca9-0ba7-4f23-8b8e-4fa0b60d493f',
 			'academicRecords' => 'e467b5c3-c497-4fb6-a0d0-cf48815e9bec',
 			'dataWarehouse' => 'ad297c25-ddde-42f3-a534-bd73818cbef7',
+			'virtualTables' => '169fac07-e960-4782-92ca-fead181c6e7d',
 			'saml' => 'ab07c21b-c27f-470f-942f-102686753057'
 		],
 		'vocabulary' => [
@@ -51,8 +53,11 @@ if (!function_exists('denv')) {
 			'changeDSRRelations' => '987d74a5-1968-4177-90ce-41d9ebac3548',
 			'changeAttributes' => '7ee55a00-a355-4066-a65c-f4df27184646',
 			'createDSRDraft' => 'ecdb22aa-f091-42b8-9b63-4303e82ee7cf',
-			'createRelationsAsync' => 'c1934dda-c1c8-4ad2-8e53-18303fb06545'
+			'createRelationsAsync' => 'c1934dda-c1c8-4ad2-8e53-18303fb06545',
+			'resetUserEmails' => '576ed9a6-bd40-4df6-b11e-e28cdaa8cefe'
 		],
+		'requiredTermsString' => 'requiredTerms',
+		'additionalTermsString' => 'additionalTerms',
 		'requiredElementsString' => 'requiredElements',
 		'additionalElementsString' => 'additionalElements',
 		'dataAssetDomainTypeId' => '00000000-0000-0000-0000-000000030011',
@@ -62,20 +67,26 @@ if (!function_exists('denv')) {
 		'standardFieldNameTypeId' => 'ea92faa8-685d-4cb0-8665-14808de08dd2',
 		'relationship' => [
 			'termToSynonym' => '00000000-0000-0000-0000-000000007001',
-			'DSRtoTerm' => 'edc9e81b-98dc-4bde-8191-1ae75161ab67',
+			'DSRtoRequestedTerm' => 'edc9e81b-98dc-4bde-8191-1ae75161ab67',
+			'DSRtoAdditionallyIncludedTerm' => '71be0418-dbb7-4ee0-ad9e-ef9d5eca13ab',
+			'DSRtoRequestedDataAsset' => 'e3e7f185-7d37-4475-949b-a16ff04e73bc',
+			'DSRtoAdditionallyIncludedDataAsset' => 'eb29734c-dd12-4046-9a61-3ad83b0f1f80',
 			'termToDataAsset' => '00000000-0000-0000-0000-000000007038',
 			'DSAtoDSR' => '00000000-0000-0000-0000-000000007055',
 			'DSAtoPolicy' => 'd22051bf-af3e-4771-862c-c2b3f10bce05',
 			'DSRtoPolicy' => '0cd17138-7610-48fc-8d11-616a376d44c5',
 			'termToPolicy' => '0b8404c5-b0f2-4109-89ab-374c5f775c14',
-			'DSRtoAdditionallyIncludedAsset' => '71be0418-dbb7-4ee0-ad9e-ef9d5eca13ab',
 			'DSRtoNecessaryAPI' => '5f4d65ab-ab89-4ed2-a2e7-a628ee7ba4ba',
 			'DSRtoNecessaryTable' => 'ec73bc13-c215-42f2-911b-76a345ec9ed5',
+			'DSRtoNecessaryVirtualTable' => '1cf4ebdf-7594-42b5-b288-b4bd094ff821',
 			'DSRtoNecessarySAML' => 'dca012a1-e752-4299-bf61-925358efe83c',
 			'applicationOrProjectToDSR' => '7ff3a292-a33a-47fd-b549-4b9b5a66da3b',
 			'applicationOrProjectToDSA' => '029c9294-3bdc-4ceb-a922-e2186fb5df30',
 			'schemaToTable' => '00000000-0000-0000-0000-000000007043',
 			'columnToTable' => '00000000-0000-0000-0000-000000007042',
+			'spaceToSubspace' => 'd029cd53-191d-4990-bdb3-dbff2c846933',
+			'spaceToVirtualTable' => 'a4dcea9d-b222-452b-8af2-5c02590ba2df',
+			'columnToVirtualTable' => '39f5bacc-a0eb-4468-9f4e-9623b966e991',
 			'fieldToSaml' => 'cee630bb-e1c0-471b-91c2-727397f10d0b',
 			'developmentShopToApplicationOrProject' => '3e4e1b35-4cc2-43b3-a624-d753f14347c2',
 			'businessGroupToApplicationOrProject' => '4e041daf-1a20-4962-bc43-134649c7d3b0'
@@ -89,6 +100,8 @@ if (!function_exists('denv')) {
 			'field' => '00000000-0000-0000-0001-000400000008',
 			'fieldSet' => '73bae222-220d-4342-94ba-6a8369797eac',
 			'samlResponse' => 'fbe6f14c-38a0-4926-aa0c-42f2c3b04018',
+			'table' => '00000000-0000-0000-0000-000000031007',
+			'dremioSpace' => 'dea44108-f1f3-417f-901d-c3161ac04c91',
 			'developmentShop' => 'f8d30393-9f7f-4236-8e8d-828805a569d9',
 			'applicationOrProject' => '4d9178d0-ff3d-4e7e-8dba-4dca9e0f8343',
 			'businessGroup' => '00b946c2-9bf1-449b-a528-20f9a0700e95',
@@ -107,9 +120,16 @@ if (!function_exists('denv')) {
 			'stewardName' => '4331ec09-88a2-48e6-b096-9ece6648aff3',
 			'notes' => '00000000-0000-0000-0000-000000003116',
 			'inclusionScenario' => '00000000-0000-0000-0001-000500000026',
-			'applicationIdentity' => '0a607e95-4e85-4b86-beac-e2b74cd9e89a'
+			'applicationIdentity' => '0a607e95-4e85-4b86-beac-e2b74cd9e89a',
+			'apiStoreLink' => '84895173-c033-47df-af56-3ae38a4b4081',
+			'authorizedByFieldset' => '1624663d-dcbb-4011-a3b2-f9be790b4e8a'
 		],
 		'status' => [
+			'testing' => '4eb2eaf1-faa5-4e89-9129-3203fc5eafa4',
+			'preProduction' => '744e30a0-5152-406c-98a6-7db92d3b8522',
+			'production' => 'cb7feadd-bfe8-4c01-bcb1-7ad955bc58a1',
+			'deprecated' => 'de263699-db33-4762-9330-943049eeec55',
+			'retired' => '982bf7ce-25b4-4903-b932-36091434514c',
 			'deleted' => '5ed07772-862c-4898-aa31-9c781ab13a1e'
 		],
 		'term' => [
@@ -134,7 +154,9 @@ if (!function_exists('denv')) {
 			'sponsorEmail' => '51e3cd5e-9aa9-4953-8a29-31cfd0492d0c',
 			'requestingOrganization' => '97a41292-5627-49cc-bc36-efad1b996d37',
 			'developmentShop' => '064fe8d8-bcd8-42b6-8b85-af984c14714d',
+			'developmentShopId' => '72747431-c83d-4f3f-9ba5-016ae47ef36b',
 			'applicationOrProjectName' => 'c70f71fb-a92b-4034-b8b6-9f042c0a39ea',
+			'applicationOrProjectId' => 'e36f6ecc-3a16-4bfd-95bb-ac9e42166aed',
 			'descriptionOfInformation' => '6b41a821-2a26-4fe8-8202-23442c1e54bb',
 			'descriptionOfApplicationOrProject' => '459f3f5c-2904-47f7-b91d-005a02ad2fce',
 			'necessityOfData' => '12d99132-6845-48f9-89b6-e4c74e1ab978',
@@ -426,7 +448,7 @@ if (!function_exists('denv')) {
  * Uncomment this line and correct your server timezone to fix
  * any date & time related errors.
  */
-	date_default_timezone_set('UTC');
+	date_default_timezone_set('America/Denver');
 
 /**
  * `Config.timezone` is available in which you can set users' timezone string.

@@ -12,4 +12,8 @@ class SamlController extends AppController {
 		$fields = $this->CollibraAPI->getSamlResponseFields($responseName);
 		$this->set(compact('responseName', 'fields'));
 	}
+
+	public function customView() {
+		
+	}
 }

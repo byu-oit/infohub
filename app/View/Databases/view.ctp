@@ -24,29 +24,30 @@
 		background-color: inherit;
 	}
 </style>
-<div id="apiBody" class="innerLower">
+<div id="apiBody" class="innerDataSet">
 	<div id="searchResults">
-		<h1 class="headerTab"><a href="/databases/schema/<?= $schemaName ?>"><?= $schemaName ?></a> > <?= $tableNameOnly ?></h1>
+		<h1 class="headerTab"><a href="/databases/database/<?= $databaseName ?>"><?= $databaseName ?></a> > <a href="/databases/schema/<?= $databaseName.'/'.$schemaName ?>"><?= $schemaName ?></a> > <?= $tableNameOnly ?></h1>
 		<div class="clear"></div>
 		<div class="btnLinks">
-			<?php if ($isOITEmployee): ?>
+			<?php if ($matchAuthorized): ?>
 				<div style="float: right">
 					<?= $this->Html->link(
 						'Update Unlinked Columns',
-						array_merge(['controller' => 'database_admin', 'action' => 'update', $schemaName, $tableName]),
+						array_merge(['controller' => 'database_admin', 'action' => 'update', $databaseName, $schemaName, $tableName]),
 						['class' => 'inputButton dbTable', 'id' => 'admin']) ?>
 				</div>
 			<?php endif ?>
 		</div>
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
-				<input type="button" data-schemaName="<?= h($schemaName) ?>" data-tableName="<?= h($tableName) ?>" api="false" onclick="addToQueueDBTable(this, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
+				<input type="button" data-databaseName="<?= h($databaseName) ?>" data-schemaName="<?= h($schemaName) ?>" data-tableName="<?= h($tableName) ?>" api="false" onclick="addToQueueDBTable(this, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
 				<table class="table-columns checkBoxes view">
 					<tr class="header">
 						<th><input type="checkbox" onclick="toggleAllCheckboxes(this)" name="toggleCheckboxes"/></th>
 						<th class="fieldColumn">Column</th>
 						<th class="termColumn">Business Term</th>
-						<th>Classification</th>
+						<th class="classificationColumn">Classification</th>
+						<th class="glossaryColumn">Glossary</th>
 					</tr>
 					<?php foreach ($columns as $column): ?>
 						<tr>
@@ -59,7 +60,8 @@
 									value="<?= h($column->businessTerm[0]->termId) ?>"
 									class="chk"
 									id="chk<?= h($column->businessTerm[0]->termId) ?>"
-									data-name="<?= $column->columnName ?>">
+									data-name="<?= $column->columnName ?>"
+									data-column-id="<?= $column->columnId ?>">
 								<?php else: ?>
 									<input
 									type="checkbox"
@@ -67,7 +69,8 @@
 									data-vocabID=""
 									value=""
 									class="chk"
-									data-name="<?= $column->columnName ?>">
+									data-name="<?= $column->columnName ?>"
+									data-column-id="<?= $column->columnId ?>">
 								<?php endif ?>
 							</td>
 							<td><?php
@@ -122,10 +125,15 @@
 									}
 								endif ?>
 							</td>
+							<td>
+								<?php if (!empty($column->businessTerm[0])) {
+									echo '<a href="/search/listTerms/'.$column->businessTerm[0]->termVocabularyId.'">'.$column->businessTerm[0]->termCommunityName.'</a>';
+								} ?>
+							</td>
 						</tr>
 					<?php endforeach ?>
 				</table>
-				<input type="button" data-schemaName="<?= h($schemaName) ?>" data-tableName="<?= h($tableName) ?>" api="false" onclick="addToQueueDBTable(this, true)" class="requestAccess grow mainRequestBtn" value="Add To Request">
+				<input type="button" data-databaseName="<?= h($databaseName) ?>" data-schemaName="<?= h($schemaName) ?>" data-tableName="<?= h($tableName) ?>" api="false" onclick="addToQueueDBTable(this, true)" class="requestAccess grow mainRequestBtn" value="Add To Request">
 			</div>
 		</div>
 	</div>

@@ -17,6 +17,19 @@
 			});
 		});
 
+		$('.apiHelpSmlStatus .contact').on('mouseover', function(){
+			var pos = $(this).offset();
+			var data = '<strong>'+$(this).attr('coordinator-name')+'</strong><br/>'+$(this).attr('coordinator-email')+'<br/>'+$(this).attr('coordinator-phone');
+			$('#info-win .info-win-content').html(data);
+			$('#info-win').show();
+			var winLeft = pos.left + $(this).outerWidth()/2 - $('#info-win').outerWidth()/2 + 5;
+			var winTop = pos.top - $('#info-win').outerHeight() - 5;
+			$('#info-win').css('top',winTop).css('left',winLeft);
+		});
+		$('.apiHelpSmlStatus .contact').mouseout(function(){
+			$('#info-win').hide();
+		});
+
 	});
 
 	function toggleFieldsetCollapse(elem) {
@@ -78,15 +91,19 @@
 	table.api-fields tr.header:hover {
 		background-color: inherit;
 	}
+	.contact {
+		text-decoration: underline;
+		cursor: pointer;
+	}
 </style>
-<div id="apiBody" class="innerLower">
+<div id="apiBody" class="innerDataSet">
 	<div id="searchResults">
 		<h1 class="headerTab"><?= $hostname . '/' . trim($basePath, '/') ?></h1>
 		<div class="clear"></div>
 		<div class="btnLinks">
 			<a href="https://developer.byu.edu/" id="doc_link" class="inputButton" target="_blank">Read API documentation</a>
 			<a href="https://api.byu.edu/store/" id="store_link" class="inputButton" target="_blank">View this API in the store</a>
-			<?php if ($isOITEmployee): ?>
+			<?php if ($matchAuthorized): ?>
 				<div style="float: right">
 					<?= $this->Html->link(
 						'Update Unlinked Fields',
@@ -95,8 +112,22 @@
 				</div>
 			<?php endif ?>
 		</div>
-		<div id="api_help_btn" class="apiHelp">Do you need access to call this API?</div>
-		<div id="api_help" class="apiHelpSml">There are potentially two steps you'll need to complete.<br><br>1. Subscribe to the API in the API store (WSO2). This gives you the ability to call the API with your own credentials for self-service. You'll need to create an "application" in WSO2 and subscribe to the each API you are interested in. You must complete this step in the API store. An overview of the process is available in the <a href="https://developer.byu.edu/docs/consume-api/5-minute-quickstart">Developer Portal.<br>https://developer.byu.edu/docs/consume-api/5-minute-quickstart</a><br><br>2. Request elevated access to the API. Many APIs can return more data if you have elevated permissions. Select the elements of the API that you need for your application and click the "Add to request" button. Once you've added all the elements you want access to, submit your request from the shopping cart icon at the top of the page. This will initiate the process of securing approvals (if needed) from the appropriate data stewards. More <a href="https://developer.byu.edu/docs/consume-api/get-elevated-access">detailed instructions</a> for this step are available.<br><a href="https://developer.byu.edu/docs/consume-api/get-elevated-access">https://developer.byu.edu/docs/consume-api/get-elevated-access</a></div>
+		<?php if ($apiObject->statusId == Configure::read('Collibra.status.production')): ?>
+			<div id="api_help_btn" class="apiHelp">Do you need access to call this API?</div>
+			<div id="api_help" class="apiHelpSml">There are potentially two steps you'll need to complete.<br><br>1. Subscribe to the API in the API store (WSO2). This gives you the ability to call the API with your own credentials for self-service. You'll need to create an "application" in WSO2 and subscribe to the each API you are interested in. You must complete this step in the API store. An overview of the process is available in the <a href="https://developer.byu.edu/docs/consume-api/5-minute-quickstart">Developer Portal.<br>https://developer.byu.edu/docs/consume-api/5-minute-quickstart</a><br><br>2. Request elevated access to the API. Many APIs can return more data if you have elevated permissions. Select the elements of the API that you need for your application and click the "Add to request" button. Once you've added all the elements you want access to, submit your request from the shopping cart icon at the top of the page. This will initiate the process of securing approvals (if needed) from the appropriate data stewards. More <a href="https://developer.byu.edu/docs/consume-api/get-elevated-access">detailed instructions</a> for this step are available.<br><a href="https://developer.byu.edu/docs/consume-api/get-elevated-access">https://developer.byu.edu/docs/consume-api/get-elevated-access</a></div>
+		<?php elseif ($apiObject->statusId == Configure::read('Collibra.status.testing')): ?>
+			<div class="apiHelpStatus">This API is <strong>in testing.</strong></div>
+			<div class="apiHelpSmlStatus">It appears in InfoHub only for development purposes and cannot be requested.</div>
+		<?php elseif ($apiObject->statusId == Configure::read('Collibra.status.preProduction')): ?>
+			<div class="apiHelpStatus">This API is <strong>in pre-production.</strong></div>
+			<div class="apiHelpSmlStatus">This API is in InfoHub only for beta testing purposes. If you have not been specifically asked to request this API for testing, it is very unlikely you will be given access.</div>
+		<?php elseif ($apiObject->statusId == Configure::read('Collibra.status.deprecated')): ?>
+			<div class="apiHelpStatus">This API is <strong>deprecated.</strong></div>
+			<div class="apiHelpSmlStatus">Any existing subscriptions to this API will still work. However, no new subscriptions can be made, and the API may become inoperational in the future without notice. If you need the information in this API, you can contact <span class="contact" coordinator-name="<?= $coordinator->firstName.' '.$coordinator->lastName ?>" coordinator-email="<?= $coordinator->emailAddress ?>" coordinator-phone="<?= $coordinator->phoneNumbers->phone[0]->number ?>">our Information Governance Director</span>, and we will consider including this data in a University API.</div>
+		<?php elseif ($apiObject->statusId == Configure::read('Collibra.status.retired')): ?>
+			<div class="apiHelpStatus">This API is <strong>retired.</strong></div>
+			<div class="apiHelpSmlStatus">This API is no longer operational and exists in InfoHub only for record-keeping purposes.</div>
+		<?php endif ?>
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
 				<?php if (empty($fields)): ?>
@@ -105,21 +136,26 @@
 					<?php if ($containsFieldset): ?>
 						<a class="fieldset-btn grow" onclick="toggleFieldsetCollapseAll(true)">Collapse All</a><a class="fieldset-btn grow" onclick="toggleFieldsetCollapseAll(false)">Expand All</a>
 					<?php endif ?>
-					<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" api="<?= empty($fields) ? 'true' : 'false' ?>" onclick="addToQueue(this, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
+					<?php if ($apiObject->statusId == Configure::read('Collibra.status.production') || $apiObject->statusId == Configure::read('Collibra.status.preProduction')): ?>
+						<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" data-authorizedByFieldset="<?= $apiObject->authorizedByFieldset ? 'true' : 'false' ?>" api="<?= empty($fields) ? 'true' : 'false' ?>" onclick="addToQueueAPI(this, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
+					<?php endif ?>
 					<table class="api-fields checkBoxes view">
 						<tr class="header">
 							<th></th>
 							<th><input type="checkbox" onclick="toggleAllCheckboxes(this)" name="toggleCheckboxes"/></th>
 							<th class="fieldColumn">Field</th>
 							<th class="termColumn">Business Term</th>
-							<th>Classification</th>
+							<th class="classificationColumn">Classification</th>
+							<th class="glossaryColumn">Glossary</th>
 						</tr>
 						<?php foreach ($fields as $field) {
 							$this->Fieldset->printApiView($field);
 						} ?>
 					</table>
 				<?php endif ?>
-				<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" api="<?= empty($fields) ? 'true' : 'false' ?>" onclick="addToQueue(this, true)" class="requestAccess grow mainRequestBtn" value="Add To Request">
+				<?php if ($apiObject->statusId == Configure::read('Collibra.status.production') || $apiObject->statusId == Configure::read('Collibra.status.preProduction')): ?>
+					<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" data-authorizedByFieldset="<?= $apiObject->authorizedByFieldset ? 'true' : 'false' ?>" api="<?= empty($fields) ? 'true' : 'false' ?>" onclick="addToQueueAPI(this, true)" class="requestAccess grow mainRequestBtn" value="Add To Request">
+				<?php endif ?>
 			</div>
 		</div>
 	</div>

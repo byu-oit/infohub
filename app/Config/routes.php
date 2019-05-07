@@ -35,6 +35,7 @@
 
 	Router::connect('/login', array('controller' => 'myaccount', 'action' => 'login'));
 
+	Router::connect('/apis/:requestid/:hostname/*', ['controller' => 'apis', 'action' => 'viewRequested'], ['pass' => ['requestid', 'hostname'], 'requestid' => '[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}']);
 	Router::connect('/apis/deep_links/:hostname/*', ['controller' => 'apis', 'action' => 'deep_links'], ['pass' => ['hostname']]);
 	Router::connect('/apis/:hostname', ['controller' => 'apis', 'action' => 'host'], ['pass' => ['hostname']]);
 	Router::connect('/apis/:hostname/*', ['controller' => 'apis', 'action' => 'view'], ['pass' => ['hostname']]);

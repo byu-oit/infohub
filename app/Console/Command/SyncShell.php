@@ -34,7 +34,7 @@ class SyncShell extends AppShell {
         $arrAllColumns = [];
         $columnsCount = 0;
         foreach ($tables as $table) {
-            $cols = $this->BYUAPI->oracleColumns($table['schema'], $table['table'], $table['database']);
+            $cols = $this->BYUAPI->oracleColumns($table['database'], $table['schema'], $table['table']);
             $arrAllColumns[$table['database']][$table['schema']][$table['table']] = $cols;
             $columnsCount += count($cols);
         }
@@ -55,7 +55,7 @@ class SyncShell extends AppShell {
                 $arrDoubleCheckColumns = [];
                 foreach ($tables as $table) {
                     $arrDoubleCheckColumns[$table['database']][$table['schema']][$table['table']] =
-                        $this->BYUAPI->oracleColumns($table['schema'], $table['table'], $table['database']);
+                        $this->BYUAPI->oracleColumns($table['database'], $table['schema'], $table['table']);
                 }
                 $doubleCheckHash = hash('sha256', json_encode($arrDoubleCheckColumns));
                 if ($doubleCheckHash !== $hash) {
@@ -75,7 +75,7 @@ class SyncShell extends AppShell {
         foreach ($arrAllColumns as $databaseName => $databaseSchemas) {
             foreach ($databaseSchemas as $schemaName => $schemaTables) {
                 foreach ($schemaTables as $tableName => $columns) {
-                    $resp = $this->DataWarehouse->syncDataWarehouse($schemaName, $tableName, $columns, $databaseName);
+                    $resp = $this->DataWarehouse->syncDataWarehouse($databaseName, $schemaName, $tableName, $columns);
                     $level = isset($resp['noChange']) ? Shell::VERBOSE : Shell::NORMAL;
                     $this->out(date('H:i:s').' - '.$resp['message'], 1, $level);
                 }

@@ -103,13 +103,35 @@ Configure::write('Dispatcher.filters', array(
  * Configures default file logging options
  */
 App::uses('CakeLog', 'Log');
-CakeLog::config('debug', array(
-	'engine' => 'File',
-	'types' => array('notice', 'info', 'debug'),
-	'file' => 'debug',
+App::uses('ConsoleOutput', 'Console');
+CakeLog::config('default', array(
+    'engine' => 'ConsoleLog',
+    'stream' => new ConsoleOutput('php://stdout')
 ));
+
+CakeLog::config('stdout', array(
+    'engine' => 'ConsoleLog',
+    'types' => array('notice', 'info'),
+    'stream' => new ConsoleOutput('php://stdout')
+));
+
+CakeLog::config('stderr', array(
+    'engine' => 'ConsoleLog',
+    'types' => array('emergency', 'alert', 'critical', 'error', 'warning', 'debug'),
+    'stream' =>  new ConsoleOutput('php://stderr')
+));
+
+
+CakeLog::config('debug', array(
+    'engine' => 'ConsoleLog',
+    'types' => array('notice', 'info', 'debug'),
+    'format' => 'debug %s: %s',
+    'stream' => new ConsoleOutput('php://stdout')
+));
+
 CakeLog::config('error', array(
-	'engine' => 'File',
-	'types' => array('warning', 'error', 'critical', 'alert', 'emergency'),
-	'file' => 'error',
+    'engine' => 'ConsoleLog',
+    'types' => array('warning', 'error', 'critical', 'alert', 'emergency'),
+    'format' => 'error %s: %s',
+    'stream' =>  new ConsoleOutput('php://stderr')
 ));

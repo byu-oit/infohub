@@ -141,6 +141,11 @@ img.resultBodyLoading {
   color: #888888;
   font-size: 10px;
 }
+#searchBody.apis #searchMain #smLower ul li a span.pre-production,
+#searchBody.apis #searchMain #smLower ul li a span.deprecated {
+  color: #ff0000;
+  font-size: 11px;
+}
 #searchBody #searchMain #smLower ul li a:hover,
 #apiBody #searchMain #smLower ul li a:hover {
   text-decoration: underline;
@@ -1109,13 +1114,15 @@ img.resultBodyLoading {
 #request #searchBody #requestForm #net-id-input-wrapper input {
   margin: 0 0 12px 0;
 }
-#searchBody #requestForm #srLower .policy-header-wrapper {
+#searchBody #requestForm #srLower .request-form-header-wrapper {
   width: 300px;
   display: flex;
   justify-content: space-between;
   align-items: baseline;
 }
-#searchBody #requestForm #srLower .policy-header-wrapper .policies-btn {
+#searchBody #requestForm #srLower .request-form-header-wrapper .policies-btn,
+#searchBody #requestForm #srLower .request-form-header-wrapper .select-toggle-btn {
+  display: inline;
   padding: 2px 10px;
   font-size: 12px;
   font-weight: 600;
@@ -1127,13 +1134,16 @@ img.resultBodyLoading {
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   text-decoration: none;
 }
-#searchBody #requestForm #srLower .policy-header-wrapper .policies-btn .policiesShow {
+#searchBody #requestForm #srLower .request-form-header-wrapper .policies-btn .policiesShow,
+#searchBody #requestForm #srLower .request-form-header-wrapper .select-toggle-btn .toSelect {
   display: none;
 }
-#searchBody #requestForm #srLower .policy-header-wrapper .policies-btn.collapsed .policiesHide {
+#searchBody #requestForm #srLower .request-form-header-wrapper .policies-btn.collapsed .policiesHide,
+#searchBody #requestForm #srLower .request-form-header-wrapper .select-toggle-btn.onText .toText {
   display: none;
 }
-#searchBody #requestForm #srLower .policy-header-wrapper .policies-btn.collapsed .policiesShow {
+#searchBody #requestForm #srLower .request-form-header-wrapper .policies-btn.collapsed .policiesShow,
+#searchBody #requestForm #srLower .request-form-header-wrapper .select-toggle-btn.onText .toSelect {
   display: inline;
 }
 #searchBody #requestForm #srLower .taBox div.info {
@@ -1170,6 +1180,9 @@ img.resultBodyLoading {
   -moz-box-shadow: 0px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: 0px 0px 7px 1px rgba(50, 50, 50, 0.22);
 }
+#searchBody #requestForm #srLower input.invalid {
+  box-shadow: 0px 0px 7px 1px #fc9898;
+}
 #searchBody #requestForm #srLower .radioBox {
   display: inline-block;
   padding: 8px;
@@ -1203,7 +1216,6 @@ img.resultBodyLoading {
 #apiBody #searchSuccess #srLower .fieldGroup {
   width: 75%;
   margin-bottom: 10px;
-  *zoom: 1;
 }
 #searchBody #requestForm #srLower .fieldGroup:before,
 #apiBody #requestForm #srLower .fieldGroup:before,
@@ -1401,7 +1413,8 @@ img.resultBodyLoading {
 }
 #apiBody .apiHelp,
 #apiBody .tableHelp,
-#smLower .samlHelp {
+#smLower .samlHelp,
+#apiBody .apiHelpStatus {
   margin-top: 15px;
   color: rgba(14, 50, 100, 0.85);
   font-size: 18px;
@@ -1410,12 +1423,21 @@ img.resultBodyLoading {
   cursor: pointer;
   padding-bottom: 8px;
 }
+#apiBody .apiHelpStatus {
+  color: #de0202;
+  cursor: auto;
+}
 #apiBody .apiHelpSml,
-#smLower .samlHelpSml {
+#smLower .samlHelpSml,
+#apiBody .apiHelpSmlStatus {
   font-size: 14px;
   width: 100%;
   display: none;
   padding-bottom: 8px;
+}
+#apiBody .apiHelpSmlStatus {
+  color: #c54f4f;
+  display: block;
 }
 #apiBody .fieldset-btn {
   margin: 5px;
@@ -1448,6 +1470,16 @@ img.resultBodyLoading {
 #apiBody .saml-fields .termColumn {
   min-width: 300px;
 }
+#apiBody .api-fields .classificationColumn,
+#apiBody .table-columns .classificationColumn,
+#apiBody .saml-fields .classificationColumn {
+  min-width: 130px;
+}
+#apiBody .api-fields .glossaryColumn,
+#apiBody .table-columns .glossaryColumn,
+#apiBody .saml-fields .glossaryColumn {
+  min-width: 170px;
+}
 #apiBody .api-fields a,
 #apiBody .table-columns a,
 #apiBody .saml-fields a {
@@ -1465,8 +1497,15 @@ img.resultBodyLoading {
 }
 #apiBody .api-fields tr.automatic-match,
 #apiBody .table-columns tr.automatic-match,
-#apiBody .saml-fields tr.automatic-match {
+#apiBody .saml-fields tr.automatic-match,
+#apiBody .api-fields tr.requested,
+#apiBody .table-columns tr.requested,
+#apiBody .saml-fields tr.requested {
   background-color: #ffdd99;
+}
+#apiBody .api-fields tr.duplicate,
+#apiBody .table-columns tr.duplicate {
+  background-color: #f2bfbf;
 }
 #apiBody .api-fields.view td:nth-child(3),
 #apiBody .table-columns.view td:nth-child(2),

@@ -84,8 +84,8 @@
 			.each(function() {
 				var $this = $(this);
 				var full = $this.val();
-				var period = full.lastIndexOf('.');
-				var label = full.substring(period + 1);
+				var greaterThan = full.lastIndexOf('>');
+				var label = full.substring(greaterThan + 2);
 				$this.data('label', label);
 
 				$this.closest('tr').find('.term-wrapper').removeClass('display-search').addClass('display-loading');
@@ -124,7 +124,7 @@
 
 			$('.view-context' + index).html(selected.context.val);
 
-			if (!selected.hasOwnProperty('definition')) {
+			if (!selected.hasOwnProperty('definition') || !selected.definition) {
 				$('#view-definition' + index).html('');
 			} else {
 				insertDefinition(stripTags(selected.definition.val), index);
@@ -137,8 +137,8 @@
 
 		function insertDefinition(text, index) {
 			if (text !== undefined) {
-				if (text.length > 70) {
-					var truncated = text.substring(0, 70);
+				if (text.length > 60) {
+					var truncated = text.substring(0, 60);
 					$('#view-definition' + index).html(
 						'<span class="truncated">'+
 							truncated+

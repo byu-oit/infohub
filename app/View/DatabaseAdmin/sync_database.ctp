@@ -47,7 +47,7 @@
                     alert(data.message);
 
                     if (data.redirect) {
-                        window.location.href = '/databases/view/'+schema+'/'+schema+' > '+table;
+                        window.location.href = '/databases/view/'+database+'/'+schema+'/'+schema+' > '+table;
                     }
                 });
         });
@@ -83,6 +83,12 @@
         -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
         box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22)
     }
+	#schemaName {
+		width: 100px;
+	}
+	#tableName {
+		width: 250px;
+	}
 </style>
 <div id="apiBody" class="innerLower">
 	<div id="searchResults" style="margin-bottom:0px;">
@@ -92,12 +98,14 @@
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
 				<select name="database" id="databaseName">
-					<option value="DWPRD">DWPRD</option>
-					<option value="CESPRD">CESPRD</option>
-					<option value="DWHRPRD">DWHRPRD</option>
+					<?php
+						foreach ($databases as $db) {
+							echo '<option value="'.$db.'">'.$db.'</option>';
+						}
+					?>
 				</select>
-                <input type="text" id="schemaName" placeholder="Schema name" style="width:100px;">
-                <input type="text" id="tableName" placeholder="Table name" style="width:250px;">
+                <input type="text" id="schemaName" placeholder="Schema name">
+                <input type="text" id="tableName" placeholder="Table name">
 				<div class="sync-btn grow">Sync</div>
 			</div>
 		</div>

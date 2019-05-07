@@ -338,7 +338,7 @@
 			} ?>
 		</div>
 		<?php if (isset($asset->addTermGlossaries)): ?>
-			<h3 class="headerTab">Additionally Included Data</h3><img class="infoIcon" src="/img/icon-question.png" onmouseover="displayHelpText(this)" onmouseout="hideHelpText()" helpText="These are data elements that you didn't request but are included in the APIs to which you requested access.">
+			<h3 class="headerTab">Additionally Included Data</h3><img class="infoIcon" src="/img/icon-question.png" onmouseover="displayHelpText(this)" onmouseout="hideHelpText()" helpText="These are data elements that you didn't request but are included in the data sets to which you requested access.">
 			<div class="clear"></div>
 			<div class="attrValue">
 				<?php $glossaryCount = 0;
@@ -357,6 +357,30 @@
 						echo '<br>';
 					}
 				} ?>
+			</div>
+		<?php endif ?>
+		<?php if (!empty($asset->requestedDataAssets)): ?>
+			<h3 class="headerTab">Requested Data Sets</h3>
+			<div class="clear"></div>
+			<div class="attrValue">
+				<ul>
+					<?php foreach ($asset->necessaryApis as $api) {
+						echo '<li><a href="/apis/';
+						echo isset($asset->parentId) ? $asset->parentId : $asset->id;
+						echo '/'.$api->apiCommName.$api->apiName.'" title="View which elements were requested from this API">'.$api->apiName.'</a></li>';
+					}
+					foreach ($asset->necessaryTables as $table) {
+						$tableNameOnly = substr($table->tableName, strpos($table->tableName, '>') + 2);
+						echo '<li><a href="/databases/viewRequested/';
+						echo isset($asset->parentId) ? $asset->parentId : $asset->id;
+						echo '/'.$table->tableCommName.'/'.$table->tableVocabName.'/'.$tableNameOnly.'" title="View which elements were requested from this table">'.$table->tableCommName.' > '.$table->tableName.'</a></li>';
+					}
+					foreach ($asset->necessaryVirtualTables as $virTable) {
+						echo '<li><a href="/virtualTables/viewRequested/';
+						echo isset($asset->parentId) ? $asset->parentId : $asset->id;
+						echo '/'.$virTable->virTableId.'" title="View which elements were requested from this table">'.$virTable->virTableName.'</a></li>';
+					} ?>
+				</ul>
 			</div>
 		<?php endif ?>
 		<h3 class="headerTab">Requester</h3>

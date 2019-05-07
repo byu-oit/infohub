@@ -3,7 +3,28 @@
 class DatabasesController extends AppController {
 	public $uses = ['CollibraAPI', 'BYUAPI'];
 
+	function beforeFilter() {
+		parent::beforeFilter();
+		$this->Auth->deny();
+	}
+
+	private function checkAuthorized() {
+		if (!(
+			$this->Auth->user('activeFulltimeEmployee') == 'true' ||
+			$this->Auth->user('activeParttimeEmployee') == 'true' ||
+			$this->Auth->user('activeFulltimeInstructor') == 'true' ||
+			$this->Auth->user('activeParttimeInstructor') == 'true' ||
+			$this->Auth->user('activeFulltimeNonBYUEmployee') == 'true' ||
+			$this->Auth->user('activeParttimeNonBYUEmployee') == 'true'
+		)) {
+
+			$this->Flash->error('You must be an active BYU employee to browse databases.');
+			$this->redirect(['controller' => 'search', 'action' => 'index']);
+		}
+	}
+
 	public function index() {
+		$this->checkAuthorized();
 		if ($this->Session->check('recentTables')) {
 			$this->set('recent', $this->Session->read('recentTables'));
 		}
@@ -13,62 +34,69 @@ class DatabasesController extends AppController {
 			return $this->redirect(['action' => 'database', 'dbId' => $databases->subCommunityReferences->communityReference[0]->resourceId]);
 		}
 
-		$isOITEmployee = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04');
-		$this->set('isOITEmployee', $isOITEmployee);
+		$matchAuthorized = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04', 'infohub-match');
+		$this->set('matchAuthorized', $matchAuthorized);
 		$this->set('databases', $databases);
 	}
 
-	public function database($dbId) {
+	public function database($databaseName) {
+		$this->checkAuthorized();
 		if ($this->Session->check('recentTables')) {
 			$this->set('recent', $this->Session->read('recentTables'));
 		}
 
-		$schemasCommunity = json_decode($this->CollibraAPI->get('community/'.$dbId));
-		$schemas = [];
-		foreach ($schemasCommunity->vocabularyReferences->vocabularyReference as $schema) {
-			if ($schema->meta != '1') {
-				array_push($schemas, $schema);
-			}
-		}
+		$schemas = $this->CollibraAPI->getDatabaseSchemas($databaseName);
 		if (count($schemas) == 1 && empty($this->request->query['noredirect'])) {
-			return $this->redirect(['action' => 'schema', $schemas[0]->name]);
+			return $this->redirect(['action' => 'schema', $databaseName, $schemas[0]->name]);
 		}
 		usort($schemas, function ($a, $b) {
 			return strcmp($a->name, $b->name);
 		});
-		$isOITEmployee = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04');
-		$this->set('isOITEmployee', $isOITEmployee);
-		$this->set('dbName', $schemasCommunity->name);
-		$this->set('schemas', $schemas);
+		$matchAuthorized = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04', 'infohub-match');
+		$this->set(compact('matchAuthorized', 'databaseName', 'schemas'));
 	}
 
-	public function schema($schemaName) {
+	public function schema($databaseName, $schemaName) {
+		$this->checkAuthorized();
 		if ($this->Session->check('recentTables')) {
 			$this->set('recent', $this->Session->read('recentTables'));
 		}
 
-		$schema = $this->CollibraAPI->getSchemaTables($schemaName);
+		$schema = $this->CollibraAPI->getSchemaTables($databaseName, $schemaName);
 		usort($schema->tables, function($a, $b) {
 			return strcmp($a->tableName, $b->tableName);
 		});
 		$this->set('schema', $schema);
 	}
 
-	public function view($schemaName, $tableName) {
-		$tableNameOnly = substr($tableName, strpos($tableName, '>') + 2);
-		$columns = $this->CollibraAPI->getTableColumns($tableName);
+	public function view($databaseName, $schemaName, $tableName) {
+		$this->checkAuthorized();
+		$columns = $this->CollibraAPI->getTableColumns($databaseName, $tableName);
 
-		$isOITEmployee = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04');
-		$this->set(compact('schemaName', 'tableName', 'tableNameOnly', 'columns', 'isOITEmployee'));
+		$tableNameOnly = substr($tableName, strpos($tableName, '>') + 2);
+		$matchAuthorized = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04', 'infohub-match');
+		$this->set(compact('databaseName', 'schemaName', 'tableName', 'columns', 'tableNameOnly', 'matchAuthorized'));
 
 		$arrRecent = $this->Session->check('recentTables') ? $this->Session->read('recentTables') : [];
-		array_unshift($arrRecent, $tableName);
-		$arrRecent = array_unique($arrRecent);
+		array_unshift($arrRecent, ['databaseName' => $databaseName, 'schemaName' => $schemaName, 'tableName' => $tableName]);
+		$arrRecent = array_unique($arrRecent, SORT_REGULAR);
 		$this->Session->write('recentTables', array_slice($arrRecent, 0, 5));
 
 		if (array_key_exists('checkout', $this->request->query)) {
 			return $this->_autoCheckout($schemaName, $tableName, $columns);
 		}
+	}
+
+	public function viewRequested($requestId, $databaseName, $schemaName, $tableName) {
+		$this->checkAuthorized();
+		$columns = $this->CollibraAPI->getTableColumns($databaseName, $schemaName.' > '.$tableName);
+
+		$request = $this->CollibraAPI->getRequestDetails($requestId);
+		$requestedAssetIds = [];
+		foreach ($request->requestedDataAssets as $asset) {
+			array_push($requestedAssetIds, $asset->reqDataId);
+		}
+		$this->set(compact('databaseName', 'schemaName', 'tableName', 'columns', 'request', 'requestedAssetIds'));
 	}
 
 	protected function _autoCheckout($schemaName, $tableName, $columns) {

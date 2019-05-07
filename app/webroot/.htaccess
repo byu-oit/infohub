@@ -7,6 +7,6 @@
     RewriteRule ^ index.php [L]
 </IfModule>
 <IfDefine !NoCustomPHPSessionPath>
-    php_value session.save_path /opt/phproot/infohub/app/tmp/sessions
+    php_value session.save_path /cake/app/tmp/sessions
 </IfDefine>
 php_value max_input_vars 10000
