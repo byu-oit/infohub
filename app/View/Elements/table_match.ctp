@@ -63,6 +63,9 @@
 		$('.new-check').change(function() {
 			var index = $(this).data('index');
 			$('#tr'+index).toggleClass('display-new-bt');
+			if ($('#TableElements'+index+'SearchCell > input').val()) {
+				$('#TableElements'+index+'PropName').val($('#TableElements'+index+'SearchCell > input').val());
+			}
 		});
 
 		$('.data-label')
