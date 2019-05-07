@@ -122,9 +122,9 @@ class SearchController extends AppController {
 
 		// set community filter based on querystring value
 		///////////////////////////////////////////////////////
-		$filter = '';
+		$filter = [];
 		if(isset($this->request->query['f']) && $this->request->query['f'] != ''){
-			$filter = $this->request->query['f'];
+			$filter = [$this->request->query['f']];
 		}
 		///////////////////////////////////////////////////////
 
@@ -440,7 +440,7 @@ class SearchController extends AppController {
 		return $resp;
 	}
 
-	private function searchTerms($query, $page=0, $displayLength=1000, $sortField='termsignifier', $sortOrder='ASC', $communityFilter='', $termOnly=false){
+	private function searchTerms($query, $page=0, $displayLength=1000, $sortField='termsignifier', $sortOrder='ASC', $communityFilter=[], $termOnly=false){
 		$displayStart = $page*$displayLength;
 
 		// use API search call to query based on user input

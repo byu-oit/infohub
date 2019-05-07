@@ -1216,9 +1216,9 @@ class CollibraAPI extends Model {
 		return $termResp;
 	}
 
-	public function searchTerms($query, $limit = 10, $community = null) {
-		if (empty($community)) {
-			$community = Configure::read('Collibra.community.byu');
+	public function searchTerms($query, $limit = 10, $communities = []) {
+		if (empty($communities)) {
+			$communities = [Configure::read('Collibra.community.byu'), Configure::read('Collibra.community.dataGovernanceCouncil')];
 		}
 		if (substr($query, -1) !== '*') {
 			$query .= '*';
@@ -1226,7 +1226,7 @@ class CollibraAPI extends Model {
 		$request = [
 			'query' => $query,
 			'filter' => [
-				'community' => [$community],
+				'community' => $communities,
 				'category' => ['TE'],
 				'type' => [
 					'asset' => [
