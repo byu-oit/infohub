@@ -105,8 +105,22 @@ img.resultBodyLoading {
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
+#searchBody #searchMain #smLower h3.headerTab {
+  background-color: white;
+  border: rgba(14, 50, 100, 0.85) solid 2px;
+  color: rgba(14, 50, 100, 0.85);
+  float: left;
+  font-size: 18px;
+  margin: 15px 0 10px 0;
+  padding: 4px 18px;
+  font-weight: bold;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+}
 #searchBody #searchMain #smLower ul,
 #apiBody #searchMain #smLower ul {
+  clear: both;
   margin: 0;
   padding: 0;
   width: 100%;

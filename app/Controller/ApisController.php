@@ -22,12 +22,26 @@ class ApisController extends AppController {
 			$this->redirect(['action' => 'index']);
 		}
 		$apis = $this->CollibraAPI->getHostApis($community->resourceId);
+
+		$sortedApis = [];
+		$noEndpoints = false;
 		if (!empty($apis)) {
 			usort($apis, function ($a, $b) {
 				return strcmp(strtolower($a->name), strtolower($b->name));
 			});
+			foreach ($apis as $api) {
+				if (
+					$api->statusId == Configure::read('Collibra.status.testing') ||
+					$api->statusId == Configure::read('Collibra.status.retired')
+					) continue;
+				$sortedApis[$api->statusId][] = $api;
+			}
+		} else {
+			$noEndpoints = true;
 		}
-		$this->set(compact('hostname', 'community', 'apis'));
+
+
+		$this->set(compact('hostname', 'community', 'noEndpoints', 'sortedApis'));
 	}
 
 	public function view() {
