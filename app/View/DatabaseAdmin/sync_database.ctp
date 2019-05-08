@@ -10,6 +10,11 @@
 
         $('.sync-btn').click(function() {
             var thisElem = $(this);
+			var database = $('#databaseName').val();
+			var schema = $('#schemaName').val();
+			var table = $('#tableName').val();
+
+			if (!table && !confirm('Did you mean to leave the table name blank? This will result in syncing the entire schema, which will take some time.')) return;
 
             var i = 0;
             var loadingTexts = ['Syncing   ','Syncing.  ','Syncing.. ','Syncing...'];
@@ -19,21 +24,10 @@
                 if (i == loadingTexts.length) i = 0;
             }, 250);
 
-			var database = $('#databaseName').val();
-            var schema = $('#schemaName').val();
-            var table = $('#tableName').val();
-
-            var requiredErrorString = 'Schema and table names are both required.';
             if (!schema) {
-				alert(requiredErrorString);
+				alert('Schema name is required.');
 				clearInterval(loadingTextInterval);
 				$('#schemaName').focus();
-				return;
-            }
-            if (!table) {
-				alert(requiredErrorString);
-				clearInterval(loadingTextInterval);
-				$('#tableName').focus();
 				return;
             }
 
@@ -47,7 +41,7 @@
                     alert(data.message);
 
                     if (data.redirect) {
-                        window.location.href = '/databases/view/'+database+'/'+schema+'/'+schema+' > '+table;
+                        window.location.href = table ? '/databases/view/'+database+'/'+schema+'/'+schema+' > '+table : '/databases/schema/'+database+'/'+schema;
                     }
                 });
         });

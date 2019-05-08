@@ -118,13 +118,25 @@ class BYUAPI extends Model {
 		}
 
 		$resp = json_decode($response->body(), true);
-		if (!isset($resp[$schema][$table])) {
+		if (!empty($table) && !isset($resp[$schema][$table])) {
 			return [];
 		}
-		$columns = array_filter($resp[$schema][$table], function($column) {
-			return !(substr($column, 0, 4) === "SYS_");
-		});
-		return array_values($columns);
+
+		foreach ($resp[$schema] as $tableName => $columns) {
+			if (substr($tableName, 0, 4) === "BIN$") {
+				unset($resp[$schema][$tableName]);
+				continue;
+			}
+			$resp[$schema][$tableName] = array_values(array_filter($resp[$schema][$tableName], function($column) {
+				return !(substr($column, 0, 4) === "SYS_");
+			}));
+		}
+
+		if (isset($table)) {
+			return $resp[$schema][$table];
+		} else {
+			return $resp[$schema];
+		}
 	}
 
 	protected function _get($url) {
