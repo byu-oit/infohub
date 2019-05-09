@@ -5,7 +5,7 @@
 <script>
 	$(document).ready(function() {
 		$("#searchLink").addClass('active');
-        loadSpaceData('', 'catalogList0');
+        loadSpaceOrFolder('', 'catalogList0');
 	});
 
 	$(document).ready(listWidth);
@@ -17,10 +17,11 @@
 		$('.greatGrandChild').css('width', '100%').css('width', '-=11px');
 	}
 
-    function loadSpaceData(spaceId, listID){
-        $.get("/virtualTables/loadDremioSpace/"+spaceId)
+    function loadSpaceOrFolder(unitId, listID, isFolder = false){
+		var url = isFolder ? '/virtualDatasets/loadFolder/' : '/virtualDatasets/loadDremioSpace/';
+        $.get(url+unitId)
             .done(function(data) {
-                var spaces = JSON.parse(data);
+                var data = JSON.parse(data);
                 var html = '';
                 var level = 0;
                 var grandChildClass = '';
@@ -31,9 +32,9 @@
                     grandChildClass = 'grandChild';
                 }
                 // create space elements
-				if (spaceId == '') {
-					for (i=0; i < spaces.length; i++) {
-						var space = spaces[i];
+				if (unitId == '') {
+					for (i=0; i < data.length; i++) {
+						var space = data[i];
 						html += '<li class="catalogItem" id="'+space.spaceId+'">'+
 						'	   <a href="#" class="hasChildren">'+space.spaceName.split(' > ').pop()+'</a>'+
 						'	   <ul data-level="'+level+'" id="categoryList'+space.spaceId+'" class="subList catalogChild '+grandChildClass+'">'+
@@ -42,22 +43,22 @@
 						'	</li>';
 					}
 				} else {
-					for (i=0; i < spaces[0].subspaces.length; i++) {
-						var space = spaces[0].subspaces[i];
-						html += '<li class="catalogItem" id="'+space.subspaceId+'">'+
-						'	   <a href="#" class="hasChildren">'+space.subspaceName.split(' > ').pop()+'</a>'+
-						'	   <ul data-level="'+level+'" id="categoryList'+space.subspaceId+'" class="subList catalogChild '+grandChildClass+'">'+
+					for (i=0; i < data[0].subfolders.length; i++) {
+						var folder = data[0].subfolders[i];
+						html += '<li class="catalogItem" id="'+folder.subfolderId+'" isFolder="true">'+
+						'	   <a href="#" class="hasChildren">'+folder.subfolderName.split(' > ').pop()+'</a>'+
+						'	   <ul data-level="'+level+'" id="categoryList'+folder.subfolderId+'" class="subList catalogChild '+grandChildClass+'">'+
 						'       	<li><a href=""><img src="/img/dataLoading-sm.gif" alt="Loading..."></a></li>'+
 						'		</ul>'+
 						'	</li>';
 					}
 
-					// create table elements
-					if (spaces[0].tables !== undefined) {
-						for (i=0; i < spaces[0].tables.length; i++) {
-							var table = spaces[0].tables[i];
+					// create dataset elements
+					if (data[0].datasets !== undefined) {
+						for (i=0; i < data[0].datasets.length; i++) {
+							var dataset = data[0].datasets[i];
 							html += '<li class="catalogItem">'+
-							'   	<a class="table" href="/virtualTables/view/'+table.tableId+'">'+table.tableName.split(' > ').pop()+'</a>'+
+							'   	<a class="dataset" href="/virtualDatasets/view/'+dataset.datasetId+'">'+dataset.datasetName.split(' > ').pop()+'</a>'+
 							'	</li>';
 						}
 					}
@@ -65,14 +66,15 @@
 
 
                 // add click event to show/hide and load child data
-                $('#'+listID).html(html).find('li a').not('.table').click(function (e) {
+                $('#'+listID).html(html).find('li a').not('.dataset').click(function (e) {
                     $(this).toggleClass('active');
                     e.preventDefault();
 
-                    // load child spaces and tables if they haven't been loaded
+                    // load child folders and datasets if they haven't been loaded
                     if ($(this).parent().find('li').length == 1) {
-                        var thisSpaceId = $(this).parent().attr('id');
-                        loadSpaceData(thisSpaceId, 'categoryList'+thisSpaceId);
+                        var thisUnitId = $(this).parent().attr('id');
+						var thisUnitIsFolder = $(this).parent().attr('isFolder');
+                        loadSpaceOrFolder(thisUnitId, 'categoryList'+thisUnitId, thisUnitIsFolder);
                     }
 
                     var ullist = $(this).parent().children('ul:first');
@@ -92,13 +94,13 @@
 
 	<?php if (isset($recent)): ?>
 		<div id="searchMain" style="padding-top: 35px;">
-			<h2 class="headerTab">Recently Viewed Tables</h2>
+			<h2 class="headerTab">Recently Viewed Datasets</h2>
 			<div class="clear"></div>
 			<div id="smLower" class="whiteBox">
 				<ul class="catalogParent">
-					<?php foreach ($recent as $table): ?>
+					<?php foreach ($recent as $dataset): ?>
 						<li class="catalogItem">
-							<?= $this->Html->link($table['tableName'], ['action' => 'view', $table['tableId']]) ?>
+							<?= $this->Html->link($dataset['datasetName'], ['action' => 'view', $dataset['datasetId']]) ?>
 						</li>
 					<?php endforeach ?>
 				</ul>
@@ -107,7 +109,7 @@
 	<?php endif ?>
 
 	<div id="searchMain" style="padding-top: 35px;">
-		<h1 class="headerTab">Select Table</h2>
+		<h1 class="headerTab">Select Dataset</h2>
 		<div class="clear"></div>
 		<div id="smLower" class="whiteBox">
 			<ul class="catalogParent" id="catalogList0" data-level="0">
@@ -119,8 +121,8 @@
 		<div style="padding-top: 35px;">
 			<div style="float: right">
 				<?= $this->Html->link(
-					'Update a Table',
-					array_merge(['controller' => 'virtualTableAdmin', 'action' => 'syncDatasource']),
+					'Update a Dataset',
+					array_merge(['controller' => 'virtualDatasetAdmin', 'action' => 'syncDatasource']),
 					['class' => 'btn-db-sync grow', 'id' => 'admin']) ?>
 			</div>
 		</div>

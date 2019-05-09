@@ -1,6 +1,6 @@
 <?php
 
-class VirtualTableAdminController extends AppController {
+class VirtualDatasetAdminController extends AppController {
 	public $uses = ['CollibraAPI', 'BYUAPI'];
 	public $components = ['DataWarehouse'];
 
@@ -9,33 +9,33 @@ class VirtualTableAdminController extends AppController {
 		$this->Auth->deny();
 	}
 
-	public function update($tableId) {
+	public function update($datasetId) {
 		$this->autoRender = false;
 
 		if ($this->request->is('post')) {
-			$success = $this->CollibraAPI->updateBusinessTermLinks($this->request->data('Table.elements'));
+			$success = $this->CollibraAPI->updateBusinessTermLinks($this->request->data('Dataset.elements'));
 			if (!empty($success)) {
-				$this->Session->setFlash('Table updated successfully');
+				$this->Session->setFlash('Dataset updated successfully');
 				return json_encode(['success' => '1']);
 			}
 			$this->Session->setFlash('Error: ' . implode('<br>', $this->CollibraAPI->errors), 'default', ['class' => 'error']);
 			return json_encode(['success' => '0']);
 		}
 
-		$table = $this->CollibraAPI->getVirtualTable($tableId);
-		$table->columns = $this->CollibraAPI->getVirtualTableColumns($tableId);
-		if (empty($table)) {
-			return $this->redirect(['controller' => 'virtualTables', 'action' => 'index']);
+		$dataset = $this->CollibraAPI->getVirtualDataset($datasetId);
+		$dataset->columns = $this->CollibraAPI->getVirtualDatasetColumns($datasetId);
+		if (empty($dataset)) {
+			return $this->redirect(['controller' => 'virtualDatasets', 'action' => 'index']);
 		}
 		$glossaries = $this->CollibraAPI->getAllGlossaries();
-		$this->set(compact('table', 'glossaries'));
+		$this->set(compact('dataset', 'glossaries'));
 
 		$this->request->data = [
-			'Table' => [
-				'tableId' => $tableId,
+			'Dataset' => [
+				'datasetId' => $datasetId,
 				'elements' => []]];
-		foreach ($table->columns as $column) {
-			$this->request->data['Table']['elements'][] = [
+		foreach ($dataset->columns as $column) {
+			$this->request->data['Dataset']['elements'][] = [
 				'id' => $column->columnId,
 				'name' => $column->columnName,
 				'business_term' => empty($column->businessTerm[0]) ? null : $column->businessTerm[0]->termId];

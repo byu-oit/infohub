@@ -17,31 +17,32 @@
 	}
 </script>
 <style type="text/css">
-	table.table-columns tr:hover {
+	table.dataset-columns tr:hover {
 		background-color: #eee
 	}
-	table.table-columns tr.header:hover {
+	table.dataset-columns tr.header:hover {
 		background-color: inherit;
 	}
 </style>
 <div id="apiBody" class="innerDataSet">
 	<div id="searchResults">
-		<h1 class="headerTab"><?= $table->name ?></h1>
+		<!-- <h1 class="headerTab"><?= $dataset->name ?></h1> -->
+		<h1 class="headerTab"><a href="/virtualDatasets"><?= $breadcrumbs ?></a> > <?= $datasetNameOnly ?></h1>
 		<div class="clear"></div>
 		<div class="btnLinks">
 			<?php if ($matchAuthorized): ?>
 				<div style="float: right">
 					<?= $this->Html->link(
 						'Update Unlinked Columns',
-						array_merge(['controller' => 'virtual_table_admin', 'action' => 'update', $table->id]),
-						['class' => 'inputButton dbTable', 'id' => 'admin']) ?>
+						array_merge(['controller' => 'virtual_dataset_admin', 'action' => 'update', $dataset->id]),
+						['class' => 'inputButton dataset', 'id' => 'admin']) ?>
 				</div>
 			<?php endif ?>
 		</div>
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
-				<input type="button" data-tableName="<?= h($table->name) ?>" data-tableId="<?= h($table->id) ?>" api="false" onclick="addToQueueVirtualTable(this, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
-				<table class="table-columns checkBoxes view">
+				<input type="button" data-datasetName="<?= h($dataset->name) ?>" data-datasetId="<?= h($dataset->id) ?>" api="false" onclick="addToQueueVirtualDataset(this, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
+				<table class="dataset-columns checkBoxes view">
 					<tr class="header">
 						<th><input type="checkbox" onclick="toggleAllCheckboxes(this)" name="toggleCheckboxes"/></th>
 						<th class="fieldColumn">Column</th>
@@ -49,7 +50,7 @@
 						<th class="classificationColumn">Classification</th>
 						<th class="glossaryColumn">Glossary</th>
 					</tr>
-					<?php foreach ($table->columns as $column): ?>
+					<?php foreach ($dataset->columns as $column): ?>
 						<tr>
 							<td>
 								<?php if (!empty($column->businessTerm[0])): ?>
@@ -133,7 +134,7 @@
 						</tr>
 					<?php endforeach ?>
 				</table>
-				<input type="button" data-tableName="<?= h($table->name) ?>" data-tableId="<?= h($table->id) ?>" api="false" onclick="addToQueueVirtualTable(this, true)" class="requestAccess grow mainRequestBtn" value="Add To Request">
+				<input type="button" data-datasetName="<?= h($dataset->name) ?>" data-datasetId="<?= h($dataset->id) ?>" api="false" onclick="addToQueueVirtualDataset(this, true)" class="requestAccess grow mainRequestBtn" value="Add To Request">
 			</div>
 		</div>
 	</div>

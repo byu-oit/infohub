@@ -17,30 +17,30 @@
 	}
 </script>
 <style type="text/css">
-	table.table-columns tr:hover {
+	table.dataset-columns tr:hover {
 		background-color: #eee
 	}
-	table.table-columns tr.header:hover {
+	table.dataset-columns tr.header:hover {
 		background-color: inherit;
 	}
 </style>
 <div id="apiBody" class="innerDataSet">
 	<div id="searchResults">
-		<h1 class="headerTab"><?= $table->name ?></h1>
+		<h1 class="headerTab"><?= $dataset->name ?></h1>
 		<div class="clear" style="height:20px;"></div>
         <h2 class="headerTab">Requested in <?= $request->assetName ?></h2>
         <div class="clear"></div>
         <div class="apiHelp">Requested fields are highlighted.</div>
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
-				<table class="table-columns checkBoxes view">
+				<table class="dataset-columns checkBoxes view">
 					<tr class="header">
 						<th class="fieldColumn">Column</th>
 						<th class="termColumn">Business Term</th>
 						<th class="classificationColumn">Classification</th>
 						<th class="glossaryColumn">Glossary</th>
 					</tr>
-					<?php foreach ($table->columns as $column): ?>
+					<?php foreach ($dataset->columns as $column): ?>
 						<tr<?php echo in_array($column->columnId, $requestedAssetIds) ? ' class="requested"' : ''; ?>>
                             <td><?php
 								$columnPath = explode(' > ', $column->columnName);
