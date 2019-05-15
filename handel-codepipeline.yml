@@ -1,0 +1,20 @@
+
+version: 1
+
+name: infohub
+
+pipelines:
+  dev:
+    phases:
+      - type: github
+        name: Github
+        owner: byu-oit
+        repo: infohub
+        branch: dev
+      - type: codebuild
+        name: Build
+        build_image: aws/codebuild/docker:18.09.0
+      - type: handel
+        name: Deploy
+        environments_to_deploy:
+          - dev
