@@ -19,10 +19,9 @@
 			<div class="clear"></div>
 			<div id="smLower" class="whiteBox">
 				<ul class="catalogParent" id="catalogList0" data-level="0">
-					<?php foreach ($recent as $tableName):
-						$schemaName = rtrim(substr($tableName, 0, strpos($tableName, '>'))); ?>
+					<?php foreach ($recent as $table): ?>
 						<li class="catalogItem">
-							<?= $this->Html->link($tableName, ['action' => 'view', $schemaName, $tableName]) ?>
+							<?= $this->Html->link($table['databaseName'].' > '.$table['tableName'], ['action' => 'view', $table['databaseName'], $table['schemaName'], $table['tableName']]) ?>
 						</li>
 					<?php endforeach ?>
 				</ul>
@@ -36,13 +35,13 @@
 		<div id="smLower" class="whiteBox">
 			<ul class="catalogParent"><?php
 				foreach ($databases->subCommunityReferences->communityReference as $db) {
-					echo '<li class="catalogItem"><a href="/databases/database/'.$db->resourceId.'">'.$db->name.'</a></li>';
+					echo '<li class="catalogItem"><a href="/databases/database/'.$db->name.'">'.$db->name.'</a></li>';
 				}
 			?></ul>
 		</div>
 	</div>
 
-	<?php if ($isOITEmployee): ?>
+	<?php if ($matchAuthorized): ?>
 		<div style="padding-top: 35px;">
 			<div style="float: right">
 				<?= $this->Html->link(

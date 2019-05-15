@@ -17,63 +17,77 @@
 	}
 </script>
 <style type="text/css">
-	table.saml-fields tr:hover {
+	table.dataset-columns tr:hover {
 		background-color: #eee
 	}
-	table.saml-fields tr.header:hover {
+	table.dataset-columns tr.header:hover {
 		background-color: inherit;
 	}
 </style>
 <div id="apiBody" class="innerDataSet">
 	<div id="searchResults">
-		<h1 class="headerTab"><?= $responseName ?></h1>
+		<!-- <h1 class="headerTab"><?= $dataset->name ?></h1> -->
+		<h1 class="headerTab"><a href="/virtualDatasets"><?= $breadcrumbs ?></a> > <?= $datasetNameOnly ?></h1>
 		<div class="clear"></div>
+		<div class="btnLinks">
+			<?php if ($matchAuthorized): ?>
+				<div style="float: right">
+					<?= $this->Html->link(
+						'Update Unlinked Columns',
+						array_merge(['controller' => 'virtual_dataset_admin', 'action' => 'update', $dataset->id]),
+						['class' => 'inputButton dataset', 'id' => 'admin']) ?>
+				</div>
+			<?php endif ?>
+		</div>
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
-				<input type="button" data-responseName="<?= h($responseName) ?>" api="false" onclick="addToQueueSAMLResponse(this, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
-				<table class="saml-fields checkBoxes view">
+				<input type="button" data-datasetName="<?= h($dataset->name) ?>" data-datasetId="<?= h($dataset->id) ?>" api="false" onclick="addToQueueVirtualDataset(this, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
+				<table class="dataset-columns checkBoxes view">
 					<tr class="header">
 						<th><input type="checkbox" onclick="toggleAllCheckboxes(this)" name="toggleCheckboxes"/></th>
-						<th class="fieldColumn">Field</th>
+						<th class="fieldColumn">Column</th>
 						<th class="termColumn">Business Term</th>
 						<th class="classificationColumn">Classification</th>
 						<th class="glossaryColumn">Glossary</th>
 					</tr>
-					<?php foreach ($fields as $field): ?>
+					<?php foreach ($dataset->columns as $column): ?>
 						<tr>
 							<td>
-								<?php if (!empty($field->businessTerm[0])): ?>
+								<?php if (!empty($column->businessTerm[0])): ?>
 									<input
 									type="checkbox"
-									data-title="<?= h($field->businessTerm[0]->term) ?>"
-									data-vocabID="<?= h($field->businessTerm[0]->termCommunityId) ?>"
-									value="<?= h($field->businessTerm[0]->termId) ?>"
+									data-title="<?= h($column->businessTerm[0]->term) ?>"
+									data-vocabID="<?= h($column->businessTerm[0]->termCommunityId) ?>"
+									value="<?= h($column->businessTerm[0]->termId) ?>"
 									class="chk"
-									id="chk<?= h($field->businessTerm[0]->termId) ?>"
-									data-name="<?= $field->fieldName ?>"
-									data-field-id="<?= $field->fieldId ?>">
+									id="chk<?= h($column->businessTerm[0]->termId) ?>"
+									data-name="<?= $column->columnName ?>"
+									data-column-id="<?= $column->columnId ?>">
 								<?php else: ?>
 									<input
 									type="checkbox"
-									data-title="<?= $field->fieldName ?>"
+									data-title="<?= $column->columnName ?>"
 									data-vocabID=""
 									value=""
 									class="chk"
-									data-name="<?= $field->fieldName ?>"
-									data-field-id="<?= $field->fieldId ?>">
+									data-name="<?= $column->columnName ?>"
+									data-column-id="<?= $column->columnId ?>">
 								<?php endif ?>
 							</td>
-							<td><?= $field->fieldName ?></td>
+							<td><?php
+								$columnPath = explode(' > ', $column->columnName);
+								echo end($columnPath);
+							?></td>
 							<td>
-								<?php if (!empty($field->businessTerm[0])): ?>
-									<?php $termDef = nl2br(str_replace("\n\n\n", "\n\n", htmlentities(strip_tags(str_replace(['<div>', '<br>', '<br/>'], "\n", $field->businessTerm[0]->termDescription))))); ?>
-									<?= $this->Html->link($field->businessTerm[0]->term, ['controller' => 'search', 'action' => 'term', $field->businessTerm[0]->termId]) ?>
+								<?php if (!empty($column->businessTerm[0])): ?>
+									<?php $termDef = nl2br(str_replace("\n\n\n", "\n\n", htmlentities(strip_tags(str_replace(['<div>', '<br>', '<br/>'], "\n", $column->businessTerm[0]->termDescription))))); ?>
+									<?= $this->Html->link($column->businessTerm[0]->term, ['controller' => 'search', 'action' => 'term', $column->businessTerm[0]->termId]) ?>
 									<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="<?=$termDef?>" class="info"><img src="/img/iconInfo.png"></div>
 								<?php endif ?>
 							</td>
 							<td style="white-space:nowrap;">
-								<?php if (!empty($field->businessTerm[0])):
-									$classification = $field->businessTerm[0]->termClassification;
+								<?php if (!empty($column->businessTerm[0])):
+									$classification = $column->businessTerm[0]->termClassification;
 									switch($classification){
 										case 'Public':
 										case '1 - Public':
@@ -107,20 +121,20 @@
 									}
 									echo '<img class="classIcon" src="/img/icon'.$classification.'.png">&nbsp;'.$classificationTitle;
 
-									if ($field->businessTerm[0]->approvalStatus != 'Approved') {
+									if ($column->businessTerm[0]->approvalStatus != 'Approved') {
 										echo '&nbsp;&nbsp;<img class="pendingApprovalIcon" src="/img/alert.png" onmouseover="displayPendingApproval(this)" onmouseout="hidePendingAproval()">';
 									}
 								endif ?>
 							</td>
 							<td>
-								<?php if (!empty($field->businessTerm[0])) {
-									echo '<a href="/search/listTerms/'.$field->businessTerm[0]->termVocabularyId.'">'.$field->businessTerm[0]->termCommunityName.'</a>';
+								<?php if (!empty($column->businessTerm[0])) {
+									echo '<a href="/search/listTerms/'.$column->businessTerm[0]->termVocabularyId.'">'.$column->businessTerm[0]->termCommunityName.'</a>';
 								} ?>
 							</td>
 						</tr>
 					<?php endforeach ?>
 				</table>
-				<input type="button" data-responseName="<?= h($responseName) ?>" api="false" onclick="addToQueueSAMLResponse(this, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
+				<input type="button" data-datasetName="<?= h($dataset->name) ?>" data-datasetId="<?= h($dataset->id) ?>" api="false" onclick="addToQueueVirtualDataset(this, true)" class="requestAccess grow mainRequestBtn" value="Add To Request">
 			</div>
 		</div>
 	</div>

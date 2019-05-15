@@ -258,6 +258,9 @@
   float: right;
   width: 160px;
 }
+.riBelow .approverPics {
+  width: 21%;
+}
 #accountMid .accountMain .requestItem .approver {
   position: relative;
   float: right;
@@ -389,7 +392,7 @@
 }
 .subrequestNameWrapper {
   display: table;
-  width: 634px;
+  width: 78%;
   height: 65px;
   float: left;
 }
@@ -409,7 +412,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 634px;
+  width: 78%;
 }
 #accountMid .accountMain .requestItem .riBelow .status-details-flex .status-wrapper {
   width: 370px;
@@ -576,6 +579,7 @@
 #accountMid .accountMain .requestItem .riBelow .detailsBody .lower-btn,
 #apiBody #searchResults #srLower .resultItem #apiForm .lower-btn,
 #apiBody #searchResults #srLower .resultItem #tableForm .lower-btn,
+#apiBody #searchResults #srLower .resultItem #datasetForm .lower-btn,
 #apiBody #searchResults #srLower .resultItem .lower-btn {
   padding: 4px 14px;
   margin-right: 15px;

@@ -10,6 +10,11 @@
 
         $('.sync-btn').click(function() {
             var thisElem = $(this);
+			var database = $('#databaseName').val();
+			var schema = $('#schemaName').val();
+			var table = $('#tableName').val();
+
+			if (!table && !confirm('Did you mean to leave the table name blank? This will result in syncing the entire schema, which will take some time.')) return;
 
             var i = 0;
             var loadingTexts = ['Syncing   ','Syncing.  ','Syncing.. ','Syncing...'];
@@ -19,21 +24,10 @@
                 if (i == loadingTexts.length) i = 0;
             }, 250);
 
-			var database = $('#databaseName').val();
-            var schema = $('#schemaName').val();
-            var table = $('#tableName').val();
-
-            var requiredErrorString = 'Schema and table names are both required.';
             if (!schema) {
-				alert(requiredErrorString);
+				alert('Schema name is required.');
 				clearInterval(loadingTextInterval);
 				$('#schemaName').focus();
-				return;
-            }
-            if (!table) {
-				alert(requiredErrorString);
-				clearInterval(loadingTextInterval);
-				$('#tableName').focus();
 				return;
             }
 
@@ -47,7 +41,7 @@
                     alert(data.message);
 
                     if (data.redirect) {
-                        window.location.href = '/databases/view/'+schema+'/'+schema+' > '+table;
+                        window.location.href = table ? '/databases/view/'+database+'/'+schema+'/'+schema+' > '+table : '/databases/schema/'+database+'/'+schema;
                     }
                 });
         });
@@ -83,6 +77,12 @@
         -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
         box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22)
     }
+	#schemaName {
+		width: 100px;
+	}
+	#tableName {
+		width: 250px;
+	}
 </style>
 <div id="apiBody" class="innerLower">
 	<div id="searchResults" style="margin-bottom:0px;">
@@ -92,12 +92,14 @@
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
 				<select name="database" id="databaseName">
-					<option value="DWPRD">DWPRD</option>
-					<option value="CESPRD">CESPRD</option>
-					<option value="DWHRPRD">DWHRPRD</option>
+					<?php
+						foreach ($databases as $db) {
+							echo '<option value="'.$db.'">'.$db.'</option>';
+						}
+					?>
 				</select>
-                <input type="text" id="schemaName" placeholder="Schema name" style="width:100px;">
-                <input type="text" id="tableName" placeholder="Table name" style="width:250px;">
+                <input type="text" id="schemaName" placeholder="Schema name">
+                <input type="text" id="tableName" placeholder="Table name">
 				<div class="sync-btn grow">Sync</div>
 			</div>
 		</div>

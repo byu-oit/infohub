@@ -210,14 +210,6 @@ function removeFromRequestQueue(id){
 			if (id.indexOf('/') > -1) {
 				id = id.replace(/\//g, '');
 			}
-			// Likewise for unlinked API fields
-			if (id.indexOf('.') > -1) {
-				id = id.replace(/\./g, '');
-			}
-			// And for the ' > ' used in database columns' names
-			if (id.indexOf(' > ') > -1) {
-				id = id.replace(/ > /g, '');
-			}
 
 			var elem = $('#requestItem'+id);
 			var type = elem.data('type');
@@ -226,48 +218,47 @@ function removeFromRequestQueue(id){
 					var title = elem.data('title');
 					var dataId = elem.data('id');
 					var vocabId = elem.data('vocabID');
-					var apiHost = elem.attr('api-host');
-					var apiPath = elem.attr('api-path');
-					var schemaName = elem.attr('schema-name');
-					var tableName = elem.attr('table-name');
-					var responseName = elem.attr('response-name');
 
-					var undoData = {emptyApi:'false',t:[{title:title,id:dataId,vocabId:vocabId}],apiHost:apiHost,apiPath:apiPath,schemaName:schemaName,tableName:tableName,responseName:responseName};
-					break;
-				case 'concept':
-					var title = elem.data('title');
-					var dataId = elem.data('id');
-					var vocabId = elem.data('vocabID');
-					var apiHost = elem.attr('api-host');
-					var apiPath = elem.attr('api-path');
-
-					var undoData = {emptyApi:'false',t:[{title:title,dataId:id,vocabId:vocabId}],apiHost:apiHost,apiPath:apiPath};
+					var undoData = {emptyApi:'false',t:[{title:title,id:dataId,vocabId:vocabId}],url:'BusinessTerms'};
 					break;
 				case 'api':
 					var title = elem.data('title');
 					var apiHost = elem.attr('api-host');
 
-					var undoData = {emptyApi:'true',t:[title],apiHost:apiHost};
+					var undoData = {emptyApi:'true',t:[title],apiHost:apiHost,url:'EmptyAPI'};
 					break;
 				case 'field':
-					var title = elem.data('title');
-					var apiHost = elem.attr('api-host');
-					var apiPath = elem.attr('api-path');
+					var fieldName = elem.data('name');
+					var fieldId = elem.data('title');
+					var apiHost = elem.data('apiHost');
+					var apiPath = elem.data('apiPath');
+					var authorizedByFieldset = elem.data('authorizedByFieldset');
 
-					var undoData = {emptyApi:'false',f:[title],apiHost:apiHost,apiPath:apiPath};
+					var undoData = {emptyApi:'false',f:[fieldName],fi:[fieldId],apiHost:apiHost,apiPath:apiPath,afs:authorizedByFieldset,url:'API'};
 					break;
 				case 'column':
-					var title = elem.data('title');
+					var columnName = elem.data('name');
+					var columnId = elem.data('title');
+					var databaseName = elem.attr('database-name');
 					var schemaName = elem.attr('schema-name');
 					var tableName = elem.attr('table-name');
 
-					var undoData = {emptyApi:'false',c:[title],schemaName:schemaName,tableName:tableName};
+					var undoData = {emptyApi:'false',c:[tableName+' > '+columnName],ci:[columnId],databaseName:databaseName,schemaName:schemaName,tableName:tableName,url:'DBTable'};
+					break;
+				case 'virtualColumn':
+					var columnName = elem.data('name');
+					var columnId = elem.data('title');
+					var datasetName = elem.attr('dataset-name');
+					var datasetId = elem.attr('dataset-id');
+
+					var undoData = {emptyApi:'false',c:[datasetName+' > '+columnName],ci:[columnId],datasetName:datasetName,datasetId:datasetId,url:'VirtualDataset'};
 					break;
 				case 'samlField':
-					var title = elem.data('title');
+					var fieldName = elem.data('name');
+					var fieldId = elem.data('title');
 					var responseName = elem.attr('response-name');
 
-					var undoData = {emptyApi:'false',s:[title],responseName:responseName};
+					var undoData = {emptyApi:'false',s:[fieldName],si:[fieldId],responseName:responseName,url:'SAMLResponse'};
 					break;
 			}
 
@@ -277,7 +268,7 @@ function removeFromRequestQueue(id){
 
 				$(html).insertBefore('.irLower ul');
 				$('#request-undo').click(function(){
-					$.post("request/addToQueue", undoData);
+					$.post("request/addToQueue"+undoData.url, undoData);
 					$(this).remove();
 					elem.fadeIn('fast');
 				});
@@ -292,6 +283,7 @@ function clearRequestQueue(){
 			$('#request-popup').find('.clearQueue').fadeOut('fast');
 			$('#request-popup').find('h3').html('Requested Items: 0');
 			$('.irLower').find('ul.cart').find('li').fadeOut('fast');
+			$('.irLower').find('ul.cart').find('h4').fadeOut('fast');
 			$('.irLower').find('#request-undo').fadeOut('fast');
 			$('<div class="cart-cleared">Request items removed.</div>').insertBefore('.irLower ul.cart');
 		});
@@ -316,40 +308,63 @@ function addToQueue(elem, displayCart){
 		if (i == loadingTexts.length) i = 0;
 	}, 250);
 
+	var arrTerms = [{
+		title: $(elem).data('title'),
+		id: $(elem).data('rid'),
+		vocabId: $(elem).data('vocabid')
+	}];
+	$(elem).parent().find('.checkBoxes').find('input').each(function() {
+		if ($(this).prop("checked")) {
+
+			for (var i = 0; i < arrTerms.length; i++) {
+				if (arrTerms[i].id == $(this).val()) {
+					return;
+				}
+			}
+
+			arrTerms.push({
+				title: $(this).data('title'),
+				id: $(this).val(),
+				vocabId: $(this).data('vocabid')
+			});
+		}
+	});
+
+	$.post("/request/addToQueueBusinessTerms", {emptyApi:'false',t:arrTerms})
+		.done(function(data) {
+			clearInterval(loadingTextInterval);
+			$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
+			$(elem).closest('.resultItem').find('input[type=checkbox]').prop('checked', false);
+			if (displayCart) {
+				showRequestQueue();
+			}
+			updateQueueSize();
+		});
+}
+function addToQueueAPI(elem, displayCart){
+	var i = 0;
+	var loadingTexts = ['Working on it   ','Working on it.  ','Working on it.. ','Working on it...'];
+	var loadingTextInterval = setInterval(function() {
+		$(elem).parent().find('.requestAccess').attr('value', loadingTexts[i]);
+		i++;
+		if (i == loadingTexts.length) i = 0;
+	}, 250);
+
 	if ($(elem).attr('api') == 'false') {
-		var arrTerms = [{
-			title: $(elem).data('title'),
-			id: $(elem).data('rid'),
-			vocabId: $(elem).data('vocabid')
-		}];
 		var arrFields = [];
+		var arrFieldIds = [];
 		var apiHost = $(elem).attr('data-apiHost');
 		var apiPath = $(elem).attr('data-apiPath');
+		var authorizedByFieldset = $(elem).attr('data-authorizedByFieldset');
 
 		$(elem).parent().find('.checkBoxes').find('input').each(function(){
 			if($(this).prop("checked") && $(this).prop("name") != "toggleCheckboxes"){
-
-				if (!$(this).val()) {		// For an API field with no Business Term:
-					arrFields.push($(this).data('title'));
-				}
-
-				else {						// For a Business Term:
-					for (var i = 0; i < arrTerms.length; i++) {
-						if (arrTerms[i].id == $(this).val()) {
-							return;		// continue;
-						}
-					}
-
-					arrTerms.push({
-						title: $(this).data('title'),
-						id: $(this).val(),
-						vocabId: $(this).data('vocabid')
-					});
-				}
+				arrFields.push($(this).data('name'));
+				arrFieldIds.push($(this).data('fieldId'));
 			}
 		});
-		if ((arrTerms.length * 3) + arrFields.length < 500) {
-			$.post("/request/addToQueue", {emptyApi:'false', t:arrTerms, f:arrFields, apiHost:apiHost, apiPath:apiPath})
+		if (arrFields.length < 500) {
+			$.post("/request/addToQueueAPI", {emptyApi:'false', f:arrFields, fi:arrFieldIds, apiHost:apiHost, apiPath:apiPath, afs:authorizedByFieldset})
 				.done(function(data) {
 					clearInterval(loadingTextInterval);
 					$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
@@ -360,8 +375,8 @@ function addToQueue(elem, displayCart){
 					updateQueueSize();
 			});
 		} else {
-			largeAddProgressSetUp(arrTerms.length, arrFields.length);
-			largeAddToQueue(arrTerms, arrFields, apiHost, apiPath)
+			largeAddProgressSetUp(arrFields.length);
+			largeAddToQueueAPI(arrFields, arrFieldIds, apiHost, apiPath, authorizedByFieldset)
 				.then(function(data) {
 					clearInterval(loadingTextInterval);
 					$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
@@ -376,7 +391,7 @@ function addToQueue(elem, displayCart){
 		// Add an API without specified fields to cart.
 		var arrTitle = [$(elem).attr('data-apiPath')];
 		var apiHost = $(elem).attr('data-apiHost');
-		$.post("/request/addToQueue", {emptyApi:'true', t:arrTitle, apiHost:apiHost})
+		$.post("/request/addToQueueEmptyAPI", {emptyApi:'true', t:arrTitle, apiHost:apiHost})
 			.done(function(data) {
 				clearInterval(loadingTextInterval);
 				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
@@ -387,41 +402,30 @@ function addToQueue(elem, displayCart){
 		});
 	}
 }
-function largeAddToQueue(arrTerms, arrFields, apiHost, apiPath, termsStride = 75, fieldsStride = 150) {
-	if (arrTerms.length > termsStride) {
+function largeAddToQueueAPI(arrFields, arrFieldIds, apiHost, apiPath, authorizedByFieldset, fieldsStride = 150) {
+	if (arrFields.length > fieldsStride) {
 		return new Promise(function(resolve) {
-			var request = $.post("/request/addToQueue", {emptyApi:'false', t:arrTerms.slice(0, termsStride), f:[], apiHost:apiHost, apiPath:apiPath})
+			var request = $.post("/request/addToQueueAPI", {emptyApi:'false', f:arrFields.slice(0, fieldsStride), fi:arrFieldIds.slice(0, fieldsStride), apiHost:apiHost, apiPath:apiPath, afs:authorizedByFieldset})
 				.then(() => {
 					largeAddProgressIncrement();
 				});
-			var recur = largeAddToQueue(arrTerms.slice(termsStride), arrFields, apiHost, apiPath, termsStride, fieldsStride);
+			var recur = largeAddToQueueAPI(arrFields.slice(fieldsStride), arrFieldIds.slice(fieldsStride), apiHost, apiPath, authorizedByFieldset, fieldsStride);
 
 			Promise.all([request, recur]).then(() => resolve());
-			});
-	}
-	else if (arrFields.length > fieldsStride) {
-		return new Promise(function(resolve) {
-			var request = $.post("/request/addToQueue", {emptyApi:'false', t:[], f:arrFields.slice(0, fieldsStride), apiHost:apiHost, apiPath:apiPath})
-				.then(() => {
-					largeAddProgressIncrement();
-				});
-			var recur = largeAddToQueue(arrTerms, arrFields.slice(fieldsStride), apiHost, apiPath, termsStride, fieldsStride);
-
-			Promise.all([request, recur]).then(() => resolve());
-			});
+		});
 	}
 	else {
 		return new Promise(function(resolve) {
-			$.post("/request/addToQueue", {emptyApi:'false', t:arrTerms, f:arrFields, apiHost:apiHost, apiPath:apiPath})
+			$.post("/request/addToQueueAPI", {emptyApi:'false', f:arrFields, fi:arrFieldIds, apiHost:apiHost, apiPath:apiPath, afs:authorizedByFieldset})
 				.then(() => {
 					largeAddProgressIncrement();
 					resolve();
 				});
-			});
+		});
 	}
 }
-function largeAddProgressSetUp(termsSize, fieldsSize, termsStride = 75, fieldsStride = 150) {
-	var denominator = Math.floor(termsSize / termsStride) + Math.floor(fieldsSize / fieldsStride) + 1;
+function largeAddProgressSetUp(fieldsSize, fieldsStride = 150) {
+	var denominator = Math.floor(fieldsSize / fieldsStride) + 1;
 
 	var html = '<strong>This will take a moment... (<span id="progress-numerator">0</span>/'+denominator+')</strong>'+
 				'<progress id="progress-bar" value="0" max="1" data-numerator="0" data-denominator="'+denominator+'">0% done</progress>';
@@ -452,39 +456,20 @@ function addToQueueDBTable(elem, displayCart) {
 		if (i == loadingTexts.length) i = 0;
 	}, 250);
 
-	var arrTerms = [{
-		title: $(elem).data('title'),
-		id: $(elem).data('rid'),
-		vocabId: $(elem).data('vocabid')
-	}];
 	var arrColumns = [];
+	var arrColumnIds = [];
+	var databaseName = $(elem).data('databasename');
 	var schemaName = $(elem).data('schemaname');
 	var tableName = $(elem).data('tablename');
 
 	$(elem).parent().find('.checkBoxes').find('input').each(function(){
 		if($(this).prop("checked") && $(this).prop("name") != "toggleCheckboxes"){
-
-			if (!$(this).val()) {		// For a column with no Business Term:
-				arrColumns.push($(this).data('title'));
-			}
-
-			else {						// For a Business Term:
-				for (var i = 0; i < arrTerms.length; i++) {
-					if (arrTerms[i].id == $(this).val()) {
-						return;		// continue;
-					}
-				}
-
-				arrTerms.push({
-					title: $(this).data('title'),
-					id: $(this).val(),
-					vocabId: $(this).data('vocabid')
-				});
-			}
+			arrColumns.push($(this).data('name'));
+			arrColumnIds.push($(this).data('columnId'));
 		}
 	});
-	if ((arrTerms.length * 3) + arrColumns.length < 500) {
-		$.post("/request/addToQueue", {emptyApi:'false', t:arrTerms, c:arrColumns, schemaName:schemaName, tableName:tableName})
+	if (arrColumns.length < 500) {
+		$.post("/request/addToQueueDBTable", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, databaseName:databaseName, schemaName:schemaName, tableName:tableName})
 			.done(function(data) {
 				clearInterval(loadingTextInterval);
 				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
@@ -495,8 +480,8 @@ function addToQueueDBTable(elem, displayCart) {
 				updateQueueSize();
 		});
 	} else {
-		largeAddProgressSetUp(arrTerms.length, arrColumns.length);
-		largeAddToQueueDBTable(arrTerms, arrColumns, schemaName, tableName)
+		largeAddProgressSetUp(arrColumns.length);
+		largeAddToQueueDBTable(arrColumns, arrColumnIds, databaseName, schemaName, tableName)
 			.then(function(data) {
 				clearInterval(loadingTextInterval);
 				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
@@ -508,32 +493,88 @@ function addToQueueDBTable(elem, displayCart) {
 			});
 	}
 }
-function largeAddToQueueDBTable(arrTerms, arrColumns, schemaName, tableName, termsStride = 75, columnsStride = 150) {
-	if (arrTerms.length > termsStride) {
+function largeAddToQueueDBTable(arrColumns, arrColumnIds, databaseName, schemaName, tableName, columnsStride = 150) {
+	if (arrColumns.length > columnsStride) {
 		return new Promise(function(resolve) {
-			var request = $.post("/request/addToQueue", {emptyApi:'false', t:arrTerms.slice(0, termsStride), c:[], schemaName:schemaName, tableName:tableName})
+			var request = $.post("/request/addToQueueDBTable", {emptyApi:'false', c:arrColumns.slice(0, columnsStride), ci:arrColumnIds.slice(0, columnsStride), databaseName:databaseName, schemaName:schemaName, tableName:tableName})
 				.then(() => {
 					largeAddProgressIncrement();
 				});
-			var recur = largeAddToQueueDBTable(arrTerms.slice(termsStride), arrColumns, schemaName, tableName, termsStride, columnsStride);
-
-			Promise.all([request, recur]).then(() => resolve());
-			});
-	}
-	else if (arrColumns.length > columnsStride) {
-		return new Promise(function(resolve) {
-			var request = $.post("/request/addToQueue", {emptyApi:'false', t:[], c:arrColumns.slice(0, columnsStride), schemaName:schemaName, tableName:tableName})
-				.then(() => {
-					largeAddProgressIncrement();
-				});
-			var recur = largeAddToQueueDBTable(arrTerms, arrColumns.slice(columnsStride), schemaName, tableName, termsStride, columnsStride);
+			var recur = largeAddToQueueDBTable(arrColumns.slice(columnsStride), arrColumnIds.slice(columnsStride), databaseName, schemaName, tableName, columnsStride);
 
 			Promise.all([request, recur]).then(() => resolve());
 			});
 	}
 	else {
 		return new Promise(function(resolve) {
-			$.post("/request/addToQueue", {emptyApi:'false', t:arrTerms, c:arrColumns, schemaName:schemaName, tableName:tableName})
+			$.post("/request/addToQueueDBTable", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, databaseName:databaseName, schemaName:schemaName, tableName:tableName})
+				.then(() => {
+					largeAddProgressIncrement();
+					resolve();
+				});
+			});
+	}
+}
+function addToQueueVirtualDataset(elem, displayCart) {
+	var i = 0;
+	var loadingTexts = ['Working on it   ','Working on it.  ','Working on it.. ','Working on it...'];
+	var loadingTextInterval = setInterval(function() {
+		$(elem).parent().find('.requestAccess').attr('value', loadingTexts[i]);
+		i++;
+		if (i == loadingTexts.length) i = 0;
+	}, 250);
+
+	var arrColumns = [];
+	var arrColumnIds = [];
+	var datasetName = $(elem).data('datasetname');
+	var datasetId = $(elem).data('datasetid');
+
+	$(elem).parent().find('.checkBoxes').find('input').each(function(){
+		if($(this).prop("checked") && $(this).prop("name") != "toggleCheckboxes"){
+			arrColumns.push($(this).data('name'));
+			arrColumnIds.push($(this).data('columnId'));
+		}
+	});
+	if (arrColumns.length < 500) {
+		$.post("/request/addToQueueVirtualDataset", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, datasetName:datasetName, datasetId:datasetId})
+			.done(function(data) {
+				clearInterval(loadingTextInterval);
+				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
+				$(elem).closest('.resultItem').find('input[type=checkbox]').prop('checked', false);
+				if (displayCart) {
+					showRequestQueue();
+				}
+				updateQueueSize();
+		});
+	} else {
+		largeAddProgressSetUp(arrColumns.length);
+		largeAddToQueueVirtualDataset(arrColumns, arrColumnIds, datasetName, datasetId)
+			.then(function(data) {
+				clearInterval(loadingTextInterval);
+				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
+				$(elem).closest('.resultItem').find('input[type=checkbox]').prop('checked', false);
+				if (displayCart) {
+					showRequestQueue();
+				}
+				updateQueueSize();
+			});
+	}
+}
+function largeAddToQueueVirtualDataset(arrColumns, arrColumnIds, datasetName, datasetId, columnsStride = 150) {
+	if (arrColumns.length > columnsStride) {
+		return new Promise(function(resolve) {
+			var request = $.post("/request/addToQueueVirtualDataset", {emptyApi:'false', c:arrColumns.slice(0, columnsStride), ci:arrColumnIds.slice(0, columnsStride), datasetName:datasetName, datasetId:datasetId})
+				.then(() => {
+					largeAddProgressIncrement();
+				});
+			var recur = largeAddToQueueVirtualDataset(arrColumns.slice(columnsStride), arrColumnIds.slice(columnsStride), datasetName, datasetId, columnsStride);
+
+			Promise.all([request, recur]).then(() => resolve());
+			});
+	}
+	else {
+		return new Promise(function(resolve) {
+			$.post("/request/addToQueueVirtualDataset", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, datasetName:datasetName, datasetId:datasetId})
 				.then(() => {
 					largeAddProgressIncrement();
 					resolve();
@@ -550,37 +591,17 @@ function addToQueueSAMLResponse(elem, displayCart) {
 		if (i == loadingTexts.length) i = 0;
 	}, 250);
 
-	var arrTerms = [{
-		title: $(elem).data('title'),
-		id: $(elem).data('rid'),
-		vocabId: $(elem).data('vocabid')
-	}];
 	var arrFields = [];
+	var arrFieldIds = [];
 	var responseName = $(elem).data('responsename');
 
 	$(elem).parent().find('.checkBoxes').find('input').each(function(){
 		if($(this).prop("checked") && $(this).prop("name") != "toggleCheckboxes"){
-
-			if (!$(this).val()) {		// For a field with no Business Term:
-				arrFields.push($(this).data('title'));
-			}
-
-			else {						// For a Business Term:
-				for (var i = 0; i < arrTerms.length; i++) {
-					if (arrTerms[i].id == $(this).val()) {
-						return;		// continue;
-					}
-				}
-
-				arrTerms.push({
-					title: $(this).data('title'),
-					id: $(this).val(),
-					vocabId: $(this).data('vocabid')
-				});
-			}
+			arrFields.push($(this).data('name'));
+			arrFieldIds.push($(this).data('fieldId'));
 		}
 	});
-	$.post("/request/addToQueue", {emptyApi:'false', t:arrTerms, s:arrFields, responseName:responseName})
+	$.post("/request/addToQueueSAMLResponse", {emptyApi:'false', s:arrFields, si:arrFieldIds, responseName:responseName})
 		.done(function(data) {
 			clearInterval(loadingTextInterval);
 			$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
