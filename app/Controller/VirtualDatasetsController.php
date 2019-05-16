@@ -2,6 +2,7 @@
 
 class VirtualDatasetsController extends AppController {
 	public $uses = ['CollibraAPI', 'BYUAPI'];
+	public $helpers = ['VirtualDataset'];
 
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -23,56 +24,39 @@ class VirtualDatasetsController extends AppController {
 		}
 	}
 
-	public function loadDremioSpace($spaceId = null) {
-		$this->autoRender = false;
-		if ($spaceId === null) {
-			return json_encode($this->CollibraAPI->getDremioSpaces());
-		} else {
-			return json_encode($this->CollibraAPI->getDremioSpaceDetails($spaceId));
-		}
-	}
-
-	public function loadFolder($folderId) {
-		$this->autoRender = false;
-		return json_encode($this->CollibraAPI->getFolder($folderId));
-	}
-
 	public function index() {
 		$this->checkAuthorized();
-		if ($this->Session->check('recentVirtualDatasets')) {
-			$this->set('recent', $this->Session->read('recentVirtualDatasets'));
+		if ($this->Session->check('recentSpaces')) {
+			$this->set('recent', $this->Session->read('recentSpaces'));
 		}
 
 		$matchAuthorized = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04', 'infohub-match');
-		$this->set('matchAuthorized', $matchAuthorized);
+
+		$spaces = $this->CollibraAPI->getDremioSpaces();
+		$this->set(compact('matchAuthorized', 'spaces'));
 	}
 
-	public function view($datasetId) {
+	public function view($spaceId) {
 		$this->checkAuthorized();
-		$dataset = $this->CollibraAPI->getVirtualDataset($datasetId);
-		$dataset->columns = $this->CollibraAPI->getVirtualDatasetColumns($datasetId);
+		$space = $this->CollibraAPI->getDremioSpaceDetails($spaceId, true);
 		$matchAuthorized = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04', 'infohub-match');
+		$this->set(compact('space', 'matchAuthorized'));
 
-		$breadcrumbs = substr($dataset->name, 0, strrpos($dataset->name, '>') - 1);
-		$datasetNameOnly = substr($dataset->name, strrpos($dataset->name, '>') + 2);
-		$this->set(compact('dataset', 'matchAuthorized', 'breadcrumbs', 'datasetNameOnly'));
-
-		$arrRecent = $this->Session->check('recentVirtualDatasets') ? $this->Session->read('recentVirtualDatasets') : [];
-		array_unshift($arrRecent, ['datasetName' => $dataset->name, 'datasetId' => $dataset->id]);
+		$arrRecent = $this->Session->check('recentSpaces') ? $this->Session->read('recentSpaces') : [];
+		array_unshift($arrRecent, ['spaceName' => $space->spaceName, 'spaceId' => $space->spaceId]);
 		$arrRecent = array_unique($arrRecent, SORT_REGULAR);
-		$this->Session->write('recentVirtualDatasets', array_slice($arrRecent, 0, 5));
+		$this->Session->write('recentSpaces', array_slice($arrRecent, 0, 5));
 	}
 
-	public function viewRequested($requestId, $datasetId) {
+	public function viewRequested($requestId, $spaceId) {
 		$this->checkAuthorized();
-		$dataset = $this->CollibraAPI->getVirtualDataset($datasetId);
-		$dataset->columns = $this->CollibraAPI->getVirtualDatasetColumns($datasetId);
+		$space = $this->CollibraAPI->getDremioSpaceDetails($spaceId, true, $nameLookup=isset($this->request->query['n']));
 
 		$request = $this->CollibraAPI->getRequestDetails($requestId);
 		$requestedAssetIds = [];
 		foreach ($request->requestedDataAssets as $asset) {
 			array_push($requestedAssetIds, $asset->reqDataId);
 		}
-		$this->set(compact('dataset', 'request', 'requestedAssetIds'));
+		$this->set(compact('space', 'request', 'requestedAssetIds'));
 	}
 }
