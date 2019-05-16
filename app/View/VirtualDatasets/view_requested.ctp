@@ -61,9 +61,9 @@
 </style>
 <div id="apiBody" class="innerDataSet">
 	<div id="searchResults">
-		<h1 class="headerTab"><?= $space->name ?></h1>
+		<h1 class="headerTab"><?= $space->spaceName ?></h1>
 		<div class="clear" style="height:20px;"></div>
-        <h2 class="headerTab">Requested in <?= $request->assetName ?></h2>
+        <h2 class="headerTab">Requested in <?= $this->Html->link($request->assetName, array_merge(['controller' => 'request', 'action' => 'view', $request->id])) ?></h2>
         <div class="clear"></div>
         <div class="apiHelp">Requested fields are highlighted.</div>
 		<div id="srLower" class="whiteBox">

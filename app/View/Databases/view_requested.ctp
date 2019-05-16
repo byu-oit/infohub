@@ -28,7 +28,7 @@
 	<div id="searchResults">
 		<h1 class="headerTab"><a href="/databases/database/<?= $databaseName ?>"><?= $databaseName ?></a> > <a href="/databases/schema/<?= $databaseName.'/'.$schemaName ?>"><?= $schemaName ?></a> > <?= $tableName ?></h1>
 		<div class="clear" style="height:20px;"></div>
-        <h2 class="headerTab">Requested in <?= $request->assetName ?></h2>
+        <h2 class="headerTab">Requested in <?= $this->Html->link($request->assetName, array_merge(['controller' => 'request', 'action' => 'view', $request->id])) ?></h2>
         <div class="clear"></div>
         <div class="apiHelp">Requested fields are highlighted.</div>
 		<div id="srLower" class="whiteBox">
