@@ -166,7 +166,7 @@ class VirtualDatasetHelper extends AppHelper {
         echo '</td>';
         echo '<td>';
             $folderPath = explode('.', $folder->folderName);
-            echo str_repeat('&nbsp;', 12 * (count($folderPath) - 1));
+            echo str_repeat('&nbsp;', 12 * (count($folderPath) - 2));
             echo end($folderPath);
         echo '</td>';
         echo '<td></td><td></td><td></td></tr>';
@@ -188,7 +188,7 @@ class VirtualDatasetHelper extends AppHelper {
         echo '</td>';
         echo '<td>';
             $datasetPath = explode('.', $dataset->name);
-            echo str_repeat('&nbsp;', 12 * (count($datasetPath) - 1));
+            echo str_repeat('&nbsp;', 12 * (count($datasetPath) - 2));
             echo end($datasetPath);
         echo '</td>';
         echo '<td></td><td></td><td></td></tr>';
@@ -201,7 +201,7 @@ class VirtualDatasetHelper extends AppHelper {
             if (in_array($column->columnId, $requestedAssetIds)) echo ' class="requested"';
             echo '><td></td><td>';
                 $columnPath = explode('.', $column->columnName);
-                for ($i = 0; $i < count($columnPath) - 1; $i++) {
+                for ($i = 0; $i < count($columnPath) - 2; $i++) {
                     echo str_repeat('&nbsp;', 12);
                 }
                 echo end($columnPath);
