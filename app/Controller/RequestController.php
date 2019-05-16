@@ -305,15 +305,17 @@ class RequestController extends AppController {
 			$newTermsAdded = 0;
 			$arrColumns = $this->request->data['c'];
 			$arrColumnIds = $this->request->data['ci'];
-			$datasetName = $this->request->data['datasetName'];
-			$datasetId = $this->request->data['datasetId'];
+			$arrDatasets = $this->request->data['d'];
+			$arrDatasetIds = $this->request->data['di'];
+			$spaceName = $this->request->data['sn'];
+			$spaceId = $this->request->data['si'];
 
 			$arrQueue = $this->Session->read('queue');
 
-			foreach ($arrColumnIds as $index => $columnId) {
+			foreach ($arrColumnIds as $i => $columnId) {
 				if (empty($arrQueue['virtualColumns'][$columnId])) {
 					$newTermsAdded++;
-					$arrQueue['virtualColumns'][$columnId] = ['name' => end((explode(" > ", $arrColumns[$index]))), 'fullName' => $arrColumns[$index], 'datasetName' => $datasetName, 'datasetId' => $datasetId];
+					$arrQueue['virtualColumns'][$columnId] = ['name' => end((explode(".", $arrColumns[$i]))), 'fullName' => $arrColumns[$i], 'datasetName' => $arrDatasets[$i], 'datasetId' => $arrDatasetIds[$i], 'spaceName' => $spaceName, 'spaceId' => $spaceId];
 				}
 			}
 
@@ -1988,7 +1990,7 @@ class RequestController extends AppController {
 				if (empty($column->businessTerm[0]->termId)) {
 					if (array_key_exists($column->columnId, $arrQueue['virtualColumns'])) {
 						array_push($postData[$reqAssetsString], $column->columnId);
-						$virtualDatasets[$datasetName]['unmapped']['requested'][] = end((explode(' > ', $column->columnName)));
+						$virtualDatasets[$datasetName]['unmapped']['requested'][] = end((explode('.', $column->columnName)));
 					}
 				} else {
 					if (array_key_exists($column->columnId, $arrQueue['virtualColumns'])) {

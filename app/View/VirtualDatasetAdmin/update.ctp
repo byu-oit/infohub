@@ -54,40 +54,40 @@
 		}
 
 		var postData = $('form#datasetForm').serializeObject();
-		var datasetId = postData.data.Dataset.datasetId;
-		var numElements = postData.data.Dataset.elements.length;
+		var spaceId = postData.data.Space.spaceId;
+		var numElements = postData.data.Space.elements.length;
 
 		if (numElements < 100) {
 
-			$.post('/virtualDatasetAdmin/update/'+datasetId, postData)
+			$.post('/virtualDatasetAdmin/update/'+spaceId, postData)
 				.done(function(data) {
 					data = JSON.parse(data);
 					if (!data.success) {
 						window.location.reload(true);
 					}
-					window.location.href = '/virtualDatasets/view/'+datasetId;
+					window.location.href = '/virtualDatasets/view/'+spaceId;
 				});
 
 		} else {
 			window.postSuccess = true;
-			largeDatasetUpdate(postData)
+			largeSpaceUpdate(postData)
 				.then(function(data) {
 					if (!window.postSuccess) {
 						window.location.reload(true);
 					} else {
-						window.location.href = '/virtualDatasets/view/'+datasetId;
+						window.location.href = '/virtualDatasets/view/'+spaceId;
 					}
 				});
 		}
 	}
 
-	function largeDatasetUpdate(postData, stride = 100) {
-		if (postData.data.Dataset.elements.length > stride) {
+	function largeSpaceUpdate(postData, stride = 100) {
+		if (postData.data.Space.elements.length > stride) {
 			return new Promise(function(resolve) {
-				var postDataElements = postData.data.Dataset.elements;
+				var postDataElements = postData.data.Space.elements;
 
-				postData.data.Dataset.elements = postDataElements.slice(0, stride);
-				var request = $.post('/virtualDatasetAdmin/update/'+postData.data.Dataset.datasetId, postData)
+				postData.data.Space.elements = postDataElements.slice(0, stride);
+				var request = $.post('/virtualDatasetAdmin/update/'+postData.data.Space.spaceId, postData)
 					.then(function(data) {
 						data = JSON.parse(data);
 						if (!data.success) {
@@ -95,15 +95,15 @@
 						}
 					});
 
-				postData.data.Dataset.elements = postDataElements.slice(stride);
-				var recur = largeDatasetUpdate(postData);
+				postData.data.Space.elements = postDataElements.slice(stride);
+				var recur = largeSpaceUpdate(postData);
 
 				Promise.all([request, recur]).then(() => resolve());
 			});
 		}
 		else {
 			return new Promise(function(resolve) {
-				$.post('/virtualDatasetAdmin/update/'+postData.data.Dataset.datasetId, postData)
+				$.post('/virtualDatasetAdmin/update/'+postData.data.Space.spaceId, postData)
 					.then(function(data) {
 						data = JSON.parse(data);
 						if (!data.success) {
@@ -140,13 +140,13 @@
 
 </script>
 <style type="text/css">
-	table.dataset-columns td {
+	table.space-columns td {
 		padding-bottom: 0.5em;
 	}
-	table.dataset-columns tr:hover {
+	table.space-columns tr:hover {
 		background-color: #eee
 	}
-	table.dataset-columns tr.header:hover {
+	table.space-columns tr.header:hover {
 		background-color: inherit;
 	}
 	.resultItem #datasetForm .lower-btn {
@@ -156,14 +156,14 @@
 </style>
 <div id="apiBody" class="innerDataSet">
 	<div id="searchResults">
-		<h1 class="headerTab"><?= $dataset->name ?></h1>
+		<h1 class="headerTab"><?= $space->spaceName ?></h1>
 		<div class="clear"></div>
 		<div class="datasetHelp" style="cursor:default;">Can't find a matching business term? Check the "New" box to propose a new one.<br>Highlighted rows are automatic suggestions. Be sure to review these before submitting.</div>
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
-				<?= $this->Form->create('Dataset', ['id' => 'datasetForm']) ?>
-					<?= $this->Form->input('datasetId', ['type' => 'hidden']) ?>
-					<table class="dataset-columns">
+				<?= $this->Form->create('Space', ['id' => 'datasetForm']) ?>
+					<?= $this->Form->input('spaceId', ['type' => 'hidden', 'value' => $space->spaceId]) ?>
+					<table class="space-columns">
 						<tr class="header">
 							<th>Column</th>
 							<th>Business Term</th>
@@ -171,62 +171,21 @@
 							<th>Glossary</th>
 							<th>Definition</th>
 						</tr>
-						<?php foreach ($dataset->columns as $index => $column): ?>
-							<tr id="tr<?=$index?>">
-								<td><?php
-									$columnPath = explode(' > ', $column->columnName);
-									echo end($columnPath);
-								?></td>
-								<?php if (empty($column->businessTerm[0])): ?>
-									<td>
-										<input type="hidden" name="data[Dataset][elements][<?=$index?>][id]" value="<?=$column->columnId?>" id="DatasetElements<?=$index?>Id">
-										<input type="hidden" name="data[Dataset][elements][<?=$index?>][name]" class="data-label" data-index="<?=$index?>" value="<?=$column->columnName?>" id="DatasetElements<?=$index?>Name">
-										<input type="hidden" name="data[Dataset][elements][<?=$index?>][business_term]" class="bt" data-index="<?=$index?>" id="DatasetElements<?=$index?>BusinessTerm">
-										<div class="term-wrapper display-loading" id="DatasetElements<?=$index?>SearchCell">
-											<input type="text" class="bt-search" data-index="<?=$index?>" placeholder="Search for a term"></input>
-											<div class="selected-term"><span class="term-name"></span>  <span class="edit-opt" data-index="<?=$index?>" title="Select new term"></span></div>
-											<div class="loading">Loading...</div>
-										</div>
-								<?php else: ?>
-									<td>
-										<input type="hidden" name="data[Dataset][elements][<?=$index?>][id]" value="<?=$column->columnId?>" id="DatasetElements<?=$index?>Id">
-										<input type="hidden" name="data[Dataset][elements][<?=$index?>][name]" class="data-label" data-index="<?=$index?>" value="<?=$column->columnName?>" id="DatasetElements<?=$index?>Name"	data-pre-linked="true" data-orig-context="<?=$column->businessTerm[0]->termCommunityName?>" data-orig-id="<?=$column->businessTerm[0]->termId?>" data-orig-name="<?=$column->businessTerm[0]->term?>" data-orig-def="<?=preg_replace('/"/', '&quot;', $column->businessTerm[0]->termDescription)?>">
-										<input type="hidden" name="data[Dataset][elements][<?=$index?>][previous_business_term]" value="<?=$column->businessTerm[0]->termId?>">
-										<input type="hidden" name="data[Dataset][elements][<?=$index?>][previous_business_term_relation]" value="<?=$column->businessTerm[0]->termRelationId?>">
-										<input type="hidden" name="data[Dataset][elements][<?=$index?>][business_term]" value="<?=$column->businessTerm[0]->termId?>" class="bt" data-index="<?=$index?>" id="DatasetElements<?=$index?>BusinessTerm" data-orig-term="<?=$column->businessTerm[0]->termId?>">
-										<div class="term-wrapper" id="DatasetElements<?=$index?>SearchCell">
-											<input type="text" class="bt-search" data-index="<?=$index?>" placeholder="Search for a term"></input>
-											<div class="selected-term"><span class="term-name"><?=$column->businessTerm[0]->term?></span>  <span class="edit-opt" data-index="<?=$index?>" title="Select new term"></span></div>
-											<div class="loading">Loading...</div>
-										</div>
-								<?php endif ?>
-									<input type="text" name="data[Dataset][elements][<?=$index?>][propName]" class="bt-new-name" id="DatasetElements<?=$index?>PropName" data-index="<?=$index?>" placeholder="Proposed name for the term"></input>
-								</td>
-								<td>
-									<input type="checkbox" name="data[Dataset][elements][<?=$index?>][new]" id="DatasetElements<?=$index?>New" class="new-check" data-index="<?=$index?>">
-								</td>
-								<td class="glossary-cell">
-									<div class="view-context<?=$index?>" style="white-space: nowrap"></div>
-									<select name="data[Dataset][elements][<?=$index?>][propGlossary]" class="bt-new-glossary" id="DatasetElements<?=$index?>PropGlossary">
-										<option value="">Select a glossary</option>
-										<option value="">I don't know</option>
-											<?php foreach ($glossaries as $glossary) {
-												echo '<option value="'.$glossary->glossaryId.'">'.$glossary->glossaryName.'</option>';
-											} ?>
-									</select>
-								</td>
-								<td>
-									<div id="view-definition<?=$index?>" class="view-definition"></div>
-									<textarea name="data[Dataset][elements][<?=$index?>][propDefinition]" class="bt-new-definition" id="DatasetElements<?=$index?>PropDefinition" placeholder="Propose a definition for the term" rows="1" style="width:100%;"></textarea>
-								</td>
-							</tr>
-						<?php endforeach ?>
+						<?php
+						$index = 0;
+						foreach ($space->subfolders as $folder) {
+							$this->VirtualDataset->printFolderUpdate($folder, $index, $glossaries);
+						}
+						foreach ($space->datasets as $dataset) {
+							$this->VirtualDataset->printDatasetUpdate($dataset, $index, $glossaries);
+						}
+						?>
 					</table>
-					<a class="lower-btn grow" href="/virtualDatasets/view/<?=$dataset->id?>">Cancel</a>
+					<a class="lower-btn grow" href="/virtualDatasets/view/<?=$space->spaceId?>">Cancel</a>
 					<div class="update-submit grow" onclick="chunkPostData()">Save</div>
 				<?= $this->Form->end() ?>
 			</div>
 		</div>
 	</div>
 </div>
-<?= $this->element('dataset_match') ?>
+<?= $this->element('space_match') ?>

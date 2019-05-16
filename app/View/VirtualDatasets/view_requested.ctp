@@ -15,92 +15,76 @@
 	function hidePendingAproval() {
 		$('#pendingApprovalMessage').remove();
 	}
+
+	function toggleContainerCollapse(elem) {
+		var $elem = $(elem);
+		var collapsing = !$elem.data('collapsed');
+		var arrContainerPaths = [$elem.closest('tr').data('name')];
+		$elem.closest('tbody').find('tr').each(function() {
+				var $this = $(this);
+				if (arrContainerPaths.includes($this.data('container-path'))) {
+					if (collapsing) {
+						$this.data('num-collapsed', $this.data('num-collapsed') + 1);
+					} else {
+						$this.data('num-collapsed', $this.data('num-collapsed') - 1);
+					}
+
+					if ($this.data('num-collapsed') == 0) {
+						$this.css('display', 'table-row');
+					} else {
+						$this.css('display', 'none');
+					}
+
+					arrContainerPaths.push($this.data('name'));
+				}
+		});
+
+		$elem.data('collapsed', collapsing);
+		$elem.toggleClass('collapsed');
+	}
+
+	function toggleContainerCollapseAll(collapsing) {
+		$('table.space-columns').find('a.container-collapse').each(function() {
+			if ($(this).data('collapsed') != collapsing) {
+				$(this).click();
+			}
+		});
+	}
 </script>
 <style type="text/css">
-	table.dataset-columns tr:hover {
+	table.space-columns tr:hover {
 		background-color: #eee
 	}
-	table.dataset-columns tr.header:hover {
+	table.space-columns tr.header:hover {
 		background-color: inherit;
 	}
 </style>
 <div id="apiBody" class="innerDataSet">
 	<div id="searchResults">
-		<h1 class="headerTab"><?= $dataset->name ?></h1>
+		<h1 class="headerTab"><?= $space->name ?></h1>
 		<div class="clear" style="height:20px;"></div>
         <h2 class="headerTab">Requested in <?= $request->assetName ?></h2>
         <div class="clear"></div>
         <div class="apiHelp">Requested fields are highlighted.</div>
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
-				<table class="dataset-columns checkBoxes view">
+				<a class="container-btn grow" onclick="toggleContainerCollapseAll(true)">Collapse All</a><a class="container-btn grow" onclick="toggleContainerCollapseAll(false)">Expand All</a>
+				<table class="space-columns checkBoxes view">
 					<tr class="header">
+						<th></th>
 						<th class="fieldColumn">Column</th>
 						<th class="termColumn">Business Term</th>
 						<th class="classificationColumn">Classification</th>
 						<th class="glossaryColumn">Glossary</th>
 					</tr>
-					<?php foreach ($dataset->columns as $column): ?>
-						<tr<?php echo in_array($column->columnId, $requestedAssetIds) ? ' class="requested"' : ''; ?>>
-                            <td><?php
-								$columnPath = explode(' > ', $column->columnName);
-								echo end($columnPath);
-							?></td>
-							<td>
-								<?php if (!empty($column->businessTerm[0])): ?>
-									<?php $termDef = nl2br(str_replace("\n\n\n", "\n\n", htmlentities(strip_tags(str_replace(['<div>', '<br>', '<br/>'], "\n", $column->businessTerm[0]->termDescription))))); ?>
-									<?= $this->Html->link($column->businessTerm[0]->term, ['controller' => 'search', 'action' => 'term', $column->businessTerm[0]->termId]) ?>
-									<div onmouseover="showTermDef(this)" onmouseout="hideTermDef()" data-definition="<?=$termDef?>" class="info"><img src="/img/iconInfo.png"></div>
-								<?php endif ?>
-							</td>
-							<td style="white-space:nowrap;">
-								<?php if (!empty($column->businessTerm[0])):
-									$classification = $column->businessTerm[0]->termClassification;
-									switch($classification){
-										case 'Public':
-										case '1 - Public':
-											$classificationTitle = 'Public';
-											$classification = 'Public';
-											break;
-										case 'Internal':
-										case '2 - Internal':
-											$classificationTitle = 'Internal';
-											$classification = 'Internal';
-											break;
-										case 'Confidential':
-										case '3 - Confidential':
-											$classificationTitle = 'Confidential';
-											$classification = 'Classified';
-											break;
-										case 'Highly Confidential':
-										case '4 - Highly Confidential':
-											$classificationTitle = 'Highly Confidential';
-											$classification = 'HighClassified';
-											break;
-										case 'Not Applicable':
-										case '0 - N/A':
-											$classificationTitle = 'Not Applicable';
-											$classification = 'NotApplicable';
-											break;
-										default:
-											$classificationTitle = 'Unspecified';
-											$classification = 'NoClassification2';
-											break;
-									}
-									echo '<img class="classIcon" src="/img/icon'.$classification.'.png">&nbsp;'.$classificationTitle;
-
-									if ($column->businessTerm[0]->approvalStatus != 'Approved') {
-										echo '&nbsp;&nbsp;<img class="pendingApprovalIcon" src="/img/alert.png" onmouseover="displayPendingApproval(this)" onmouseout="hidePendingAproval()">';
-									}
-								endif ?>
-							</td>
-							<td>
-								<?php if (!empty($column->businessTerm[0])) {
-									echo '<a href="/search/listTerms/'.$column->businessTerm[0]->termVocabularyId.'">'.$column->businessTerm[0]->termCommunityName.'</a>';
-								} ?>
-							</td>
-						</tr>
-					<?php endforeach ?>
+					<?php
+					foreach ($space->subfolders as $folder) {
+						$this->VirtualDataset->printFolderViewRequested($folder, $requestedAssetIds);
+					}
+					foreach ($space->datasets as $dataset) {
+						$this->VirtualDataset->printDatasetViewRequested($dataset, $requestedAssetIds);
+					}
+					?>
 				</table>
 			</div>
 		</div>

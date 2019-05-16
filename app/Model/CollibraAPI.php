@@ -975,7 +975,7 @@ class CollibraAPI extends Model {
 		return $results;
 	}
 
-	public function getDremioSpaceDetails($spaceId) {
+	public function getDremioSpaceDetails($spaceId, $full = false, $nameLookup = false) {
 		$tableConfig = ['TableViewConfig' => [
 			'Columns' => [
 				['Column' => ['fieldName' => 'spaceId']],
@@ -1024,11 +1024,25 @@ class CollibraAPI extends Model {
 								'operator' => 'EQUALS',
 								'value' => Configure::read('Collibra.type.dremioSpace')]]]]]]]];
 
+		if ($nameLookup) $tableConfig['TableViewConfig']['Resources']['Term']['Filter']['AND'][0]['Field']['name'] = 'spaceName';
+
 		$results = $this->fullDataTable($tableConfig);
-		return $results;
+
+		if (!$full) {
+			return $results;
+		} else {
+			for ($i = 0; $i < sizeof($results[0]->subfolders); $i++) {
+				$results[0]->subfolders[$i] = $this->getFolder($results[0]->subfolders[$i]->subfolderId, true);
+			}
+			for ($i = 0; $i < sizeof($results[0]->datasets); $i++) {
+				$results[0]->datasets[$i] = $this->getVirtualDataset($results[0]->datasets[$i]->datasetId);
+				$results[0]->datasets[$i]->columns = $this->getVirtualDatasetColumns($results[0]->datasets[$i]->id);
+			}
+			return $results[0];
+		}
 	}
 
-	public function getFolder($folderId) {
+	public function getFolder($folderId, $full = false) {
 		$tableConfig = ['TableViewConfig' => [
 			'Columns' => [
 				['Column' => ['fieldName' => 'folderId']],
@@ -1115,7 +1129,18 @@ class CollibraAPI extends Model {
 								'value' => Configure::read('Collibra.community.virtualDatasets')]]]]]]]];
 
 		$results = $this->fullDataTable($tableConfig);
-		return $results;
+		if (!$full) {
+			return $results;
+		} else {
+			for ($i = 0; $i < sizeof($results[0]->subfolders); $i++) {
+				$results[0]->subfolders[$i] = $this->getFolder($results[0]->subfolders[$i]->subfolderId, true);
+			}
+			for ($i = 0; $i < sizeof($results[0]->datasets); $i++) {
+				$results[0]->datasets[$i] = $this->getVirtualDataset($results[0]->datasets[$i]->datasetId);
+				$results[0]->datasets[$i]->columns = $this->getVirtualDatasetColumns($results[0]->datasets[$i]->id);
+			}
+			return $results[0];
+		}
 	}
 
 	public function getVirtualDataset($datasetId) {

@@ -31,7 +31,7 @@
 						}
 						var index = $(this).data('index');
 
-						updateDataset(index, selected.item, false);
+						updateSpace(index, selected.item, false);
 					}
 				})
 				.autocomplete("instance")._renderItem = function( ul, item ) {
@@ -52,10 +52,10 @@
 			var index = $(this).data('index');
 			$('#tr' + index).removeClass('automatic-match');
 
-			$('#DatasetElements' + index + 'SearchCell').toggleClass('display-search');
-			$('#DatasetElements' + index + 'SearchCell').find('.bt-search').focus();
+			$('#SpaceElements' + index + 'SearchCell').toggleClass('display-search');
+			$('#SpaceElements' + index + 'SearchCell').find('.bt-search').focus();
 
-			$('#DatasetElements' + index + 'BusinessTerm').val('');
+			$('#SpaceElements' + index + 'BusinessTerm').val('');
 			$('.view-context' + index).html('');
 			$('#view-definition' + index).html('');
 		});
@@ -63,8 +63,8 @@
 		$('.new-check').change(function() {
 			var index = $(this).data('index');
 			$('#tr'+index).toggleClass('display-new-bt');
-			if ($('#DatasetElements'+index+'SearchCell > input').val()) {
-				$('#DatasetElements'+index+'PropName').val($('#DatasetElements'+index+'SearchCell > input').val());
+			if ($('#SpaceElements'+index+'SearchCell > input').val()) {
+				$('#SpaceElements'+index+'PropName').val($('#SpaceElements'+index+'SearchCell > input').val());
 			}
 		});
 
@@ -112,16 +112,16 @@
 					}).each(function() {
 						$(this).closest('tr').find('.term-wrapper').removeClass('display-loading').addClass('display-search');
 						if (data.length != 0) {
-							updateDataset($(this).data('index'), data[0], true);
+							updateSpace($(this).data('index'), data[0], true);
 						}
 					});
 			});
 		}
 
-		function updateDataset(index, selected, automatic) {
-			$('#DatasetElements' + index + 'BusinessTerm').val(selected.name.id);
+		function updateSpace(index, selected, automatic) {
+			$('#SpaceElements' + index + 'BusinessTerm').val(selected.name.id);
 
-			var $search = $('#DatasetElements' + index + 'SearchCell');
+			var $search = $('#SpaceElements' + index + 'SearchCell');
 			$search.find('.selected-term').find('.term-name').html(selected.name.val);
 			$search.toggleClass('display-search');
 

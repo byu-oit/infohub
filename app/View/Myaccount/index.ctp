@@ -343,7 +343,7 @@
 								echo '<li><a href="/databases/viewRequested/'.$req->id.'/'.$table->tableCommName.'/'.$table->tableVocabName.'/'.$tableNameOnly.'" title="View which elements were requested from this table">'.$table->tableCommName.' > '.$table->tableName.'</a></li>';
 							}
 							foreach ($req->necessaryVirtualDatasets as $virDataset) {
-								echo '<li><a href="/virtualDatasets/viewRequested/'.$req->id.'/'.$virDataset->virDatasetId.'" title="View which elements were requested from this dataset">'.$virDataset->virDatasetName.'</a></li>';
+								echo '<li><a href="/virtualDatasets/viewRequested/'.$req->id.'/'.$virDataset->virDatasetVocabName.'?n=1" title="View which elements were requested from this dataset">'.$virDataset->virDatasetName.'</a></li>';
 							} ?>
 						</ul>
 					</div>

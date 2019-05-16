@@ -378,7 +378,7 @@
 					foreach ($asset->necessaryVirtualDatasets as $virDataset) {
 						echo '<li><a href="/virtualDatasets/viewRequested/';
 						echo isset($asset->parentId) ? $asset->parentId : $asset->id;
-						echo '/'.$virDataset->virDatasetId.'" title="View which elements were requested from this dataset">'.$virDataset->virDatasetName.'</a></li>';
+						echo '/'.$virDataset->virDatasetVocabName.'?n=1" title="View which elements were requested from this dataset">'.$virDataset->virDatasetName.'</a></li>';
 					} ?>
 				</ul>
 			</div>
