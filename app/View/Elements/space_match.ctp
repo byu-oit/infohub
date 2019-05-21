@@ -31,7 +31,7 @@
 						}
 						var index = $(this).data('index');
 
-						updateTable(index, selected.item, false);
+						updateSpace(index, selected.item, false);
 					}
 				})
 				.autocomplete("instance")._renderItem = function( ul, item ) {
@@ -52,10 +52,10 @@
 			var index = $(this).data('index');
 			$('#tr' + index).removeClass('automatic-match');
 
-			$('#ApiElements' + index + 'SearchCell').toggleClass('display-search');
-			$('#ApiElements' + index + 'SearchCell').find('.bt-search').focus();
+			$('#SpaceElements' + index + 'SearchCell').toggleClass('display-search');
+			$('#SpaceElements' + index + 'SearchCell').find('.bt-search').focus();
 
-			$('#ApiElements' + index + 'BusinessTerm').val('');
+			$('#SpaceElements' + index + 'BusinessTerm').val('');
 			$('.view-context' + index).html('');
 			$('#view-definition' + index).html('');
 		});
@@ -63,8 +63,8 @@
 		$('.new-check').change(function() {
 			var index = $(this).data('index');
 			$('#tr'+index).toggleClass('display-new-bt');
-			if ($('#ApiElements'+index+'SearchCell > input').val()) {
-				$('#ApiElements'+index+'PropName').val($('#ApiElements'+index+'SearchCell > input').val());
+			if ($('#SpaceElements'+index+'SearchCell > input').val()) {
+				$('#SpaceElements'+index+'PropName').val($('#SpaceElements'+index+'SearchCell > input').val());
 			}
 		});
 
@@ -87,8 +87,8 @@
 			.each(function() {
 				var $this = $(this);
 				var full = $this.val();
-				var period = full.lastIndexOf('.');
-				var label = full.substring(period + 1);
+				var greaterThan = full.lastIndexOf('>');
+				var label = full.substring(greaterThan + 2);
 				$this.data('label', label);
 
 				$this.closest('tr').find('.term-wrapper').removeClass('display-search').addClass('display-loading');
@@ -112,16 +112,16 @@
 					}).each(function() {
 						$(this).closest('tr').find('.term-wrapper').removeClass('display-loading').addClass('display-search');
 						if (data.length != 0) {
-							updateTable($(this).data('index'), data[0], true);
+							updateSpace($(this).data('index'), data[0], true);
 						}
 					});
 			});
 		}
 
-		function updateTable(index, selected, automatic) {
-			$('#ApiElements' + index + 'BusinessTerm').val(selected.name.id);
+		function updateSpace(index, selected, automatic) {
+			$('#SpaceElements' + index + 'BusinessTerm').val(selected.name.id);
 
-			var $search = $('#ApiElements' + index + 'SearchCell');
+			var $search = $('#SpaceElements' + index + 'SearchCell');
 			$search.find('.selected-term').find('.term-name').html(selected.name.val);
 			$search.toggleClass('display-search');
 

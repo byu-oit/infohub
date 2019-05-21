@@ -57,8 +57,26 @@ class DatabaseAdminController extends AppController {
 			$databaseName = $this->request->data['database'];
 			$schemaName = $this->request->data['schema'];
 			$tableName = $this->request->data['table'];
-			$oracleColumns = $this->BYUAPI->oracleColumns($databaseName, $schemaName, $tableName);
-			return json_encode($this->DataWarehouse->syncDataWarehouse($databaseName, $schemaName, $tableName, $oracleColumns));
+			if (!empty($tableName)) {
+				$oracleColumns = $this->BYUAPI->oracleColumns($databaseName, $schemaName, $tableName);
+				return json_encode($this->DataWarehouse->syncDataWarehouse($databaseName, $schemaName, $tableName, $oracleColumns));
+			} else {
+				$success = true;
+				$errors = [];
+				$oracleSchema = $this->BYUAPI->oracleColumns($databaseName, $schemaName);
+				foreach ($oracleSchema as $tableName => $oracleColumns) {
+					$resp = $this->DataWarehouse->syncDataWarehouse($databaseName, $schemaName, $tableName, $oracleColumns);
+					if (!$resp['success']) {
+						$success = false;
+						array_push($errors, $resp['message']);
+					}
+				}
+				if ($success) {
+					return json_encode(['success' => 1, 'message' => 'The schema '.$databaseName.' > '.$schemaName.' has been imported successfully.', 'redirect' => 1]);
+				} else {
+					return json_encode(['success' => 0, 'message' => $errors, 'redirect' => 0]);
+				}
+			}
 		}
 	}
 }

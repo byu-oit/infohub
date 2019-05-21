@@ -248,10 +248,10 @@ function removeFromRequestQueue(id){
 				case 'virtualColumn':
 					var columnName = elem.data('name');
 					var columnId = elem.data('title');
-					var tableName = elem.attr('table-name');
-					var tableId = elem.attr('table-id');
+					var datasetName = elem.attr('dataset-name');
+					var datasetId = elem.attr('dataset-id');
 
-					var undoData = {emptyApi:'false',c:[tableName+' > '+columnName],ci:[columnId],tableName:tableName,tableId:tableId,url:'VirtualTable'};
+					var undoData = {emptyApi:'false',c:[datasetName+'.'+columnName],ci:[columnId],datasetName:datasetName,datasetId:datasetId,url:'VirtualDataset'};
 					break;
 				case 'samlField':
 					var fieldName = elem.data('name');
@@ -515,7 +515,7 @@ function largeAddToQueueDBTable(arrColumns, arrColumnIds, databaseName, schemaNa
 			});
 	}
 }
-function addToQueueVirtualTable(elem, displayCart) {
+function addToQueueVirtualDataset(elem, displayCart) {
 	var i = 0;
 	var loadingTexts = ['Working on it   ','Working on it.  ','Working on it.. ','Working on it...'];
 	var loadingTextInterval = setInterval(function() {
@@ -526,17 +526,21 @@ function addToQueueVirtualTable(elem, displayCart) {
 
 	var arrColumns = [];
 	var arrColumnIds = [];
-	var tableName = $(elem).data('tablename');
-	var tableId = $(elem).data('tableid');
+	var arrDatasets = [];
+	var arrDatasetIds = [];
+	var spaceName = $(elem).data('spacename');
+	var spaceId = $(elem).data('spaceid');
 
 	$(elem).parent().find('.checkBoxes').find('input').each(function(){
-		if($(this).prop("checked") && $(this).prop("name") != "toggleCheckboxes"){
+		if($(this).prop("checked") && $(this).prop("name") != "toggleCheckboxes" && !$(this).hasClass('container')){
 			arrColumns.push($(this).data('name'));
 			arrColumnIds.push($(this).data('columnId'));
+			arrDatasets.push($(this).data('datasetName'));
+			arrDatasetIds.push($(this).data('datasetId'));
 		}
 	});
 	if (arrColumns.length < 500) {
-		$.post("/request/addToQueueVirtualTable", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, tableName:tableName, tableId:tableId})
+		$.post("/request/addToQueueVirtualDataset", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, d:arrDatasets, di:arrDatasetIds, sn:spaceName, si:spaceId})
 			.done(function(data) {
 				clearInterval(loadingTextInterval);
 				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
@@ -548,7 +552,7 @@ function addToQueueVirtualTable(elem, displayCart) {
 		});
 	} else {
 		largeAddProgressSetUp(arrColumns.length);
-		largeAddToQueueVirtualTable(arrColumns, arrColumnIds, tableName, tableId)
+		largeAddToQueueVirtualDataset(arrColumns, arrColumnIds, arrDatasets, arrDatasetIds, spaceName, spaceId)
 			.then(function(data) {
 				clearInterval(loadingTextInterval);
 				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
@@ -560,21 +564,21 @@ function addToQueueVirtualTable(elem, displayCart) {
 			});
 	}
 }
-function largeAddToQueueVirtualTable(arrColumns, arrColumnIds, tableName, tableId, columnsStride = 150) {
+function largeAddToQueueVirtualDataset(arrColumns, arrColumnIds, arrDatasets, arrDatasetIds, spaceName, spaceId, columnsStride = 150) {
 	if (arrColumns.length > columnsStride) {
 		return new Promise(function(resolve) {
-			var request = $.post("/request/addToQueueVirtualTable", {emptyApi:'false', c:arrColumns.slice(0, columnsStride), ci:arrColumnIds.slice(0, columnsStride), tableName:tableName, tableId:tableId})
+			var request = $.post("/request/addToQueueVirtualDataset", {emptyApi:'false', c:arrColumns.slice(0, columnsStride), ci:arrColumnIds.slice(0, columnsStride), d:arrDatasets.slice(0, columnsStride), di:arrDatasetIds.slice(0, columnsStride), sn:spaceName, si:spaceId})
 				.then(() => {
 					largeAddProgressIncrement();
 				});
-			var recur = largeAddToQueueVirtualTable(arrColumns.slice(columnsStride), arrColumnIds.slice(columnsStride), tableName, tableId, columnsStride);
+			var recur = largeAddToQueueVirtualDataset(arrColumns.slice(columnsStride), arrColumnIds.slice(columnsStride), arrDatasets.slice(columnsStride), arrDatasetIds.slice(columnsStride), spaceName, spaceId, columnsStride);
 
 			Promise.all([request, recur]).then(() => resolve());
 			});
 	}
 	else {
 		return new Promise(function(resolve) {
-			$.post("/request/addToQueueVirtualTable", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, tableName:tableName, tableId:tableId})
+			$.post("/request/addToQueueVirtualDataset", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, d:arrDatasets, di:arrDatasetIds, sn:spaceName, si:spaceId})
 				.then(() => {
 					largeAddProgressIncrement();
 					resolve();

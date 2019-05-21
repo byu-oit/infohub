@@ -375,10 +375,10 @@
 						echo isset($asset->parentId) ? $asset->parentId : $asset->id;
 						echo '/'.$table->tableCommName.'/'.$table->tableVocabName.'/'.$tableNameOnly.'" title="View which elements were requested from this table">'.$table->tableCommName.' > '.$table->tableName.'</a></li>';
 					}
-					foreach ($asset->necessaryVirtualTables as $virTable) {
-						echo '<li><a href="/virtualTables/viewRequested/';
+					foreach ($asset->necessaryVirtualDatasets as $virDataset) {
+						echo '<li><a href="/virtualDatasets/viewRequested/';
 						echo isset($asset->parentId) ? $asset->parentId : $asset->id;
-						echo '/'.$virTable->virTableId.'" title="View which elements were requested from this table">'.$virTable->virTableName.'</a></li>';
+						echo '/'.$virDataset->virDatasetVocabName.'?n=1" title="View which elements were requested from this dataset">'.$virDataset->virDatasetName.'</a></li>';
 					} ?>
 				</ul>
 			</div>

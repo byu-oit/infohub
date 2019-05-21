@@ -105,8 +105,22 @@ img.resultBodyLoading {
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
+#searchBody #searchMain #smLower h3.headerTab {
+  background-color: white;
+  border: rgba(14, 50, 100, 0.85) solid 2px;
+  color: rgba(14, 50, 100, 0.85);
+  float: left;
+  font-size: 18px;
+  margin: 15px 0 10px 0;
+  padding: 4px 18px;
+  font-weight: bold;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+}
 #searchBody #searchMain #smLower ul,
 #apiBody #searchMain #smLower ul {
+  clear: both;
   margin: 0;
   padding: 0;
   width: 100%;
@@ -636,8 +650,10 @@ img.resultBodyLoading {
 #searchBody #searchResults #srLower .resultItem .submit input,
 #apiBody #searchResults #srLower .resultItem #apiForm .submit input,
 #apiBody #searchResults #srLower .resultItem #tableForm .submit input,
+#apiBody #searchResults #srLower .resultItem #datasetForm .submit input,
 #apiBody #searchResults #srLower .resultItem #apiForm .update-submit,
-#apiBody #searchResults #srLower .resultItem #tableForm .update-submit {
+#apiBody #searchResults #srLower .resultItem #tableForm .update-submit,
+#apiBody #searchResults #srLower .resultItem #datasetForm .update-submit {
   color: #fff;
   font-size: 12.5px;
   text-decoration: none;
@@ -1407,12 +1423,14 @@ img.resultBodyLoading {
   padding: 0 30px;
   text-decoration: none;
 }
-#apiBody .inputButton.dbTable {
+#apiBody .inputButton.dbTable,
+#apiBody .inputButton.dataset {
   position: relative;
   top: -35px;
 }
 #apiBody .apiHelp,
 #apiBody .tableHelp,
+#apiBody .datasetHelp,
 #smLower .samlHelp,
 #apiBody .apiHelpStatus {
   margin-top: 15px;
@@ -1439,7 +1457,8 @@ img.resultBodyLoading {
   color: #c54f4f;
   display: block;
 }
-#apiBody .fieldset-btn {
+#apiBody .fieldset-btn,
+#apiBody .container-btn {
   margin: 5px;
   padding: 2px 10px;
   display: inline-block;
@@ -1455,6 +1474,7 @@ img.resultBodyLoading {
 }
 #apiBody .api-fields,
 #apiBody .table-columns,
+#apiBody .space-columns,
 #apiBody .saml-fields {
   margin-top: 30px;
   padding: 4px;
@@ -1462,60 +1482,73 @@ img.resultBodyLoading {
 }
 #apiBody .api-fields .fieldColumn,
 #apiBody .table-columns .fieldColumn,
+#apiBody .space-columns .fieldColumn,
 #apiBody .saml-fields .fieldColumn {
   min-width: 250px;
 }
 #apiBody .api-fields .termColumn,
 #apiBody .table-columns .termColumn,
+#apiBody .space-columns .termColumn,
 #apiBody .saml-fields .termColumn {
   min-width: 300px;
 }
 #apiBody .api-fields .classificationColumn,
 #apiBody .table-columns .classificationColumn,
+#apiBody .space-columns .classificationColumn,
 #apiBody .saml-fields .classificationColumn {
   min-width: 130px;
 }
 #apiBody .api-fields .glossaryColumn,
 #apiBody .table-columns .glossaryColumn,
+#apiBody .space-columns .glossaryColumn,
 #apiBody .saml-fields .glossaryColumn {
   min-width: 170px;
 }
 #apiBody .api-fields a,
 #apiBody .table-columns a,
+#apiBody .space-columns a,
 #apiBody .saml-fields a {
   color: #234e77;
 }
 #apiBody .api-fields a:hover,
 #apiBody .table-columns a:hover,
+#apiBody .space-columns a:hover,
 #apiBody .saml-fields a:hover {
   color: #10375b;
 }
 #apiBody .api-fields tbody .header,
 #apiBody .table-columns tbody .header,
+#apiBody .space-columns tbody .header,
 #apiBody .saml-fields tbody .header {
   text-align: left;
 }
 #apiBody .api-fields tr.automatic-match,
 #apiBody .table-columns tr.automatic-match,
+#apiBody .space-columns tr.automatic-match,
 #apiBody .saml-fields tr.automatic-match,
 #apiBody .api-fields tr.requested,
 #apiBody .table-columns tr.requested,
+#apiBody .space-columns tr.requested,
 #apiBody .saml-fields tr.requested {
   background-color: #ffdd99;
 }
 #apiBody .api-fields tr.duplicate,
-#apiBody .table-columns tr.duplicate {
+#apiBody .table-columns tr.duplicate,
+#apiBody .space-columns tr.duplicate {
   background-color: #f2bfbf;
 }
 #apiBody .api-fields.view td:nth-child(3),
 #apiBody .table-columns.view td:nth-child(2),
+#apiBody .space-columns.view td:nth-child(3),
 #apiBody .saml-fields.view td:nth-child(2),
 #apiBody .api-fields td:last-child,
 #apiBody .table-columns td:last-child,
+#apiBody .space-columns td:last-child,
 #apiBody .saml-fields.view td:last-child {
   width: 100%;
 }
-#apiBody .api-fields a.fieldset-collapse {
+#apiBody .api-fields a.fieldset-collapse,
+#apiBody .space-columns a.container-collapse {
   display: inline-block;
   height: 14px;
   width: 14px;
@@ -1523,41 +1556,51 @@ img.resultBodyLoading {
   background-size: 14px;
   cursor: pointer;
 }
-#apiBody .api-fields a.fieldset-collapse.collapsed {
+#apiBody .api-fields a.fieldset-collapse.collapsed,
+#apiBody .space-columns a.container-collapse.collapsed {
   background-image: url(../img/iconRight.png);
 }
 #apiBody .api-fields tbody tr .bt-new-name,
 #apiBody .table-columns tbody tr .bt-new-name,
+#apiBody .space-columns tbody tr .bt-new-name,
 #apiBody .saml-fields tbody tr .bt-new-name,
 #apiBody .api-fields tbody tr .bt-new-glossary,
 #apiBody .table-columns tbody tr .bt-new-glossary,
+#apiBody .space-columns tbody tr .bt-new-glossary,
 #apiBody .saml-fields tbody tr .bt-new-name,
 #apiBody .api-fields tbody tr .bt-new-definition,
 #apiBody .table-columns tbody tr .bt-new-definition,
+#apiBody .space-columns tbody tr .bt-new-definition,
 #apiBody .saml-fields tbody tr .bt-new-name {
   display: none;
 }
 #apiBody .api-fields tbody tr.display-new-bt .bt-new-name,
 #apiBody .table-columns tbody tr.display-new-bt .bt-new-name,
+#apiBody .space-columns tbody tr.display-new-bt .bt-new-name,
 #apiBody .saml-fields tbody tr.display-new-bt .bt-new-name,
 #apiBody .api-fields tbody tr.display-new-bt .bt-new-glossary,
 #apiBody .table-columns tbody tr.display-new-bt .bt-new-glossary,
+#apiBody .space-columns tbody tr.display-new-bt .bt-new-glossary,
 #apiBody .saml-fields tbody tr.display-new-bt .bt-new-name,
 #apiBody .api-fields tbody tr.display-new-bt .bt-new-definition,
 #apiBody .table-columns tbody tr.display-new-bt .bt-new-definition,
+#apiBody .space-columns tbody tr.display-new-bt .bt-new-definition,
 #apiBody .saml-fields tbody tr.display-new-bt .bt-new-definition {
   display: inline-block;
 }
 #apiBody .api-fields tbody tr.display-new-bt td div,
 #apiBody .table-columns tbody tr.display-new-bt td div,
+#apiBody .space-columns tbody tr.display-new-bt td div,
 #apiBody .saml-fields tbody tr.display-new-bt td div {
   display: none;
 }
 #apiBody .api-fields tbody .term-wrapper .bt-search,
 #apiBody .table-columns tbody .term-wrapper .bt-search,
+#apiBody .space-columns tbody .term-wrapper .bt-search,
 #apiBody .saml-fields tbody .term-wrapper .bt-search,
 #apiBody .api-fields tbody .term-wrapper .loading,
 #apiBody .table-columns tbody .term-wrapper .loading,
+#apiBody .space-columns tbody .term-wrapper .loading,
 #apiBody .saml-fields tbody .term-wrapper .loading,
 #apiForm .swagger tbody .term-wrapper .bt-search,
 #apiForm .swagger tbody .term-wrapper .loading {
@@ -1565,21 +1608,25 @@ img.resultBodyLoading {
 }
 #apiBody .api-fields tbody .term-wrapper .selected-term,
 #apiBody .table-columns tbody .term-wrapper .selected-term,
+#apiBody .space-columns tbody .term-wrapper .selected-term,
 #apiBody .saml-fields tbody .term-wrapper .selected-term,
 #apiForm .swagger tbody .term-wrapper .selected-term {
   display: block;
 }
 #apiBody .api-fields tbody .term-wrapper.display-loading .loading,
 #apiBody .table-columns tbody .term-wrapper.display-loading .loading,
+#apiBody .space-columns tbody .term-wrapper.display-loading .loading,
 #apiBody .saml-fields tbody .term-wrapper.display-loading .loading,
 #apiForm .swagger tbody .term-wrapper.display-loading .loading {
   display: block;
 }
 #apiBody .api-fields tbody .term-wrapper.display-loading .bt-search,
 #apiBody .table-columns tbody .term-wrapper.display-loading .bt-search,
+#apiBody .space-columns tbody .term-wrapper.display-loading .bt-search,
 #apiBody .saml-fields tbody .term-wrapper.display-loading .bt-search,
 #apiBody .api-fields tbody .term-wrapper.display-loading .selected-term,
 #apiBody .table-columns tbody .term-wrapper.display-loading .selected-term,
+#apiBody .space-columns tbody .term-wrapper.display-loading .selected-term,
 #apiBody .saml-fields tbody .term-wrapper.display-loading .selected-term,
 #apiForm .swagger tbody .term-wrapper.display-loading .bt-search,
 #apiForm .swagger tbody .term-wrapper.display-loading .selected-term {
@@ -1587,15 +1634,18 @@ img.resultBodyLoading {
 }
 #apiBody .api-fields tbody .term-wrapper.display-search .bt-search,
 #apiBody .table-columns tbody .term-wrapper.display-search .bt-search,
+#apiBody .space-columns tbody .term-wrapper.display-search .bt-search,
 #apiBody .saml-fields tbody .term-wrapper.display-search .bt-search,
 #apiForm .swagger tbody .term-wrapper.display-search .bt-search {
   display: inline-block;
 }
 #apiBody .api-fields tbody .term-wrapper.display-search .selected-term,
 #apiBody .table-columns tbody .term-wrapper.display-search .selected-term,
+#apiBody .space-columns tbody .term-wrapper.display-search .selected-term,
 #apiBody .saml-fields tbody .term-wrapper.display-search .selected-term,
 #apiBody .api-fields tbody .term-wrapper.display-search .loading,
 #apiBody .table-columns tbody .term-wrapper.display-search .loading,
+#apiBody .space-columns tbody .term-wrapper.display-search .loading,
 #apiBody .saml-fields tbody .term-wrapper.display-search .loading,
 #apiForm .swagger tbody .term-wrapper.display-search .selected-term,
 #apiForm .swagger tbody .term-wrapper.display-search .loading {
@@ -1603,6 +1653,7 @@ img.resultBodyLoading {
 }
 #apiBody .api-fields tbody .term-wrapper span.edit-opt,
 #apiBody .table-columns tbody .term-wrapper span.edit-opt,
+#apiBody .space-columns tbody .term-wrapper span.edit-opt,
 #apiBody .saml-fields tbody .term-wrapper span.edit-opt,
 #apiForm .swagger tbody .term-wrapper span.edit-opt {
   display: inline-block;
@@ -1623,11 +1674,13 @@ img.resultBodyLoading {
 }
 #apiBody .api-fields tbody .glossary-cell,
 #apiBody .table-columns tbody .glossary-cell,
+#apiBody .space-columns tbody .glossary-cell,
 #apiBody .saml-fields tbody .glossary-cell {
   min-width: 150px;
 }
 #apiBody .api-fields tbody .glossary-cell div,
 #apiBody .table-columns tbody .glossary-cell div,
+#apiBody .space-columns tbody .glossary-cell div,
 #apiBody .saml-fields tbody .glossary-cell div {
   max-width: 150px;
   overflow: hidden;
@@ -1635,26 +1688,31 @@ img.resultBodyLoading {
 }
 #apiBody .api-fields tbody .bt-new-glossary,
 #apiBody .table-columns tbody .bt-new-glossary,
+#apiBody .space-columns tbody .bt-new-glossary,
 #apiBody .saml-fields tbody .bt-new-glossary {
   width: 100%;
 }
 #apiBody .api-fields tbody .view-definition .truncated,
 #apiBody .table-columns tbody .view-definition .truncated,
+#apiBody .space-columns tbody .view-definition .truncated,
 #apiBody .saml-fields tbody .view-definition .truncated {
   display: inline;
 }
 #apiBody .api-fields tbody .view-definition .full,
 #apiBody .table-columns tbody .view-definition .full,
+#apiBody .space-columns tbody .view-definition .full,
 #apiBody .saml-fields tbody .view-definition .full {
   display: none;
 }
 #apiBody .api-fields tbody .view-definition.expanded .truncated,
 #apiBody .table-columns tbody .view-definition.expanded .truncated,
+#apiBody .space-columns tbody .view-definition.expanded .truncated,
 #apiBody .saml-fields tbody .view-definition.expanded .truncated {
   display: none;
 }
 #apiBody .api-fields tbody .view-definition.expanded .full,
 #apiBody .table-columns tbody .view-definition.expanded .full,
+#apiBody .space-columns tbody .view-definition.expanded .full,
 #apiBody .saml-fields tbody .view-definition.expanded .full {
   display: inline;
 }

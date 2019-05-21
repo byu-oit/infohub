@@ -8,15 +8,17 @@ $(document).ready(function() {
 	$('#apiFilter').focus();
 	$('#browse-tab').addClass('active');
 
-	var apis = [
-		<?php foreach ($apis as $api) {
-			if (
-				$api->statusId != Configure::read('Collibra.status.testing') &&
-				$api->statusId != Configure::read('Collibra.status.retired')
-			) {
-				echo '"'.$api->name.'",';
-			}
-		} ?> ""];
+	var apis = [ <?php
+		foreach ($sortedApis[Configure::read('Collibra.status.production')] as $api) {
+			echo '"'.$api->name.'",';
+		}
+		foreach ($sortedApis[Configure::read('Collibra.status.preProduction')] as $api) {
+			echo '"'.$api->name.'",';
+		}
+		foreach ($sortedApis[Configure::read('Collibra.status.deprecated')] as $api) {
+			echo '"'.$api->name.'",';
+		}
+	?> ""];
 	$('#apiFilter').on('input', function() {
 		var filterValue = $(this).val().toLowerCase();
 		for (var i = 0; i < apis.length; i++) {
@@ -82,25 +84,39 @@ $(document).ready(function() {
 		<h2 class="headerTab"><?=$community->name?></h2>
 		<div class="clear"></div>
 		<div id="smLower" class="whiteBox">
-			<ul class="catalogParent">
-				<?php if (empty($apis)): ?>
+			<?php if ($noEndpoints): ?>
+				<ul class="catalogParent">
 					No endpoints found
-				<?php else: ?>
+				</ul>
+			<?php else: ?>
+				<h3 class="headerTab">Production</h3>
+				<ul class="catalogParent">
 					<?php $i = 0;
-					foreach ($apis as $endpoint):
-						if (
-							$endpoint->statusId == Configure::read('Collibra.status.testing') ||
-							$endpoint->statusId == Configure::read('Collibra.status.retired')
-						) continue; ?>
-						<li id="catalogIndex-<?=$i?>" class="catalogItem" data-name="<?=$endpoint->name?>">
-							<?php echo '<a href="/apis/'.$hostname.$endpoint->name.'">'.$endpoint->name;
-								  if ($endpoint->statusId == Configure::read('Collibra.status.preProduction')) echo '<span class="pre-production"> (Pre-production)</span>';
-								  if ($endpoint->statusId == Configure::read('Collibra.status.deprecated')) echo '<span class="deprecated"> (Deprecated)</span>';
-								  echo '</a>';
-							?>
+					foreach ($sortedApis[Configure::read('Collibra.status.production')] as $api): ?>
+						<li id="catalogIndex-<?=$i?>" class="catalogItem" data-name="<?=$api->name?>">
+							<?php echo '<a href="/apis/'.$hostname.$api->name.'">'.$api->name.'</a>'; ?>
 						</li>
 					<?php $i++;
 					endforeach; ?>
+				</ul>
+				<h3 class="headerTab">Pre-Production</h3>
+				<ul class="catalogParent">
+					<?php foreach ($sortedApis[Configure::read('Collibra.status.preProduction')] as $api): ?>
+						<li id="catalogIndex-<?=$i?>" class="catalogItem" data-name="<?=$api->name?>">
+							<?php echo '<a href="/apis/'.$hostname.$api->name.'">'.$api->name.'</a>'; ?>
+						</li>
+					<?php $i++;
+					endforeach; ?>
+				</ul>
+				<h3 class="headerTab">Deprecated</h3>
+				<ul class="catalogParent">
+					<?php foreach ($sortedApis[Configure::read('Collibra.status.deprecated')] as $api): ?>
+						<li id="catalogIndex-<?=$i?>" class="catalogItem" data-name="<?=$api->name?>">
+							<?php echo '<a href="/apis/'.$hostname.$api->name.'">'.$api->name.'</a>'; ?>
+						</li>
+					<?php $i++;
+					endforeach; ?>
+				</ul>
 				<?php endif ?>
 			</ul>
 		</div>
