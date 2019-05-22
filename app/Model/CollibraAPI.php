@@ -1150,7 +1150,9 @@ class CollibraAPI extends Model {
 				['Column' => ['fieldName' => 'name']],
 				['Column' => ['fieldName' => 'description']],
 				['Column' => ['fieldName' => 'folderId']],
-				['Column' => ['fieldName' => 'folderName']]],
+				['Column' => ['fieldName' => 'folderName']],
+				['Column' => ['fieldName' => 'spaceId']],
+				['Column' => ['fieldName' => 'spaceName']]],
 			'Resources' => [
 				'Term' => [
 					'Id' => ['name' => 'id'],
@@ -1158,12 +1160,18 @@ class CollibraAPI extends Model {
 					'StringAttribute' => [[
 						'labelId' => Configure::read('Collibra.attribute.description'),
 						'Value' => ['name' => 'description']]],
-					'Relation' => [
+					'Relation' => [[
 						'typeId' => Configure::read('Collibra.relationship.folderToVirtualDataset'),
 						'type' => 'TARGET',
 						'Source' => [
 							'Id' => ['name' => 'folderId'],
 							'Signifier' => ['name' => 'folderName']]],
+					[
+						'typeId' => Configure::read('Collibra.relationship.spaceToVirtualDataset'),
+						'type' => 'TARGET',
+						'Source' => [
+							'Id' => ['name' => 'spaceId'],
+							'Signifier' => ['name' => 'spaceName']]]],
 					'Filter' => [
 						'AND' => [[
 							'Field' => [
