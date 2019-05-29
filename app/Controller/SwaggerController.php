@@ -13,7 +13,6 @@ class SwaggerController extends AppController {
 	}
 
 	public function index() {
-		pr($this->CollibraAPI->getRequestDetails('989d9ff1-4451-43e8-a89f-e036a1b6d042'));exit();
 		if ($this->request->is('post')) {
 			$swag = $this->request->data('Swagger.swag');
 			$swagUrl = $this->request->data('Swagger.url');
