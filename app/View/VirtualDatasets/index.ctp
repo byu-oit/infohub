@@ -44,14 +44,14 @@
 			</ul>
 		</div>
 	</div>
-	<!-- <?php if ($matchAuthorized): ?>
+	<?php if ($importAuthorized): ?>
 		<div style="padding-top: 35px;">
 			<div style="float: right">
 				<?= $this->Html->link(
-					'Update a Dataset',
-					array_merge(['controller' => 'virtualDatasetAdmin', 'action' => 'syncDatasource']),
+					'Import Datasets',
+					array_merge(['controller' => 'virtualDatasetAdmin', 'action' => 'import']),
 					['class' => 'btn-db-sync grow', 'id' => 'admin']) ?>
 			</div>
 		</div>
-	<?php endif ?> -->
+	<?php endif ?>
 </div>

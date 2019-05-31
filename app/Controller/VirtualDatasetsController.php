@@ -30,10 +30,10 @@ class VirtualDatasetsController extends AppController {
 			$this->set('recent', $this->Session->read('recentSpaces'));
 		}
 
-		$matchAuthorized = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04', 'infohub-match');
+		$importAuthorized = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04');
 
 		$spaces = $this->CollibraAPI->getDremioSpaces();
-		$this->set(compact('matchAuthorized', 'spaces'));
+		$this->set(compact('importAuthorized', 'spaces'));
 	}
 
 	public function view($spaceId) {
