@@ -22,6 +22,9 @@ type Config struct {
 	CollibraPassword string
 	ByuAPIKey        string
 	ByuAPISecret     string
+	DremioURL        string
+	DremioUser       string
+	DremioPassword   string
 	GithubToken      string
 	DBHost           string
 	DBUser           string
@@ -62,6 +65,9 @@ func main() {
 		CollibraPassword: params["collibra_password"],
 		ByuAPIKey:        params["byuapi_key"],
 		ByuAPISecret:     params["byuapi_secret"],
+		DremioURL:        params["dremio_url"],
+		DremioUser:       params["dremio_user"],
+		DremioPassword:   params["dremio_password"],
 		GithubToken:      params["github_token"],
 		DBHost:           os.Getenv("DB_ADDRESS"),
 		DBUser:           params["db_username"],
