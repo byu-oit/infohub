@@ -600,6 +600,11 @@
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
+#apiBody #searchResults #srLower .resultItem #apiForm .lower-btn,
+#apiBody #searchResults #srLower .resultItem #tableForm .lower-btn,
+#apiBody #searchResults #srLower .resultItem #datasetForm .lower-btn {
+  margin-right: 75px;
+}
 #accountMid .accountMain .requestItem .detailsBody .edit-btn {
   display: inline-block;
   height: 22px;
