@@ -154,6 +154,7 @@
 #accountMid .accountMain .requestItem .riLeft {
   width: 65%;
   float: left;
+  margin-bottom: 15px;
 }
 #accountMid .accountMain .requestItem .riLeft .riDate,
 #accountMid .accountMain .requestItem .detailsBody .riDate {
@@ -256,6 +257,7 @@
 }
 .approverPics {
   float: right;
+  padding-top: 10px;
   width: 160px;
 }
 .riBelow .approverPics {
@@ -389,11 +391,13 @@
   width: 88%;
   clear: both;
   margin-left: 12%;
+  border-top: 1px solid #12447760;
+  margin-top: 15px;
 }
 .subrequestNameWrapper {
   display: table;
   width: 78%;
-  height: 65px;
+  height: 45px;
   float: left;
 }
 #accountMid .accountMain .requestItem .riBelow .subrequestName {
