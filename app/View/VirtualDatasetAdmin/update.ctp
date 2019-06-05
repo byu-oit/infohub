@@ -181,8 +181,8 @@
 						}
 						?>
 					</table>
-					<a class="lower-btn grow" href="/virtualDatasets/view/<?=$space->spaceId?>">Cancel</a>
 					<div class="update-submit grow" onclick="chunkPostData()">Save</div>
+					<a class="lower-btn grow" href="/virtualDatasets/view/<?=$space->spaceId?>">Cancel</a>
 				<?= $this->Form->end() ?>
 			</div>
 		</div>

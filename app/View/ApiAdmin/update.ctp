@@ -179,8 +179,8 @@
 							$this->Fieldset->printApiAdminUpdate($field, $index, $glossaries);
 						} ?>
 					</table>
-					<a class="lower-btn grow" href="/apis/<?=$hostname.$basePath?>">Cancel</a>
 					<div class="update-submit grow" onclick="chunkPostData()">Save</div>
+					<a class="lower-btn grow" href="/apis/<?=$hostname.$basePath?>">Cancel</a>
 				<?= $this->Form->end() ?>
 			</div>
 		</div>

@@ -226,8 +226,8 @@
 							</tr>
 						<?php endforeach ?>
 					</table>
-					<a class="lower-btn grow" href="/databases/view/<?=$databaseName.'/'.$schemaName.'/'.$tableName?>">Cancel</a>
 					<div class="update-submit grow" onclick="chunkPostData()">Save</div>
+					<a class="lower-btn grow" href="/databases/view/<?=$databaseName.'/'.$schemaName.'/'.$tableName?>">Cancel</a>
 				<?= $this->Form->end() ?>
 			</div>
 		</div>
