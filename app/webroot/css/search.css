@@ -677,8 +677,11 @@ img.resultBodyLoading {
 #apiBody #searchResults #srLower .resultItem #apiForm .update-submit,
 #apiBody #searchResults #srLower .resultItem #tableForm .update-submit,
 #apiBody #searchResults #srLower .resultItem #datasetForm .update-submit {
-  bottom: -43px;
+  position: relative;
+  top: 23px;
   height: 18px;
+  float: right;
+  right: 0%;
 }
 #searchBody #searchResults #srLower .resultItem .requestAccess.topBtn,
 #apiBody #searchResults #srLower .resultItem .requestAccess.topBtn,
