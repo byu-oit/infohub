@@ -674,6 +674,12 @@ img.resultBodyLoading {
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
+#apiBody #searchResults #srLower .resultItem #apiForm .update-submit,
+#apiBody #searchResults #srLower .resultItem #tableForm .update-submit,
+#apiBody #searchResults #srLower .resultItem #datasetForm .update-submit {
+  bottom: -43px;
+  height: 18px;
+}
 #searchBody #searchResults #srLower .resultItem .requestAccess.topBtn,
 #apiBody #searchResults #srLower .resultItem .requestAccess.topBtn,
 #searchBody #requestForm #srLower .resultItem .requestAccess.topBtn,
@@ -1890,6 +1896,11 @@ form#request #mobileReqd {
     right: inherit;
     left: 50%;
     margin-left: -65px;
+  }
+  #apiBody #searchResults #srLower .resultItem #apiForm .update-submit,
+  #apiBody #searchResults #srLower .resultItem #tableForm .update-submit,
+  #apiBody #searchResults #srLower .resultItem #datasetForm .update-submit {
+    bottom: 22px;
   }
 }
 @media screen and (max-width: 650px) {
