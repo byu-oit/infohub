@@ -476,7 +476,14 @@ class CollibraAPI extends Model {
 				['Column' => ['fieldName' => 'name']],
 				['Column' => ['fieldName' => 'statusId']],
 				['Column' => ['fieldName' => 'status']],
-				['Column' => ['fieldName' => 'authorizedByFieldset']]],
+				['Column' => ['fieldName' => 'authorizedByFieldset']],
+				['Group' => [
+					'name' => 'dataSharingRequests',
+					'Columns' => [
+						['Column' => ['fieldName' => 'dsrId']],
+						['Column' => ['fieldName' => 'dsrName']],
+						['Column' => ['fieldName' => 'dsrStatus']],
+						['Column' => ['fieldName' => 'dsrStatusId']]]]]],
 			'Resources' => [
 				'Term' => [
 					'Id' => ['name' => 'id'],
@@ -487,6 +494,15 @@ class CollibraAPI extends Model {
 					'BooleanAttribute' => [
 						'Value' => ['name' => 'authorizedByFieldset'],
 						'labelId' => Configure::read('Collibra.attribute.authorizedByFieldset')],
+					'Relation' => [[
+						'typeId' => Configure::read('Collibra.relationship.DSRtoNecessaryAPI'),
+						'type' => 'TARGET',
+						'Source' => [
+							'Id' => ['name' => 'dsrId'],
+							'Signifier' => ['name' => 'dsrName'],
+							'Status' => [
+								'Id' => ['name' => 'dsrStatusId'],
+								'Signifier' => ['name' => 'dsrStatus']]]]],
 					'Vocabulary' => [
 						'Id' => ['name' => 'vocabId']],
 					'ConceptType' => [
@@ -1519,6 +1535,17 @@ class CollibraAPI extends Model {
 				$this->errors[] = "Unable to create vocabulary \"{$swagger['basePath']}/{$swagger['version']}\" in community \"{$swagger['host']}\"";
 				return false;
 			}
+		}
+
+		if (isset($swagger['destructiveUpdate'])) {
+			$toDeleteIds = [];
+			foreach ($existentTerms as $exId => $exName) {
+				if (!in_array($exName, array_column($swagger['elements'], 'name'))) {
+					array_push($toDeleteIds, $exId);
+					unset($existentTerms[$exId]);
+				}
+			}
+			$this->deleteJSON('term/remove/async', $this->prepData(['resource' => $toDeleteIds]));
 		}
 
 		$fields = [];

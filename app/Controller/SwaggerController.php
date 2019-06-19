@@ -59,6 +59,11 @@ class SwaggerController extends AppController {
 			}
 			$fields = $this->CollibraAPI->getApiFields($this->request->data['Api']['host'], $this->request->data['Api']['basePath'].'/'.$this->request->data['Api']['version']);
 			if (!empty($fields)) {
+				if (!isset($this->request->query['diff'])) {
+					$this->redirect(['action' => 'diff']);
+				}
+
+				$this->request->data['Api']['destructiveUpdate'] = true;
 				for ($i = 0; $i < count($this->request->data['Api']['elements']); $i++) {
 					foreach ($fields as $existingField) {
 						if ($this->request->data['Api']['elements'][$i]['name'] == $existingField->name) {
@@ -69,6 +74,89 @@ class SwaggerController extends AppController {
 				}
 			}
 		}
+	}
+
+	public function diff() {
+		$newApi = $this->_getUploadedSwagger();
+		$oldApi = $this->CollibraAPI->getApiObject($newApi['host'], $newApi['basePath'].'/'.$newApi['version']);
+		$oldApi->fields = $this->CollibraAPI->getApiFields($newApi['host'], $newApi['basePath'].'/'.$newApi['version']);
+		usort($newApi['elements'], function($a, $b) {
+			return strcmp($a['name'], $b['name']);
+		});
+
+		list($oldRows, $newRows, $removedElems, $addedElems) = $this->_calculateDiff($oldApi, $newApi);
+
+		$requested = false;
+		foreach ($oldApi->dataSharingRequests as $dsr) {
+			if (!in_array($dsr->dsrStatus, ['Canceled', 'Deleted', 'Obsolete'])) {
+				$requested = true;
+				break;
+			}
+		}
+		if ($requested && (!empty($removedElems) || !empty($addedElems))) {
+			$emailBody = "An InfoHub user ({$_SESSION["byuUsername"]}) attempted to re-import the API {$oldApi->name}. The change wasn't completed because the API is requested in the following DSRs:<br/>";
+			foreach ($oldApi->dataSharingRequests as $dsr) {
+				$emailBody .= $dsr->dsrName."<br/>";
+			}
+			$emailBody .= "<br/>Removed elements:<br/>";
+			foreach ($removedElems as $elem) {
+				$emailBody .= $elem."<br/>";
+			}
+			$emailBody .= "<br/>Added elements:<br/>";
+			foreach ($addedElems as $elem) {
+				$emailBody .= $elem."<br/>";
+			}
+
+			$postData = [
+				'subjectLine' => 'Requested dataset update',
+				'emailBody' => $emailBody
+			];
+			$postString = http_build_query($postData);
+			$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.emailGovernanceDirectors').'/start', $postString);
+		}
+
+		$this->set(compact('oldApi', 'newApi', 'oldRows', 'newRows', 'requested'));
+	}
+
+	protected function _calculateDiff($oldApi, $newApi) {
+		$i = $j = 0;
+		$oldRows = $newRows = '';
+		$removedElems = $addedElems = [];
+		while ($i < count($oldApi->fields) && $j < count($newApi['elements'])) {
+			if ($oldApi->fields[$i]->name == $newApi['elements'][$j]['name']) {
+				$bt = !empty($oldApi->fields[$i]->businessTerm) ? $oldApi->fields[$i]->businessTerm[0]->term : '';
+				$oldRows .= '<tr><td>'.$oldApi->fields[$i]->name.'</td><td>'.$bt.'</td></tr>';
+				$newRows .= '<tr><td>'.$newApi['elements'][$j]['name'].'</td></tr>';
+				$i++;
+				$j++;
+			} else if ($oldApi->fields[$i]->name < $newApi['elements'][$j]['name']) {
+				$bt = !empty($oldApi->fields[$i]->businessTerm) ? $oldApi->fields[$i]->businessTerm[0]->term : '';
+				$oldRows .= '<tr class="removed"><td>'.$oldApi->fields[$i]->name.'</td><td>'.$bt.'</td></tr>';
+				array_push($removedElems, $oldApi->fields[$i]->name);
+				$newRows .= '<tr><td>&nbsp;</td></tr>';
+				$i++;
+			} else if ($oldApi->fields[$i]->name > $newApi['elements'][$j]['name']) {
+				$oldRows .= '<tr><td>&nbsp;</td><td></td></tr>';
+				$newRows .= '<tr class="added"><td>'.$newApi['elements'][$j]['name'].'</td></tr>';
+				array_push($addedElems, $newApi['elements'][$j]['name']);
+				$j++;
+			}
+		}
+		while ($i < count($oldApi->fields)) {
+			$bt = !empty($oldApi->fields[$i]->businessTerm) ? $oldApi->fields[$i]->businessTerm[0]->term : '';
+			$oldRows .= '<tr class="removed"><td>'.$oldApi->fields[$i]->name.'</td><td>'.$bt.'</td></tr>';
+			array_push($removedElems, $oldApi->fields[$i]->name);
+			$newRows .= '<tr><td>&nbsp;</td></tr>';
+			$i++;
+		}
+		while ($j < count($newApi['elements'])) {
+			$oldRows .= '<tr><td>&nbsp;</td><td></td></tr>';
+			$newRows .= '<tr class="added"><td>'.$newApi['elements'][$j]['name'].'</td></tr>';
+			array_push($addedElems, $newApi['elements'][$j]['name']);
+			$j++;
+		}
+
+		return [$oldRows, $newRows, $removedElems, $addedElems];
 	}
 
 	public function find_business_term($label = null) {
