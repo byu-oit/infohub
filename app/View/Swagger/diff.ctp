@@ -21,7 +21,7 @@
 		<div class="clear" style="height:20px;"></div>
         <h2 class="headerTab">Diff view</h2>
         <div class="clear"></div>
-		<?php if (!$requested): ?>
+		<?php if (!$blockedChange): ?>
 			<div class="apiHelp">Please review the changes to this API below.</div>
 		<?php else: ?>
 			<div class="apiHelpStatus">This dataset is part of an active Data Sharing Request.</div>
@@ -47,7 +47,7 @@
 			</div>
 			<div class="button-wrapper">
 				<a class="lower-btn grow" href="/apis/<?=$newApi['host'].'/'.trim($newApi['basePath'], '/').'/'.$newApi['version']?>">Cancel</a>
-				<?php if (!$requested): ?>
+				<?php if (!$blockedChange): ?>
 					<div class="update-submit grow" onclick="window.location.href='/swagger/process?diff=done'">Continue</div>
 				<?php endif ?>
 			</div>
