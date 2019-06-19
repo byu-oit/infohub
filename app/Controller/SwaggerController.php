@@ -93,7 +93,8 @@ class SwaggerController extends AppController {
 				break;
 			}
 		}
-		if ($requested && (!empty($removedElems) || !empty($addedElems))) {
+		$blockedChange = $requested && (!empty($removedElems) || !empty($addedElems));
+		if ($blockedChange) {
 			$emailBody = "An InfoHub user ({$_SESSION["byuUsername"]}) attempted to re-import the API {$oldApi->name}. The change wasn't completed because the API is requested in the following DSRs:<br/>";
 			foreach ($oldApi->dataSharingRequests as $dsr) {
 				$emailBody .= $dsr->dsrName."<br/>";
@@ -115,7 +116,7 @@ class SwaggerController extends AppController {
 			$resp = $this->CollibraAPI->post('workflow/'.Configure::read('Collibra.workflow.emailGovernanceDirectors').'/start', $postString);
 		}
 
-		$this->set(compact('oldApi', 'newApi', 'oldRows', 'newRows', 'requested'));
+		$this->set(compact('oldApi', 'newApi', 'oldRows', 'newRows', 'blockedChange'));
 	}
 
 	protected function _calculateDiff($oldApi, $newApi) {
