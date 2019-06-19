@@ -95,7 +95,8 @@ class SwaggerController extends AppController {
 		}
 		$blockedChange = $requested && (!empty($removedElems) || !empty($addedElems));
 		if ($blockedChange) {
-			$emailBody = "An InfoHub user ({$_SESSION["byuUsername"]}) attempted to re-import the API {$oldApi->name}. The change wasn't completed because the API is requested in the following DSRs:<br/>";
+			$name = empty($_SESSION['byuUsername']) ? "not logged in" : $_SESSION['byuUsername'];
+			$emailBody = "An InfoHub user ({$name}) attempted to re-import the API {$oldApi->name}. The change wasn't completed because the API is requested in the following DSRs:<br/>";
 			foreach ($oldApi->dataSharingRequests as $dsr) {
 				$emailBody .= $dsr->dsrName."<br/>";
 			}
