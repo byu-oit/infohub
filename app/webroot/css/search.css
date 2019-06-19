@@ -256,6 +256,9 @@ img.resultBodyLoading {
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
+#apiBody.diff #searchResults #srLower {
+  padding-bottom: 60px;
+}
 #searchBody #searchResults #srLower #searchFilters,
 #apiBody #searchResults #srLower #searchFilters,
 #searchBody #requestForm #srLower #searchFilters,
@@ -312,6 +315,12 @@ img.resultBodyLoading {
 }
 #searchBody #requestForm #srLower .resultItem {
   overflow: hidden;
+}
+#apiBody.diff #searchResults #srLower .resultItem.halfWidth {
+  display: inline-block;
+  width: 39%;
+  margin: 0 1%;
+  padding: 0 4%;
 }
 #searchBody #searchResults #srLower .resultItem h4,
 #apiBody #searchResults #srLower .resultItem h4,
@@ -674,6 +683,36 @@ img.resultBodyLoading {
   -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
   box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
+#apiBody.diff #searchResults #srLower .button-wrapper {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  position: absolute;
+  right: 70px;
+  width: 200px;
+  height: 40px;
+  padding-top: 8px;
+}
+#apiBody.diff #searchResults #srLower .button-wrapper .update-submit {
+  color: #fff;
+  font-size: 12.5px;
+  text-decoration: none;
+  padding: 6px 15px;
+  background-color: #ffa900;
+  /* display: block; */
+  text-align: center;
+  font-weight: bold;
+  /* position: absolute;
+  bottom: 20px;
+  right: 3%; */
+  border: none;
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+}
 #apiBody #searchResults #srLower .resultItem #apiForm .update-submit,
 #apiBody #searchResults #srLower .resultItem #tableForm .update-submit,
 #apiBody #searchResults #srLower .resultItem #datasetForm .update-submit {
@@ -682,6 +721,21 @@ img.resultBodyLoading {
   height: 18px;
   float: right;
   right: 0%;
+}
+#apiBody.diff #searchResults #srLower .button-wrapper .lower-btn {
+  /* float: right; */
+  padding: 4px 14px;
+  /* margin-top: 5px;
+  margin-right: 15px; */
+  font-size: 13px;
+  text-decoration: none;
+  font-weight: 600;
+  color: white;
+  background-color: #114477;
+  cursor: pointer;
+  -webkit-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  -moz-box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
+  box-shadow: -2px 2px 7px 1px rgba(50, 50, 50, 0.22);
 }
 #searchBody #searchResults #srLower .resultItem .requestAccess.topBtn,
 #apiBody #searchResults #srLower .resultItem .requestAccess.topBtn,
@@ -1441,7 +1495,8 @@ img.resultBodyLoading {
 #apiBody .tableHelp,
 #apiBody .datasetHelp,
 #smLower .samlHelp,
-#apiBody .apiHelpStatus {
+#apiBody .apiHelpStatus,
+#apiBody .tableHelpStatus {
   margin-top: 15px;
   color: rgba(14, 50, 100, 0.85);
   font-size: 18px;
@@ -1450,19 +1505,22 @@ img.resultBodyLoading {
   cursor: pointer;
   padding-bottom: 8px;
 }
-#apiBody .apiHelpStatus {
+#apiBody .apiHelpStatus,
+#apiBody .tableHelpStatus {
   color: #de0202;
   cursor: auto;
 }
 #apiBody .apiHelpSml,
 #smLower .samlHelpSml,
-#apiBody .apiHelpSmlStatus {
+#apiBody .apiHelpSmlStatus,
+#apiBody .tableHelpSmlStatus {
   font-size: 14px;
   width: 100%;
   display: none;
   padding-bottom: 8px;
 }
-#apiBody .apiHelpSmlStatus {
+#apiBody .apiHelpSmlStatus,
+#apiBody .tableHelpSmlStatus {
   color: #c54f4f;
   display: block;
 }
@@ -1488,6 +1546,12 @@ img.resultBodyLoading {
   margin-top: 30px;
   padding: 4px;
   font-size: 14px;
+}
+#apiBody.diff .api-fields,
+#apiBody.diff .table-columns {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 7px;
 }
 #apiBody .api-fields .fieldColumn,
 #apiBody .table-columns .fieldColumn,
@@ -1546,6 +1610,16 @@ img.resultBodyLoading {
 #apiBody .space-columns tr.duplicate {
   background-color: #f2bfbf;
 }
+#apiBody .api-fields tr.removed,
+#apiBody .table-columns tr.removed,
+#apiBody .space-columns tr.removed {
+  box-shadow: 0px 0px 2px 2px #f2bfbf;
+}
+#apiBody .api-fields tr.added,
+#apiBody .table-columns tr.added,
+#apiBody .space-columns tr.added {
+  box-shadow: 0px 0px 2px 2px #d8e8ab;
+}
 #apiBody .api-fields.view td:nth-child(3),
 #apiBody .table-columns.view td:nth-child(2),
 #apiBody .space-columns.view td:nth-child(3),
@@ -1555,6 +1629,14 @@ img.resultBodyLoading {
 #apiBody .space-columns td:last-child,
 #apiBody .saml-fields.view td:last-child {
   width: 100%;
+}
+#apiBody.diff .api-fields.view td:nth-child(1),
+#apiBody.diff .table-columns.view td:nth-child(1) {
+  width: 100%;
+}
+#apiBody.diff .api-fields.view td:nth-child(2),
+#apiBody.diff .table-columns.view td:nth-child(2) {
+  white-space: nowrap;
 }
 #apiBody .api-fields a.fieldset-collapse,
 #apiBody .space-columns a.container-collapse {
