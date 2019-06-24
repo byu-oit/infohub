@@ -38,6 +38,10 @@
                     clearInterval(loadingTextInterval);
                     thisElem.html('Sync');
                     var data = JSON.parse(data);
+					if (data.diff) {
+						window.location.href = '/databaseAdmin/diff/'+database+'/'+schema+'/'+table;
+						return;
+					}
                     alert(data.message);
 
                     if (data.redirect) {

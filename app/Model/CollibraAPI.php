@@ -716,7 +716,16 @@ class CollibraAPI extends Model {
 				['Column' => ['fieldName' => 'schemaId']],
 				['Column' => ['fieldName' => 'schemaName']],
 				['Column' => ['fieldName' => 'databaseId']],
-				['Column' => ['fieldName' => 'databaseName']]],
+				['Column' => ['fieldName' => 'databaseName']],
+				['Column' => ['fieldName' => 'tableAltered']],
+				['Column' => ['fieldName' => 'tableAlteredAttrId']],
+				['Group' => [
+					'name' => 'dataSharingRequests',
+					'Columns' => [
+						['Column' => ['fieldName' => 'dsrId']],
+						['Column' => ['fieldName' => 'dsrName']],
+						['Column' => ['fieldName' => 'dsrStatus']],
+						['Column' => ['fieldName' => 'dsrStatusId']]]]]],
 			'Resources' => [
 				'Term' => [
 					'Id' => ['name' => 'id'],
@@ -724,16 +733,29 @@ class CollibraAPI extends Model {
 					'StringAttribute' => [[
 						'labelId' => Configure::read('Collibra.attribute.description'),
 						'Value' => ['name' => 'description']]],
+					'BooleanAttribute' => [[
+						'labelId' => Configure::read('Collibra.attribute.tableAltered'),
+						'Value' => ['name' => 'tableAltered'],
+						'Id' => ['name' => 'tableAlteredAttrId']]],
 					'Vocabulary' => [
 						'Community' => [
 							'Id' => ['name' => 'databaseId'],
 							'Name' => ['name' => 'databaseName']]],
-					'Relation' => [
+					'Relation' => [[
 						'typeId' => Configure::read('Collibra.relationship.schemaToTable'),
 						'type' => 'TARGET',
 						'Source' => [
 							'Id' => ['name' => 'schemaId'],
 							'Signifier' => ['name' => 'schemaName']]],
+					[
+						'typeId' => Configure::read('Collibra.relationship.DSRtoNecessaryTable'),
+						'type' => 'TARGET',
+						'Source' => [
+							'Id' => ['name' => 'dsrId'],
+							'Signifier' => ['name' => 'dsrName'],
+							'Status' => [
+								'Id' => ['name' => 'dsrStatusId'],
+								'Signifier' => ['name' => 'dsrStatus']]]]],
 					'Filter' => [
 						'AND' => [[
 							'Field' => [
