@@ -35,6 +35,9 @@ class VirtualDatasetAdminController extends AppController {
 	public function import() {
 		$this->autoRender = false;
 		if (!$this->request->is('post')) {
+			$directorId = $this->CollibraAPI->getResponsibilities(Configure::read('Collibra.community.dataGovernanceCouncil'))['Steward'][0]->resourceId;
+			$director = json_decode($this->CollibraAPI->get('user/'.$directorId));
+			$this->set(compact('director'));
 			$this->render();
 		} else {
 			$path = str_replace('.', '/', $this->request->data['path']);
