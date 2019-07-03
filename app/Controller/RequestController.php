@@ -2275,7 +2275,8 @@ class RequestController extends AppController {
 			$processID = $formResp->startWorkflowResponses[0]->processInstanceId;
 
 			// attempt to reindex source to make sure latest requests are displayed
-			$resp = $this->CollibraAPI->post('search/re-index');
+			// Commenting this out for now because the search re-index broke in Collibra 5.6
+			// $resp = $this->CollibraAPI->post('search/re-index');
 
 			$this->deleteDraft();
 
