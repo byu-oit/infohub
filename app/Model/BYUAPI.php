@@ -28,7 +28,7 @@ class BYUAPI extends Model {
 		return $data->PersonSummaryService->response;
 	}
 
-	public function isGROGroupMember($netid, ...$groups) {
+	public function isGROGroupMemberAny($netid, ...$groups) {
 		if (empty($netid) || empty($groups)) {
 			return false;
 		}
