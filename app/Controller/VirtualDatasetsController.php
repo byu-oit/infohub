@@ -30,7 +30,7 @@ class VirtualDatasetsController extends AppController {
 			$this->set('recent', $this->Session->read('recentSpaces'));
 		}
 
-		$importAuthorized = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04');
+		$importAuthorized = $this->BYUAPI->isGROGroupMemberAny($this->Auth->user('username'), 'oit04');
 
 		$spaces = $this->CollibraAPI->getDremioSpaces();
 		$this->set(compact('importAuthorized', 'spaces'));
@@ -39,7 +39,7 @@ class VirtualDatasetsController extends AppController {
 	public function view($spaceId) {
 		$this->checkAuthorized();
 		$space = $this->CollibraAPI->getDremioSpaceDetails($spaceId, true);
-		$matchAuthorized = $this->BYUAPI->isGROGroupMember($this->Auth->user('username'), 'oit04', 'infohub-match');
+		$matchAuthorized = $this->BYUAPI->isGROGroupMemberAny($this->Auth->user('username'), 'oit04', 'infohub-match');
 		$this->set(compact('space', 'matchAuthorized'));
 
 		$arrRecent = $this->Session->check('recentSpaces') ? $this->Session->read('recentSpaces') : [];
