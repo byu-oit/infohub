@@ -233,20 +233,11 @@ class RequestController extends AppController {
 			}
 		}
 
-		$pdfString = $pdf->Output('S');
-		$fileId = $this->CollibraAPI->uploadFile($pdfString, "DSA_".$dsaId);
+		$pdfPath = TMP.'/dsas/'.$dsaId.'.pdf';
+		$pdf->Output('F', $pdfPath);
 
-		$postData = [
-			'file' => $fileId,
-			'fileName' => 'DSA_' . $dsaId . '.pdf'
-		];
-		$postString = http_build_query($postData);
-		$resp = $this->CollibraAPI->post('term/'.$dsaId.'/attachment', $postString);
-
-		if ($resp->code != '201') {
-			return json_encode(['success' => '0', 'message' => $resp->body]);
-		}
-		return json_encode(['success' => '1']);
+		$this->response->file($pdfPath);
+		return $this->response;
 	}
 
 	public function addToQueueAPI() {
