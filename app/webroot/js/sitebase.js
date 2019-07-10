@@ -526,21 +526,17 @@ function addToQueueVirtualDataset(elem, displayCart) {
 
 	var arrColumns = [];
 	var arrColumnIds = [];
-	var arrDatasets = [];
-	var arrDatasetIds = [];
-	var spaceName = $(elem).data('spacename');
-	var spaceId = $(elem).data('spaceid');
+	var datasetName = $(elem).data('datasetName');
+	var datasetId = $(elem).data('datasetId');
 
 	$(elem).parent().find('.checkBoxes').find('input').each(function(){
 		if($(this).prop("checked") && $(this).prop("name") != "toggleCheckboxes" && !$(this).hasClass('container')){
 			arrColumns.push($(this).data('name'));
 			arrColumnIds.push($(this).data('columnId'));
-			arrDatasets.push($(this).data('datasetName'));
-			arrDatasetIds.push($(this).data('datasetId'));
 		}
 	});
 	if (arrColumns.length < 500) {
-		$.post("/request/addToQueueVirtualDataset", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, d:arrDatasets, di:arrDatasetIds, sn:spaceName, si:spaceId})
+		$.post("/request/addToQueueVirtualDataset", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, dn:datasetName, di:datasetId})
 			.done(function(data) {
 				clearInterval(loadingTextInterval);
 				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
@@ -552,7 +548,7 @@ function addToQueueVirtualDataset(elem, displayCart) {
 		});
 	} else {
 		largeAddProgressSetUp(arrColumns.length);
-		largeAddToQueueVirtualDataset(arrColumns, arrColumnIds, arrDatasets, arrDatasetIds, spaceName, spaceId)
+		largeAddToQueueVirtualDataset(arrColumns, arrColumnIds, datasetName, datasetId)
 			.then(function(data) {
 				clearInterval(loadingTextInterval);
 				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
@@ -564,21 +560,21 @@ function addToQueueVirtualDataset(elem, displayCart) {
 			});
 	}
 }
-function largeAddToQueueVirtualDataset(arrColumns, arrColumnIds, arrDatasets, arrDatasetIds, spaceName, spaceId, columnsStride = 150) {
+function largeAddToQueueVirtualDataset(arrColumns, arrColumnIds, datasetName, datasetId, columnsStride = 150) {
 	if (arrColumns.length > columnsStride) {
 		return new Promise(function(resolve) {
-			var request = $.post("/request/addToQueueVirtualDataset", {emptyApi:'false', c:arrColumns.slice(0, columnsStride), ci:arrColumnIds.slice(0, columnsStride), d:arrDatasets.slice(0, columnsStride), di:arrDatasetIds.slice(0, columnsStride), sn:spaceName, si:spaceId})
+			var request = $.post("/request/addToQueueVirtualDataset", {emptyApi:'false', c:arrColumns.slice(0, columnsStride), ci:arrColumnIds.slice(0, columnsStride), dn:datasetName, di:datasetId})
 				.then(() => {
 					largeAddProgressIncrement();
 				});
-			var recur = largeAddToQueueVirtualDataset(arrColumns.slice(columnsStride), arrColumnIds.slice(columnsStride), arrDatasets.slice(columnsStride), arrDatasetIds.slice(columnsStride), spaceName, spaceId, columnsStride);
+			var recur = largeAddToQueueVirtualDataset(arrColumns.slice(columnsStride), arrColumnIds.slice(columnsStride), datasetName, datasetId, columnsStride);
 
 			Promise.all([request, recur]).then(() => resolve());
 			});
 	}
 	else {
 		return new Promise(function(resolve) {
-			$.post("/request/addToQueueVirtualDataset", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, d:arrDatasets, di:arrDatasetIds, sn:spaceName, si:spaceId})
+			$.post("/request/addToQueueVirtualDataset", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, dn:datasetName, di:datasetId})
 				.then(() => {
 					largeAddProgressIncrement();
 					resolve();

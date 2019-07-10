@@ -296,17 +296,20 @@ class RequestController extends AppController {
 			$newTermsAdded = 0;
 			$arrColumns = $this->request->data['c'];
 			$arrColumnIds = $this->request->data['ci'];
-			$arrDatasets = $this->request->data['d'];
-			$arrDatasetIds = $this->request->data['di'];
-			$spaceName = $this->request->data['sn'];
-			$spaceId = $this->request->data['si'];
+			$datasetName = $this->request->data['dn'];
+			$datasetId = $this->request->data['di'];
 
 			$arrQueue = $this->Session->read('queue');
 
 			foreach ($arrColumnIds as $i => $columnId) {
 				if (empty($arrQueue['virtualColumns'][$columnId])) {
 					$newTermsAdded++;
-					$arrQueue['virtualColumns'][$columnId] = ['name' => end((explode(".", $arrColumns[$i]))), 'fullName' => $arrColumns[$i], 'datasetName' => $arrDatasets[$i], 'datasetId' => $arrDatasetIds[$i], 'spaceName' => $spaceName, 'spaceId' => $spaceId];
+					$arrQueue['virtualColumns'][$columnId] = [
+						'name' => end((explode(".", $arrColumns[$i]))),
+						'fullName' => $arrColumns[$i],
+						'datasetName' => $datasetName,
+						'datasetId' => $datasetId
+					];
 				}
 			}
 

@@ -983,202 +983,35 @@ class CollibraAPI extends Model {
 		return $results;
 	}
 
-	public function getDremioSpaces() {
+	public function getDremioDatasets() {
 		$tableConfig = ['TableViewConfig' => [
 			'Columns' => [
-				['Column' => ['fieldName' => 'spaceId']],
-				['Column' => ['fieldName' => 'spaceName']]],
+				['Column' => ['fieldName' => 'datasetId']],
+				['Column' => ['fieldName' => 'datasetName']]],
 			'Resources' => [
 				'Term' => [
-					'Id' => ['name' => 'spaceId'],
-					'Signifier' => ['name' => 'spaceName'],
+					'Id' => ['name' => 'datasetId'],
+					'Signifier' => ['name' => 'datasetName'],
 					'ConceptType' => [
 						'Id' => ['name' => 'assetTypeId']],
 					'Vocabulary' => [
 						'Community' => [
-							'Id' => ['name' => 'communityId']]],
+							'ParentCommunity' => [
+								'Id' => ['name' => 'parentCommunityId']]]],
 					'Filter' => [
 						'AND' => [[
 							'Field' => [
 								'name' => 'assetTypeId',
 								'operator' => 'EQUALS',
-								'value' => Configure::read('Collibra.type.dremioSpace')]],
+								'value' => Configure::read('Collibra.type.virtualDataset')]],
 						[
 							'Field' => [
-								'name' => 'communityId',
+								'name' => 'parentCommunityId',
 								'operator' => 'EQUALS',
 								'value' => Configure::read('Collibra.community.virtualDatasets')]]]]]]]];
 
 		$results = $this->fullDataTable($tableConfig);
 		return $results;
-	}
-
-	public function getDremioSpaceDetails($spaceId, $full = false, $nameLookup = false) {
-		$tableConfig = ['TableViewConfig' => [
-			'Columns' => [
-				['Column' => ['fieldName' => 'spaceId']],
-				['Column' => ['fieldName' => 'spaceName']],
-				['Group' => [
-					'name' => 'subfolders',
-					'Columns' => [
-						['Column' => ['fieldName' => 'subfolderId']],
-						['Column' => ['fieldName' => 'subfolderName']],
-						['Column' => ['fieldName' => 'subfolderRelId']]]]],
-				['Group' => [
-					'name' => 'datasets',
-					'Columns' => [
-						['Column' => ['fieldName' => 'datasetId']],
-						['Column' => ['fieldName' => 'datasetName']],
-						['Column' => ['fieldName' => 'datasetRelId']]]]]],
-			'Resources' => [
-				'Term' => [
-					'Id' => ['name' => 'spaceId'],
-					'Signifier' => ['name' => 'spaceName'],
-					'ConceptType' => [
-						'Id' => ['name' => 'assetTypeId']],
-					'Relation' => [[
-						'typeId' => Configure::read('Collibra.relationship.spaceToFolder'),
-						'type' => 'SOURCE',
-						'Id' => ['name' => 'subfolderRelId'],
-						'Target' => [
-							'Id' => ['name' => 'subfolderId'],
-							'Signifier' => ['name' => 'subfolderName']]],
-					[
-						'typeId' => Configure::read('Collibra.relationship.spaceToVirtualDataset'),
-						'type' => 'SOURCE',
-						'Id' => ['name' => 'datasetRelId'],
-						'Target' => [
-							'Id' => ['name' => 'datasetId'],
-							'Signifier' => ['name' => 'datasetName']]]],
-					'Filter' => [
-						'AND' => [[
-							'Field' => [
-								'name' => 'spaceId',
-								'operator' => 'EQUALS',
-								'value' => $spaceId]],
-						[
-							'Field' => [
-								'name' => 'assetTypeId',
-								'operator' => 'EQUALS',
-								'value' => Configure::read('Collibra.type.dremioSpace')]]]]]]]];
-
-		if ($nameLookup) $tableConfig['TableViewConfig']['Resources']['Term']['Filter']['AND'][0]['Field']['name'] = 'spaceName';
-
-		$results = $this->fullDataTable($tableConfig);
-
-		if (!$full) {
-			return $results;
-		} else {
-			for ($i = 0; $i < sizeof($results[0]->subfolders); $i++) {
-				$results[0]->subfolders[$i] = $this->getFolder($results[0]->subfolders[$i]->subfolderId, true);
-			}
-			for ($i = 0; $i < sizeof($results[0]->datasets); $i++) {
-				$results[0]->datasets[$i] = $this->getVirtualDataset($results[0]->datasets[$i]->datasetId);
-				$results[0]->datasets[$i]->columns = $this->getVirtualDatasetColumns($results[0]->datasets[$i]->id);
-			}
-			return $results[0];
-		}
-	}
-
-	public function getFolder($folderId, $full = false) {
-		$tableConfig = ['TableViewConfig' => [
-			'Columns' => [
-				['Column' => ['fieldName' => 'folderId']],
-				['Column' => ['fieldName' => 'folderName']],
-				['Group' => [
-					'name' => 'space',
-					'Columns' => [
-						['Column' => ['fieldName' => 'spaceId']],
-						['Column' => ['fieldName' => 'spaceName']],
-						['Column' => ['fieldName' => 'spaceRelId']],
-						['Column' => ['fieldName' => 'spaceAssetType']],
-						['Column' => ['fieldName' => 'spaceAssetTypeId']]]]],
-				['Group' => [
-					'name' => 'parentFolder',
-					'Columns' => [
-						['Column' => ['fieldName' => 'parentFolderId']],
-						['Column' => ['fieldName' => 'parentFolderName']],
-						['Column' => ['fieldName' => 'parentFolderRelId']],
-						['Column' => ['fieldName' => 'parentFolderAssetType']],
-						['Column' => ['fieldName' => 'parentFolderAssetTypeId']]]]],
-				['Group' => [
-					'name' => 'subfolders',
-					'Columns' => [
-						['Column' => ['fieldName' => 'subfolderId']],
-						['Column' => ['fieldName' => 'subfolderName']],
-						['Column' => ['fieldName' => 'subfolderRelId']]]]],
-				['Group' => [
-					'name' => 'datasets',
-					'Columns' => [
-						['Column' => ['fieldName' => 'datasetId']],
-						['Column' => ['fieldName' => 'datasetName']],
-						['Column' => ['fieldName' => 'datasetRelId']]]]]],
-			'Resources' => [
-				'Term' => [
-					'Id' => ['name' => 'folderId'],
-					'Signifier' => ['name' => 'folderName'],
-					'Vocabulary' => [
-						'Community' => [
-							'Id' => ['name' => 'communityId']]],
-					'Relation' => [[
-						'typeId' => Configure::read('Collibra.relationship.spaceToFolder'),
-						'type' => 'TARGET',
-						'Id' => ['name' => 'spaceRelId'],
-						'Source' => [
-							'Id' => ['name' => 'spaceId'],
-							'Signifier' => ['name' => 'spaceName'],
-							'ConceptType' => [
-								'Id' => ['name' => 'spaceAssetTypeId'],
-								'Signifier' => ['name' => 'spaceAssetType']]]],
-					[
-						'typeId' => Configure::read('Collibra.relationship.folderToFolder'),
-						'type' => 'TARGET',
-						'Id' => ['name' => 'parentFolderRelId'],
-						'Source' => [
-							'Id' => ['name' => 'parentFolderId'],
-							'Signifier' => ['name' => 'parentFolderName'],
-							'ConceptType' => [
-								'Id' => ['name' => 'parentFolderAssetTypeId'],
-								'Signifier' => ['name' => 'parentFolderAssetType']]]],
-					[
-						'typeId' => Configure::read('Collibra.relationship.folderToFolder'),
-						'type' => 'SOURCE',
-						'Id' => ['name' => 'subfolderRelId'],
-						'Target' => [
-							'Id' => ['name' => 'subfolderId'],
-							'Signifier' => ['name' => 'subfolderName']]],
-					[
-						'typeId' => Configure::read('Collibra.relationship.folderToVirtualDataset'),
-						'type' => 'SOURCE',
-						'Id' => ['name' => 'datasetRelId'],
-						'Target' => [
-							'Id' => ['name' => 'datasetId'],
-							'Signifier' => ['name' => 'datasetName']]]],
-					'Filter' => [
-						'AND' => [[
-							'Field' => [
-								'name' => 'folderId',
-								'operator' => 'EQUALS',
-								'value' => $folderId]],
-						[
-							'Field' => [
-								'name' => 'communityId',
-								'operator' => 'EQUALS',
-								'value' => Configure::read('Collibra.community.virtualDatasets')]]]]]]]];
-
-		$results = $this->fullDataTable($tableConfig);
-		if (!$full) {
-			return $results;
-		} else {
-			for ($i = 0; $i < sizeof($results[0]->subfolders); $i++) {
-				$results[0]->subfolders[$i] = $this->getFolder($results[0]->subfolders[$i]->subfolderId, true);
-			}
-			for ($i = 0; $i < sizeof($results[0]->datasets); $i++) {
-				$results[0]->datasets[$i] = $this->getVirtualDataset($results[0]->datasets[$i]->datasetId);
-				$results[0]->datasets[$i]->columns = $this->getVirtualDatasetColumns($results[0]->datasets[$i]->id);
-			}
-			return $results[0];
-		}
 	}
 
 	public function getVirtualDataset($datasetId) {
@@ -1188,9 +1021,7 @@ class CollibraAPI extends Model {
 				['Column' => ['fieldName' => 'name']],
 				['Column' => ['fieldName' => 'description']],
 				['Column' => ['fieldName' => 'folderId']],
-				['Column' => ['fieldName' => 'folderName']],
-				['Column' => ['fieldName' => 'spaceId']],
-				['Column' => ['fieldName' => 'spaceName']]],
+				['Column' => ['fieldName' => 'folderName']]],
 			'Resources' => [
 				'Term' => [
 					'Id' => ['name' => 'id'],
@@ -1198,18 +1029,10 @@ class CollibraAPI extends Model {
 					'StringAttribute' => [[
 						'labelId' => Configure::read('Collibra.attribute.description'),
 						'Value' => ['name' => 'description']]],
-					'Relation' => [[
-						'typeId' => Configure::read('Collibra.relationship.folderToVirtualDataset'),
-						'type' => 'TARGET',
-						'Source' => [
+					'Vocabulary' => [
+						'Community' => [
 							'Id' => ['name' => 'folderId'],
-							'Signifier' => ['name' => 'folderName']]],
-					[
-						'typeId' => Configure::read('Collibra.relationship.spaceToVirtualDataset'),
-						'type' => 'TARGET',
-						'Source' => [
-							'Id' => ['name' => 'spaceId'],
-							'Signifier' => ['name' => 'spaceName']]]],
+							'Name' => ['name' => 'folderName']]],
 					'Filter' => [
 						'AND' => [[
 							'Field' => [

@@ -3,37 +3,6 @@
 App::uses('AppHelper', 'View/Helper');
 
 class VirtualDatasetHelper extends AppHelper {
-    public function printFolderView($folder) {
-        echo '<tr data-num-collapsed="0" data-name="'.$folder->folderName.'" data-container-path="';
-        $path = explode('.', $folder->folderName);
-        array_pop($path);
-        echo implode('.', $path).'"><td>';
-        echo '<a class="container-collapse" onclick="toggleContainerCollapse(this)" data-collapsed="false"></a>';
-        echo '</td>';
-        echo '<td>';
-            echo '<input type="checkbox"'.
-                 ' class="chk container"'.
-                 ' data-name="'.$folder->folderName.'"'.
-                 ' data-container-path="';
-                 $path = explode('.', $folder->folderName);
-                 array_pop($path);
-                 echo implode('.', $path).'">';
-        echo '</td>';
-        echo '<td>';
-            $folderPath = explode('.', $folder->folderName);
-            echo str_repeat('&nbsp;', 12 * (count($folderPath) - 2));
-            echo end($folderPath);
-        echo '</td>';
-        echo '<td></td><td></td><td></td></tr>';
-
-        foreach ($folder->subfolders as $subfolder) {
-            $this->printFolderView($subfolder);
-        }
-        foreach ($folder->datasets as $dataset) {
-            $this->printDatasetView($dataset);
-        }
-    }
-
     public function printDatasetView($dataset) {
         echo '<tr data-num-collapsed="0" data-name="'.$dataset->name.'" data-container-path="';
         $path = explode('.', $dataset->name);
@@ -73,8 +42,6 @@ class VirtualDatasetHelper extends AppHelper {
                          ' id="chk'.h($column->businessTerm[0]->termId).'"'.
                          ' data-name="'.$column->columnName.'"'.
                          ' data-column-id="'.$column->columnId.'"'.
-                         ' data-dataset-name="'.$dataset->name.'"'.
-                         ' data-dataset-id="'.$dataset->id.'"'.
                          ' data-container-path="';
                          $path = explode('.', $column->columnName);
                          array_pop($path);
@@ -87,8 +54,6 @@ class VirtualDatasetHelper extends AppHelper {
                          ' class="chk"'.
                          ' data-name="'.$column->columnName.'"'.
                          ' data-column-id="'.$column->columnId.'"'.
-                         ' data-dataset-name="'.$dataset->name.'"'.
-                         ' data-dataset-id="'.$dataset->id.'"'.
                          ' data-container-path="';
                          $path = explode('.', $column->columnName);
                          array_pop($path);
@@ -154,28 +119,6 @@ class VirtualDatasetHelper extends AppHelper {
                     echo '<a href="/search/listTerms/'.$column->businessTerm[0]->termVocabularyId.'">'.$column->businessTerm[0]->termCommunityName.'</a>';
                 }
             echo '</td></tr>';
-        }
-    }
-
-    public function printFolderViewRequested($folder, $requestedAssetIds) {
-        echo '<tr data-num-collapsed="0" data-name="'.$folder->folderName.'" data-container-path="';
-        $path = explode('.', $folder->folderName);
-        array_pop($path);
-        echo implode('.', $path).'"><td>';
-        echo '<a class="container-collapse" onclick="toggleContainerCollapse(this)" data-collapsed="false"></a>';
-        echo '</td>';
-        echo '<td>';
-            $folderPath = explode('.', $folder->folderName);
-            echo str_repeat('&nbsp;', 12 * (count($folderPath) - 2));
-            echo end($folderPath);
-        echo '</td>';
-        echo '<td></td><td></td><td></td></tr>';
-
-        foreach ($folder->subfolders as $subfolder) {
-            $this->printFolderViewRequested($subfolder, $requestedAssetIds);
-        }
-        foreach ($folder->datasets as $dataset) {
-            $this->printDatasetViewRequested($dataset, $requestedAssetIds);
         }
     }
 
@@ -261,24 +204,8 @@ class VirtualDatasetHelper extends AppHelper {
         }
     }
 
-    public function printFolderUpdate($folder, &$index, $glossaries) {
-        echo '<tr id="tr'.$index.'"><td>';
-            $folderPath = explode('.', $folder->folderName);
-            echo str_repeat('&nbsp;', 12 * (count($folderPath) - 2));
-            echo end($folderPath);
-        echo '</td>';
-        echo '<td></td><td></td><td></td><td></td></tr>';
-        $index++;
-
-        foreach ($folder->subfolders as $subfolder) {
-            $this->printFolderUpdate($subfolder, $index, $glossaries);
-        }
-        foreach ($folder->datasets as $dataset) {
-            $this->printDatasetUpdate($dataset, $index, $glossaries);
-        }
-    }
-
-    public function printDatasetUpdate($dataset, &$index, $glossaries) {
+    public function printDatasetUpdate($dataset, $glossaries) {
+        $index = 0;
         echo '<tr id="tr'.$index.'"><td>';
             $datasetPath = explode('.', $dataset->name);
             echo str_repeat('&nbsp;', 12 * (count($datasetPath) - 2));
@@ -297,32 +224,32 @@ class VirtualDatasetHelper extends AppHelper {
             echo '</td>';
             echo '<td>';
             if (empty($column->businessTerm[0])) {
-                echo '<input type="hidden" name="data[Space][elements]['.$index.'][id]" value="'.$column->columnId.'" id="SpaceElements'.$index.'Id">'.
-                     '<input type="hidden" name="data[Space][elements]['.$index.'][name]" class="data-label" data-index="'.$index.'" value="'.$column->columnName.'" id="SpaceElements'.$index.'Name">'.
-                     '<input type="hidden" name="data[Space][elements]['.$index.'][business_term]" class="bt" data-index="'.$index.'" id="SpaceElements'.$index.'BusinessTerm">'.
-                     '<div class="term-wrapper display-loading" id="SpaceElements'.$index.'SearchCell">'.
+                echo '<input type="hidden" name="data[Dataset][elements]['.$index.'][id]" value="'.$column->columnId.'" id="DatasetElements'.$index.'Id">'.
+                     '<input type="hidden" name="data[Dataset][elements]['.$index.'][name]" class="data-label" data-index="'.$index.'" value="'.$column->columnName.'" id="DatasetElements'.$index.'Name">'.
+                     '<input type="hidden" name="data[Dataset][elements]['.$index.'][business_term]" class="bt" data-index="'.$index.'" id="DatasetElements'.$index.'BusinessTerm">'.
+                     '<div class="term-wrapper display-loading" id="DatasetElements'.$index.'SearchCell">'.
                         '<input type="text" class="bt-search" data-index="'.$index.'" placeholder="Search for a term"></input>'.
                         '<div class="selected-term"><span class="term-name"></span>  <span class="edit-opt" data-index="'.$index.'" title="Select new term"></span></div>'.
                         '<div class="loading">Loading...</div>'.
                      '</div>';
             } else {
-                echo '<input type="hidden" name="data[Space][elements]['.$index.'][id]" value="'.$column->columnId.'" id="SpaceElements'.$index.'Id">'.
-                     '<input type="hidden" name="data[Space][elements]['.$index.'][name]" class="data-label" data-index="'.$index.'" value="'.$column->columnName.'" id="SpaceElements'.$index.'Name"	data-pre-linked="true" data-orig-context="'.$column->businessTerm[0]->termCommunityName.'" data-orig-id="'.$column->businessTerm[0]->termId.'" data-orig-name="'.$column->businessTerm[0]->term.'" data-orig-def="'.preg_replace('/"/', '&quot;', $column->businessTerm[0]->termDescription).'">'.
-                     '<input type="hidden" name="data[Space][elements]['.$index.'][previous_business_term]" value="'.$column->businessTerm[0]->termId.'">'.
-                     '<input type="hidden" name="data[Space][elements]['.$index.'][previous_business_term_relation]" value="'.$column->businessTerm[0]->termRelationId.'">'.
-                     '<input type="hidden" name="data[Space][elements]['.$index.'][business_term]" value="'.$column->businessTerm[0]->termId.'" class="bt" data-index="'.$index.'" id="SpaceElements'.$index.'BusinessTerm" data-orig-term="'.$column->businessTerm[0]->termId.'">'.
-                     '<div class="term-wrapper" id="SpaceElements'.$index.'SearchCell">'.
+                echo '<input type="hidden" name="data[Dataset][elements]['.$index.'][id]" value="'.$column->columnId.'" id="DatasetElements'.$index.'Id">'.
+                     '<input type="hidden" name="data[Dataset][elements]['.$index.'][name]" class="data-label" data-index="'.$index.'" value="'.$column->columnName.'" id="DatasetElements'.$index.'Name"	data-pre-linked="true" data-orig-context="'.$column->businessTerm[0]->termCommunityName.'" data-orig-id="'.$column->businessTerm[0]->termId.'" data-orig-name="'.$column->businessTerm[0]->term.'" data-orig-def="'.preg_replace('/"/', '&quot;', $column->businessTerm[0]->termDescription).'">'.
+                     '<input type="hidden" name="data[Dataset][elements]['.$index.'][previous_business_term]" value="'.$column->businessTerm[0]->termId.'">'.
+                     '<input type="hidden" name="data[Dataset][elements]['.$index.'][previous_business_term_relation]" value="'.$column->businessTerm[0]->termRelationId.'">'.
+                     '<input type="hidden" name="data[Dataset][elements]['.$index.'][business_term]" value="'.$column->businessTerm[0]->termId.'" class="bt" data-index="'.$index.'" id="DatasetElements'.$index.'BusinessTerm" data-orig-term="'.$column->businessTerm[0]->termId.'">'.
+                     '<div class="term-wrapper" id="DatasetElements'.$index.'SearchCell">'.
                         '<input type="text" class="bt-search" data-index="'.$index.'" placeholder="Search for a term"></input>'.
                         '<div class="selected-term"><span class="term-name">'.$column->businessTerm[0]->term.'</span>  <span class="edit-opt" data-index="'.$index.'" title="Select new term"></span></div>'.
                         '<div class="loading">Loading...</div>'.
                      '</div>';
             }
-            echo '<input type="text" name="data[Space][elements]['.$index.'][propName]" class="bt-new-name" id="SpaceElements'.$index.'PropName" data-index="'.$index.'" placeholder="Proposed name for the term"></input>'.
+            echo '<input type="text" name="data[Dataset][elements]['.$index.'][propName]" class="bt-new-name" id="DatasetElements'.$index.'PropName" data-index="'.$index.'" placeholder="Proposed name for the term"></input>'.
              '</td><td>'.
-                 '<input type="checkbox" name="data[Space][elements]['.$index.'][new]" id="SpaceElements'.$index.'New" class="new-check" data-index="'.$index.'">'.
+                 '<input type="checkbox" name="data[Dataset][elements]['.$index.'][new]" id="DatasetElements'.$index.'New" class="new-check" data-index="'.$index.'">'.
              '</td><td class="glossary-cell">'.
                  '<div class="view-context'.$index.'" style="white-space: nowrap"></div>'.
-                 '<select name="data[Space][elements]['.$index.'][propGlossary]" class="bt-new-glossary" id="SpaceElements'.$index.'PropGlossary">'.
+                 '<select name="data[Dataset][elements]['.$index.'][propGlossary]" class="bt-new-glossary" id="DatasetElements'.$index.'PropGlossary">'.
                  '<option value="">Select a glossary</option>'.
                  '<option value="">I don\'t know</option>';
                      foreach ($glossaries as $glossary) {
@@ -331,7 +258,7 @@ class VirtualDatasetHelper extends AppHelper {
             echo '</select>'.
              '</td><td>'.
                  '<div id="view-definition'.$index.'" class="view-definition"></div>'.
-                 '<textarea name="data[Space][elements]['.$index.'][propDefinition]" class="bt-new-definition" id="SpaceElements'.$index.'PropDefinition" placeholder="Propose a definition for the term" rows="1" style="width:100%;"></textarea>'.
+                 '<textarea name="data[Dataset][elements]['.$index.'][propDefinition]" class="bt-new-definition" id="DatasetElements'.$index.'PropDefinition" placeholder="Propose a definition for the term" rows="1" style="width:100%;"></textarea>'.
              '</td>';
             echo '</tr>';
             $index++;

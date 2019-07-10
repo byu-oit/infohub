@@ -54,40 +54,40 @@
 		}
 
 		var postData = $('form#datasetForm').serializeObject();
-		var spaceId = postData.data.Space.spaceId;
-		var numElements = postData.data.Space.elements.length;
+		var datasetId = postData.data.Dataset.datasetId;
+		var numElements = postData.data.Dataset.elements.length;
 
 		if (numElements < 100) {
 
-			$.post('/virtualDatasetAdmin/update/'+spaceId, postData)
+			$.post('/virtualDatasetAdmin/update/'+datasetId, postData)
 				.done(function(data) {
 					data = JSON.parse(data);
 					if (!data.success) {
 						window.location.reload(true);
 					}
-					window.location.href = '/virtualDatasets/view/'+spaceId;
+					window.location.href = '/virtualDatasets/view/'+datasetId;
 				});
 
 		} else {
 			window.postSuccess = true;
-			largeSpaceUpdate(postData)
+			largeDatasetUpdate(postData)
 				.then(function(data) {
 					if (!window.postSuccess) {
 						window.location.reload(true);
 					} else {
-						window.location.href = '/virtualDatasets/view/'+spaceId;
+						window.location.href = '/virtualDatasets/view/'+datasetId;
 					}
 				});
 		}
 	}
 
-	function largeSpaceUpdate(postData, stride = 100) {
-		if (postData.data.Space.elements.length > stride) {
+	function largeDatasetUpdate(postData, stride = 100) {
+		if (postData.data.Dataset.elements.length > stride) {
 			return new Promise(function(resolve) {
-				var postDataElements = postData.data.Space.elements;
+				var postDataElements = postData.data.Dataset.elements;
 
-				postData.data.Space.elements = postDataElements.slice(0, stride);
-				var request = $.post('/virtualDatasetAdmin/update/'+postData.data.Space.spaceId, postData)
+				postData.data.Dataset.elements = postDataElements.slice(0, stride);
+				var request = $.post('/virtualDatasetAdmin/update/'+postData.data.Dataset.datasetId, postData)
 					.then(function(data) {
 						data = JSON.parse(data);
 						if (!data.success) {
@@ -95,15 +95,15 @@
 						}
 					});
 
-				postData.data.Space.elements = postDataElements.slice(stride);
-				var recur = largeSpaceUpdate(postData);
+				postData.data.Dataset.elements = postDataElements.slice(stride);
+				var recur = largeDatasetUpdate(postData);
 
 				Promise.all([request, recur]).then(() => resolve());
 			});
 		}
 		else {
 			return new Promise(function(resolve) {
-				$.post('/virtualDatasetAdmin/update/'+postData.data.Space.spaceId, postData)
+				$.post('/virtualDatasetAdmin/update/'+postData.data.Dataset.datasetId, postData)
 					.then(function(data) {
 						data = JSON.parse(data);
 						if (!data.success) {
@@ -140,13 +140,13 @@
 
 </script>
 <style type="text/css">
-	table.space-columns td {
+	table.dataset-columns td {
 		padding-bottom: 0.5em;
 	}
-	table.space-columns tr:hover {
+	table.dataset-columns tr:hover {
 		background-color: #eee
 	}
-	table.space-columns tr.header:hover {
+	table.dataset-columns tr.header:hover {
 		background-color: inherit;
 	}
 	.resultItem #datasetForm .lower-btn {
@@ -156,14 +156,14 @@
 </style>
 <div id="apiBody" class="innerDataSet">
 	<div id="searchResults">
-		<h1 class="headerTab"><?= $space->spaceName ?></h1>
+		<h1 class="headerTab"><?= $dataset->name ?></h1>
 		<div class="clear"></div>
 		<div class="datasetHelp" style="cursor:default;">Can't find a matching business term? Check the "New" box to propose a new one.<br>Highlighted rows are automatic suggestions. Be sure to review these before submitting.</div>
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
-				<?= $this->Form->create('Space', ['id' => 'datasetForm']) ?>
-					<?= $this->Form->input('spaceId', ['type' => 'hidden', 'value' => $space->spaceId]) ?>
-					<table class="space-columns">
+				<?= $this->Form->create('Dataset', ['id' => 'datasetForm']) ?>
+					<?= $this->Form->input('datasetId', ['type' => 'hidden', 'value' => $dataset->id]) ?>
+					<table class="dataset-columns">
 						<tr class="header">
 							<th>Column</th>
 							<th>Business Term</th>
@@ -171,21 +171,13 @@
 							<th>Glossary</th>
 							<th>Definition</th>
 						</tr>
-						<?php
-						$index = 0;
-						foreach ($space->subfolders as $folder) {
-							$this->VirtualDataset->printFolderUpdate($folder, $index, $glossaries);
-						}
-						foreach ($space->datasets as $dataset) {
-							$this->VirtualDataset->printDatasetUpdate($dataset, $index, $glossaries);
-						}
-						?>
+						<?php $this->VirtualDataset->printDatasetUpdate($dataset, $glossaries); ?>
 					</table>
 					<div class="update-submit grow" onclick="chunkPostData()">Save</div>
-					<a class="lower-btn grow" href="/virtualDatasets/view/<?=$space->spaceId?>">Cancel</a>
+					<a class="lower-btn grow" href="/virtualDatasets/view/<?=$dataset->id?>">Cancel</a>
 				<?= $this->Form->end() ?>
 			</div>
 		</div>
 	</div>
 </div>
-<?= $this->element('space_match') ?>
+<?= $this->element('dataset_match') ?>

@@ -6,7 +6,7 @@ class DremioAPI extends Model {
 	public $useDbConfig = 'dremioApi';
 
 	public function catalog($path = '') {
-		$url = empty($path) ? 'catalog' : 'catalog/by-path/'.$path;
+		$url = 'catalog/by-path/InfoGov_Virtual_Datasets/'.$path;
 		$data = $this->_get($url);
 
 		if (isset($data->errorMessage)) {
