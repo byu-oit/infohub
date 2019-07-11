@@ -105,7 +105,7 @@ class BYUAPI extends Model {
 			$url .= "/{$table}";
 		}
 		if (!empty($db)) {
-			if ($db === 'CESPRD' || $db === 'DWPRD') {
+			if ($db === 'DWPRD') {
 				$url .= "?db=default";
 			} else {
 				$url .= "?db={$db}";
