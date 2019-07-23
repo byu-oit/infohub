@@ -10,23 +10,25 @@ class VirtualDatasetAdminController extends AppController {
 		$this->Auth->deny();
 	}
 
-	public function update($datasetId) {
+	public function update($spaceId) {
 		$this->autoRender = false;
 
 		if ($this->request->is('post')) {
-			$success = $this->CollibraAPI->updateBusinessTermLinks($this->request->data('Dataset.elements'));
+			$success = $this->CollibraAPI->updateBusinessTermLinks($this->request->data('Space.elements'));
 			if (!empty($success)) {
-				$this->Session->setFlash('Dataset updated successfully');
+				$this->Session->setFlash('Space updated successfully');
 				return json_encode(['success' => '1']);
 			}
 			$this->Session->setFlash('Error: ' . implode('<br>', $this->CollibraAPI->errors), 'default', ['class' => 'error']);
 			return json_encode(['success' => '0']);
 		}
 
-		$dataset = $this->CollibraAPI->getVirtualDataset($datasetId);
-		$dataset->columns = $this->CollibraAPI->getVirtualDatasetColumns($datasetId);
+		$space = $this->CollibraAPI->getDremioSpaceDetails($spaceId, true);
+		if (empty($space->subfolders) && empty($space->datasets)) {
+			return $this->redirect(['controller' => 'virtualDatasets', 'action' => 'index']);
+		}
 		$glossaries = $this->CollibraAPI->getAllGlossaries();
-		$this->set(compact('dataset', 'glossaries'));
+		$this->set(compact('space', 'glossaries'));
 		$this->render();
 	}
 
@@ -45,6 +47,7 @@ class VirtualDatasetAdminController extends AppController {
 
 	private function _import($path) {
 		$asset = $this->DremioAPI->catalog($path);
+		$spaceName = explode('/', $path)[0];
 
 		if (empty($asset) || isset($asset->errorMessage)) {
 			return ['success' => 0, 'message' => 'Error contacting Dremio.'];
@@ -53,8 +56,13 @@ class VirtualDatasetAdminController extends AppController {
 		if ($asset->entityType == 'dataset') {
 
 			$pathArray = explode('/', $path);
-			$postData = ['folderName' => [], 'datasetName' => '', 'columnNames' => []];
-			$postData['folderName'] = $pathArray[0];
+			$postData = ['spaceName' => '', 'folderNames' => [], 'datasetName' => '', 'columnNames' => []];
+			$postData['spaceName'] = $pathArray[0];
+			$i = 2;
+			while (count($postData['folderNames']) < count($pathArray) - 2) {
+				array_push($postData['folderNames'], implode('.', array_slice($pathArray, 0, $i)));
+				$i++;
+			}
 			$postData['datasetName'] = implode('.', $pathArray);
 			foreach (array_column($asset->fields, 'name') as $columnName) {
 				array_push($postData['columnNames'], implode('.', $pathArray).'.'.$columnName);
@@ -65,19 +73,36 @@ class VirtualDatasetAdminController extends AppController {
 				$this->Collibra->preparePostData($postData));
 			if ($resp->code != '200') {
 				return ['success' => 0, 'message' => 'Error reaching Collibra.'];
+			} else {
+				return ['success' => 0, 'message' => 'Dataset imported successfully.', 'redirect' => 1];
 			}
-			return ['success' => 1, 'message' => 'Dataset imported successfully.', 'redirect' => 1];
 
 		} else {
 
-			$folder = $path;
 			$assets = [
+				'folders' => [],
 				'datasets' => [],
 				'arrPostData' => []
 			];
 			foreach ($asset->children as $ch) {
-				if ($ch->type == 'DATASET') {
-					array_push($assets['datasets'], $folder.'/'.end($ch->path));
+				if ($ch->type == 'CONTAINER' && $ch->containerType == 'FOLDER') {
+					array_push($assets['folders'], implode('/', $ch->path));
+				}
+				else if ($ch->type == 'DATASET') {
+					array_push($assets['datasets'], implode('/', $ch->path));
+				}
+			}
+
+			while (!empty($assets['folders'])) {
+				$folderPath = array_shift($assets['folders']);
+				$folder = $this->DremioAPI->catalog($folderPath);
+				foreach ($folder->children as $ch) {
+					if ($ch->type == 'CONTAINER' && $ch->containerType == 'FOLDER') {
+						array_push($assets['folders'], implode('/', $ch->path));
+					}
+					else if ($ch->type == 'DATASET') {
+						array_push($assets['datasets'], implode('/', $ch->path));
+					}
 				}
 			}
 
@@ -85,11 +110,14 @@ class VirtualDatasetAdminController extends AppController {
 				$dataset = $this->DremioAPI->catalog($datasetPath);
 
 				$pathArray = explode('/', $datasetPath);
-				$postData = [
-					'folderName' => $folder,
-					'datasetName' => implode('.', $pathArray),
-					'columnNames' => []
-				];
+				$postData = ['spaceName' => '', 'folderNames' => [], 'datasetName' => '', 'columnNames' => []];
+				$postData['spaceName'] = $pathArray[0];
+				$i = 2;
+				while (count($postData['folderNames']) < count($pathArray) - 2) {
+					array_push($postData['folderNames'], implode('.', array_slice($pathArray, 0, $i)));
+					$i++;
+				}
+				$postData['datasetName'] = implode('.', $pathArray);
 				foreach (array_column($dataset->fields, 'name') as $columnName) {
 					array_push($postData['columnNames'], implode('.', $pathArray).'.'.$columnName);
 				}
@@ -107,10 +135,11 @@ class VirtualDatasetAdminController extends AppController {
 				}
 			}
 
-			if (!$success) {
+			if ($success) {
+				return ['success' => 1, 'message' => 'Datasets imported successfully.', 'redirect' => 1];
+			} else {
 				return ['success' => 0, 'message' => 'Error reaching Collibra.'];
 			}
-			return ['success' => 1, 'message' => 'Datasets imported successfully.', 'redirect' => 1];
 
 		}
 	}

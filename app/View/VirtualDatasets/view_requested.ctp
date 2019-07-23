@@ -44,7 +44,7 @@
 	}
 
 	function toggleContainerCollapseAll(collapsing) {
-		$('table.dataset-columns').find('a.container-collapse').each(function() {
+		$('table.space-columns').find('a.container-collapse').each(function() {
 			if ($(this).data('collapsed') != collapsing) {
 				$(this).click();
 			}
@@ -52,16 +52,16 @@
 	}
 </script>
 <style type="text/css">
-	table.dataset-columns tr:hover {
+	table.space-columns tr:hover {
 		background-color: #eee
 	}
-	table.dataset-columns tr.header:hover {
+	table.space-columns tr.header:hover {
 		background-color: inherit;
 	}
 </style>
 <div id="apiBody" class="innerDataSet">
 	<div id="searchResults">
-		<h1 class="headerTab"><?= $dataset->name ?></h1>
+		<h1 class="headerTab"><?= $space->spaceName ?></h1>
 		<div class="clear" style="height:20px;"></div>
         <h2 class="headerTab">Requested in <?= $this->Html->link($request->assetName, array_merge(['controller' => 'request', 'action' => 'view', $request->id])) ?></h2>
         <div class="clear"></div>
@@ -69,7 +69,7 @@
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
 				<a class="container-btn grow" onclick="toggleContainerCollapseAll(true)">Collapse All</a><a class="container-btn grow" onclick="toggleContainerCollapseAll(false)">Expand All</a>
-				<table class="dataset-columns checkBoxes view">
+				<table class="space-columns checkBoxes view">
 					<tr class="header">
 						<th></th>
 						<th class="fieldColumn">Column</th>
@@ -77,7 +77,14 @@
 						<th class="classificationColumn">Classification</th>
 						<th class="glossaryColumn">Glossary</th>
 					</tr>
-					<?php $this->VirtualDataset->printDatasetViewRequested($dataset, $requestedAssetIds); ?>
+					<?php
+					foreach ($space->subfolders as $folder) {
+						$this->VirtualDataset->printFolderViewRequested($folder, $requestedAssetIds);
+					}
+					foreach ($space->datasets as $dataset) {
+						$this->VirtualDataset->printDatasetViewRequested($dataset, $requestedAssetIds);
+					}
+					?>
 				</table>
 			</div>
 		</div>
