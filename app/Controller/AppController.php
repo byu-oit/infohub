@@ -117,7 +117,7 @@ class AppController extends Controller {
 		parent::beforeFilter();
 
 		$this->Cookie->name = 'Infohub';
-		$this->Auth->authenticate = ['Cas' => ['hostname' => 'cas.byu.edu', 'uri' => 'cas']];
+		$this->Auth->authenticate = ['Cas' => ['hostname' => 'cas.prd-shared-oit-byu.amazon.byu.edu', 'uri' => 'cas']];
 		$this->Auth->allow();
 		if($this->name != 'CakeError'){
 			$this->initBeforeFilter();
