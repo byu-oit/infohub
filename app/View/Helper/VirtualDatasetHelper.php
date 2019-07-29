@@ -3,9 +3,9 @@
 App::uses('AppHelper', 'View/Helper');
 
 class VirtualDatasetHelper extends AppHelper {
-    public function printFolderView($folder) {
-        echo '<tr data-num-collapsed="0" data-name="'.$folder->folderName.'" data-container-path="';
-        $path = explode('.', $folder->folderName);
+    public function printTableView($table) {
+        echo '<tr data-num-collapsed="0" data-name="'.$table->name.'" data-container-path="';
+        $path = explode('.', $table->name);
         array_pop($path);
         echo implode('.', $path).'"><td>';
         echo '<a class="container-collapse" onclick="toggleContainerCollapse(this)" data-collapsed="false"></a>';
@@ -13,51 +13,20 @@ class VirtualDatasetHelper extends AppHelper {
         echo '<td>';
             echo '<input type="checkbox"'.
                  ' class="chk container"'.
-                 ' data-name="'.$folder->folderName.'"'.
+                 ' data-name="'.$table->name.'"'.
                  ' data-container-path="';
-                 $path = explode('.', $folder->folderName);
+                 $path = explode('.', $table->name);
                  array_pop($path);
                  echo implode('.', $path).'">';
         echo '</td>';
         echo '<td>';
-            $folderPath = explode('.', $folder->folderName);
-            echo str_repeat('&nbsp;', 12 * (count($folderPath) - 2));
-            echo end($folderPath);
+            $tablePath = explode('.', $table->name);
+            echo str_repeat('&nbsp;', 12 * (count($tablePath) - 2));
+            echo end($tablePath);
         echo '</td>';
         echo '<td></td><td></td><td></td></tr>';
 
-        foreach ($folder->subfolders as $subfolder) {
-            $this->printFolderView($subfolder);
-        }
-        foreach ($folder->datasets as $dataset) {
-            $this->printDatasetView($dataset);
-        }
-    }
-
-    public function printDatasetView($dataset) {
-        echo '<tr data-num-collapsed="0" data-name="'.$dataset->name.'" data-container-path="';
-        $path = explode('.', $dataset->name);
-        array_pop($path);
-        echo implode('.', $path).'"><td>';
-        echo '<a class="container-collapse" onclick="toggleContainerCollapse(this)" data-collapsed="false"></a>';
-        echo '</td>';
-        echo '<td>';
-            echo '<input type="checkbox"'.
-                 ' class="chk container"'.
-                 ' data-name="'.$dataset->name.'"'.
-                 ' data-container-path="';
-                 $path = explode('.', $dataset->name);
-                 array_pop($path);
-                 echo implode('.', $path).'">';
-        echo '</td>';
-        echo '<td>';
-            $datasetPath = explode('.', $dataset->name);
-            echo str_repeat('&nbsp;', 12 * (count($datasetPath) - 2));
-            echo end($datasetPath);
-        echo '</td>';
-        echo '<td></td><td></td><td></td></tr>';
-
-        foreach ($dataset->columns as $column) {
+        foreach ($table->columns as $column) {
             echo '<tr data-num-collapsed="0" data-name="'.$column->columnName.'" data-container-path="';
             $path = explode('.', $column->columnName);
             array_pop($path);
@@ -73,8 +42,8 @@ class VirtualDatasetHelper extends AppHelper {
                          ' id="chk'.h($column->businessTerm[0]->termId).'"'.
                          ' data-name="'.$column->columnName.'"'.
                          ' data-column-id="'.$column->columnId.'"'.
-                         ' data-dataset-name="'.$dataset->name.'"'.
-                         ' data-dataset-id="'.$dataset->id.'"'.
+                         ' data-table-name="'.$table->name.'"'.
+                         ' data-table-id="'.$table->id.'"'.
                          ' data-container-path="';
                          $path = explode('.', $column->columnName);
                          array_pop($path);
@@ -87,8 +56,8 @@ class VirtualDatasetHelper extends AppHelper {
                          ' class="chk"'.
                          ' data-name="'.$column->columnName.'"'.
                          ' data-column-id="'.$column->columnId.'"'.
-                         ' data-dataset-name="'.$dataset->name.'"'.
-                         ' data-dataset-id="'.$dataset->id.'"'.
+                         ' data-table-name="'.$table->name.'"'.
+                         ' data-table-id="'.$table->id.'"'.
                          ' data-container-path="';
                          $path = explode('.', $column->columnName);
                          array_pop($path);
@@ -157,43 +126,21 @@ class VirtualDatasetHelper extends AppHelper {
         }
     }
 
-    public function printFolderViewRequested($folder, $requestedAssetIds) {
-        echo '<tr data-num-collapsed="0" data-name="'.$folder->folderName.'" data-container-path="';
-        $path = explode('.', $folder->folderName);
+    public function printTableViewRequested($table, $requestedAssetIds) {
+        echo '<tr data-num-collapsed="0" data-name="'.$table->name.'" data-container-path="';
+        $path = explode('.', $table->name);
         array_pop($path);
         echo implode('.', $path).'"><td>';
         echo '<a class="container-collapse" onclick="toggleContainerCollapse(this)" data-collapsed="false"></a>';
         echo '</td>';
         echo '<td>';
-            $folderPath = explode('.', $folder->folderName);
-            echo str_repeat('&nbsp;', 12 * (count($folderPath) - 2));
-            echo end($folderPath);
+            $tablePath = explode('.', $table->name);
+            echo str_repeat('&nbsp;', 12 * (count($tablePath) - 2));
+            echo end($tablePath);
         echo '</td>';
         echo '<td></td><td></td><td></td></tr>';
 
-        foreach ($folder->subfolders as $subfolder) {
-            $this->printFolderViewRequested($subfolder, $requestedAssetIds);
-        }
-        foreach ($folder->datasets as $dataset) {
-            $this->printDatasetViewRequested($dataset, $requestedAssetIds);
-        }
-    }
-
-    public function printDatasetViewRequested($dataset, $requestedAssetIds) {
-        echo '<tr data-num-collapsed="0" data-name="'.$dataset->name.'" data-container-path="';
-        $path = explode('.', $dataset->name);
-        array_pop($path);
-        echo implode('.', $path).'"><td>';
-        echo '<a class="container-collapse" onclick="toggleContainerCollapse(this)" data-collapsed="false"></a>';
-        echo '</td>';
-        echo '<td>';
-            $datasetPath = explode('.', $dataset->name);
-            echo str_repeat('&nbsp;', 12 * (count($datasetPath) - 2));
-            echo end($datasetPath);
-        echo '</td>';
-        echo '<td></td><td></td><td></td></tr>';
-
-        foreach ($dataset->columns as $column) {
+        foreach ($table->columns as $column) {
             echo '<tr data-num-collapsed="0" data-name="'.$column->columnName.'" data-container-path="';
             $path = explode('.', $column->columnName);
             array_pop($path);
@@ -261,33 +208,16 @@ class VirtualDatasetHelper extends AppHelper {
         }
     }
 
-    public function printFolderUpdate($folder, &$index, $glossaries) {
+    public function printTableUpdate($table, &$index, $glossaries) {
         echo '<tr id="tr'.$index.'"><td>';
-            $folderPath = explode('.', $folder->folderName);
-            echo str_repeat('&nbsp;', 12 * (count($folderPath) - 2));
-            echo end($folderPath);
+            $tablePath = explode('.', $table->name);
+            echo str_repeat('&nbsp;', 12 * (count($tablePath) - 2));
+            echo end($tablePath);
         echo '</td>';
         echo '<td></td><td></td><td></td><td></td></tr>';
         $index++;
 
-        foreach ($folder->subfolders as $subfolder) {
-            $this->printFolderUpdate($subfolder, $index, $glossaries);
-        }
-        foreach ($folder->datasets as $dataset) {
-            $this->printDatasetUpdate($dataset, $index, $glossaries);
-        }
-    }
-
-    public function printDatasetUpdate($dataset, &$index, $glossaries) {
-        echo '<tr id="tr'.$index.'"><td>';
-            $datasetPath = explode('.', $dataset->name);
-            echo str_repeat('&nbsp;', 12 * (count($datasetPath) - 2));
-            echo end($datasetPath);
-        echo '</td>';
-        echo '<td></td><td></td><td></td><td></td></tr>';
-        $index++;
-
-        foreach ($dataset->columns as $column) {
+        foreach ($table->columns as $column) {
             echo '<tr id="tr'.$index.'"><td>';
                 $columnPath = explode('.', $column->columnName);
                 for ($i = 0; $i < count($columnPath) - 2; $i++) {

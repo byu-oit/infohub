@@ -55,7 +55,7 @@
 	}
 
 	function toggleContainerCollapseAll(collapsing) {
-		$('table.space-columns').find('a.container-collapse').each(function() {
+		$('table.dataset-columns').find('a.container-collapse').each(function() {
 			if ($(this).data('collapsed') != collapsing) {
 				$(this).click();
 			}
@@ -63,23 +63,23 @@
 	}
 </script>
 <style type="text/css">
-	table.space-columns tr:hover {
+	table.dataset-columns tr:hover {
 		background-color: #eee
 	}
-	table.space-columns tr.header:hover {
+	table.dataset-columns tr.header:hover {
 		background-color: inherit;
 	}
 </style>
 <div id="apiBody" class="innerDataSet">
 	<div id="searchResults">
-		<h1 class="headerTab"><?= $space->spaceName ?></h1>
+		<h1 class="headerTab"><?= $dataset->datasetName ?></h1>
 		<div class="clear"></div>
 		<div class="btnLinks">
 			<?php if ($matchAuthorized): ?>
 				<div style="float: right">
 					<?= $this->Html->link(
 						'Update Unlinked Columns',
-						array_merge(['controller' => 'virtual_dataset_admin', 'action' => 'update', $space->spaceId]),
+						array_merge(['controller' => 'virtual_dataset_admin', 'action' => 'update', $dataset->datasetId]),
 						['class' => 'inputButton dataset', 'id' => 'admin']) ?>
 				</div>
 			<?php endif ?>
@@ -87,8 +87,8 @@
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
 				<a class="container-btn grow" onclick="toggleContainerCollapseAll(true)">Collapse All</a><a class="container-btn grow" onclick="toggleContainerCollapseAll(false)">Expand All</a>
-				<input type="button" data-spaceName="<?= h($space->spaceName) ?>" data-spaceId="<?= h($space->spaceId) ?>" api="false" onclick="addToQueueVirtualDataset(this, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
-				<table class="space-columns checkBoxes view">
+				<input type="button" data-datasetName="<?= h($dataset->datasetName) ?>" data-datasetId="<?= h($dataset->datasetId) ?>" api="false" onclick="addToQueueVirtualDataset(this, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
+				<table class="dataset-columns checkBoxes view">
 					<tr class="header">
 						<th></th>
 						<th><input type="checkbox" onclick="toggleAllCheckboxes(this)" name="toggleCheckboxes"/></th>
@@ -98,15 +98,12 @@
 						<th class="glossaryColumn">Glossary</th>
 					</tr>
 					<?php
-					foreach ($space->subfolders as $folder) {
-						$this->VirtualDataset->printFolderView($folder);
-					}
-					foreach ($space->datasets as $dataset) {
-						$this->VirtualDataset->printDatasetView($dataset);
+					foreach ($dataset->tables as $table) {
+						$this->VirtualDataset->printTableView($table);
 					}
 					?>
 				</table>
-				<input type="button" data-spaceName="<?= h($space->spaceName) ?>" data-spaceId="<?= h($space->spaceId) ?>" api="false" onclick="addToQueueVirtualDataset(this, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
+				<input type="button" data-datasetName="<?= h($dataset->datasetName) ?>" data-datasetId="<?= h($dataset->datasetId) ?>" api="false" onclick="addToQueueVirtualDataset(this, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
 			</div>
 		</div>
 	</div>

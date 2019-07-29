@@ -340,7 +340,7 @@
 								echo '<li id="requestItem'.$columnId.'" data-title="'.$columnId.'" data-name="'.$column['name'].'" database-name="'.$column['databaseName'].'" schema-name="'.$column['schemaName'].'" table-name="'.$column['tableName'].'" data-type="column"><a class="delete" href="javascript:removeFromRequestQueue(\''.$columnId.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$column['name'].'</li>';
 							}
 							foreach ($arrQueue['virtualColumns'] as $columnId => $column) {
-								echo '<li id="requestItem'.$columnId.'" data-title="'.$columnId.'" data-name="'.$column['name'].'" dataset-name="'.$column['datasetName'].'" dataset-id="'.$column['datasetId'].'" data-type="virtualColumn"><a class="delete" href="javascript:removeFromRequestQueue(\''.$columnId.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$column['name'].'</li>';
+								echo '<li id="requestItem'.$columnId.'" data-title="'.$columnId.'" data-name="'.$column['name'].'" table-name="'.$column['tableName'].'" table-id="'.$column['tableId'].'" dataset-name="'.$column['datasetName'].'" dataset-id="'.$column['datasetId'].'" data-type="virtualColumn"><a class="delete" href="javascript:removeFromRequestQueue(\''.$columnId.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$column['name'].'</li>';
 							}
 							foreach ($arrQueue['samlFields'] as $fieldId => $field) {
 								echo '<li id="requestItem'.$fieldId.'" data-title="'.$fieldId.'" data-name="'.$field['name'].'" response-name="'.$field['responseName'].'" data-type="samlField"><a class="delete" href="javascript:removeFromRequestQueue(\''.$fieldId.'\')"><img src="/img/icon-delete.gif" width="11" title="delete" /></a>'.$field['name'].'</li>';
@@ -466,7 +466,7 @@
 						"technologyType",
 						"api",
 						"tables",
-						"virtualDatasets",
+						"virtualTables",
 						"saml",
 						Configure::read('Collibra.requiredTermsString'),
 						Configure::read('Collibra.additionalTermsString'),
