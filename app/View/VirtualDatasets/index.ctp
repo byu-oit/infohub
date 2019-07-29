@@ -11,13 +11,13 @@
 
 	<?php if (isset($recent)): ?>
 		<div id="searchMain" style="padding-top: 35px;">
-			<h2 class="headerTab">Recently Viewed Spaces</h2>
+			<h2 class="headerTab">Recently Viewed Datasets</h2>
 			<div class="clear"></div>
 			<div id="smLower" class="whiteBox">
 				<ul class="catalogParent">
-					<?php foreach ($recent as $space): ?>
+					<?php foreach ($recent as $ds): ?>
 						<li class="catalogItem">
-							<?= $this->Html->link($space['spaceName'], ['action' => 'view', $space['spaceId']]) ?>
+							<?= $this->Html->link($ds['datasetName'], ['action' => 'view', $ds['datasetId']]) ?>
 						</li>
 					<?php endforeach ?>
 				</ul>
@@ -26,17 +26,17 @@
 	<?php endif ?>
 
 	<div id="searchMain" style="padding-top: 35px;">
-		<h1 class="headerTab">Select Space</h2>
+		<h1 class="headerTab">Select Dataset</h2>
 		<div class="clear"></div>
 		<div id="smLower" class="whiteBox">
 			<ul class="catalogParent">
-				<?php if (empty($spaces)): ?>
-					No spaces found
+				<?php if (empty($datasets)): ?>
+					No datasets found
 				<?php else: ?>
 					<?php $i = 0;
-					foreach ($spaces as $space): ?>
-						<li id="catalogIndex-<?=$i?>" class="catalogItem" data-name="<?=$space->spaceName?>">
-							<?php echo '<a href="/virtualDatasets/view/'.$space->spaceId.'">'.$space->spaceName.'</a>'; ?>
+					foreach ($datasets as $ds): ?>
+						<li id="catalogIndex-<?=$i?>" class="catalogItem" data-name="<?=$ds->datasetName?>">
+							<?php echo '<a href="/virtualDatasets/view/'.$ds->datasetId.'">'.$ds->datasetName.'</a>'; ?>
 						</li>
 					<?php $i++;
 					endforeach; ?>
@@ -48,7 +48,7 @@
 		<div style="padding-top: 35px;">
 			<div style="float: right">
 				<?= $this->Html->link(
-					'Import Datasets',
+					'Import Virtual Tables',
 					array_merge(['controller' => 'virtualDatasetAdmin', 'action' => 'import']),
 					['class' => 'btn-db-sync grow', 'id' => 'admin']) ?>
 			</div>
