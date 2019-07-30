@@ -130,7 +130,7 @@ class MyaccountController extends AppController {
 				array_push($sortedRequests['inProgress'], $r);
 			} else if ($r->statusName == 'Completed' || $r->statusName == 'Obsolete') {
 				array_push($sortedRequests['completed'], $r);
-			} else if ($r->statusName == 'Canceled') {
+			} else if ($r->statusName == 'Canceled' || $r->statusName == 'Rejected') {
 				array_push($sortedRequests['canceled'], $r);
 			}
 		}

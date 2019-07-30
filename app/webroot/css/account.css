@@ -222,12 +222,14 @@
 }
 #accountMid .accountMain .requestItem .status-details-flex .status-wrapper .obsolete,
 #accountMid .accountMain .requestItem .status-details-flex .status-wrapper .canceled,
+#accountMid .accountMain .requestItem .status-details-flex .status-wrapper .rejected,
 #accountMid .accountMain .requestItem .status-details-flex .status-wrapper .deleted {
   width: 250px;
   border-color: #d8e8ab;
   border-radius: 16px;
   font-style: italic;
 }
+#accountMid .accountMain .requestItem .status-details-flex .status-wrapper .rejected,
 #accountMid .accountMain .requestItem .status-details-flex .status-wrapper .deleted {
   border-color: #fc9898;
 }
@@ -243,6 +245,7 @@
 }
 #accountMid .accountMain .requestItem .status-details-flex .status-wrapper.compressed .obsolete,
 #accountMid .accountMain .requestItem .status-details-flex .status-wrapper.compressed .canceled,
+#accountMid .accountMain .requestItem .status-details-flex .status-wrapper.compressed .rejected,
 #accountMid .accountMain .requestItem .status-details-flex .status-wrapper.compressed .deleted {
   width: 250px;
   height: 16px;
@@ -457,12 +460,14 @@
 }
 #accountMid .accountMain .requestItem .riBelow .status-details-flex .status-wrapper .obsolete,
 #accountMid .accountMain .requestItem .riBelow .status-details-flex .status-wrapper .canceled,
+#accountMid .accountMain .requestItem .riBelow .status-details-flex .status-wrapper .rejected,
 #accountMid .accountMain .requestItem .riBelow .status-details-flex .status-wrapper .deleted {
   width: 146px;
   border-color: #d8e8ab;
   border-radius: 12px;
   font-style: italic;
 }
+#accountMid .accountMain .requestItem .riBelow .status-details-flex .status-wrapper .rejected,
 #accountMid .accountMain .requestItem .riBelow .status-details-flex .status-wrapper .deleted {
   border-color: #fc9898;
 }

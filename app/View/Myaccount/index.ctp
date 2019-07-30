@@ -248,6 +248,9 @@
 					case 'Canceled':
 						echo '<div class="status-cell canceled">Canceled</div>';
 						break;
+					case 'Rejected':
+						echo '<div class="status-cell rejected">Rejected</div>';
+						break;
 				}
 				echo '</div>';
 
