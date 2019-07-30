@@ -987,7 +987,8 @@ class CollibraAPI extends Model {
 		$tableConfig = ['TableViewConfig' => [
 			'Columns' => [
 				['Column' => ['fieldName' => 'datasetId']],
-				['Column' => ['fieldName' => 'datasetName']]],
+				['Column' => ['fieldName' => 'datasetName']],
+				['Column' => ['fieldName' => 'datasetVocabId']]],
 			'Resources' => [
 				'Term' => [
 					'Id' => ['name' => 'datasetId'],
@@ -995,6 +996,7 @@ class CollibraAPI extends Model {
 					'ConceptType' => [
 						'Id' => ['name' => 'assetTypeId']],
 					'Vocabulary' => [
+						'Id' => ['name' => 'datasetVocabId'],
 						'Community' => [
 							'Id' => ['name' => 'communityId']]],
 					'Filter' => [

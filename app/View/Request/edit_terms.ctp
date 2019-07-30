@@ -40,8 +40,8 @@
 				else if ($(this).attr('name') == 'virtualColumns[]') {
 					arrVirtualColumns.push({
 						id:$(this).val(),
-						datasetName:$(this).attr('datasetName'),
-						datasetId:$(this).attr('datasetId')
+						tableName:$(this).attr('tableName'),
+						tableId:$(this).attr('tableId')
 					});
 				}
 				else if ($(this).attr('name') == 'samlFields[]') {
@@ -174,10 +174,10 @@
 								}
 							}
 							if (!empty($organizedVirtualColumns)) {
-								foreach ($organizedVirtualColumns as $virtualDatasetName => $columns) {
-									echo '<h4>'.$virtualDatasetName.'</h4>';
+								foreach ($organizedVirtualColumns as $virtualTableName => $columns) {
+									echo '<h4>'.$virtualTableName.'</h4>';
 									foreach ($columns as $id => $column) {
-										echo '<li id="requestItem'.$id.'"><input type="checkbox" name="virtualColumns[]" value="'.$id.'" datasetName="'.$column['datasetName'].'" datasetId="'.$column['datasetId'].'" checked="checked">'.$column['name'].'</li>';
+										echo '<li id="requestItem'.$id.'"><input type="checkbox" name="virtualColumns[]" value="'.$id.'" tableName="'.$column['tableName'].'" tableId="'.$column['tableId'].'" checked="checked">'.$column['name'].'</li>';
 									}
 								}
 							}

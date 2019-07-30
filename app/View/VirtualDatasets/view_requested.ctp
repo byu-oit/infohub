@@ -19,23 +19,15 @@
 	function toggleContainerCollapse(elem) {
 		var $elem = $(elem);
 		var collapsing = !$elem.data('collapsed');
-		var arrContainerPaths = [$elem.closest('tr').data('name')];
+		var collapsingTable = $elem.closest('tr').data('name');
 		$elem.closest('tbody').find('tr').each(function() {
 				var $this = $(this);
-				if (arrContainerPaths.includes($this.data('container-path'))) {
+				if (collapsingTable == $this.data('tableName')) {
 					if (collapsing) {
-						$this.data('num-collapsed', $this.data('num-collapsed') + 1);
-					} else {
-						$this.data('num-collapsed', $this.data('num-collapsed') - 1);
-					}
-
-					if ($this.data('num-collapsed') == 0) {
-						$this.css('display', 'table-row');
-					} else {
 						$this.css('display', 'none');
+					} else {
+						$this.css('display', 'table-row');
 					}
-
-					arrContainerPaths.push($this.data('name'));
 				}
 		});
 

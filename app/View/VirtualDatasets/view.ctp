@@ -8,11 +8,10 @@
 
 		$('input.container').change(function() {
 			var thisElem = $(this);
-			var arrContainerPaths = [thisElem.data('name')];
+			var checkedTable = thisElem.data('name');
 			thisElem.closest('tbody').find('input.chk').each(function() {
-				if (arrContainerPaths.includes($(this).data('container-path'))) {
+				if (checkedTable == $(this).data('tableName')) {
 					$(this).prop('checked', thisElem.prop('checked'));
-					arrContainerPaths.push($(this).data('name'));
 				}
 			});
 		});
@@ -30,23 +29,15 @@
 	function toggleContainerCollapse(elem) {
 		var $elem = $(elem);
 		var collapsing = !$elem.data('collapsed');
-		var arrContainerPaths = [$elem.closest('tr').data('name')];
+		var collapsingTable = $elem.closest('tr').data('name');
 		$elem.closest('tbody').find('tr').each(function() {
 				var $this = $(this);
-				if (arrContainerPaths.includes($this.data('container-path'))) {
+				if (collapsingTable == $this.data('tableName')) {
 					if (collapsing) {
-						$this.data('num-collapsed', $this.data('num-collapsed') + 1);
-					} else {
-						$this.data('num-collapsed', $this.data('num-collapsed') - 1);
-					}
-
-					if ($this.data('num-collapsed') == 0) {
-						$this.css('display', 'table-row');
-					} else {
 						$this.css('display', 'none');
+					} else {
+						$this.css('display', 'table-row');
 					}
-
-					arrContainerPaths.push($this.data('name'));
 				}
 		});
 
@@ -64,7 +55,7 @@
 </script>
 <style type="text/css">
 	table.dataset-columns tr:hover {
-		background-color: #eee
+		background-color: #eee;
 	}
 	table.dataset-columns tr.header:hover {
 		background-color: inherit;
