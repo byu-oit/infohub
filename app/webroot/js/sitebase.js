@@ -253,7 +253,7 @@ function removeFromRequestQueue(id){
 					var datasetName = elem.attr('dataset-name');
 					var datasetId = elem.attr('dataset-id');
 
-					var undoData = {emptyApi:'false',c:[tableName+'.'+columnName],ci:[columnId],t:tableName,ti:tableId,dn:datasetName,di:datasetId,url:'VirtualDataset'};
+					var undoData = {emptyApi:'false',c:[tableName+'.'+columnName],ci:[columnId],t:[tableName],ti:[tableId],dn:datasetName,di:datasetId,url:'VirtualDataset'};
 					break;
 				case 'samlField':
 					var fieldName = elem.data('name');

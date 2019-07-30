@@ -662,7 +662,7 @@ class RequestController extends AppController {
 		$addedApis = [];
 		$addedFieldsetApis = [];
 		$addedTables = [];
-		$addedVirtualDatasets = [];
+		$addedVirtualTables = [];
 		$addedSamlResponses = [];
 		$additionString = "<br/><br/>Addition, ".date('Y-m-d').":";
 
@@ -674,7 +674,7 @@ class RequestController extends AppController {
 		$relationsPostData['additionalDataAssets'] = [];
 		$relationsPostData['apis'] = [];
 		$relationsPostData['tables'] = [];
-		$relationsPostData['virtualDatasets'] = [];
+		$relationsPostData['virtualTables'] = [];
 		$relationsPostData['saml'] = [];
 		$relationsPostData['policies'] = [];
 
@@ -702,7 +702,7 @@ class RequestController extends AppController {
 		}
 		if (isset($this->request->data['arrVirtualColumns'])) {
 			foreach ($this->request->data['arrVirtualColumns'] as $column) {
-				$addedVirtualDatasets[$column['datasetName']] = ['datasetId' => $column['datasetId']];
+				$addedVirtualTables[$column['tableName']] = ['tableId' => $column['tableId']];
 				$additionString .= "<br/>{$arrQueue['virtualColumns'][$column['id']]['fullName']}";
 				unset($arrQueue['virtualColumns'][$column['id']]);
 			}
@@ -887,19 +887,19 @@ class RequestController extends AppController {
 				}
 			}
 		}
-		foreach ($addedVirtualDatasets as $datasetName => $_) {
-			if (!in_array($addedVirtualDatasets[$datasetName]['datasetId'], array_column($request->necessaryVirtualDatasets, 'virDatasetId'))) {
-				array_push($relationsPostData['virtualDatasets'], $addedVirtualDatasets[$datasetName]['datasetId']);
+		foreach ($addedVirtualTables as $tableName => $_) {
+			if (!in_array($addedVirtualTables[$tableName]['tableId'], array_column($request->necessaryVirtualTables, 'virTableId'))) {
+				array_push($relationsPostData['virtualTables'], $addedVirtualTables[$tableName]['tableId']);
 			}
 
-			$columns = $this->CollibraAPI->getVirtualDatasetColumns($addedVirtualDatasets[$datasetName]['datasetId']);
+			$columns = $this->CollibraAPI->getVirtualTableColumns($addedVirtualTables[$tableName]['tableId']);
 			foreach ($columns as $column) {
 				if (!in_array($column->columnId, array_column($this->request->data['arrVirtualColumns'], 'id'))) continue;
 				if (empty($column->businessTerm[0]->termId)) {
-					$addedVirtualDatasets[$datasetName]['unmapped']['requested'][] = $column->columnName;
+					$addedVirtualTables[$tableName]['unmapped']['requested'][] = $column->columnName;
 					array_push($relationsPostData['requestedDataAssets'], $column->columnId);
 				} else {
-					$addedVirtualDatasets[$datasetName]['requestedBusinessTerm'][] = '('.$column->businessTerm[0]->termCommunityName.') '.$column->businessTerm[0]->term;
+					$addedVirtualTables[$tableName]['requestedBusinessTerm'][] = '('.$column->businessTerm[0]->termCommunityName.') '.$column->businessTerm[0]->term;
 					array_push($relationsPostData['requestedDataAssets'], $column->columnId);
 					array_push($requestedTerms, $column->businessTerm[0]);
 				}
@@ -1040,26 +1040,26 @@ class RequestController extends AppController {
 			}
 		}
 
-		if (!empty($addedVirtualDatasets)) {
-			if (!$legacy && strpos($request->attributes['Technology Type']->attrValue, 'Virtual Dataset') === false) {
+		if (!empty($addedVirtualTables)) {
+			if (!$legacy && strpos($request->attributes['Technology Type']->attrValue, 'Virtual Table') === false) {
 				$attr = $request->attributes['Technology Type'];
-				$newValues = array_merge(explode(';', $attr->attrValue), ['Virtual Dataset']);
+				$newValues = array_merge(explode(';', $attr->attrValue), ['Virtual Table']);
 				$resp = $this->CollibraAPI->post('attribute/'.$attr->attrResourceId, $this->Collibra->preparePostData(['value' => $newValues]));
 				if ($resp->code != '200') $success = false;
 			}
 
-			$additionString .= "<br/><br/><b>Newly Requested Virtual Dataset Columns:</b><br/>";
-			foreach ($addedVirtualDatasets as $datasetName => $dataset) {
-				$additionString .= ". . <u><b>{$datasetName}</u></b><br/>";
-				if (!empty($dataset['requestedBusinessTerm'])) {
-					$dataset['requestedBusinessTerm'] = array_unique($dataset['requestedBusinessTerm']);
-					sort($dataset['requestedBusinessTerm']);
-					$additionString .= "<br/>. . . . <b>Requested business terms:</b><br/>. . . . . . " . implode("<br/>. . . . . . ", $dataset['requestedBusinessTerm']) . "<br/>";
+			$additionString .= "<br/><br/><b>Newly Requested Virtual Table Columns:</b><br/>";
+			foreach ($addedVirtualTables as $tableName => $table) {
+				$additionString .= ". . <u><b>{$tableName}</u></b><br/>";
+				if (!empty($table['requestedBusinessTerm'])) {
+					$table['requestedBusinessTerm'] = array_unique($table['requestedBusinessTerm']);
+					sort($table['requestedBusinessTerm']);
+					$additionString .= "<br/>. . . . <b>Requested business terms:</b><br/>. . . . . . " . implode("<br/>. . . . . . ", $table['requestedBusinessTerm']) . "<br/>";
 				}
-				if (!empty($dataset['unmapped'])) {
+				if (!empty($table['unmapped'])) {
 					$additionString .= "<br/>. . . . <b>*Columns with no Business Terms:</b><br/>";
-					if (!empty($dataset['unmapped']['requested'])) {
-						$additionString .= ". . . . . . Requested:<br/>. . . . . . . . " . implode("<br/>. . . . . . . . ", $dataset['unmapped']['requested']) . "<br/>";
+					if (!empty($table['unmapped']['requested'])) {
+						$additionString .= ". . . . . . Requested:<br/>. . . . . . . . " . implode("<br/>. . . . . . . . ", $table['unmapped']['requested']) . "<br/>";
 					}
 				}
 				$additionString .= "<br/>";
@@ -1324,20 +1324,20 @@ class RequestController extends AppController {
 				array_push($toDeleteIds, $table->tableRelationId);
 			}
 		}
-		foreach ($request->necessaryVirtualDatasets as $virDataset) {
-			$datasetStillRequested = false;
-			$virDataset->columns = $this->CollibraAPI->getVirtualDatasetColumns($virDataset->virDatasetId);
+		foreach ($request->necessaryVirtualTables as $virTable) {
+			$tableStillRequested = false;
+			$virTable->columns = $this->CollibraAPI->getVirtualTableColumns($virTable->virTableId);
 
-			foreach ($virDataset->columns as $column) {
+			foreach ($virTable->columns as $column) {
 				if (!in_array($column->columnId, $this->request->data['arrIds'])) {
 					if (in_array($column->columnId, array_column($request->requestedDataAssets, 'reqDataId'))) {
-						$datasetStillRequested = true;
+						$tableStillRequested = true;
 						break;
 					}
 				}
 			}
 
-			if (!$datasetStillRequested) array_push($toDeleteIds, $virDataset->virDatasetRelationId);
+			if (!$tableStillRequested) array_push($toDeleteIds, $virTable->virTableRelationId);
 		}
 		foreach ($request->necessarySamlResponses as $response) {
 			$thisResponseAllFieldIds = [];
@@ -1418,8 +1418,8 @@ class RequestController extends AppController {
 			if ($resp->code != '200') $success = false;
 		}
 
-		// If all of a request's APIs, tables, virtual datasets, or SAML responses have been removed, edit the technologyType attribute
-		if (empty($request->necessaryApis) || empty($request->necessaryTables) || empty($request->necessaryVirtualDatasets) || empty($request->necessarySamlResponses)) {
+		// If all of a request's APIs, tables, virtual tables, or SAML responses have been removed, edit the technologyType attribute
+		if (empty($request->necessaryApis) || empty($request->necessaryTables) || empty($request->necessaryVirtualTables) || empty($request->necessarySamlResponses)) {
 			foreach ($request->attributes as $attr) {
 				if ($attr->attrTypeId == Configure::read('Collibra.formFields.technologyType')) {
 					$arrOldValue = explode(';', $attr->attrValue);
@@ -1437,8 +1437,8 @@ class RequestController extends AppController {
 			if (!empty($request->necessaryTables)) {
 				array_push($arrNewValue, 'Data Warehouse');
 			}
-			if (!empty($request->necessaryVirtualDatasets)) {
-				array_push($arrNewValue, 'Virtual Dataset');
+			if (!empty($request->necessaryVirtualTables)) {
+				array_push($arrNewValue, 'Virtual Table');
 			}
 			if (!empty($request->necessarySamlResponses)) {
 				array_push($arrNewValue, 'SAML');
@@ -1534,10 +1534,10 @@ class RequestController extends AppController {
 			$alreadyRequested = in_array($id, array_column($request->requestedDataAssets, 'reqDataId'));
 			if ($alreadyRequested) continue;
 
-			$organizedVirtualColumns[$column['datasetName']][$id] = $column;
+			$organizedVirtualColumns[$column['tableName']][$id] = $column;
 		}
-		foreach ($organizedVirtualColumns as $dataset => $columns) {
-			uasort($organizedVirtualColumns[$dataset], function($a, $b) {
+		foreach ($organizedVirtualColumns as $table => $columns) {
+			uasort($organizedVirtualColumns[$table], function($a, $b) {
 				return strcmp($a['fullName'], $b['fullName']);
 			});
 		}

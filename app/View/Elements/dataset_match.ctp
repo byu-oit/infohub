@@ -31,7 +31,7 @@
 						}
 						var index = $(this).data('index');
 
-						updateSpace(index, selected.item, false);
+						updateDataset(index, selected.item, false);
 					}
 				})
 				.autocomplete("instance")._renderItem = function( ul, item ) {
@@ -52,10 +52,10 @@
 			var index = $(this).data('index');
 			$('#tr' + index).removeClass('automatic-match');
 
-			$('#SpaceElements' + index + 'SearchCell').toggleClass('display-search');
-			$('#SpaceElements' + index + 'SearchCell').find('.bt-search').focus();
+			$('#DatasetElements' + index + 'SearchCell').toggleClass('display-search');
+			$('#DatasetElements' + index + 'SearchCell').find('.bt-search').focus();
 
-			$('#SpaceElements' + index + 'BusinessTerm').val('');
+			$('#DatasetElements' + index + 'BusinessTerm').val('');
 			$('.view-context' + index).html('');
 			$('#view-definition' + index).html('');
 		});
@@ -63,8 +63,8 @@
 		$('.new-check').change(function() {
 			var index = $(this).data('index');
 			$('#tr'+index).toggleClass('display-new-bt');
-			if ($('#SpaceElements'+index+'SearchCell > input').val()) {
-				$('#SpaceElements'+index+'PropName').val($('#SpaceElements'+index+'SearchCell > input').val());
+			if ($('#DatasetElements'+index+'SearchCell > input').val()) {
+				$('#DatasetElements'+index+'PropName').val($('#DatasetElements'+index+'SearchCell > input').val());
 			}
 		});
 
@@ -112,16 +112,16 @@
 					}).each(function() {
 						$(this).closest('tr').find('.term-wrapper').removeClass('display-loading').addClass('display-search');
 						if (data.length != 0) {
-							updateSpace($(this).data('index'), data[0], true);
+							updateDataset($(this).data('index'), data[0], true);
 						}
 					});
 			});
 		}
 
-		function updateSpace(index, selected, automatic) {
-			$('#SpaceElements' + index + 'BusinessTerm').val(selected.name.id);
+		function updateDataset(index, selected, automatic) {
+			$('#DatasetElements' + index + 'BusinessTerm').val(selected.name.id);
 
-			var $search = $('#SpaceElements' + index + 'SearchCell');
+			var $search = $('#DatasetElements' + index + 'SearchCell');
 			$search.find('.selected-term').find('.term-name').html(selected.name.val);
 			$search.toggleClass('display-search');
 
