@@ -66,7 +66,6 @@ if (!function_exists('denv')) {
 		'glossaryTypeId' => '00000000-0000-0000-0000-000000010001',
 		'techAssetDomainTypeId' => '00000000-0000-0000-0000-000000030004',
 		'businessTermTypeId' => '00000000-0000-0000-0000-000000011001',
-		'standardFieldNameTypeId' => 'ea92faa8-685d-4cb0-8665-14808de08dd2',
 		'relationship' => [
 			'termToSynonym' => '00000000-0000-0000-0000-000000007001',
 			'DSRtoRequestedTerm' => 'edc9e81b-98dc-4bde-8191-1ae75161ab67',
@@ -118,6 +117,7 @@ if (!function_exists('denv')) {
 			'description' => '00000000-0000-0000-0000-000000003114',
 			'descriptiveExample' => '00000000-0000-0000-0000-000000003115',
 			'standardFieldName' => 'ea92faa8-685d-4cb0-8665-14808de08dd2',
+			'alternativeFieldName' => '75f83a44-facf-4de9-a1bb-d7a655075958',
 			'classification' => '80cae8d4-856f-4b9a-971a-164514e79744',
 			'concept' => '00fd4187-ffbd-4419-acd0-74fd9f16598a',
 			'requesterNetId' => 'a368134f-ab44-4ce6-ac1d-1b69bfa37d6e',
