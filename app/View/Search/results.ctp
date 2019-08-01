@@ -250,6 +250,10 @@
 								<li><span class="listLabel">Standard Field Name:&nbsp;</span><?=$term->standardFieldName?></li>
 							<?php endif;
 
+							if(!empty($term->alternativeFieldNames)): ?>
+								<li><span class="listLabel">Alternative Field Names:&nbsp;</span><?=implode(array_column($term->alternativeFieldNames, 'alternativeFieldName'), ', ')?></li>
+							<?php endif;
+
 							if(!empty($term->descriptiveExample)): ?>
 								<li><span class="listLabel">Descriptive Example:&nbsp;</span><?=$term->descriptiveExample?></li>
 							<?php endif;
