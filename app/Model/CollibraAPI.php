@@ -1294,10 +1294,6 @@ class CollibraAPI extends Model {
 				["Column" => ["fieldName" => "communityname"]],
 				["Column" => ["fieldName" => "statusname"]],
 				["Group" => [
-					"name" => "alternativeFieldNames",
-					"Columns" => [
-						["Column" => ["fieldName" => "alternativeFieldName"]]]]],
-				["Group" => [
 					"Columns" => [
 						["Column" => ["fieldName" => "userRole00000000000000000000000000005016fn"]],
 						["Column" => ["fieldName" => "userRole00000000000000000000000000005016ln"]]],
@@ -1321,9 +1317,6 @@ class CollibraAPI extends Model {
 					"StringAttribute" => [[
 						"Value" => ["name" => "standardFieldName"],
 						"labelId" => Configure::read('Collibra.attribute.standardFieldName')],
-					[
-						"Value" => ["name" => "alternativeFieldName"],
-						"labelId" => Configure::read('Collibra.attribute.alternativeFieldName')],
 					[
 						"Value" => ["name" => "description"],
 						"labelId" => Configure::read('Collibra.attribute.definition')],
@@ -1556,7 +1549,7 @@ class CollibraAPI extends Model {
 			array_push($wfPostData['target'], $id);
 		}
 
-		$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', $this->prepData($wfPostData));
+		$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createBusinessTermRelations').'/start', $this->prepData($wfPostData));
 
 		return true;
 	}
@@ -1622,7 +1615,7 @@ class CollibraAPI extends Model {
 			return true;
 		}
 
-		$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createRelationsAsync').'/start', $this->prepData($wfPostData));
+		$resp = $this->post('workflow/'.Configure::read('Collibra.workflow.createBusinessTermRelations').'/start', $this->prepData($wfPostData));
 
 		return true;
 	}
@@ -1746,9 +1739,7 @@ class CollibraAPI extends Model {
 				'type' => [
 					'asset' => [Configure::read('Collibra.businessTermTypeId')]],
 				'community' => [Configure::read('Collibra.community.byu')]],
-			'fields' => [
-				Configure::read('Collibra.attribute.standardFieldName'),
-				Configure::read('Collibra.attribute.alternativeFieldName')],
+			'fields' => [Configure::read('Collibra.attribute.standardFieldName')],
 			'order' => [
 				'by' => 'score',
 				'sort' => 'desc'],

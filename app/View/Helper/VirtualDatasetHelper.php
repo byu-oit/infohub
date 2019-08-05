@@ -175,7 +175,7 @@ class VirtualDatasetHelper extends AppHelper {
                      '<input type="hidden" name="data[Dataset][elements]['.$index.'][name]" class="data-label" data-index="'.$index.'" value="'.$column->columnName.'" id="DatasetElements'.$index.'Name">'.
                      '<input type="hidden" name="data[Dataset][elements]['.$index.'][business_term]" class="bt" data-index="'.$index.'" id="DatasetElements'.$index.'BusinessTerm">'.
                      '<div class="term-wrapper display-loading" id="DatasetElements'.$index.'SearchCell">'.
-                        '<input type="text" class="bt-search" data-index="'.$index.'" placeholder="Search for a term"></input>'.
+                        '<input type="text" class="bt-search" data-index="'.$index.'" data-default-search="'.str_replace('_', ' ', $column->columnName).'" placeholder="Search for a term"></input>'.
                         '<div class="selected-term"><span class="term-name"></span>  <span class="edit-opt" data-index="'.$index.'" title="Select new term"></span></div>'.
                         '<div class="loading">Loading...</div>'.
                      '</div>';
@@ -186,7 +186,7 @@ class VirtualDatasetHelper extends AppHelper {
                      '<input type="hidden" name="data[Dataset][elements]['.$index.'][previous_business_term_relation]" value="'.$column->businessTerm[0]->termRelationId.'">'.
                      '<input type="hidden" name="data[Dataset][elements]['.$index.'][business_term]" value="'.$column->businessTerm[0]->termId.'" class="bt" data-index="'.$index.'" id="DatasetElements'.$index.'BusinessTerm" data-orig-term="'.$column->businessTerm[0]->termId.'">'.
                      '<div class="term-wrapper" id="DatasetElements'.$index.'SearchCell">'.
-                        '<input type="text" class="bt-search" data-index="'.$index.'" placeholder="Search for a term"></input>'.
+                        '<input type="text" class="bt-search" data-index="'.$index.'" data-default-search="'.str_replace('_', ' ', $column->columnName).'" placeholder="Search for a term"></input>'.
                         '<div class="selected-term"><span class="term-name">'.$column->businessTerm[0]->term.'</span>  <span class="edit-opt" data-index="'.$index.'" title="Select new term"></span></div>'.
                         '<div class="loading">Loading...</div>'.
                      '</div>';

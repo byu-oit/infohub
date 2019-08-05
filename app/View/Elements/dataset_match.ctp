@@ -1,4 +1,5 @@
 <script type="text/javascript">
+	var autocompleteCache = {};
 	$(document).ready(function() {
 		var loadingStatus = {};
 
@@ -6,19 +7,12 @@
 			.each(function() {
 				$(this).autocomplete({
 					source: function( request, response ) {
-						$.getJSON("/search/autoCompleteTerm/1", {
-							q: request.term
-						}, response );
-					},
-					search: function() {
-						// custom minLength
-						if ( this.value.length < 2 ) {
-							return false;
-						}
+						searchAutocomplete(request.term, response);
 					},
 					response: function( event, ui ) {
 						ui.content.push({
-							newTab: true
+							newTab: true,
+							label: $(event.target).data('defaultSearch')
 						});
 					},
 					select: function(evt, selected) {
@@ -32,7 +26,8 @@
 						var index = $(this).data('index');
 
 						updateDataset(index, selected.item, false);
-					}
+					},
+					minLength: 2
 				})
 				.autocomplete("instance")._renderItem = function( ul, item ) {
 					if (item.newTab === undefined) {
@@ -43,9 +38,15 @@
 
 					return $( "<li>" )
 						.addClass("new-tab")
-						.append( "<div>Search for \""+$(this)[0].term+"\" in new tab</div>" )
+						.append( "<div>Search for \""+item.label+"\" in new tab</div>" )
 						.appendTo( ul );
 				};
+			});
+		$('.bt-search')
+			.focus(function() {
+				if ($(this).val()) return;
+				var fieldName = $(this).data('defaultSearch');
+				$(this).autocomplete('search', fieldName);
 			});
 
 		$('.edit-opt').click(function() {
@@ -113,6 +114,8 @@
 						$(this).closest('tr').find('.term-wrapper').removeClass('display-loading').addClass('display-search');
 						if (data.length != 0) {
 							updateDataset($(this).data('index'), data[0], true);
+						} else {
+							searchAutocomplete($(this).closest('td').find('.bt-search').data('defaultSearch'), function() {});
 						}
 					});
 			});
@@ -157,6 +160,20 @@
 			}
 		}
 	});
+
+	function searchAutocomplete(query, callback) {
+		if (autocompleteCache[query] !== undefined) {
+			callback(autocompleteCache[query]);
+		}
+		else {
+			$.getJSON("/search/autoCompleteTerm/1", {
+				q: query
+			}, function(data) {
+				autocompleteCache[query] = data;
+				callback(data);
+			});
+		}
+	}
 
 	function toggleDefinition(index) {
 		$('#view-definition'+index).toggleClass('expanded');
