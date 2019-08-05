@@ -364,7 +364,7 @@ class SearchController extends AppController {
 		session_write_close(); //No local database writes, so allow this ajax request to run in parallel with others
 		$query= $this->request->query('q');
 		if(empty($query)){
-			return new CakeResponse(['type' => 'application/javascript', 'body' => []]);
+			return new CakeResponse(['type' => 'application/javascript', 'body' => '']);
 		}
 
 		$definitionAttributeTypeId = Configure::read('Collibra.attribute.definition');

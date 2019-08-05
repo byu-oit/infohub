@@ -199,7 +199,7 @@ class FieldsetHelper extends AppHelper {
                      '<input type="hidden" name="data[Api][elements]['.$index.'][name]" class="data-label" data-index="'.$index.'" value="'.$field->name.'" id="ApiElements'.$index.'Name">'.
                      '<input type="hidden" name="data[Api][elements]['.$index.'][business_term]" class="bt" data-index="'.$index.'" id="ApiElements'.$index.'BusinessTerm">'.
                      '<div class="term-wrapper display-loading" id="ApiElements'.$index.'SearchCell">'.
-                        '<input type="text" class="bt-search" data-index="'.$index.'" placeholder="Search for a term"></input>'.
+                        '<input type="text" class="bt-search" data-index="'.$index.'" data-default-search="'.str_replace('_', ' ', end($fieldPath)).'" placeholder="Search for a term"></input>'.
                         '<div class="selected-term"><span class="term-name"></span>  <span class="edit-opt" data-index="'.$index.'" title="Select new term"></span></div>'.
                         '<div class="loading">Loading...</div>'.
                      '</div>';
@@ -210,7 +210,7 @@ class FieldsetHelper extends AppHelper {
                      '<input type="hidden" name="data[Api][elements]['.$index.'][previous_business_term_relation]" value="'.$field->businessTerm[0]->termRelationId.'">'.
                      '<input type="hidden" name="data[Api][elements]['.$index.'][business_term]" value="'.$field->businessTerm[0]->termId.'" class="bt" data-index="'.$index.'" id="ApiElements'.$index.'BusinessTerm" data-orig-term="'.$field->businessTerm[0]->termId.'">'.
                      '<div class="term-wrapper" id="ApiElements'.$index.'SearchCell">'.
-                        '<input type="text" class="bt-search" data-index="'.$index.'" placeholder="Search for a term"></input>'.
+                        '<input type="text" class="bt-search" data-index="'.$index.'" data-default-search="'.str_replace('_', ' ', end($fieldPath)).'" placeholder="Search for a term"></input>'.
                         '<div class="selected-term"><span class="term-name">'.$field->businessTerm[0]->term.'</span>  <span class="edit-opt" data-index="'.$index.'" title="Select new term"></span></div>'.
                         '<div class="loading">Loading...</div>'.
                      '</div>';

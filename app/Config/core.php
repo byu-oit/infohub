@@ -54,7 +54,7 @@ if (!function_exists('denv')) {
 			'changeDSRRelations' => '987d74a5-1968-4177-90ce-41d9ebac3548',
 			'changeAttributes' => '7ee55a00-a355-4066-a65c-f4df27184646',
 			'createDSRDraft' => 'ecdb22aa-f091-42b8-9b63-4303e82ee7cf',
-			'createRelationsAsync' => 'c1934dda-c1c8-4ad2-8e53-18303fb06545',
+			'createBusinessTermRelations' => '183e91f7-8258-410b-960c-7b45017c71fa',
 			'resetUserEmails' => '576ed9a6-bd40-4df6-b11e-e28cdaa8cefe',
 			'emailGovernanceDirectors' => 'f4e04b65-fef9-4af9-8934-48ce1e827375'
 		],
@@ -117,7 +117,6 @@ if (!function_exists('denv')) {
 			'description' => '00000000-0000-0000-0000-000000003114',
 			'descriptiveExample' => '00000000-0000-0000-0000-000000003115',
 			'standardFieldName' => 'ea92faa8-685d-4cb0-8665-14808de08dd2',
-			'alternativeFieldName' => '75f83a44-facf-4de9-a1bb-d7a655075958',
 			'classification' => '80cae8d4-856f-4b9a-971a-164514e79744',
 			'concept' => '00fd4187-ffbd-4419-acd0-74fd9f16598a',
 			'requesterNetId' => 'a368134f-ab44-4ce6-ac1d-1b69bfa37d6e',
