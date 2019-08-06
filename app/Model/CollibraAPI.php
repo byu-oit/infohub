@@ -1235,7 +1235,7 @@ class CollibraAPI extends Model {
 		return $termResp;
 	}
 
-	public function searchTerms($query, $limit = 10, $communities = []) {
+	public function searchTerms($query, $limit = 10, $communities = [], $searchWordsOnly = false) {
 		if (empty($communities)) {
 			$communities = [Configure::read('Collibra.community.byu'), Configure::read('Collibra.community.dataGovernanceCouncil')];
 		}
@@ -1252,7 +1252,7 @@ class CollibraAPI extends Model {
 						'00000000-0000-0000-0000-000000011001',
 						Configure::read('Collibra.type.synonym')]],
 				'includeMeta' => true],
-			'fields' => ['name', 'attributes'],
+			'fields' => ['name'],
 			'order' => [
 				'by' => 'score',
 				'sort' => 'desc'],
@@ -1265,6 +1265,7 @@ class CollibraAPI extends Model {
 		if(!Configure::read('allowUnapprovedTerms')){
 			$request['filter']['status'] = '00000000-0000-0000-0000-000000005009';
 		}
+		$request['fields'][] = $searchWordsOnly ? Configure::read('Collibra.attribute.searchWords') : 'attributes';
 
 		$resp = $this->postJSON('search', json_encode($request));
 		return json_decode($resp);

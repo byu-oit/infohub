@@ -7,7 +7,7 @@
 			.each(function() {
 				$(this).autocomplete({
 					source: function( request, response ) {
-						searchAutocomplete(request.term, response);
+						searchAutocomplete(request.term, response, '0');
 					},
 					response: function( event, ui ) {
 						ui.content.push({
@@ -115,7 +115,7 @@
 						if (data.length != 0) {
 							updateDataset($(this).data('index'), data[0], true);
 						} else {
-							searchAutocomplete($(this).closest('td').find('.bt-search').data('defaultSearch'), function() {});
+							searchAutocomplete($(this).closest('td').find('.bt-search').data('defaultSearch'), function() {}, '1');
 						}
 					});
 			});
@@ -161,13 +161,14 @@
 		}
 	});
 
-	function searchAutocomplete(query, callback) {
+	function searchAutocomplete(query, callback, searchWords) {
 		if (autocompleteCache[query] !== undefined) {
 			callback(autocompleteCache[query]);
 		}
 		else {
 			$.getJSON("/search/autoCompleteTerm/1", {
-				q: query
+				q: query,
+				sw: searchWords
 			}, function(data) {
 				autocompleteCache[query] = data;
 				callback(data);
