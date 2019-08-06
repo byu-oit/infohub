@@ -362,7 +362,8 @@ class SearchController extends AppController {
 
 	public function autoCompleteTerm() {
 		session_write_close(); //No local database writes, so allow this ajax request to run in parallel with others
-		$query= $this->request->query('q');
+		$query = $this->request->query('q');
+		$searchWords = $this->request->query('sw') === '1';
 		if(empty($query)){
 			return new CakeResponse(['type' => 'application/javascript', 'body' => '']);
 		}
@@ -371,7 +372,7 @@ class SearchController extends AppController {
 
 		$results = [];
 		// create JSON request string
-		$jsonResp = $this->CollibraAPI->searchTerms($query);
+		$jsonResp = $this->CollibraAPI->searchTerms($query, 10, [], $searchWords);
 		for($i=0; $i<sizeof($jsonResp->results); $i++){
 			$result = $jsonResp->results[$i];
 			if (empty($result->definition) && !empty($result->attributes)) {
