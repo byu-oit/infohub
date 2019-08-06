@@ -19,7 +19,6 @@
 	<?= $this->Form->create('Api', ['id' => 'apiForm']) ?>
 		<?= $this->Form->input('host') ?>
 		<?= $this->Form->input('basePath') ?>
-		<?= $this->Form->input('version') ?>
 		<?= $this->Form->input('authorizedByFieldset', ['type' => 'hidden']) ?>
 		<?= $this->Form->input('destructiveUpdate', ['type' => 'hidden']) ?>
 		<table class="swagger">
