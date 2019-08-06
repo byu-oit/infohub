@@ -10,6 +10,10 @@ class ApisController extends AppController {
 			return $this->redirect(['action' => 'host', 'hostname' => $hosts[0]]);
 		}
 		$this->set('hosts', $hosts);
+
+		if ($this->Session->check('recentAPIs')) {
+			$this->set('recent', $this->Session->read('recentAPIs'));
+		}
 	}
 
 	public function host($hostname) {
