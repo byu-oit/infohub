@@ -57,7 +57,7 @@
 		<div class="clear" style="height:20px;"></div>
         <h2 class="headerTab">Requested in <?= $this->Html->link($request->assetName, array_merge(['controller' => 'request', 'action' => 'view', $request->id])) ?></h2>
         <div class="clear"></div>
-        <div class="apiHelp">Requested fields are highlighted.</div>
+        <div class="apiHelp" style="cursor:initial;">Requested fields are highlighted.</div>
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
 				<a class="container-btn grow" onclick="toggleContainerCollapseAll(true)">Collapse All</a><a class="container-btn grow" onclick="toggleContainerCollapseAll(false)">Expand All</a>
