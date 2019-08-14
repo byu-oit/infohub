@@ -75,7 +75,7 @@
 			<div class="apiHelpStatus">This API is <strong>retired.</strong></div>
 			<div class="apiHelpSmlStatus">This API is no longer operational and exists in InfoHub only for record-keeping purposes.</div>
 		<?php endif ?>
-        <div class="apiHelp">Requested fields are highlighted.</div>
+        <div class="apiHelp" style="cursor:initial;">Requested fields are highlighted.</div>
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
 				<?php if ($containsFieldset): ?>

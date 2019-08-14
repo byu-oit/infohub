@@ -382,6 +382,11 @@
 						echo '<li><a href="/virtualDatasets/viewRequested/';
 						echo isset($asset->parentId) ? $asset->parentId : $asset->id;
 						echo '/'.$virTable->virTableVocabName.'?n=1" title="View which elements were requested from this virtual table">'.$virTable->virTableName.'</a></li>';
+					}
+					foreach ($asset->necessarySamlResponses as $saml) {
+						echo '<li><a href="/saml/viewRequested/';
+						echo isset($asset->parentId) ? $asset->parentId : $asset->id;
+						echo '/'.$saml->responseName.'" title="View which elements were requested from this response">'.$saml->responseName.'</a></li>';
 					} ?>
 				</ul>
 			</div>

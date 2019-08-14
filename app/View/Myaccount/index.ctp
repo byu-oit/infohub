@@ -347,6 +347,9 @@
 							}
 							foreach ($req->necessaryVirtualTables as $virTable) {
 								echo '<li><a href="/virtualDatasets/viewRequested/'.$req->id.'/'.$virTable->virTableVocabName.'?n=1" title="View which elements were requested from this virtual table">'.$virTable->virTableName.'</a></li>';
+							}
+							foreach ($req->necessarySamlResponses as $saml) {
+								echo '<li><a href="/saml/viewRequested/'.$req->id.'/'.$saml->responseName.'" title="View which elements were requested from this response">'.$saml->responseName.'</a></li>';
 							} ?>
 						</ul>
 					</div>
