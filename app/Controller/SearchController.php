@@ -363,7 +363,6 @@ class SearchController extends AppController {
 	public function autoCompleteTerm() {
 		session_write_close(); //No local database writes, so allow this ajax request to run in parallel with others
 		$query = $this->request->query('q');
-		$searchWords = $this->request->query('sw') === '1';
 		if(empty($query)){
 			return new CakeResponse(['type' => 'application/javascript', 'body' => '']);
 		}
@@ -372,7 +371,8 @@ class SearchController extends AppController {
 
 		$results = [];
 		// create JSON request string
-		$jsonResp = $this->CollibraAPI->searchTerms($query, 10, [], $searchWords);
+		$jsonResp = $this->CollibraAPI->searchTerms($query);
+
 		for($i=0; $i<sizeof($jsonResp->results); $i++){
 			$result = $jsonResp->results[$i];
 			if (empty($result->definition) && !empty($result->attributes)) {
@@ -384,6 +384,26 @@ class SearchController extends AppController {
 			}
 			$results[] = $result;
 		}
+		return new CakeResponse(['type' => 'application/javascript', 'body' => json_encode($results)]);
+	}
+
+	public function searchOnPreviouslyMatchedFields() {
+		$query = $this->request->query('q');
+		if (empty($query)) {
+			return new CakeResponse(['type' => 'application/javascript', 'body' => '']);
+		}
+
+		$query = str_replace(' ', '_', $query);
+		$jsonResp = $this->CollibraAPI->searchOnPreviouslyMatchedFields($query);
+		$results = [];
+		foreach ($jsonResp as $resp) {
+			$results[] = [
+				'name' => ['id' => $resp->id, 'val' => $resp->name],
+				'definition' => ['val' => $resp->definition],
+				'context' => ['val' => $resp->vocabName]
+			];
+		}
+
 		return new CakeResponse(['type' => 'application/javascript', 'body' => json_encode($results)]);
 	}
 
