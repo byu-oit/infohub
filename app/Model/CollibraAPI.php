@@ -1235,7 +1235,7 @@ class CollibraAPI extends Model {
 		return $termResp;
 	}
 
-	public function searchTerms($query, $limit = 10, $communities = [], $searchWordsOnly = false) {
+	public function searchTerms($query, $limit = 10, $communities = []) {
 		if (empty($communities)) {
 			$communities = [Configure::read('Collibra.community.byu'), Configure::read('Collibra.community.dataGovernanceCouncil')];
 		}
@@ -1252,7 +1252,7 @@ class CollibraAPI extends Model {
 						'00000000-0000-0000-0000-000000011001',
 						Configure::read('Collibra.type.synonym')]],
 				'includeMeta' => true],
-			'fields' => ['name'],
+			'fields' => ['name', 'attributes'],
 			'order' => [
 				'by' => 'score',
 				'sort' => 'desc'],
@@ -1265,10 +1265,57 @@ class CollibraAPI extends Model {
 		if(!Configure::read('allowUnapprovedTerms')){
 			$request['filter']['status'] = '00000000-0000-0000-0000-000000005009';
 		}
-		$request['fields'][] = $searchWordsOnly ? Configure::read('Collibra.attribute.searchWords') : 'attributes';
 
 		$resp = $this->postJSON('search', json_encode($request));
 		return json_decode($resp);
+	}
+
+	public function searchOnPreviouslyMatchedFields($query) {
+		$queryCommaAfter = $query.',';
+		$queryCommaBefore = ', '.$query;
+		$queryCommaSurrounded = ', '.$query.',';
+
+		$tableConfig = ['TableViewConfig' => [
+			'Columns' => [
+				['Column' => ['fieldName' => 'id']],
+				['Column' => ['fieldName' => 'name']],
+				['Column' => ['fieldName' => 'definition']],
+				['Column' => ['fieldName' => 'vocabName']]],
+			'Resources' => [
+				'Term' => [
+					'Id' => ['name' => 'id'],
+					'Signifier' => ['name' => 'name'],
+					'StringAttribute' => [[
+						'Value' => ['name' => 'previouslyMatchedFieldNames'],
+						'labelId' => Configure::read('Collibra.attribute.previouslyMatchedFieldNames')],
+					[
+						'Value' => ['name' => 'definition'],
+						'labelId' => Configure::read('Collibra.attribute.definition')]],
+					'Vocabulary' => [
+						'Name' => ['name' => 'vocabName']],
+					'Filter' => [
+						'AND' => [
+							['OR' => [
+								['Field' => [
+									'name' => 'previouslyMatchedFieldNames',
+									'operator' => 'EQUALS',
+									'value' => $query]],
+								['Field' => [
+									'name' => 'previouslyMatchedFieldNames',
+									'operator' => 'STARTS_WITH',
+									'value' => $queryCommaAfter]],
+								['Field' => [
+									'name' => 'previouslyMatchedFieldNames',
+									'operator' => 'ENDS_WITH',
+									'value' => $queryCommaBefore]],
+								['Field' => [
+									'name' => 'previouslyMatchedFieldNames',
+									'operator' => 'INCLUDES',
+									'value' => $queryCommaSurrounded]]]]]]]],
+			'displayLength' => 10]];
+
+		$results = $this->fullDataTable($tableConfig);
+		return $results;
 	}
 
 	public function getTerms($vocabularyId = null, $passedOptions = []) {
