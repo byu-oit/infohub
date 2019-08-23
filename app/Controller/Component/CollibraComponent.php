@@ -44,8 +44,23 @@ class CollibraComponent extends Component {
     }
 
     public function preparePostData($postData, $match='/%5B[0-9]*%5D/', $replacement='') {
+    	// Collibra doesn't like array keys in post data, e.g.
+		// foo[0]=bar&foo[1]=duh&foo[2]=gronk
+		//
+		// Instead it simply expects the same key repeated, e.g.
+		// foo=bar&foo=duh&foo=gronk
+		//
+		// But we don't want to corrupt the urlencoded values, for instance pre-encoded JSON,
+		// so we use http_build_query, split everything apart, fix the keys, and then glue it all back together
         $postString = http_build_query($postData);
-        $postString = preg_replace($match, $replacement, $postString);
-        return $postString;
+        $pieces = explode('&', $postString);
+        $cleanKeys = [];
+        foreach($pieces as $keyVal) {
+            list($key, $val) = explode('=', $keyVal);
+            $key = preg_replace($match, $replacement, $key);
+            $cleanKeys[] = "{$key}={$val}";
+		}
+
+        return implode('&', $cleanKeys);
     }
 }
