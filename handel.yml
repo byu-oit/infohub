@@ -54,7 +54,7 @@ environments:
           port_mappings:
             - 80
           max_mb: 1024
-          cpu_units: 512
+          cpu_units: 1280
           routing:
             base_path: /
             health_check_path: /ping.html
