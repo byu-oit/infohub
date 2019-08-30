@@ -53,8 +53,8 @@ environments:
           image_name: <account>/infohub:prd
           port_mappings:
             - 80
-          max_mb: 2048
-          cpu_units: 925
+          max_mb: 1024
+          cpu_units: 512
           routing:
             base_path: /
             health_check_path: /ping.html
