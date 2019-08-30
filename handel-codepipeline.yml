@@ -31,4 +31,4 @@ pipelines:
       - type: handel
         name: Deploy
         environments_to_deploy:
-          - dev
+          - prd
