@@ -43,6 +43,9 @@ environments:
     storage:
       type: efs
   prd:
+    dns:
+      type: route53zone
+      name: infohub.byu.edu
     app:
       type: ecs
       containers:
