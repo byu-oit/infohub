@@ -13,7 +13,21 @@ pipelines:
         branch: dev
       - type: codebuild
         name: Build
-        build_image: aws/codebuild/docker:18.09.0
+        build_image: aws/codebuild/standard:2.0
+      - type: handel
+        name: Deploy
+        environments_to_deploy:
+          - dev
+  prd:
+    phases:
+      - type: github
+        name: Github
+        owner: byu-oit
+        repo: infohub
+        branch: master
+      - type: codebuild
+        name: Build
+        build_image: aws/codebuild/standard:2.0
       - type: handel
         name: Deploy
         environments_to_deploy:
