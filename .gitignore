@@ -6,12 +6,8 @@
 /app/webroot/robots.txt
 /lib/Cake/Console/Templates/skel/tmp/
 /plugins
-/Plugin
 /vendors
-/vendor
-/vendor/
 /build
-/.vscode
 /dist
 /tags
 *.mo
