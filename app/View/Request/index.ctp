@@ -382,7 +382,7 @@
 						</div>
 						<div class="field-container">
 							<label for="email">Requester Email*</label>
-							<input type="text" id="email" name="email" class="inputShade noPlaceHolder" value="<?= (Configure::read('debug') == 0) ? ( empty($preFilled['email']) ? h($psEmail) : h($preFilled['email']) ) : h('null@example.com') ?>">
+							<input type="text" id="email" name="email" class="inputShade noPlaceHolder" value="<?= (Configure::read('debug') == 0) ? ( empty($preFilled['email']) ? h($psEmail) : h($preFilled['email']) ) : h('') ?>">
 						</div>
 				</div>
 
@@ -404,7 +404,7 @@
 					</div>
 					<div class="field-container">
 						<label for="sponsorEmail">Sponsor Email*</label>
-						<input type="text" id="sponsorEmail" name="sponsorEmail" class="inputShade noPlaceHolder" value="<?= (Configure::read('debug') == 0) ? ( empty($preFilled['sponsorEmail']) ? ( empty($supervisorInfo->email) ? '' : h($supervisorInfo->email) ) : $preFilled['sponsorEmail'] ) : h('null@example.com') ?>">
+						<input type="text" id="sponsorEmail" name="sponsorEmail" class="inputShade noPlaceHolder" value="<?= (Configure::read('debug') == 0) ? ( empty($preFilled['sponsorEmail']) ? ( empty($supervisorInfo->email) ? '' : h($supervisorInfo->email) ) : $preFilled['sponsorEmail'] ) : h('') ?>">
 					</div>
 					<div class="field-container">
 						<label for="requestingOrganization">Requesting Organization*</label>
