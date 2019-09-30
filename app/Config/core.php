@@ -243,7 +243,7 @@ if (!function_exists('denv')) {
  */
 	Configure::write('Error', [
 		'handler' => 'ErrorHandler::handleError',
-		'level' => E_ALL & ~E_DEPRECATED,
+		'level' => E_ALL & ~E_DEPRECATED & ~E_NOTICE,
 		'trace' => true
 	]);
 

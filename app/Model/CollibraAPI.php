@@ -1693,7 +1693,7 @@ class CollibraAPI extends Model {
 			return null;
 		}
 
-		$match = array_column($search->{$key}, null, 'name')[$name];
+		$match = @array_column($search->{$key}, null, 'name')[$name];
 		if (!$match && $type == 'vocabulary') {
 			//Slightly looser matching, ignoring leading or trailing "/" character
 			foreach ($search->{$key} as $item) {
