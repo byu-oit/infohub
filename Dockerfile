@@ -35,13 +35,7 @@ RUN ln -s /usr/lib /var/www/lib \
   && sed -i 's/^#LoadModule rewrite_module /LoadModule rewrite_module /' /etc/apache2/httpd.conf \
   && sed -i 's/^#EnableMMAP off/EnableMMAP off/' /etc/apache2/httpd.conf \
   && sed -i 's/AllowOverride None/AllowOverride All/' /etc/apache2/httpd.conf \
-  && mkdir -p /cake/app/tmp/cache/models \
-  && mkdir -p /cake/app/tmp/cache/persistent \
-  && mkdir -p /cake/app/tmp/sessions \
-  && mkdir -p /cake/app/tmp/swagger \
-  && mkdir -p /cake/app/tmp/queue \
-  && mkdir -p /cake/app/tmp/attachments \
-  && chown -R apache:root /cake/app/tmp
+
 
 COPY --from=builder /go/src/app/launcher .
 
