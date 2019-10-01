@@ -34,8 +34,7 @@ RUN ln -s /usr/lib /var/www/lib \
   && rm -rf /var/www/localhost/htdocs && ln -s /cake/app/webroot /var/www/localhost/htdocs \
   && sed -i 's/^#LoadModule rewrite_module /LoadModule rewrite_module /' /etc/apache2/httpd.conf \
   && sed -i 's/^#EnableMMAP off/EnableMMAP off/' /etc/apache2/httpd.conf \
-  && sed -i 's/AllowOverride None/AllowOverride All/' /etc/apache2/httpd.conf \
-
+  && sed -i 's/AllowOverride None/AllowOverride All/' /etc/apache2/httpd.conf
 
 COPY --from=builder /go/src/app/launcher .
 
