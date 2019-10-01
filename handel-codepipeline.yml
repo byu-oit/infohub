@@ -10,7 +10,7 @@ pipelines:
         name: Github
         owner: byu-oit
         repo: infohub
-        branch: dev
+        branch: master
       - type: codebuild
         name: Build
         build_image: aws/codebuild/standard:2.0
@@ -24,7 +24,7 @@ pipelines:
         name: Github
         owner: byu-oit
         repo: infohub
-        branch: master
+        branch: aws-prd
       - type: codebuild
         name: Build
         build_image: aws/codebuild/standard:2.0
