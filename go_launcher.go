@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -102,8 +101,8 @@ func run() {
 
 func linkDir() {
 	efsdir := os.Getenv("STORAGE_MOUNT_DIR")
-	efsuploadsdir := fmt.Sprintf(efsdir, "/", "uploads")
-	efstmpdir := fmt.Sprintf(efsdir, "/", "tmp")
+	efsuploadsdir := efsdir + "/" + "uploads"
+	efstmpdir := efsdir + "/" + "tmp"
 	uploads := "/cake/app/webroot/uploads"
 	tmp := "/cake/app/tmp"
 	err := os.Symlink(efsuploadsdir, uploads)
