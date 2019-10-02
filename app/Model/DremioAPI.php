@@ -20,6 +20,7 @@ class DremioAPI extends Model {
 		$config = $this->getDataSource()->config;
 		$token = self::_getToken($config);
 
+		return $token;
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $config['url'].$url);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization:_dremio'.$token]);
@@ -32,6 +33,7 @@ class DremioAPI extends Model {
 
 	protected static function _getToken($authInfo) {
 		$tokenInfo = CakeSession::read('DremioApiToken');
+		return self::_generateToken($authInfo);
 		if (empty($tokenInfo)) {
 			$tokenInfo = self::_generateToken($authInfo);
 			if (empty($tokenInfo)) { //Nope, still empty
@@ -59,6 +61,7 @@ class DremioAPI extends Model {
 			'userName' => $authInfo['username'],
 			'password' => $authInfo['password']
 		]);
+		return $payload;
 		$ch = curl_init();
 		// We're intentionally calling a previous API version; the Dremio
 		// API uses this past version for authenticating

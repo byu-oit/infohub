@@ -41,11 +41,13 @@
 				if (!path) { $('#path').focus(); } else { $('#dataset').focus(); }
 				return;
 			}
+			alert("Starting Import");
 
 			$.post('/virtualDatasetAdmin/import', {path:path, dataset:dataset})
 				.done(function(data) {
 					clearInterval(loadingTextInterval);
 					thisElem.html('Import');
+					alert(data);
 					var data = JSON.parse(data);
 					alert(data.message);
 
