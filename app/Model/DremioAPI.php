@@ -19,6 +19,7 @@ class DremioAPI extends Model {
 	protected function _get($url) {
 		$config = $this->getDataSource()->config;
 		$token = self::_getToken($config);
+		return "Hello ".$token;
 
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $config['url'].$url);

@@ -44,6 +44,7 @@
 
 			$.post('/virtualDatasetAdmin/import', {path:path, dataset:dataset})
 				.done(function(data) {
+					alert(data);
 					clearInterval(loadingTextInterval);
 					thisElem.html('Import');
 					var data = JSON.parse(data);

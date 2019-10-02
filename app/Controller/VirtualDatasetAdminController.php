@@ -49,6 +49,7 @@ class VirtualDatasetAdminController extends AppController {
 	private function _import($path, $dataset) {
 		$asset = $this->DremioAPI->catalog($path);
 
+		return ($asset);
 		if (empty($asset) || isset($asset->errorMessage)) {
 			return ['success' => 0, 'message' => 'Error contacting Dremio.'];
 		}
