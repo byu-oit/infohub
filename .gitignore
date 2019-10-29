@@ -13,6 +13,7 @@
 *.mo
 /composer.phar
 /docker-compose.yml
+Dockerfile-local
 /data-warehouse-tables.json
 /app/Controller/DevClearController.php
 # INTENTIONALLY adding /vendor to version control
