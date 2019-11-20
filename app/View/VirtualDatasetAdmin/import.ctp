@@ -43,18 +43,51 @@
 			}
 
 			$.post('/virtualDatasetAdmin/import', {path:path, dataset:dataset})
-				.done(function(data) {
-					alert(data);
+				.done(function(data, statusText, xhr) {
+					var status = xhr.status;
+					
+					/*
+					alert ('Return status code: ' +status);
+					alert('The data returned = ' +data);
+					*/
 					clearInterval(loadingTextInterval);
 					thisElem.html('Import');
-					var data = JSON.parse(data);
-					alert(data.message);
 
-					if (data.redirect) {
-						window.location.href = '/virtualDatasets';
+					if(data) {
+    					try {
+        					data = JSON.parse(data);
+    					} catch(e) {
+        					alert(e); // error in the above string
+    					}
+						if (data.redirect) {
+							window.location.href = '/virtualDatasets';
+						}
+						else {
+							alert('Data import failed.')
+						}
 					}
+				})
+				.fail(function(jqxhr, settings, ex) { 
+					clearInterval(loadingTextInterval);
+					alert('failed, ' + ex);
 				});
 		});
+
+		// $.post('/virtualDatasetAdmin/import', {path:path, dataset:dataset})
+		// 		.done(function(data) {
+		// 			alert(data);
+		// 			clearInterval(loadingTextInterval);
+		// 			thisElem.html('Import');
+		// 			var data = JSON.parse(data);
+		// 			alert(data.message);
+
+		// 			if (data.redirect) {
+		// 				window.location.href = '/virtualDatasets';
+		// 			}
+		// 		});
+		// });
+
+
 
 		$('#path, #newDataset').on({
 			keyup: function(e) {

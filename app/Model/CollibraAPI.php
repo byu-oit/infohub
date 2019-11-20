@@ -2556,6 +2556,7 @@ class CollibraAPI extends Model {
 
 		/*if($this->code != '200' && $this->code != '201'){
 			echo 'cURL ERROR:<br>'.
+				'username: '. $this->settings['username'].'<br>'.
 				'code: '. $this->code.'<br>'.
 				'info: '. print_r($this->info).'<br>'.
 				'error: '. implode('<br>', $this->errors) .'<br>';
