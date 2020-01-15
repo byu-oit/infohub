@@ -8,6 +8,9 @@ tags:
 
 environments:
   dev:
+    dns:
+      type: route53zone
+      name: infohub-dev.byu.edu
     app:
       type: ecs
       containers:
