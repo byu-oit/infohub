@@ -24,7 +24,7 @@ pipelines:
         name: Github
         owner: byu-oit
         repo: infohub
-        branch: aws-prd
+        branch: aws-mig
       - type: codebuild
         name: Build
         build_image: aws/codebuild/standard:2.0
