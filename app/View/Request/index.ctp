@@ -53,9 +53,9 @@
 							$('#name').val(data.requester.name);
 							$('#phone').val(data.requester.phone);
 							$('#role').val(data.requester.role);
-							<?php if (Configure::read('debug') == 0): ?>
+							<!--?php if (Configure::read('debug') == 0): ?-->
 								$('#email').val(data.requester.email);
-							<?php endif ?>
+							<!--?php endif ?-->
 
 							$('#sponsorName').val(data.supervisor.name);
 							$('#sponsorPhone').val(data.supervisor.phone);
@@ -382,7 +382,7 @@
 						</div>
 						<div class="field-container">
 							<label for="email">Requester Email*</label>
-							<input type="text" id="email" name="email" class="inputShade noPlaceHolder" value="<?= (Configure::read('debug') == 0) ? ( empty($preFilled['email']) ? h($psEmail) : h($preFilled['email']) ) : h('') ?>">
+							<input type="text" id="email" name="email" class="inputShade noPlaceHolder" value="<?= (Configure::read('debug') == 0) ? ( empty($preFilled['email']) ? h($psEmail) : h($preFilled['email']) ) : h('null@example.com') ?>">
 						</div>
 				</div>
 
@@ -404,7 +404,7 @@
 					</div>
 					<div class="field-container">
 						<label for="sponsorEmail">Sponsor Email*</label>
-						<input type="text" id="sponsorEmail" name="sponsorEmail" class="inputShade noPlaceHolder" value="<?= (Configure::read('debug') == 0) ? ( empty($preFilled['sponsorEmail']) ? ( empty($supervisorInfo->email) ? '' : h($supervisorInfo->email) ) : $preFilled['sponsorEmail'] ) : h('') ?>">
+						<input type="text" id="sponsorEmail" name="sponsorEmail" class="inputShade noPlaceHolder" value="<?= (Configure::read('debug') == 0) ? ( empty($preFilled['sponsorEmail']) ? ( empty($supervisorInfo->email) ? '' : h($supervisorInfo->email) ) : $preFilled['sponsorEmail'] ) : h('null@example.com') ?>">
 					</div>
 					<div class="field-container">
 						<label for="requestingOrganization">Requesting Organization*</label>
