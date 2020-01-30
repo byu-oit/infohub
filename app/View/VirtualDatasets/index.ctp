@@ -29,19 +29,40 @@
 		<h1 class="headerTab">Select Dataset</h2>
 		<div class="clear"></div>
 		<div id="smLower" class="whiteBox">
-			<ul class="catalogParent">
-				<?php if (empty($datasets)): ?>
-					No datasets found
-				<?php else: ?>
+			<?php if ($noEndpoints): ?>
+				<ul class="catalogParent">
+					No endpoints found
+				</ul>
+			<?php else: ?>
+				<h3 class="headerTab">Production</h3>
+				<ul class="catalogParent">
 					<?php $i = 0;
-					foreach ($datasets as $ds): ?>
+					foreach ($sortedDataset[Configure::read('Collibra.status.production')] as $ds): ?>
 						<li id="catalogIndex-<?=$i?>" class="catalogItem" data-name="<?=$ds->datasetName?>">
 							<?php echo '<a href="/virtualDatasets/view/'.$ds->datasetId.'">'.$ds->datasetName.'</a>'; ?>
 						</li>
 					<?php $i++;
 					endforeach; ?>
+				</ul>
+				<h3 class="headerTab">Pre-Production</h3>
+				<ul class="catalogParent">
+					<?php foreach ($sortedDataset[Configure::read('Collibra.status.preProduction')] as $ds): ?>
+						<li id="catalogIndex-<?=$i?>" class="catalogItem" data-name="<?=$ds->datasetName?>">
+							<?php echo '<a href="/virtualDatasets/view/'.$ds->datasetId.'">'.$ds->datasetName.'</a>'; ?>
+						</li>
+					<?php $i++;
+					endforeach; ?>
+				</ul>
+				<h3 class="headerTab">Deprecated</h3>
+				<ul class="catalogParent">
+					<?php foreach ($sortedDataset[Configure::read('Collibra.status.deprecated')] as $ds): ?>
+						<li id="catalogIndex-<?=$i?>" class="catalogItem" data-name="<?=$ds->datasetName?>">
+							<?php echo '<a href="/virtualDatasets/view/'.$ds->datasetId.'">'.$ds->datasetName.'</a>'; ?>
+						</li>
+					<?php $i++;
+					endforeach; ?>
+				</ul>
 				<?php endif ?>
-			</ul>
 		</div>
 	</div>
 	<?php if ($importAuthorized): ?>

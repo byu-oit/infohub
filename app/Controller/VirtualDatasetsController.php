@@ -33,7 +33,8 @@ class VirtualDatasetsController extends AppController {
 		$importAuthorized = $this->BYUAPI->isGROGroupMemberAny($this->Auth->user('username'), 'oit04');
 
 		$datasets = $this->CollibraAPI->getDremioDatasets();
-		$this->set(compact('importAuthorized', 'datasets'));
+		$sortedDataset = $this->dataSet($datasets);
+		$this->set(compact('importAuthorized', 'datasets', 'sortedDataset'));
 	}
 
 	public function view($datasetId) {
@@ -45,7 +46,28 @@ class VirtualDatasetsController extends AppController {
 		$arrRecent = $this->Session->check('recentDatasets') ? $this->Session->read('recentDatasets') : [];
 		array_unshift($arrRecent, ['datasetName' => $dataset->datasetName, 'datasetId' => $dataset->datasetId]);
 		$arrRecent = array_unique($arrRecent, SORT_REGULAR);
+		$sortedDataset = $this->dataSet($datasets);
 		$this->Session->write('recentDatasets', array_slice($arrRecent, 0, 5));
+	}
+
+	private function dataSet($dataset) {
+		$sortedDataset = [];
+		$noDataSets = false;
+		if(!empty($dataset)) {
+			usort($dataset, function ($a, $b) {
+				return strcmp(strtolower($a->datasetName), strtolower($b->datasetName));
+			});
+			foreach ($dataset as $ds) {
+				if (
+					$ds->statusId == Configure::read('Collibra.status.testing') ||
+					$ds->statusId == Configure::read('Collibra.status.retired')
+					) continue;
+				$sortedDataset[$ds->statusId][] = $ds;
+			}
+		} else {
+			$noDataSets = true;
+		}
+		return $sortedDataset;
 	}
 
 	public function viewRequested($requestId, $datasetId) {
