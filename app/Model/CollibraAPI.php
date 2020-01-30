@@ -988,11 +988,15 @@ class CollibraAPI extends Model {
 			'Columns' => [
 				['Column' => ['fieldName' => 'datasetId']],
 				['Column' => ['fieldName' => 'datasetName']],
+				['Column' => ['fieldName' => 'statusId']],
 				['Column' => ['fieldName' => 'datasetVocabId']]],
 			'Resources' => [
 				'Term' => [
 					'Id' => ['name' => 'datasetId'],
 					'Signifier' => ['name' => 'datasetName'],
+					'Status' => [
+						'Id' => ['name' => 'statusId'],
+						'Signifier' => ['name' => 'status']],
 					'ConceptType' => [
 						'Id' => ['name' => 'assetTypeId']],
 					'Vocabulary' => [
