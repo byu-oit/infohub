@@ -1477,21 +1477,21 @@ class CollibraAPI extends Model {
 			return false;
 		}
 
-		$vocabulary = $this->get("vocabulary/name/full?name={$swagger['basePath']}", ['json' => true])->vocabulary;
+		$vocabulary = $this->get("vocabulary/name/full?name={$swagger['basePath']}/{$swagger['version']}", ['json' => true])->vocabulary;
 		$existentTerms = [];
 		if (!empty($vocabulary)) {
 			$vocabularyId = $vocabulary[0]->resourceId;
 			$createdVocabulary = false;
-			$vocabularyTerms = $this->getApiFields($swagger['host'], "{$swagger['basePath']}");
+			$vocabularyTerms = $this->getApiFields($swagger['host'], "{$swagger['basePath']}/{$swagger['version']}");
 			foreach ($vocabularyTerms as $term) {
 				$existentTerms[$term->id] = $term->name;
 			}
 		}
 		else {
-			$vocabularyId = $this->createVocabulary("{$swagger['basePath']}", $hostCommunity->resourceId);
+			$vocabularyId = $this->createVocabulary("{$swagger['basePath']}/{$swagger['version']}", $hostCommunity->resourceId);
 			$createdVocabulary = true;
 			if (empty($vocabularyId)) {
-				$this->errors[] = "Unable to create vocabulary \"{$swagger['basePath']}\" in community \"{$swagger['host']}\"";
+				$this->errors[] = "Unable to create vocabulary \"{$swagger['basePath']}/{$swagger['version']}\" in community \"{$swagger['host']}\"";
 				return false;
 			}
 		}
@@ -1530,15 +1530,15 @@ class CollibraAPI extends Model {
 		}
 		//Create API object
 		if ($createdVocabulary) {
-			$apiResult = $this->addTermsToVocabulary($vocabularyId, Configure::read('Collibra.type.api'), ["{$swagger['basePath']}"]);
+			$apiResult = $this->addTermsToVocabulary($vocabularyId, Configure::read('Collibra.type.api'), ["{$swagger['basePath']}/{$swagger['version']}"]);
 			if (empty($apiResult) || !$apiResult->isOk()) {
-				$this->errors[] = "Error creating an object representing \"{$swagger['basePath']}\"";
+				$this->errors[] = "Error creating an object representing \"{$swagger['basePath']}/{$swagger['version']}\"";
 				if ($createdVocabulary) $this->deleteVocabulary($vocabularyId);
 				return false;
 			}
 			$apiResult = json_decode($apiResult);
 			$BYUAPI = ClassRegistry::init('BYUAPI');
-			$linksResponse = $BYUAPI->deepLinks($swagger['basePath']);
+			$linksResponse = $BYUAPI->deepLinks($swagger['basePath'].'/'.$swagger['version']);
 			if (!empty($linksResponse)) {
 				$postData['label'] = Configure::read('Collibra.attribute.apiStoreLink');
 				$postData['value'] = '<a class="link" href="'.$linksResponse['link'].'" target="_blank">'.$linksResponse['link'].'</a>';
@@ -1556,7 +1556,7 @@ class CollibraAPI extends Model {
 		if (!empty($fields)) {
 			$fieldsResult = $this->addTermsToVocabulary($vocabularyId, Configure::read('Collibra.type.field'), $fields);
 			if (empty($fieldsResult) || !$fieldsResult->isOk()) {
-				$this->errors[] = "Error adding fields to \"{$swagger['basePath']}\"";
+				$this->errors[] = "Error adding fields to \"{$swagger['basePath']}/{$swagger['version']}\"";
 				if ($createdVocabulary) $this->deleteVocabulary($vocabularyId);
 				return false;
 			}
@@ -1564,7 +1564,7 @@ class CollibraAPI extends Model {
 		if (!empty($fieldSets)) {
 			$fieldSetsResult = $this->addTermsToVocabulary($vocabularyId, Configure::read('Collibra.type.fieldSet'), $fieldSets);
 			if (empty($fieldSetsResult) || !$fieldSetsResult->isOk()) {
-				$this->errors[] = "Error adding fieldSets to \"{$swagger['basePath']}\"";
+				$this->errors[] = "Error adding fieldSets to \"{$swagger['basePath']}/{$swagger['version']}\"";
 				if ($createdVocabulary) $this->deleteVocabulary($vocabularyId);
 				return false;
 			}
@@ -1605,7 +1605,6 @@ class CollibraAPI extends Model {
 
 		return true;
 	}
-
 
 	public function addTermsToVocabulary($vocabularyId, $conceptType, $terms) {
 		if (empty($terms)) {
