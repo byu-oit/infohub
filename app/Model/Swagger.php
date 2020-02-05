@@ -41,6 +41,16 @@ class Swagger extends AppModel {
 			$uapiParse = false;
 		}
 
+		if($uapiParse == true) {
+			$versionMatches = [];
+			if (preg_match_all('/\/v[0-9]+(\.[0-9]+)*/', $basePath, $versionMatches)) {
+				$basePath = substr($basePath, 0, -strlen(end($versionMatches[0])));
+			}
+			$version = $this->_getRef('/info/version');
+		} else {
+			$version = "";
+		}
+
 		$this->elements = [];
 		if ($uapiParse) {
 			$rootPath = isset($paths['/']) ? '/' : '/*';
@@ -87,6 +97,7 @@ class Swagger extends AppModel {
 		return [
 			'host' => $host,
 			'basePath' => $basePath,
+			'version' => $version,
 			'elements' => array_values($this->elements),
 			'authorizedByFieldset' => $authorizedByFieldset
 		];

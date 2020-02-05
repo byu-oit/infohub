@@ -20,6 +20,7 @@
 		<?= $this->Form->input('host') ?>
 		<?= $this->Form->input('basePath') ?>
 		<?= $this->Form->input('authorizedByFieldset', ['type' => 'hidden']) ?>
+		<?= $this->Form->input('version') ?>
 		<?= $this->Form->input('destructiveUpdate', ['type' => 'hidden']) ?>
 		<table class="swagger">
 			<tr>
