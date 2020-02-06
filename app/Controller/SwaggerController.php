@@ -215,7 +215,7 @@ class SwaggerController extends AppController {
 			return ['error' => ['messages' => $this->CollibraAPI->errors]];
 		}
 
-		return ['status' => 'success', 'link' => "{$this->request->host()}/apis/{$swagger['host']}{$swagger['basePath']/$newApi['version']}"];
+		return ['status' => 'success', 'link' => "{$this->request->host()}/apis/{$swagger['host']}{$swagger['basePath']}/{$swagger['version']}"];
 	}
 
 	protected function _getUploadedSwagger() {
