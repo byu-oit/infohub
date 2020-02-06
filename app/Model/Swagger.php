@@ -55,6 +55,9 @@ class Swagger extends AppModel {
 		if ($uapiParse) {
 			$rootPath = isset($paths['/']) ? '/' : '/*';
 			foreach ($paths[$rootPath] as $method => $operation) {
+				if (empty($operation['responses'])) {
+					continue;
+				}
 				$response = empty($operation['responses'][200]['$ref']) ? $operation['responses'][200] : $this->_getRef($operation['responses'][200]['$ref']);
 				if (empty($response['schema'])) {
 					continue;

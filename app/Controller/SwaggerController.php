@@ -24,7 +24,7 @@ class SwaggerController extends AppController {
 					return;
 				}
 				if (!file_put_contents($filename, $swag)) {
-					$this->Session->setFlash('Error saving swagger file locally', 'default', ['class' => 'error']);
+					$this->Session->setFlash("Error saving swagger file locally", 'default', ['class' => 'error']);
 					return;
 				}
 				$this->redirect(['action' => 'process']);
