@@ -48,7 +48,7 @@ class Swagger extends AppModel {
 			}
 			$version = $this->_getRef('/info/version');
 		} else {
-			$version = "";
+			$version = $this->_getRef('/info/version');
 		}
 
 		$this->elements = [];
