@@ -45,10 +45,16 @@ class Swagger extends AppModel {
 			$versionMatches = [];
 			if (preg_match_all('/\/v[0-9]+(\.[0-9]+)*/', $basePath, $versionMatches)) {
 				$basePath = substr($basePath, 0, -strlen(end($versionMatches[0])));
-			}
+			} 
 			$version = $this->_getRef('/info/version');
 		} else {
-			$version = $this->_getRef('/info/version');
+			$versionMatches = [];
+			if($host == "api.byu.edu") {
+				if (preg_match_all('/\/v[0-9]+(\.[0-9]+)*/', $basePath, $versionMatches)) {
+					$basePath = substr($basePath, 0, -strlen(end($versionMatches[0])));
+				}
+				$version = $this->_getRef('/info/version');
+			}			
 		}
 
 		$this->elements = [];
