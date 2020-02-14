@@ -41,10 +41,29 @@ class Swagger extends AppModel {
 			$uapiParse = false;
 		}
 
+		if($uapiParse == true) {
+			$versionMatches = [];
+			if (preg_match_all('/\/v[0-9]+(\.[0-9]+)*/', $basePath, $versionMatches)) {
+				$basePath = substr($basePath, 0, -strlen(end($versionMatches[0])));
+			} 
+			$version = $this->_getRef('/info/version');
+		} else {
+			$versionMatches = [];
+			if($host == "api.byu.edu") {
+				if (preg_match_all('/\/v[0-9]+(\.[0-9]+)*/', $basePath, $versionMatches)) {
+					$basePath = substr($basePath, 0, -strlen(end($versionMatches[0])));
+				}
+				$version = $this->_getRef('/info/version');
+			}			
+		}
+
 		$this->elements = [];
 		if ($uapiParse) {
 			$rootPath = isset($paths['/']) ? '/' : '/*';
 			foreach ($paths[$rootPath] as $method => $operation) {
+				if (empty($operation['responses'])) {
+					continue;
+				}
 				$response = empty($operation['responses'][200]['$ref']) ? $operation['responses'][200] : $this->_getRef($operation['responses'][200]['$ref']);
 				if (empty($response['schema'])) {
 					continue;
@@ -87,6 +106,7 @@ class Swagger extends AppModel {
 		return [
 			'host' => $host,
 			'basePath' => $basePath,
+			'version' => $version,
 			'elements' => array_values($this->elements),
 			'authorizedByFieldset' => $authorizedByFieldset
 		];

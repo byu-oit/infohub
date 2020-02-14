@@ -17,7 +17,7 @@
 </style>
 <div id="apiBody" class="innerDataSet diff">
 	<div id="searchResults">
-		<h1 class="headerTab"><?=$newApi['host'].'/'.trim($newApi['basePath'], '/')?></h1>
+		<h1 class="headerTab"><?=$newApi['host'].'/'.trim($newApi['basePath'].'/'.$newApi['version'], '/')?></h1>
 		<div class="clear" style="height:20px;"></div>
         <h2 class="headerTab">Diff view</h2>
         <div class="clear"></div>
@@ -46,7 +46,7 @@
 				</table>
 			</div>
 			<div class="button-wrapper">
-				<a class="lower-btn grow" href="/apis/<?=$newApi['host'].'/'.trim($newApi['basePath'], '/')?>">Cancel</a>
+				<a class="lower-btn grow" href="/apis/<?=$newApi['host'].'/'.trim($newApi['basePath'].'/'.$newApi['version'], '/')?>">Cancel</a>
 				<?php if (!$blockedChange): ?>
 					<div class="update-submit grow" onclick="window.location.href='/swagger/process?diff=done'">Continue</div>
 				<?php endif ?>

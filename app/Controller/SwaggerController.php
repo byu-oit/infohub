@@ -24,7 +24,7 @@ class SwaggerController extends AppController {
 					return;
 				}
 				if (!file_put_contents($filename, $swag)) {
-					$this->Session->setFlash('Error saving swagger file locally', 'default', ['class' => 'error']);
+					$this->Session->setFlash("Error saving swagger file locally", 'default', ['class' => 'error']);
 					return;
 				}
 				$this->redirect(['action' => 'process']);
@@ -57,7 +57,7 @@ class SwaggerController extends AppController {
 				$this->Session->setFlash('Error: ' . implode('<br>', $this->Swagger->parseErrors), 'default', ['class' => 'error']);
 				return $this->redirect(['action' => 'index']);
 			}
-			$fields = $this->CollibraAPI->getApiFields($this->request->data['Api']['host'], $this->request->data['Api']['basePath']);
+			$fields = $this->CollibraAPI->getApiFields($this->request->data['Api']['host'], $this->request->data['Api']['basePath'].'/'.$this->request->data['Api']['version']);
 			if (!empty($fields)) {
 				if (!isset($this->request->query['diff'])) {
 					$this->redirect(['action' => 'diff']);
@@ -78,8 +78,8 @@ class SwaggerController extends AppController {
 
 	public function diff() {
 		$newApi = $this->_getUploadedSwagger();
-		$oldApi = $this->CollibraAPI->getApiObject($newApi['host'], $newApi['basePath']);
-		$oldApi->fields = $this->CollibraAPI->getApiFields($newApi['host'], $newApi['basePath']);
+		$oldApi = $this->CollibraAPI->getApiObject($newApi['host'], $newApi['basePath'].'/'.$newApi['version']);
+		$oldApi->fields = $this->CollibraAPI->getApiFields($newApi['host'], $newApi['basePath'].'/'.$newApi['version']);
 		usort($newApi['elements'], function($a, $b) {
 			return strcmp($a['name'], $b['name']);
 		});
@@ -215,7 +215,7 @@ class SwaggerController extends AppController {
 			return ['error' => ['messages' => $this->CollibraAPI->errors]];
 		}
 
-		return ['status' => 'success', 'link' => "{$this->request->host()}/apis/{$swagger['host']}{$swagger['basePath']}"];
+		return ['status' => 'success', 'link' => "{$this->request->host()}/apis/{$swagger['host']}{$swagger['basePath']}/{$swagger['version']}"];
 	}
 
 	protected function _getUploadedSwagger() {
