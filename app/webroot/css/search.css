@@ -1805,6 +1805,7 @@ img.resultBodyLoading {
 #apiBody .api-fields tbody .view-definition.expanded .full,
 #apiBody .table-columns tbody .view-definition.expanded .full,
 #apiBody .space-columns tbody .view-definition.expanded .full,
+#apiBody .dataset-columns tbody .view-definition.expanded .full,
 #apiBody .saml-fields tbody .view-definition.expanded .full {
   display: inline;
 }
