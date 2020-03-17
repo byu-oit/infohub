@@ -101,8 +101,9 @@
 				return;
 			}
 			loadingStatus[label] = true;
-			$.post('/swagger/find_business_term', {label: label}, function(data) {
+			$.post('/swagger/find_business_term', {label: label}, function(result) {
 				delete loadingStatus[label];
+				var data = result.response;
 				if (!data instanceof Array) {
 					return;
 				}
@@ -114,6 +115,7 @@
 						$(this).closest('tr').find('.term-wrapper').removeClass('display-loading').addClass('display-search');
 						if (data.length != 0) {
 							updateTable($(this).data('index'), data[0], true);
+							insertDefinition(result.res, $(this).data('index'));
 						} else {
 							searchAutocomplete($(this).closest('td').find('.bt-search').data('defaultSearch'), function() {}, true);
 						}
