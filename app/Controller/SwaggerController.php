@@ -173,7 +173,17 @@ class SwaggerController extends AppController {
 			return new CakeResponse(['type' => 'json', 'body' => '[]']);
 		}
 		$response = $this->CollibraAPI->searchStandardLabel($label);
-		return new CakeResponse(['type' => 'json', 'body' => json_encode($response)]);
+		if(empty($response[0]->name->id)) {
+			return new CakeResponse(['type' => 'json', 'body' => json_encode([ 'response' => $response ])]);
+		} else {
+			$id = $response[0]->name->id;
+			$res = $this->CollibraAPI->getTermDefinition($id);
+			$output = [
+				'response' => $response,
+				'res' => $res
+			];
+			return new CakeResponse(['type' => 'json', 'body' => json_encode($output)]);
+		}	
 	}
 
 	public function import() {
