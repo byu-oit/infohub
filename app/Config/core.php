@@ -180,7 +180,10 @@ if (!function_exists('denv')) {
 		],
 		'policy' => [
 			'standardDataUsagePolicies' => '76c92ba2-6930-4946-809b-e559bb247587',
-			'trustedPartnerSecurityStandards' => '712bd956-0c58-4724-bc12-69b1ee12bddf'
+			'trustedPartnerSecurityStandards' => '712bd956-0c58-4724-bc12-69b1ee12bddf',
+			'restrictedPolicy' => 'bb6588e5-0a6d-48de-a347-a087fc6e4350',
+			'restrict1' => 'cebf2b6d-df2f-479a-a9d5-248ece179c04',
+			'restrict2' => '4fbff9d7-32f1-4959-a52f-d4eaea763d5c'
 		]
 	]);
 

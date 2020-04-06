@@ -357,16 +357,20 @@ function addToQueueAPI(elem, displayCart){
 		var arrFieldIds = [];
 		var apiHost = $(elem).attr('data-apiHost');
 		var apiPath = $(elem).attr('data-apiPath');
+		var arrCommIds = [];
+		var btFieldsIds = [];
 		var authorizedByFieldset = $(elem).attr('data-authorizedByFieldset');
 
 		$(elem).parent().find('.checkBoxes').find('input').each(function(){
 			if($(this).prop("checked") && $(this).prop("name") != "toggleCheckboxes"){
 				arrFields.push($(this).data('name'));
 				arrFieldIds.push($(this).data('fieldId'));
+				arrCommIds.push($(this).data('vocabid'));
+				btFieldsIds.push($(this).val());
 			}
 		});
 		if (arrFields.length < 500) {
-			$.post("/request/addToQueueAPI", {emptyApi:'false', f:arrFields, fi:arrFieldIds, apiHost:apiHost, apiPath:apiPath, afs:authorizedByFieldset})
+			$.post("/request/addToQueueAPI", {emptyApi:'false', fd:btFieldsIds, f:arrFields, fi:arrFieldIds, fc:arrCommIds, apiHost:apiHost, apiPath:apiPath, afs:authorizedByFieldset})
 				.done(function(data) {
 					clearInterval(loadingTextInterval);
 					$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
@@ -378,7 +382,7 @@ function addToQueueAPI(elem, displayCart){
 			});
 		} else {
 			largeAddProgressSetUp(arrFields.length);
-			largeAddToQueueAPI(arrFields, arrFieldIds, apiHost, apiPath, authorizedByFieldset)
+			largeAddToQueueAPI(btFieldsIds, arrFields, arrFieldIds, arrCommIds, apiHost, apiPath, authorizedByFieldset)
 				.then(function(data) {
 					clearInterval(loadingTextInterval);
 					$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
@@ -404,21 +408,21 @@ function addToQueueAPI(elem, displayCart){
 		});
 	}
 }
-function largeAddToQueueAPI(arrFields, arrFieldIds, apiHost, apiPath, authorizedByFieldset, fieldsStride = 150) {
+function largeAddToQueueAPI(btFieldsIds, arrFields, arrFieldIds, arrCommIds, apiHost, apiPath, authorizedByFieldset, fieldsStride = 150) {
 	if (arrFields.length > fieldsStride) {
 		return new Promise(function(resolve) {
-			var request = $.post("/request/addToQueueAPI", {emptyApi:'false', f:arrFields.slice(0, fieldsStride), fi:arrFieldIds.slice(0, fieldsStride), apiHost:apiHost, apiPath:apiPath, afs:authorizedByFieldset})
+			var request = $.post("/request/addToQueueAPI", {fd: btFieldsIds.slice(0, fieldsStride), emptyApi:'false', f:arrFields.slice(0, fieldsStride), fi:arrFieldIds.slice(0, fieldsStride), fc:arrCommIds.slice(0, fieldsStride), apiHost:apiHost, apiPath:apiPath, afs:authorizedByFieldset})
 				.then(() => {
 					largeAddProgressIncrement();
 				});
-			var recur = largeAddToQueueAPI(arrFields.slice(fieldsStride), arrFieldIds.slice(fieldsStride), apiHost, apiPath, authorizedByFieldset, fieldsStride);
+			var recur = largeAddToQueueAPI(btFieldsIds.slice(fieldsStride), arrFields.slice(fieldsStride), arrFieldIds.slice(fieldsStride), arrCommIds.slice(fieldsStride), apiHost, apiPath, authorizedByFieldset, fieldsStride);
 
 			Promise.all([request, recur]).then(() => resolve());
 		});
 	}
 	else {
 		return new Promise(function(resolve) {
-			$.post("/request/addToQueueAPI", {emptyApi:'false', f:arrFields, fi:arrFieldIds, apiHost:apiHost, apiPath:apiPath, afs:authorizedByFieldset})
+			$.post("/request/addToQueueAPI", {fd: btFieldsIds, emptyApi:'false', f:arrFields, fi:arrFieldIds, fc:arrCommIds, apiHost:apiHost, apiPath:apiPath, afs:authorizedByFieldset})
 				.then(() => {
 					largeAddProgressIncrement();
 					resolve();
@@ -460,6 +464,8 @@ function addToQueueDBTable(elem, displayCart) {
 
 	var arrColumns = [];
 	var arrColumnIds = [];
+	var arrCommIds = [];
+	var btFieldsIds = [];
 	var databaseName = $(elem).data('databasename');
 	var schemaName = $(elem).data('schemaname');
 	var tableName = $(elem).data('tablename');
@@ -468,10 +474,12 @@ function addToQueueDBTable(elem, displayCart) {
 		if($(this).prop("checked") && $(this).prop("name") != "toggleCheckboxes"){
 			arrColumns.push($(this).data('name'));
 			arrColumnIds.push($(this).data('columnId'));
+			arrCommIds.push($(this).data('vocabid'));
+			btFieldsIds.push($(this).val());
 		}
 	});
 	if (arrColumns.length < 500) {
-		$.post("/request/addToQueueDBTable", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, databaseName:databaseName, schemaName:schemaName, tableName:tableName})
+		$.post("/request/addToQueueDBTable", {fd:btFieldsIds, emptyApi:'false', c:arrColumns, fc:arrCommIds, ci:arrColumnIds, databaseName:databaseName, schemaName:schemaName, tableName:tableName})
 			.done(function(data) {
 				clearInterval(loadingTextInterval);
 				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
@@ -483,7 +491,7 @@ function addToQueueDBTable(elem, displayCart) {
 		});
 	} else {
 		largeAddProgressSetUp(arrColumns.length);
-		largeAddToQueueDBTable(arrColumns, arrColumnIds, databaseName, schemaName, tableName)
+		largeAddToQueueDBTable(btFieldsIds, arrColumns, arrColumnIds, arrCommIds, databaseName, schemaName, tableName)
 			.then(function(data) {
 				clearInterval(loadingTextInterval);
 				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
@@ -495,21 +503,21 @@ function addToQueueDBTable(elem, displayCart) {
 			});
 	}
 }
-function largeAddToQueueDBTable(arrColumns, arrColumnIds, databaseName, schemaName, tableName, columnsStride = 150) {
+function largeAddToQueueDBTable(btFieldsIds, arrColumns, arrColumnIds, arrCommIds, databaseName, schemaName, tableName, columnsStride = 150) {
 	if (arrColumns.length > columnsStride) {
 		return new Promise(function(resolve) {
-			var request = $.post("/request/addToQueueDBTable", {emptyApi:'false', c:arrColumns.slice(0, columnsStride), ci:arrColumnIds.slice(0, columnsStride), databaseName:databaseName, schemaName:schemaName, tableName:tableName})
+			var request = $.post("/request/addToQueueDBTable", {fd:btFieldsIds.slice(0, columnsStride), emptyApi:'false', c:arrColumns.slice(0, columnsStride), fc:arrCommIds.slice(0, arrCommIds), ci:arrColumnIds.slice(0, columnsStride), databaseName:databaseName, schemaName:schemaName, tableName:tableName})
 				.then(() => {
 					largeAddProgressIncrement();
 				});
-			var recur = largeAddToQueueDBTable(arrColumns.slice(columnsStride), arrColumnIds.slice(columnsStride), databaseName, schemaName, tableName, columnsStride);
+			var recur = largeAddToQueueDBTable(btFieldsIds.slice(columnsStride), arrColumns.slice(columnsStride), arrColumnIds.slice(columnsStride), arrCommIds.slice(arrCommIds), databaseName, schemaName, tableName, columnsStride);
 
 			Promise.all([request, recur]).then(() => resolve());
 			});
 	}
 	else {
 		return new Promise(function(resolve) {
-			$.post("/request/addToQueueDBTable", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, databaseName:databaseName, schemaName:schemaName, tableName:tableName})
+			$.post("/request/addToQueueDBTable", {fd:btFieldsIds, emptyApi:'false', c:arrColumns, ci:arrColumnIds, fc:arrCommIds, databaseName:databaseName, schemaName:schemaName, tableName:tableName})
 				.then(() => {
 					largeAddProgressIncrement();
 					resolve();
@@ -530,6 +538,8 @@ function addToQueueVirtualDataset(elem, displayCart) {
 	var arrColumnIds = [];
 	var arrTables = [];
 	var arrTableIds = [];
+	var arrCommIds = [];
+	var btFieldsIds = [];
 	var datasetName = $(elem).data('datasetname');
 	var datasetId = $(elem).data('datasetid');
 
@@ -539,10 +549,12 @@ function addToQueueVirtualDataset(elem, displayCart) {
 			arrColumnIds.push($(this).data('columnId'));
 			arrTables.push($(this).data('tableName'));
 			arrTableIds.push($(this).data('tableId'));
+			arrCommIds.push($(this).data('vocabid'));
+			btFieldsIds.push($(this).val());
 		}
 	});
 	if (arrColumns.length < 500) {
-		$.post("/request/addToQueueVirtualDataset", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, t:arrTables, ti:arrTableIds, dn:datasetName, di:datasetId})
+		$.post("/request/addToQueueVirtualDataset", {fd:btFieldsIds, emptyApi:'false', fc:arrCommIds, c:arrColumns, ci:arrColumnIds, t:arrTables, ti:arrTableIds, dn:datasetName, di:datasetId})
 			.done(function(data) {
 				clearInterval(loadingTextInterval);
 				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
@@ -554,7 +566,7 @@ function addToQueueVirtualDataset(elem, displayCart) {
 		});
 	} else {
 		largeAddProgressSetUp(arrColumns.length);
-		largeAddToQueueVirtualDataset(arrColumns, arrColumnIds, arrTables, arrTableIds, datasetName, datasetId)
+		largeAddToQueueVirtualDataset(btFieldsIds, arrColumns, arrColumnIds, arrCommIds, arrTables, arrTableIds, datasetName, datasetId)
 			.then(function(data) {
 				clearInterval(loadingTextInterval);
 				$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');
@@ -566,21 +578,21 @@ function addToQueueVirtualDataset(elem, displayCart) {
 			});
 	}
 }
-function largeAddToQueueVirtualDataset(arrColumns, arrColumnIds, arrTables, arrTableIds, datasetName, datasetId, columnsStride = 150) {
+function largeAddToQueueVirtualDataset(btFieldsIds, arrColumns, arrColumnIds, arrCommIds, arrTables, arrTableIds, datasetName, datasetId, columnsStride = 150) {
 	if (arrColumns.length > columnsStride) {
 		return new Promise(function(resolve) {
-			var request = $.post("/request/addToQueueVirtualDataset", {emptyApi:'false', c:arrColumns.slice(0, columnsStride), ci:arrColumnIds.slice(0, columnsStride), t:arrTables.slice(0, columnsStride), ti:arrTableIds.slice(0, columnsStride), dn:datasetName, di:datasetId})
+			var request = $.post("/request/addToQueueVirtualDataset", {fd:btFieldsIds.slice(0, columnsStride), emptyApi:'false', c:arrColumns.slice(0, columnsStride), fc:arrCommIds.slice(0, arrCommIds), ci:arrColumnIds.slice(0, columnsStride), t:arrTables.slice(0, columnsStride), ti:arrTableIds.slice(0, columnsStride), dn:datasetName, di:datasetId})
 				.then(() => {
 					largeAddProgressIncrement();
 				});
-			var recur = largeAddToQueueVirtualDataset(arrColumns.slice(columnsStride), arrColumnIds.slice(columnsStride), arrTables.slice(columnsStride), arrTableIds.slice(columnsStride), datasetName, datasetId, columnsStride);
+			var recur = largeAddToQueueVirtualDataset(btFieldsIds.slice(columnsStride), arrColumns.slice(columnsStride), arrColumnIds.slice(columnsStride), arrCommIds.slice(columnsStride), arrTables.slice(columnsStride), arrTableIds.slice(columnsStride), datasetName, datasetId, columnsStride);
 
 			Promise.all([request, recur]).then(() => resolve());
 			});
 	}
 	else {
 		return new Promise(function(resolve) {
-			$.post("/request/addToQueueVirtualDataset", {emptyApi:'false', c:arrColumns, ci:arrColumnIds, t:arrTables, ti:arrTableIds, dn:datasetName, di:datasetId})
+			$.post("/request/addToQueueVirtualDataset", {fd:btFieldsIds, emptyApi:'false', fc:arrCommIds, c:arrColumns, ci:arrColumnIds, t:arrTables, ti:arrTableIds, dn:datasetName, di:datasetId})
 				.then(() => {
 					largeAddProgressIncrement();
 					resolve();
@@ -599,15 +611,19 @@ function addToQueueSAMLResponse(elem, displayCart) {
 
 	var arrFields = [];
 	var arrFieldIds = [];
+	var arrCommIds = [];
+	var btFieldsIds = [];
 	var responseName = $(elem).data('responsename');
 
 	$(elem).parent().find('.checkBoxes').find('input').each(function(){
 		if($(this).prop("checked") && $(this).prop("name") != "toggleCheckboxes"){
 			arrFields.push($(this).data('name'));
 			arrFieldIds.push($(this).data('fieldId'));
+			arrCommIds.push($(this).data('vocabid'));
+			btFieldsIds.push($(this).val());
 		}
 	});
-	$.post("/request/addToQueueSAMLResponse", {emptyApi:'false', s:arrFields, si:arrFieldIds, responseName:responseName})
+	$.post("/request/addToQueueSAMLResponse", {fd:btFieldsIds, emptyApi:'false', s:arrFields, fc:arrCommIds, si:arrFieldIds, responseName:responseName})
 		.done(function(data) {
 			clearInterval(loadingTextInterval);
 			$(elem).parent().find('.requestAccess').attr('value', 'Added to Request').removeClass('grow').addClass('inactive');

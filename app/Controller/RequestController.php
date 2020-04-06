@@ -246,16 +246,23 @@ class RequestController extends AppController {
 			$newTermsAdded = 0;
 			$arrFields = $this->request->data['f'];
 			$arrFieldIds = $this->request->data['fi'];
+			$arrCommIds = $this->request->data['fc'];
+			$btFieldsIds = $this->request->data['fd'];
 			$apiHost = $this->request->data['apiHost'];
 			$apiPath = $this->request->data['apiPath'];
 			$authorizedByFieldset = $this->request->data['afs'];
 
 			$arrQueue = $this->Session->read('queue');
 
+			$termIds = [];
+			foreach ($arrFields as $term) {
+				$termIds[$term['id']] = 'ignore';
+			}
+
 			foreach ($arrFieldIds as $index => $fieldId) {
 				if (empty($arrQueue['apiFields'][$fieldId])) {
 					$newTermsAdded++;
-					$arrQueue['apiFields'][$fieldId] = ['name' => end((explode(".", $arrFields[$index]))), 'fullName' => $arrFields[$index], 'apiHost' => $apiHost, 'apiPath' => $apiPath, 'authorizedByFieldset' => $authorizedByFieldset];
+					$arrQueue['apiFields'][$fieldId] = ['fieldId' => $btFieldsIds[$index], 'communityId' => $arrCommIds[$index], 'name' => end((explode(".", $arrFields[$index]))), 'fullName' => $arrFields[$index], 'apiHost' => $apiHost, 'apiPath' => $apiPath, 'authorizedByFieldset' => $authorizedByFieldset];
 				}
 			}
 
@@ -271,6 +278,8 @@ class RequestController extends AppController {
 			$newTermsAdded = 0;
 			$arrColumns = $this->request->data['c'];
 			$arrColumnIds = $this->request->data['ci'];
+			$arrCommIds = $this->request->data['fc'];
+			$btFieldsIds = $this->request->data['fd'];
 			$databaseName = $this->request->data['databaseName'];
 			$schemaName = $this->request->data['schemaName'];
 			$tableName = $this->request->data['tableName'];
@@ -280,7 +289,7 @@ class RequestController extends AppController {
 			foreach ($arrColumnIds as $index => $columnId) {
 				if (empty($arrQueue['dbColumns'][$columnId])) {
 					$newTermsAdded++;
-					$arrQueue['dbColumns'][$columnId] = ['name' => end((explode(" > ", $arrColumns[$index]))), 'fullName' => $arrColumns[$index], 'databaseName' => $databaseName, 'schemaName' => $schemaName, 'tableName' => $tableName];
+					$arrQueue['dbColumns'][$columnId] = ['fieldId' => $btFieldsIds[$index], 'communityId' => $arrCommIds[$index], 'name' => end((explode(" > ", $arrColumns[$index]))), 'fullName' => $arrColumns[$index], 'databaseName' => $databaseName, 'schemaName' => $schemaName, 'tableName' => $tableName];
 				}
 			}
 
@@ -297,16 +306,18 @@ class RequestController extends AppController {
 			$arrColumns = $this->request->data['c'];
 			$arrColumnIds = $this->request->data['ci'];
 			$arrTables = $this->request->data['t'];
+			$btFieldsIds = $this->request->data['fd'];
 			$arrTableIds = $this->request->data['ti'];
 			$datasetName = $this->request->data['dn'];
 			$datasetId = $this->request->data['di'];
+			$arrCommIds = $this->request->data['fc'];
 
 			$arrQueue = $this->Session->read('queue');
 
 			foreach ($arrColumnIds as $i => $columnId) {
 				if (empty($arrQueue['virtualColumns'][$columnId])) {
 					$newTermsAdded++;
-					$arrQueue['virtualColumns'][$columnId] = ['name' => end((explode(".", $arrColumns[$i]))), 'fullName' => $arrColumns[$i], 'tableName' => $arrTables[$i], 'tableId' => $arrTableIds[$i], 'datasetName' => $datasetName, 'datasetId' => $datasetId];
+					$arrQueue['virtualColumns'][$columnId] = ['fieldId' => $btFieldsIds[$i], 'communityId' => $arrCommIds[$i], 'name' => end((explode(".", $arrColumns[$i]))), 'fullName' => $arrColumns[$i], 'tableName' => $arrTables[$i], 'tableId' => $arrTableIds[$i], 'datasetName' => $datasetName, 'datasetId' => $datasetId];
 				}
 			}
 
@@ -322,6 +333,8 @@ class RequestController extends AppController {
 			$newTermsAdded = 0;
 			$arrSamlFields = $this->request->data['s'];
 			$arrSamlFieldIds = $this->request->data['si'];
+			$arrCommIds = $this->request->data['fc'];
+			$btFieldsIds = $this->request->data['fd'];
 			$responseName = $this->request->data['responseName'];
 
 			$arrQueue = $this->Session->read('queue');
@@ -329,7 +342,7 @@ class RequestController extends AppController {
 			foreach ($arrSamlFieldIds as $index => $fieldId) {
 				if (empty($arrQueue['samlFields'][$fieldId])) {
 					$newTermsAdded++;
-					$arrQueue['samlFields'][$fieldId] = ['name' => $arrSamlFields[$index], 'responseName' => $responseName];
+					$arrQueue['samlFields'][$fieldId] = ['fieldId' => $btFieldsIds[$index], 'communityId' => $arrCommIds[$index], 'name' => $arrSamlFields[$index], 'responseName' => $responseName];
 				}
 			}
 
@@ -368,6 +381,7 @@ class RequestController extends AppController {
 		if ($this->request->is('post')) {
 			$newTermsAdded = 0;
 			$arrTerms = $this->request->data['t'];
+			$btFieldsId = $this->request->data['fd'];
 			$arrQueue = $this->Session->read('queue');
 
 			$arrTermIds = [];
@@ -385,7 +399,7 @@ class RequestController extends AppController {
 
 					if ($requestable) {
 						$newTermsAdded++;
-						$arrQueue['businessTerms'][$term->termrid] = ['term' => $term->termsignifier, 'communityId' => $term->commrid];
+						$arrQueue['businessTerms'][$term->termrid] = ['fieldId' => $btFieldsId, 'term' => $term->termsignifier, 'communityId' => $term->commrid];
 					}
 				}
 			}
@@ -2470,13 +2484,23 @@ class RequestController extends AppController {
 					array_push($policies, $policy);
 					break;
 				case Configure::read('Collibra.policy.trustedPartnerSecurityStandards'):
-					foreach ($arrQueue['businessTerms'] as $term) {
-						if ($term['communityId'] == Configure::read('Collibra.community.academicRecords')) {
-							array_push($policies, $policy);
-							break;
-						}
-					}
+					if($this->needsAcademicPolicy($arrQueue, 'businessTerms')  ||
+					   $this->needsAcademicPolicy($arrQueue, 'apiFields') ||
+					   $this->needsAcademicPolicy($arrQueue, 'dbColumns') ||
+					   $this->needsAcademicPolicy($arrQueue, 'samlFields') || 
+					   $this->needsAcademicPolicy($arrQueue, 'virtualColumns')){
+						array_push($policies, $policy);
+					}		
 					break;
+				case Configure::read('Collibra.policy.restrictedPolicy'):
+					if($this->needsRestrictedPolicy($arrQueue, 'businessTerms')  ||
+					   $this->needsRestrictedPolicy($arrQueue, 'apiFields') ||
+					   $this->needsRestrictedPolicy($arrQueue, 'dbColumns') ||
+					   $this->needsRestrictedPolicy($arrQueue, 'samlFields') || 
+					   $this->needsRestrictedPolicy($arrQueue, 'virtualColumns')){
+						array_push($policies, $policy);
+					}
+				break;
 				default:
 					break;
 			}
@@ -2530,5 +2554,23 @@ class RequestController extends AppController {
 
 		$this->set(compact('preFilled', 'arrQueue', 'netId', 'psName', 'psPhone', 'psEmail', 'psRole', 'psDepartment', 'psReportsToName', 'supervisorInfo', 'policies', 'developmentShops', 'applicationsAndProjects', 'customSAML'));
 		$this->set('submitErr', isset($this->request->query['err']));
+	}
+
+	private function needsAcademicPolicy($arrQueue, $type) {
+		foreach ($arrQueue[$type] as $term) {
+			if ($term['communityId'] == Configure::read('Collibra.community.academicRecords')) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private function needsRestrictedPolicy($arrQueue, $type) {
+		foreach ($arrQueue[$type] as $term) {
+			if ($term['fieldId'] == Configure::read('Collibra.community.restrict1') || $term['fieldId'] == Configure::read('Collibra.community.restrict2')) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
