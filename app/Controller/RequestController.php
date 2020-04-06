@@ -2567,7 +2567,8 @@ class RequestController extends AppController {
 
 	private function needsRestrictedPolicy($arrQueue, $type) {
 		foreach ($arrQueue[$type] as $term) {
-			if ($term['fieldId'] == Configure::read('Collibra.community.restrict1') || $term['fieldId'] == Configure::read('Collibra.community.restrict2')) {
+			if ($term['fieldId'] == Configure::read('Collibra.policy.restrict1') || $term['fieldId'] == Configure::read('Collibra.policy.restrict2')) {
+				print_r("Have a match");
 				return true;
 			}
 		}
