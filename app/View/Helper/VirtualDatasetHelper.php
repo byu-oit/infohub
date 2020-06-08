@@ -15,7 +15,8 @@ class VirtualDatasetHelper extends AppHelper {
         echo '<td></td><td></td><td></td></tr>';
 
         foreach ($table->columns as $column) {
-            echo '<tr data-name="'.$column->columnName.'" data-table-name="'.$table->name.'">';
+            $columnPath = end(explode('>', $column->columnName));
+            echo '<tr data-name="'.$columnPath.'" data-table-name="'.$table->name.'">';
             echo '<td></td>';
             echo '<td>';
                 if (!empty($column->businessTerm[0])) {
@@ -25,23 +26,23 @@ class VirtualDatasetHelper extends AppHelper {
                          ' value="'.h($column->businessTerm[0]->termId).'"'.
                          ' class="chk"'.
                          ' id="chk'.h($column->businessTerm[0]->termId).'"'.
-                         ' data-name="'.$column->columnName.'"'.
+                         ' data-name="'.$columnPath.'"'.
                          ' data-column-id="'.$column->columnId.'"'.
                          ' data-table-name="'.$table->name.'"'.
                          ' data-table-id="'.$table->id.'">';
                 } else {
                     echo '<input type="checkbox"'.
-                         ' data-title="'.$column->columnName.'"'.
+                         ' data-title="'.$columnPath.'"'.
                          ' data-vocabID=""'.
                          ' value=""'.
                          ' class="chk"'.
-                         ' data-name="'.$column->columnName.'"'.
+                         ' data-name="'.$columnPath.'"'.
                          ' data-column-id="'.$column->columnId.'"'.
                          ' data-table-name="'.$table->name.'"'.
                          ' data-table-id="'.$table->id.'">';
                 }
             echo '</td>';
-            echo '<td>'.str_repeat('&nbsp;', 12).$column->columnName.'</td>';
+            echo '<td>'.str_repeat('&nbsp;', 12).$columnPath.'</td>';
             echo '<td>';
                 if (!empty($column->businessTerm[0])) {
                     $columnDef = nl2br(str_replace("\n\n\n", "\n\n", htmlentities(strip_tags(str_replace(['<div>', '<br>', '<br/>'], "\n", $column->businessTerm[0]->termDescription)))));
@@ -104,9 +105,10 @@ class VirtualDatasetHelper extends AppHelper {
         echo '<td></td><td></td><td></td></tr>';
 
         foreach ($table->columns as $column) {
-            echo '<tr data-name="'.$column->columnName.'" data-table-name="'.$table->name.'"';
+            $columnPath = end(explode('>', $column->columnName));
+            echo '<tr data-name="'.$columnPath.'" data-table-name="'.$table->name.'"';
             if (in_array($column->columnId, $requestedAssetIds)) echo ' class="requested"';
-            echo '><td></td><td>'.str_repeat('&nbsp;', 12).$column->columnName.'</td>';
+            echo '><td></td><td>'.str_repeat('&nbsp;', 12).$columnPath.'</td>';
             echo '<td>';
                 if (!empty($column->businessTerm[0])) {
                     $columnDef = nl2br(str_replace("\n\n\n", "\n\n", htmlentities(strip_tags(str_replace(['<div>', '<br>', '<br/>'], "\n", $column->businessTerm[0]->termDescription)))));
@@ -168,25 +170,26 @@ class VirtualDatasetHelper extends AppHelper {
         $index++;
 
         foreach ($table->columns as $column) {
-            echo '<tr id="tr'.$index.'"><td>'.str_repeat('&nbsp;', 12).$column->columnName.'</td>';
+            $columnPath = end(explode('>', $column->columnName));
+            echo '<tr id="tr'.$index.'"><td>'.str_repeat('&nbsp;', 12).$columnPath.'</td>';
             echo '<td>';
             if (empty($column->businessTerm[0])) {
                 echo '<input type="hidden" name="data[Dataset][elements]['.$index.'][id]" value="'.$column->columnId.'" id="DatasetElements'.$index.'Id">'.
-                     '<input type="hidden" name="data[Dataset][elements]['.$index.'][name]" class="data-label" data-index="'.$index.'" value="'.$column->columnName.'" id="DatasetElements'.$index.'Name">'.
+                     '<input type="hidden" name="data[Dataset][elements]['.$index.'][name]" class="data-label" data-index="'.$index.'" value="'.$columnPath.'" id="DatasetElements'.$index.'Name">'.
                      '<input type="hidden" name="data[Dataset][elements]['.$index.'][business_term]" class="bt" data-index="'.$index.'" id="DatasetElements'.$index.'BusinessTerm">'.
                      '<div class="term-wrapper display-loading" id="DatasetElements'.$index.'SearchCell">'.
-                        '<input type="text" class="bt-search" data-index="'.$index.'" data-default-search="'.str_replace('_', ' ', $column->columnName).'" placeholder="Search for a term"></input>'.
+                        '<input type="text" class="bt-search" data-index="'.$index.'" data-default-search="'.str_replace('_', ' ', $columnPath).'" placeholder="Search for a term"></input>'.
                         '<div class="selected-term"><span class="term-name"></span>  <span class="edit-opt" data-index="'.$index.'" title="Select new term"></span></div>'.
                         '<div class="loading">Loading...</div>'.
                      '</div>';
             } else {
                 echo '<input type="hidden" name="data[Dataset][elements]['.$index.'][id]" value="'.$column->columnId.'" id="DatasetElements'.$index.'Id">'.
-                     '<input type="hidden" name="data[Dataset][elements]['.$index.'][name]" class="data-label" data-index="'.$index.'" value="'.$column->columnName.'" id="DatasetElements'.$index.'Name"	data-pre-linked="true" data-orig-context="'.$column->businessTerm[0]->termCommunityName.'" data-orig-id="'.$column->businessTerm[0]->termId.'" data-orig-name="'.$column->businessTerm[0]->term.'" data-orig-def="'.preg_replace('/"/', '&quot;', $column->businessTerm[0]->termDescription).'">'.
+                     '<input type="hidden" name="data[Dataset][elements]['.$index.'][name]" class="data-label" data-index="'.$index.'" value="'.$columnPath.'" id="DatasetElements'.$index.'Name"	data-pre-linked="true" data-orig-context="'.$column->businessTerm[0]->termCommunityName.'" data-orig-id="'.$column->businessTerm[0]->termId.'" data-orig-name="'.$column->businessTerm[0]->term.'" data-orig-def="'.preg_replace('/"/', '&quot;', $column->businessTerm[0]->termDescription).'">'.
                      '<input type="hidden" name="data[Dataset][elements]['.$index.'][previous_business_term]" value="'.$column->businessTerm[0]->termId.'">'.
                      '<input type="hidden" name="data[Dataset][elements]['.$index.'][previous_business_term_relation]" value="'.$column->businessTerm[0]->termRelationId.'">'.
                      '<input type="hidden" name="data[Dataset][elements]['.$index.'][business_term]" value="'.$column->businessTerm[0]->termId.'" class="bt" data-index="'.$index.'" id="DatasetElements'.$index.'BusinessTerm" data-orig-term="'.$column->businessTerm[0]->termId.'">'.
                      '<div class="term-wrapper" id="DatasetElements'.$index.'SearchCell">'.
-                        '<input type="text" class="bt-search" data-index="'.$index.'" data-default-search="'.str_replace('_', ' ', $column->columnName).'" placeholder="Search for a term"></input>'.
+                        '<input type="text" class="bt-search" data-index="'.$index.'" data-default-search="'.str_replace('_', ' ', $columnPath).'" placeholder="Search for a term"></input>'.
                         '<div class="selected-term"><span class="term-name">'.$column->businessTerm[0]->term.'</span>  <span class="edit-opt" data-index="'.$index.'" title="Select new term"></span></div>'.
                         '<div class="loading">Loading...</div>'.
                      '</div>';
