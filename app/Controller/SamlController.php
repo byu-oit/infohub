@@ -4,8 +4,14 @@ class SamlController extends AppController {
 	public $uses = ['CollibraAPI'];
 
 	public function index() {
-        $responses = $this->CollibraAPI->getSamlResponses();
-        $this->set('responses', $responses);
+		$responses = [];
+		$rawResponses = $this->CollibraAPI->getSamlResponses();
+		foreach ($rawResponses as $resp) {
+			if($resp->responseName != "SAML Custom Attributes" && $resp->responseName != "SAML Optional Attributes") {
+				$responses[] = $resp;
+			}
+		}
+		$this->set('responses', $responses);
 	}
 
 	public function view($responseName) {
