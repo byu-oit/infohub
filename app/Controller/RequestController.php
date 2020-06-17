@@ -2200,6 +2200,7 @@ class RequestController extends AppController {
 		$postData['requesterEmail'] = $email;
 		$postData['requesterPhone'] = $phone;
 		$postData['requesterRole'] = $role;
+		$customSAMLCheck = false;
 
 		if (!empty($apis) || !empty($fieldsetApis)) {
 			$postData['technologyType'][] = 'API';
@@ -2210,13 +2211,16 @@ class RequestController extends AppController {
 		if (!empty($virtualTables)) {
 			$postData['technologyType'][] = 'Virtual Table';
 		}
-		if (!empty($samlResponses)) {
-			$postData['technologyType'][] = 'SAML';
-		}
-		if (!isset($postData['technologyType']) || !in_array('SAML', $postData['technologyType'])) {
-			if ($this->Session->read('customSAML')) {
+		//Skip adding this as the next if will push in custom
+		if ($this->Session->read('customSAML') != true) {
+			if (!empty($samlResponses)) {
 				$postData['technologyType'][] = 'SAML';
 			}
+		}
+		if (!isset($postData['technologyType']) || !in_array('SAML', $postData['technologyType'])) {
+			$postData['technologyType'][] = 'SAML';
+			$customSAMLCheck = true;
+			$this->Session->write('customSAML', false);
 		}
 
 		// Collibra requires "additionalTerms" and "additionalElements" fields
@@ -2251,8 +2255,8 @@ class RequestController extends AppController {
 			array_push($postData['tables'], $tableObject->id);
 		}
 		$postData['virtualTables'] = array_column($virtualTables, 'tableId');
-		foreach ($samlResponses as $responseName => $_) {
-			if (!$this->Session->read('customSAML')) {
+		if (!$customSAMLCheck) {
+			foreach ($samlResponses as $responseName => $_) {
 				$responseObject = $this->CollibraAPI->getSamlResponseObject($responseName);
 				array_push($postData['saml'], $responseObject->id);
 			}
