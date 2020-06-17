@@ -2252,8 +2252,10 @@ class RequestController extends AppController {
 		}
 		$postData['virtualTables'] = array_column($virtualTables, 'tableId');
 		foreach ($samlResponses as $responseName => $_) {
-			$responseObject = $this->CollibraAPI->getSamlResponseObject($responseName);
-			array_push($postData['saml'], $responseObject->id);
+			if (!$this->Session->read('customSAML')) {
+				$responseObject = $this->CollibraAPI->getSamlResponseObject($responseName);
+				array_push($postData['saml'], $responseObject->id);
+			}
 		}
 
 		//See above comment regarding "additionalTerms"
