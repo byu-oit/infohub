@@ -5,6 +5,7 @@
 <script>
 	$(document).ready(function() {
 		$("#browse-tab").addClass('active');
+		$(".chk").attr('checked', 'checked');
 	});
 
 	function displayPendingApproval(elem) {
@@ -26,6 +27,9 @@
 </style>
 <div id="apiBody" class="innerDataSet">
 	<div id="searchResults">
+		<div style="margin-bottom:10px">
+			<a href="/saml" style="font-size:12px;text-decoration:none">Back to SAML Options</a>
+		</div>
 		<h1 class="headerTab"><?= $responseName ?></h1>
 		<div class="clear"></div>
 		<div id="srLower" class="whiteBox">
@@ -33,7 +37,7 @@
 				<input type="button" data-responseName="<?= h($responseName) ?>" api="false" onclick="addToQueueSAMLResponse(this, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
 				<table class="saml-fields checkBoxes view">
 					<tr class="header">
-						<th><input type="checkbox" onclick="toggleAllCheckboxes(this)" name="toggleCheckboxes"/></th>
+						<th><input type="checkbox" class="chk" onclick="toggleAllCheckboxes(this)" name="toggleCheckboxes"/></th>
 						<th class="fieldColumn">Field</th>
 						<th class="termColumn">Business Term</th>
 						<th class="classificationColumn">Classification</th>
