@@ -2218,9 +2218,11 @@ class RequestController extends AppController {
 			}
 		}
 		if (!isset($postData['technologyType']) || !in_array('SAML', $postData['technologyType'])) {
-			$postData['technologyType'][] = 'SAML';
-			$customSAMLCheck = true;
-			$this->Session->write('customSAML', false);
+			if ($this->Session->read('customSAML')){
+				$postData['technologyType'][] = 'SAML';
+				$customSAMLCheck = true;
+				$this->Session->write('customSAML', false);
+			}
 		}
 
 		// Collibra requires "additionalTerms" and "additionalElements" fields
