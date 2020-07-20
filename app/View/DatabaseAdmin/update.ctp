@@ -237,7 +237,7 @@
 					</span>
 				</a> 
 			<?php else : ?>
-				<a href="https://supoport-test.byu.edu/ih?id=update_business_terms&database=<?=$databaseName.'&schema='.$schemaName.'&table='.substr($tableName, strrpos($tableName, " ") + 1)?>">
+				<a href="https://support-test.byu.edu/ih?id=update_business_terms&database=<?=$databaseName.'&schema='.$schemaName.'&table='.substr($tableName, strrpos($tableName, " ") + 1)?>">
 					<span>
 							<input type="button" value="Service Portal IH Beta">
 					</span>

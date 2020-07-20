@@ -113,7 +113,7 @@
 					</span>
 				</a> 
 			<?php else : ?>
-				<a href="https://supoport-test.byu.edu/ih?id=sync_database">
+				<a href="https://support-test.byu.edu/ih?id=sync_database">
 					<span>
 							<input type="button" value="Service Portal IH Beta">
 					</span>

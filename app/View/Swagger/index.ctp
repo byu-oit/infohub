@@ -14,7 +14,7 @@
 					</span>
 				</a> 
 			<?php else : ?>
-				<a href="https://supoport-test.byu.edu/ih?id=swagger_import">
+				<a href="https://support-test.byu.edu/ih?id=swagger_import">
 					<span>
 							<input type="button" value="Service Portal IH Beta">
 					</span>
