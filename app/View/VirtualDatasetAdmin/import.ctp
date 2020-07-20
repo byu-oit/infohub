@@ -162,6 +162,19 @@
 				</select>
 				<input type="text" id="newDataset" placeholder="Enter name of new dataset" style="display:none;">
 			</div>
+			<?php if(strpos($_SERVER['HTTP_HOST'],'dev') === false) : ?>
+				<a href="https://support.byu.edu/ih?id=virtual_database_admin">
+					<span>
+							<input type="button" value="Service Portal IH Beta">
+					</span>
+				</a> 
+			<?php else : ?>
+				<a href="https://supoport-test.byu.edu/ih?id=virtual_database_admin">
+					<span>
+							<input type="button" value="Service Portal IH Beta">
+					</span>
+				</a>
+			<?php endif; ?>
 		</div>
 	</div>
 </div>

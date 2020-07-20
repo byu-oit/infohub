@@ -230,6 +230,19 @@
 					<a class="lower-btn grow" href="/databases/view/<?=$databaseName.'/'.$schemaName.'/'.$tableName?>">Cancel</a>
 				<?= $this->Form->end() ?>
 			</div>
+			<?php if(strpos($_SERVER['HTTP_HOST'],'dev') === false) : ?>
+				<a href="https://support.byu.edu/ih?id=update_business_terms&database=<?=$databaseName.'&schema='.$schemaName.'&table='.substr($tableName, strrpos($tableName, " ") + 1)?>">
+					<span>
+							<input type="button" value="Service Portal IH Beta">
+					</span>
+				</a> 
+			<?php else : ?>
+				<a href="https://supoport-test.byu.edu/ih?id=update_business_terms&database=<?=$databaseName.'&schema='.$schemaName.'&table='.substr($tableName, strrpos($tableName, " ") + 1)?>">
+					<span>
+							<input type="button" value="Service Portal IH Beta">
+					</span>
+				</a>
+			<?php endif; ?>
 		</div>
 	</div>
 </div>

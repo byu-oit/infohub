@@ -104,8 +104,22 @@
 				</select>
                 <input type="text" id="schemaName" placeholder="Schema name">
                 <input type="text" id="tableName" placeholder="Table name">
-				<div class="sync-btn grow">Sync</div>
-			</div>
-		</div>
+                <div class="sync-btn grow">Sync</div>
+            </div>
+            <?php if(strpos($_SERVER['HTTP_HOST'],'dev') === false) : ?>
+				<a href="https://support.byu.edu/ih?id=sync_database">
+					<span>
+							<input type="button" value="Service Portal IH Beta">
+					</span>
+				</a> 
+			<?php else : ?>
+				<a href="https://supoport-test.byu.edu/ih?id=sync_database">
+					<span>
+							<input type="button" value="Service Portal IH Beta">
+					</span>
+				</a>
+			<?php endif; ?>
+        </div>
+        
 	</div>
 </div>

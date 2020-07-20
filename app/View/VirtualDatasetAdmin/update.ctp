@@ -58,7 +58,6 @@
 		var numElements = postData.data.Dataset.elements.length;
 
 		if (numElements < 100) {
-
 			$.post('/virtualDatasetAdmin/update/'+datasetId, postData)
 				.done(function(data) {
 					data = JSON.parse(data);
@@ -182,7 +181,21 @@
 					<a class="lower-btn grow" href="/virtualDatasets/view/<?=$dataset->datasetId?>">Cancel</a>
 				<?= $this->Form->end() ?>
 			</div>
+			<?php if(strpos($_SERVER['HTTP_HOST'],'dev') === false) : ?>
+				<a href="https://support.byu.edu/ih?id=update_virtual_dataset&datasetId=<?=$dataset->datasetId?>">
+					<span>
+							<input type="button" value="Service Portal IH Beta">
+					</span>
+				</a> 
+			<?php else : ?>
+				<a href="https://support-test.byu.edu/ih?id=update_virtual_dataset&datasetId=<?=$dataset->datasetId?>">
+					<span>
+							<input type="button" value="Service Portal IH Beta">
+					</span>
+				</a>
+			<?php endif; ?>
 		</div>
 	</div>
 </div>
 <?= $this->element('dataset_match') ?>
+
