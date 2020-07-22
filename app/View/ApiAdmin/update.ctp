@@ -184,13 +184,13 @@
 				<?= $this->Form->end() ?>
 			</div>
 			<?php if(strpos($_SERVER['HTTP_HOST'],'dev') === false) : ?>
-				<a href="https://support.byu.edu/ih?id=view_api&datasetId=<?=$basePath?>">
+				<a href="https://support.byu.edu/ih?id=view_api&datasetId=<?=$basePath?>" target="_blank">
 					<span>
 							<input type="button" value="Service Portal IH Beta">
 					</span>
 				</a> 
 			<?php else : ?>
-				<a href="https://support-test.byu.edu/ih?id=view_api&datasetId=<?=$basePath?>">
+				<a href="https://support-test.byu.edu/ih?id=view_api&datasetId=<?=$basePath?>" target="_blank">
 					<span>
 							<input type="button" value="Service Portal IH Beta">
 					</span>
