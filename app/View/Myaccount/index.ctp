@@ -480,6 +480,20 @@
 						echo '<div class="lower-btn edit grow" data-rid="'.$req->id.'">Edit</div>';
 					}
 				}
+				if(strpos($_SERVER['HTTP_HOST'],'dev') === false){
+					echo '<div class="lower-btn grow"><a href="https://support.byu.edu/ih?id=printRequest&dsrId='.$req->id.'" target="_blank">
+					<span>
+							<input type="button" value="Service Portal IH Beta">
+					</span>
+				</a></div> '; 
+				}
+				else {
+					echo '<div class="lower-btn grow"><a href="https://support-test.byu.edu/ih?id=printRequest&dsrId='.$req->id.'" target="_blank">
+					<span>
+							<input type="button" value="Service Portal IH Beta">
+					</span>
+				</a></div> ';
+				}
 				echo '<div class="lower-btn print grow" data-rid="'.$req->id.'">Print</div>';
 				echo '<div class="lower-btn share grow" data-rid="'.$req->id.'">Share</div>';
 				if (in_array($req->statusName, $pendingStatuses)) {
