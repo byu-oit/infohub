@@ -109,23 +109,24 @@
 						'Update Unlinked Fields',
 						array_merge(['controller' => 'api_admin', 'action' => 'update', $hostname], explode('/', $basePath)),
 						['class' => 'inputButton', 'id' => 'admin']) ?>
-			<?php endif ?>
-			<div class="clear"></br></div>
+				<div class="clear"></br></div>
 						<div style="position: absolute">
 						<?php if(strpos($_SERVER['HTTP_HOST'],'dev') === false) : ?>
-				<a href="https://support.byu.edu/ih?id=view_api&datasetId=<?=$basePath?>" target="_blank">
-					<span>
-							<input type="button" value="Service Portal IH Beta">
-					</span>
-				</a> 
-			<?php else : ?>
-				<a href="https://support-test.byu.edu/ih?id=view_api&datasetId=<?=$basePath?>" target="_blank">
-					<span>
-							<input type="button" value="Service Portal IH Beta">
-					</span>
-				</a>
-			<?php endif; ?>
-				</div>
+							<a href="https://support.byu.edu/ih?id=view_api&datasetId=<?=$basePath?>" target="_blank">
+								<span>
+										<input type="button" value="Service Portal IH Beta">
+								</span>
+							</a> 
+						<?php else : ?>
+							<a href="https://support-test.byu.edu/ih?id=view_api&datasetId=<?=$basePath?>" target="_blank">
+								<span>
+										<input type="button" value="Service Portal IH Beta">
+								</span>
+							</a>
+						<?php endif; ?>
+							</div>
+			<?php endif ?>
+		
 		</div>
 		<?php if ($apiObject->statusId == Configure::read('Collibra.status.production')): ?>
 			<div id="api_help_btn" class="apiHelp">Do you need access to call this API?</div>
