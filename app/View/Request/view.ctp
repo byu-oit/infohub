@@ -52,7 +52,7 @@
 		});
 		$('.print').click(function() {
 			var dsaString = $(this).data('dsa') ? '/false' : '';
-			window.open('/request/printView/' + $(this).attr('data-rid') + dsaString, '_blank').focus();
+			window.open('https://support.byu.edu/ih?id=printRequest&dsrId=' + $(this).attr('data-rid') + dsaString, '_blank').focus();
 		});
 		$('.edit').click(function() {
 			var dsaString = $(this).data('dsa') ? '/false' : '';
@@ -516,6 +516,20 @@
 			if (in_array($asset->statusName, $pendingStatuses)) {
 				echo '<div class="lower-btn edit grow" data-rid="'.$asset->id.'"'; if (!$parent) echo ' data-dsa="true"'; echo '>Edit</div>';
 			}
+		}
+		if(strpos($_SERVER['HTTP_HOST'],'dev') === false){
+			echo '<div class="lower-btn grow"><a href="https://support.byu.edu/ih?id=printRequest&dsrId='.$req->id.'" target="_blank">
+			<span>
+					<input type="button" value="Service Portal IH Beta">
+			</span>
+		</a></div> '; 
+		}
+		else {
+			echo '<div class="lower-btn grow"><a href="https://support-test.byu.edu/ih?id=printRequest&dsrId='.$req->id.'" target="_blank">
+			<span>
+					<input type="button" value="Service Portal IH Beta">
+			</span>
+		</a></div> ';
 		}
 		echo '<div class="lower-btn print grow" data-rid="'.$asset->id.'"'; if (!$parent) echo ' data-dsa="true"'; echo '>Print</div>';
 		echo '</div>';
