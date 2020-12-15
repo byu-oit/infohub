@@ -468,6 +468,7 @@
 						"tables",
 						"virtualTables",
 						"saml",
+						"samlMetadata",
 						Configure::read('Collibra.requiredTermsString'),
 						Configure::read('Collibra.additionalTermsString'),
 						Configure::read('Collibra.requiredElementsString'),
