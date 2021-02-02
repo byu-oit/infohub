@@ -73,7 +73,7 @@
 		});
 		$('.print').click(function() {
 			var dsaString = $(this).data('dsa') ? '/false' : '';
-			window.open('/request/printView/' + $(this).attr('data-rid') + dsaString, '_blank').focus();
+			window.open('https://support.byu.edu/ih?id=printRequest&dsrId=' + $(this).attr('data-rid') + dsaString, '_blank').focus();
 		});
 		$('.edit').click(function() {
 			var dsaString = $(this).data('dsa') ? '/false' : '';
