@@ -2263,6 +2263,7 @@ class RequestController extends AppController {
 				array_push($postData['saml'], $responseObject->id);
 			}
 		}
+		$postData['loggedIn'] = $_SESSION['phpCAS']['user'];
 
 		//See above comment regarding "additionalTerms"
 		if (empty($postData['api'])) {
