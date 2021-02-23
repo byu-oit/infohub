@@ -2488,7 +2488,8 @@ class RequestController extends AppController {
 		$policies = [];
 		$allPolicies = $this->CollibraAPI->getPolicies();
 		foreach ($allPolicies as $policy) {
-			switch($policy->id) {
+			//print_r($policy->id);
+			switch($policy->id) {				
 				case Configure::read('Collibra.policy.standardDataUsagePolicies'):
 					array_push($policies, $policy);
 					break;
@@ -2507,6 +2508,15 @@ class RequestController extends AppController {
 					   $this->needsRestrictedPolicy($arrQueue, 'dbColumns') ||
 					   $this->needsRestrictedPolicy($arrQueue, 'samlFields') || 
 					   $this->needsRestrictedPolicy($arrQueue, 'virtualColumns')){
+						array_push($policies, $policy);
+					}
+				break;
+				case "e3fd8d28-2c85-4ec8-9624-ad1b69816058":
+					if($this->needsIdCardPolicy($arrQueue, 'businessTerms')  ||
+					   $this->needsIdCardPolicy($arrQueue, 'apiFields') ||
+					   $this->needsIdCardPolicy($arrQueue, 'dbColumns') ||
+					   $this->needsIdCardPolicy($arrQueue, 'samlFields') || 
+					   $this->needsIdCardPolicy($arrQueue, 'virtualColumns')){
 						array_push($policies, $policy);
 					}
 				break;
@@ -2577,7 +2587,18 @@ class RequestController extends AppController {
 	private function needsRestrictedPolicy($arrQueue, $type) {
 		foreach ($arrQueue[$type] as $term) {
 			if ($term['fieldId'] == Configure::read('Collibra.policy.restrict1') || $term['fieldId'] == Configure::read('Collibra.policy.restrict2')) {
-				print_r("Have a match");
+				//print_r("Have a match");
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private function needsIdCardPolicy($arrQueue, $type) {
+		foreach ($arrQueue[$type] as $term) {
+			print_r($term['fieldId']);
+			if ($term['fieldId'] == "e0662922-50b2-4092-a3d3-8439ab49fe64") {
+				//print_r("Have a match");
 				return true;
 			}
 		}
