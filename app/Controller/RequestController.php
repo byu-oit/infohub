@@ -2485,6 +2485,8 @@ class RequestController extends AppController {
 			}
 		}
 
+		//print_r(json_encode($arrQueue));
+
 		$policies = [];
 		$allPolicies = $this->CollibraAPI->getPolicies();
 		foreach ($allPolicies as $policy) {
@@ -2585,9 +2587,14 @@ class RequestController extends AppController {
 	}
 
 	private function needsRestrictedPolicy($arrQueue, $type) {
+		//print_r($arrQueue[$type]);
 		foreach ($arrQueue[$type] as $term) {
+			//print_r(json_encode($term));
 			if ($term['fieldId'] == Configure::read('Collibra.policy.restrict1') || $term['fieldId'] == Configure::read('Collibra.policy.restrict2')) {
 				//print_r("Have a match");
+				return true;
+			}
+			if ($term['term'] == "Restricted Person" || $term['term'] == "Restricted Person Flag") {
 				return true;
 			}
 		}
@@ -2599,6 +2606,9 @@ class RequestController extends AppController {
 			//print_r($term['fieldId']);
 			if ($term['fieldId'] == "e0662922-50b2-4092-a3d3-8439ab49fe64") {
 				//print_r("Have a match");
+				return true;
+			}
+			if ($term['term'] == "ID Card Photo") {
 				return true;
 			}
 		}
