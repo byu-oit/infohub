@@ -2596,7 +2596,7 @@ class RequestController extends AppController {
 
 	private function needsIdCardPolicy($arrQueue, $type) {
 		foreach ($arrQueue[$type] as $term) {
-			print_r($term['fieldId']);
+			//print_r($term['fieldId']);
 			if ($term['fieldId'] == "e0662922-50b2-4092-a3d3-8439ab49fe64") {
 				//print_r("Have a match");
 				return true;
