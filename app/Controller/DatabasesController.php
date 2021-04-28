@@ -9,6 +9,9 @@ class DatabasesController extends AppController {
 	}
 
 	private function checkAuthorized() {
+		if($this->BYUAPI->isGROGroupMemberAny($this->Auth->user('username'), 'oit04', 'infohub-match')){
+			return;
+		}
 		if (!(
 			$this->Auth->user('activeFulltimeEmployee') == 'true' ||
 			$this->Auth->user('activeParttimeEmployee') == 'true' ||
