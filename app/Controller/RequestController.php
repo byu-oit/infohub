@@ -1886,7 +1886,7 @@ class RequestController extends AppController {
 		}
 		foreach ($arrQueue['virtualColumns'] as $id => $column) {
 			if (!empty($column['tableName'])) {
-				$virtualTables[$column['tableName']] = ['tableId' => $column['tableId']];
+				$virtualTables[$column['datasetName']] = ['tableId' => $column['tableId']];
 			}
 		}
 		foreach ($arrQueue['samlFields'] as $id => $field) {
