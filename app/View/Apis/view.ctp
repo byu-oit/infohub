@@ -128,6 +128,9 @@
 			<?php endif ?>
 		
 		</div>
+		<div>
+		<?= $apiObject->usageNotes ?>
+		</div>
 		<?php if ($apiObject->statusId == Configure::read('Collibra.status.production')): ?>
 			<div id="api_help_btn" class="apiHelp">Do you need access to call this API?</div>
 			<div id="api_help" class="apiHelpSml">There are potentially two steps you'll need to complete.<br><br>1. Subscribe to the API in the API store (WSO2). This gives you the ability to call the API with your own credentials for self-service. You'll need to create an "application" in WSO2 and subscribe to the each API you are interested in. You must complete this step in the API store. An overview of the process is available in the <a href="https://developer.byu.edu/docs/consume-api/5-minute-quickstart">Developer Portal.<br>https://developer.byu.edu/docs/consume-api/5-minute-quickstart</a><br><br>2. Request elevated access to the API. Many APIs can return more data if you have elevated permissions. Select the elements of the API that you need for your application and click the "Add to request" button. Once you've added all the elements you want access to, submit your request from the shopping cart icon at the top of the page. This will initiate the process of securing approvals (if needed) from the appropriate data stewards. More <a href="https://developer.byu.edu/docs/consume-api/get-elevated-access">detailed instructions</a> for this step are available.<br><a href="https://developer.byu.edu/docs/consume-api/get-elevated-access">https://developer.byu.edu/docs/consume-api/get-elevated-access</a></div>
@@ -150,7 +153,8 @@
 					<h3>Well, this is embarrassing. We haven't yet specified the output fields for this API, but it is functional, and you can still request access to it.</h3>
 				<?php else: ?>
 					<?php if ($containsFieldset): ?>
-						<a class="fieldset-btn grow" onclick="toggleFieldsetCollapseAll(true)">Collapse All</a><a class="fieldset-btn grow" onclick="toggleFieldsetCollapseAll(false)">Expand All</a>
+						<a class="fieldset-btn grow" onclick="toggleFieldsetCollapseAll(true)">Collapse All</a>
+						<a class="fieldset-btn grow" onclick="toggleFieldsetCollapseAll(false)">Expand All</a>
 					<?php endif ?>
 					<?php if ($apiObject->statusId == Configure::read('Collibra.status.production') || $apiObject->statusId == Configure::read('Collibra.status.preProduction')): ?>
 						<input type="button" data-apiHost="<?= h($hostname) ?>" data-apiPath="<?= h(trim($basePath, '/')) ?>" data-authorizedByFieldset="<?= $apiObject->authorizedByFieldset ? 'true' : 'false' ?>" api="<?= empty($fields) ? 'true' : 'false' ?>" onclick="addToQueueAPI(this, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">

@@ -477,6 +477,7 @@ class CollibraAPI extends Model {
 				['Column' => ['fieldName' => 'statusId']],
 				['Column' => ['fieldName' => 'status']],
 				['Column' => ['fieldName' => 'authorizedByFieldset']],
+				['Column' => ['fieldName' => 'usageNotes']],
 				['Group' => [
 					'name' => 'dataSharingRequests',
 					'Columns' => [
@@ -491,6 +492,9 @@ class CollibraAPI extends Model {
 					'Status' => [
 						'Id' => ['name' => 'statusId'],
 						'Signifier' => ['name' => 'status']],
+					'StringAttribute' => [[
+							'Value' => ['name' => 'usageNotes'],
+							'labelId' => Configure::read('Collibra.attribute.usageNotes')]],
 					'BooleanAttribute' => [
 						'Value' => ['name' => 'authorizedByFieldset'],
 						'labelId' => Configure::read('Collibra.attribute.authorizedByFieldset')],

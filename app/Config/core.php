@@ -129,7 +129,8 @@ if (!function_exists('denv')) {
 			'apiStoreLink' => '84895173-c033-47df-af56-3ae38a4b4081',
 			'authorizedByFieldset' => '1624663d-dcbb-4011-a3b2-f9be790b4e8a',
 			'tableAltered' => '2852c753-990e-4a32-8e50-924e72350102',
-			'previouslyMatchedFieldNames' => '75f83a44-facf-4de9-a1bb-d7a655075958'
+			'previouslyMatchedFieldNames' => '75f83a44-facf-4de9-a1bb-d7a655075958',
+			'usageNotes' => '3dda4b76-2b31-4dbd-a058-729dac94f230'
 		],
 		'status' => [
 			'testing' => '4eb2eaf1-faa5-4e89-9129-3203fc5eafa4',
@@ -183,7 +184,9 @@ if (!function_exists('denv')) {
 			'trustedPartnerSecurityStandards' => '712bd956-0c58-4724-bc12-69b1ee12bddf',
 			'restrictedPolicy' => '8ac2c5ae-2229-490d-8a64-3a6015cb0256',
 			'restrict1' => 'cebf2b6d-df2f-479a-a9d5-248ece179c04',
-			'restrict2' => '4fbff9d7-32f1-4959-a52f-d4eaea763d5c'
+			'restrict2' => '4fbff9d7-32f1-4959-a52f-d4eaea763d5c',
+			'idCardPolicy' => 'e3fd8d28-2c85-4ec8-9624-ad1b69816058',
+			'idPhotoBusinessTerm' => 'e0662922-50b2-4092-a3d3-8439ab49fe64'
 		]
 	]);
 
