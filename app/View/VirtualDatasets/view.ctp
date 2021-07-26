@@ -65,6 +65,7 @@
 	<div id="searchResults">
 		<h1 class="headerTab"><?= $dataset->datasetName ?></h1>
 		<div class="clear"></div>
+		<?= $dataset->usageNotes ?>
 		<div class="btnLinks">
 			<?php if ($matchAuthorized): ?>
 				<div style="float: right">

@@ -75,10 +75,22 @@ class DatabasesController extends AppController {
 	public function view($databaseName, $schemaName, $tableName) {
 		$this->checkAuthorized();
 		$columns = $this->CollibraAPI->getTableColumns($databaseName, $tableName);
+		$schema = $this->CollibraAPI->getSchemaTables($databaseName, $schemaName);
+		foreach ($schema->tables as $tn) {
+			if($tn->tableName == $tableName) {
+				$tableInfo = $this->CollibraAPI->getAttributes($tn->tableId);
+				foreach($tableInfo as $attr) {
+					//Usage Notes
+					if($attr['Usage Notes']->attrTypeId == "3dda4b76-2b31-4dbd-a058-729dac94f230") {
+						$usageNotes = $attr['Usage Notes']->attrValue;
+					}
+				}
+			}
+		}
 
 		$tableNameOnly = substr($tableName, strpos($tableName, '>') + 2);
 		$matchAuthorized = $this->BYUAPI->isGROGroupMemberAny($this->Auth->user('username'), 'oit04', 'infohub-match');
-		$this->set(compact('databaseName', 'schemaName', 'tableName', 'columns', 'tableNameOnly', 'matchAuthorized'));
+		$this->set(compact('databaseName', 'schemaName', 'tableName', 'columns', 'tableNameOnly', 'matchAuthorized', 'usageNotes'));
 
 		$arrRecent = $this->Session->check('recentTables') ? $this->Session->read('recentTables') : [];
 		array_unshift($arrRecent, ['databaseName' => $databaseName, 'schemaName' => $schemaName, 'tableName' => $tableName]);

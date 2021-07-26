@@ -28,6 +28,7 @@
 	<div id="searchResults">
 		<h1 class="headerTab"><a href="/databases/database/<?= $databaseName ?>"><?= $databaseName ?></a> > <a href="/databases/schema/<?= $databaseName.'/'.$schemaName ?>"><?= $schemaName ?></a> > <?= $tableNameOnly ?></h1>
 		<div class="clear"></div>
+		<?= $usageNotes ?>
 		<div class="btnLinks">
 			<?php if ($matchAuthorized): ?>
 				<div style="float: right">
