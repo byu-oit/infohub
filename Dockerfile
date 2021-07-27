@@ -1,6 +1,6 @@
 # Builder Launcher Binary
-FROM golang as builder
 ARG REGISTRY=docker.io
+FROM golang as builder
 
 ENV GO111MODULE on
 
