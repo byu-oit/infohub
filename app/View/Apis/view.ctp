@@ -128,8 +128,8 @@
 			<?php endif ?>
 		
 		</div>
-		<div>
-		<?= $apiObject->usageNotes ?>
+		<div class="usageNotes">
+			<?= $apiObject->usageNotes ?>
 		</div>
 		<?php if ($apiObject->statusId == Configure::read('Collibra.status.production')): ?>
 			<div id="api_help_btn" class="apiHelp">Do you need access to call this API?</div>

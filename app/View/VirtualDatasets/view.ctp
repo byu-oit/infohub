@@ -64,8 +64,7 @@
 <div id="apiBody" class="innerDataSet">
 	<div id="searchResults">
 		<h1 class="headerTab"><?= $dataset->datasetName ?></h1>
-		<div class="clear"></div>
-		<?= $dataset->usageNotes ?>
+		<div class="clear"></div>		
 		<div class="btnLinks">
 			<?php if ($matchAuthorized): ?>
 				<div style="float: right">
@@ -90,6 +89,9 @@
 						['class' => 'inputButton dataset', 'id' => 'admin']) ?>
 				</div>
 			<?php endif ?>
+		</div>
+		<div class="usageNotes">
+			<?= $dataset->usageNotes ?>
 		</div>
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
