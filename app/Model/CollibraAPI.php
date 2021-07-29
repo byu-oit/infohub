@@ -477,6 +477,7 @@ class CollibraAPI extends Model {
 				['Column' => ['fieldName' => 'statusId']],
 				['Column' => ['fieldName' => 'status']],
 				['Column' => ['fieldName' => 'authorizedByFieldset']],
+				['Column' => ['fieldName' => 'usageNotes']],
 				['Group' => [
 					'name' => 'dataSharingRequests',
 					'Columns' => [
@@ -491,6 +492,9 @@ class CollibraAPI extends Model {
 					'Status' => [
 						'Id' => ['name' => 'statusId'],
 						'Signifier' => ['name' => 'status']],
+					'StringAttribute' => [[
+							'Value' => ['name' => 'usageNotes'],
+							'labelId' => Configure::read('Collibra.attribute.usageNotes')]],
 					'BooleanAttribute' => [
 						'Value' => ['name' => 'authorizedByFieldset'],
 						'labelId' => Configure::read('Collibra.attribute.authorizedByFieldset')],
@@ -781,6 +785,7 @@ class CollibraAPI extends Model {
 				['Column' => ['fieldName' => 'columnName']],
 				['Column' => ['fieldName' => 'columnId']],
 				['Column' => ['fieldName' => 'columnDescription']],
+				['Column' => ['fieldName' => 'usageNotes']],
 				['Group' => [
 					'name' => 'businessTerm',
 					'Columns' => [
@@ -801,6 +806,9 @@ class CollibraAPI extends Model {
 					'StringAttribute' => [[
 						'Value' => ['name' => 'columnDescription'],
 						'labelId' => Configure::read('Collibra.attribute.description')]],
+					'StringAttribute' => [[
+							'Value' => ['name' => 'usageNotes'],
+							'labelId' => Configure::read('Collibra.attribute.usageNotes')]],
 					'Vocabulary' => [
 						'Community' => [
 							'Name' => ['name' => 'databaseName']]],
@@ -887,6 +895,7 @@ class CollibraAPI extends Model {
 				['Column' => ['fieldName' => 'name']],
 				['Column' => ['fieldName' => 'description']],
 				['Column' => ['fieldName' => 'vocabId']]],
+				['Column' => ['fieldName' => 'usageNotes']],
 			'Resources' => [
 				'Term' => [
 					'Id' => ['name' => 'id'],
@@ -894,6 +903,9 @@ class CollibraAPI extends Model {
 					'StringAttribute' => [[
 						'labelId' => Configure::read('Collibra.attribute.description'),
 						'Value' => ['name' => 'description']]],
+					'StringAttribute' => [[
+						'Value' => ['name' => 'usageNotes'],
+						'labelId' => Configure::read('Collibra.attribute.usageNotes')]],
 					'ConceptType' => [
 						'Id' => ['name' => 'conceptTypeId']],
 					'Vocabulary' => [
@@ -1024,6 +1036,7 @@ class CollibraAPI extends Model {
 			'Columns' => [
 				['Column' => ['fieldName' => 'datasetId']],
 				['Column' => ['fieldName' => 'datasetName']],
+				['Column' => ['fieldName' => 'usageNotes']],
 				['Group' => [
 					'name' => 'tables',
 					'Columns' => [
@@ -1036,6 +1049,9 @@ class CollibraAPI extends Model {
 					'Signifier' => ['name' => 'datasetName'],
 					'ConceptType' => [
 						'Id' => ['name' => 'assetTypeId']],
+					'StringAttribute' => [[
+						'Value' => ['name' => 'usageNotes'],
+						'labelId' => Configure::read('Collibra.attribute.usageNotes')]],
 					'Relation' => [[
 						'typeId' => Configure::read('Collibra.relationship.datasetToVirtualTable'),
 						'type' => 'SOURCE',

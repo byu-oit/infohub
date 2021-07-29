@@ -27,7 +27,7 @@
 <div id="apiBody" class="innerDataSet">
 	<div id="searchResults">
 		<h1 class="headerTab"><a href="/databases/database/<?= $databaseName ?>"><?= $databaseName ?></a> > <a href="/databases/schema/<?= $databaseName.'/'.$schemaName ?>"><?= $schemaName ?></a> > <?= $tableNameOnly ?></h1>
-		<div class="clear"></div>
+		<div class="clear"></div>		
 		<div class="btnLinks">
 			<?php if ($matchAuthorized): ?>
 				<div style="float: right">
@@ -52,6 +52,9 @@
 						['class' => 'inputButton dbTable', 'id' => 'admin']) ?>
 				</div>
 			<?php endif ?>
+		</div>
+		<div class="usageNotes">
+			<?= $usageNotes ?>
 		</div>
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">

@@ -32,6 +32,9 @@
 		</div>
 		<h1 class="headerTab"><?= $responseName ?></h1>
 		<div class="clear"></div>
+		<div class="usageNotes">
+			<?= $usageNotes ?>
+		</div>
 		<div id="srLower" class="whiteBox">
 			<div class="resultItem">
 				<input type="button" data-responseName="<?= h($responseName) ?>" api="false" onclick="addToQueueSAMLResponse(this, true)" class="requestAccess grow mainRequestBtn topBtn" value="Add To Request">
