@@ -420,7 +420,8 @@ class CollibraAPI extends Model {
 			return $hosts;
 		}
 		foreach ($hostsRaw->communityReference as $host) {
-			if (empty($host->name) || !preg_match('/^[a-zA-Z][a-zA-Z0-9\.]*$/', $host->name) || $host->name === 'SAML') {
+			//if (empty($host->name) || !preg_match('/^[a-zA-Z][a-zA-Z0-9\.]*$/', $host->name) || $host->name === 'SAML') {
+			if (empty($host->name) || $host->name === 'SAML') {
 				continue;
 			}
 			$hosts[] = $host->name;
