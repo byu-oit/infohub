@@ -14,7 +14,7 @@ RUN CGO_ENABLED=0 go build -o launcher
 
 
 # Build App container
-FROM alpine:3.8
+FROM $REGISTRY/alpine:3.8
 
 WORKDIR /cake
 
