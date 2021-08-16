@@ -503,20 +503,22 @@ class RequestController extends AppController {
 			return json_encode(['success' => 0, 'message' => 'Bad request']);
 		}
 
+		//The personId is more of a netId now within the DirectoryController
 		$person = $this->BYUAPI->personalSummary($personId);
 		if (!isset($person)) {
 			return json_encode(['success' => 0, 'message' => 'Person\'s information could not be loaded']);
 		}
 
 		$request = $this->CollibraAPI->getRequestDetails($dsrId);
+		//print_r($request);
 
 		foreach($request->collaborators as $collaborator) {
-			if ($collaborator->identifiers->net_id == $person->identifiers->net_id) {
+			if ($collaborator->identifiers->net_id == $person->basic->net_id->value) {
 				return json_encode(['success' => 0, 'message' => 'This person is already a collaborator on this request.']);
 			}
 		}
 
-		$postData['value'] = $person->identifiers->net_id;
+		$postData['value'] = $person->basic->net_id->value;
 		$postData['representation'] = $dsrId;
 		$postData['label'] = Configure::read('Collibra.attribute.requesterNetId');
 		$postString = http_build_query($postData);
@@ -2189,7 +2191,7 @@ class RequestController extends AppController {
 		$byuUser = $this->BYUAPI->personalSummary($netID);
 		$supervisorInfo = $this->BYUAPI->supervisorLookup($netID);
 
-		$postData['requesterNetId'] = array_unique([$byuUser->identifiers->net_id, $supervisorInfo->net_id, $this->Auth->user('username')]);
+		$postData['requesterNetId'] = array_unique([$byuUser->basic->net_id->value, $supervisorInfo->net_id, $this->Auth->user('username')]);
 		foreach($this->request->data as $key => $val){
 			if (!in_array($key, ['name', 'phone', 'email', 'role', 'terms', 'apiFields', 'requestSubmit', 'collibraUser', 'requesterNetId'])) {
 				$postData[$key] = $val;
@@ -2539,25 +2541,35 @@ class RequestController extends AppController {
 		$psRole = '';
 		$psDepartment = '';
 		$psReportsToName = '';
-		if(isset($byuUser->names->preferred_name)){
-			$psName = $byuUser->names->preferred_name;
+		if(isset($byuUser->basic->preferred_name->value)){
+			$psName = $byuUser->basic->preferred_name->value;
 		}
-		if(isset($byuUser->contact_information->work_phone)){
-			$psPhone = $byuUser->contact_information->work_phone;
+		for($i = 0; $i < sizeof($byuUser->phones->values); $i++) {
+			if($byuUser->phones->values[$i]->work_flag->value) {
+				$psPhone = $byuUser->phones->values[$i]->phone_number->value;
+				break;
+			}
 		}
-		if(isset($byuUser->contact_information->work_email_address)) {
-			$psEmail = $byuUser->contact_information->work_email_address;
-		} else if(isset($byuUser->contact_information->email)){
-			$psEmail = $byuUser->contact_information->email;
+		for($i = 0; $i < sizeof($byuUser->email_addresses->values); $i++) {
+			if($byuUser->email_addresses->values[$i]->email_address_type->value == "PERSONAL") {
+				$psEmailPersonal = $byuUser->email_addresses->values[$i]->email_address->value;
+			} else if($byuUser->email_addresses->values[$i]->email_address_type->value == "WORK") {
+				$psWorkEmail = $byuUser->email_addresses->values[$i]->email_address->value;
+			}
 		}
-		if(isset($byuUser->employee_information->job_title)){
-			$psRole = $byuUser->employee_information->job_title;
+		if(isset($psWorkEmail)) {
+			$psEmail = $psWorkEmail;
+		} else if(isset($psEmailPersonal)){
+			$psEmail = $psEmailPersonal;
 		}
-		if(isset($byuUser->employee_information->reportsToName)){
-			$psReportsToName = $byuUser->employee_information->reportsToName;
+		if(isset($byuUser->employee_summary->job_code->description)){
+			$psRole = $byuUser->employee_summary->job_code->description;
 		}
-		if (!empty($byuUser->employee_information->department)) {
-			$psDepartment = $byuUser->employee_information->department;
+		if(isset($byuUser->employee_summary->reports_to_byu_id->description)){
+			$psReportsToName = $byuUser->employee_summary->reports_to_byu_id->description;
+		}
+		if (!empty($byuUser->employee_summary->department->value)) {
+			$psDepartment = $byuUser->employee_summary->department->value;
 		}
 
 		$customSAML = $this->Session->read('customSAML');

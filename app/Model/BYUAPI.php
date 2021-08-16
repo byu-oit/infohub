@@ -13,32 +13,53 @@ class BYUAPI extends Model {
 		if (!empty($summary)) {
 			return $summary;
 		}
-
-		$response = $this->_get("domains/legacy/identity/person/PRO/personsummary/v1/{$netid}");
+		$response = $this->_get("byuapi/persons/v3/?net_ids={$netid}&field_sets=basic%2Cemployee_summary%2Cgroup_memberships&contexts=contact");
 		if (!$response || !$response->isOk()) {
 			return [];
 		}
-
 		$data = json_decode($response->body());
-		if (empty($data->PersonSummaryService->response->identifiers->net_id)) {
+		if (empty($data->values[0]->basic->net_id->value)) {
 			return [];
 		}
+		Cache::write($cacheKey, $data->values[0]);
+		return $data->values[0];
+		
+	}
 
-		Cache::write($cacheKey, $data->PersonSummaryService->response);
-		return $data->PersonSummaryService->response;
+	public function personalSummaryByBYUId($byuIdRaw) {
+		$byuId = urldecode(trim($byuIdRaw));
+		$cacheKey = "personSummaryBYUId_{$byuId}";
+        $summary = Cache::read($cacheKey);
+		if (!empty($summary)) {
+			return $summary;
+		}
+		$response = $this->_get("byuapi/persons/v3/{$byuId}?field_sets=basic%2Cemployee_summary%2Cgroup_memberships&contexts=contact");
+		if (!$response || !$response->isOk()) {
+			return [];
+		}
+		$data = json_decode($response->body());
+		if (empty($data->basic->net_id->value)) {
+			return [];
+		}
+		Cache::write($cacheKey, $data);
+		return $data;
 	}
 
 	public function isGROGroupMemberAny($netid, ...$groups) {
 		if (empty($netid) || empty($groups)) {
 			return false;
 		}
-
-		foreach ($groups as $group) {
-			$response = $this->_get("domains/legacy/identity/access/ismember/v1/{$group}/{$netid}");
-			$data = json_decode($response);
-
-			if (isset($data->{'isMember Service'}->response->isMember) && $data->{'isMember Service'}->response->isMember) {
-				return true;
+		$person = $this->personalSummary($netid);
+		if(empty($person) || $person->group_memberships->metadata->collection_size == 0){
+			return false;
+		}
+		$groupMembership = $person->group_memberships;
+		for($i=0; $i < $person->group_memberships->metadata->collection_size; $i++) {
+			$groupId = $groupMembership->values[$i]->group_id->value;
+			foreach ($groups as $group) {
+				if($groupId == $group) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -46,15 +67,17 @@ class BYUAPI extends Model {
 
 	public function directorySearch($queryString, $length = 5) {
         $queryString = preg_replace('/ /', '%20', $queryString);
-		$response = $this->_get("domains/legacy/identity/person/directorylookup2.1/v1/{$queryString}");
+		$response = $this->_get("byuapi/persons/v3/?search_context=person_lookup&search_text={$queryString}&field_sets=basic%2Cemployee_summary%2Cgroup_memberships");
 		$data = json_decode($response);
 
-        if (!$data || isset($data->PersonLookupService->errors)) {
+        if (!$data || !$response->isOk()) {
             return [];
         }
+		
+		$data = $data;
 
-		$arrResults = array_filter($data->PersonLookupService->response->information, function ($person) {
-			return !empty($person->person_id);
+		$arrResults = array_filter($data->values, function ($person) {
+			return !empty($person->basic->person_id->value);
 		});
         $arrResults = array_slice($arrResults, 0, $length);
 
@@ -63,22 +86,33 @@ class BYUAPI extends Model {
 
 	public function supervisorLookup($netidRaw){
 		$selfInfo = $this->personalSummary($netidRaw);
-		if (empty($selfInfo) || empty($selfInfo->employee_information->reportsToId)) {
+		if (empty($selfInfo) || empty($selfInfo->employee_summary->reports_to_byu_id->value)) {
 			return [];
 		}
-
-		$data = $this->personalSummary($selfInfo->employee_information->reportsToId);
+		$data = $this->personalSummaryByBYUId($selfInfo->employee_summary->reports_to_byu_id->value);
 		$supervisor = new stdClass();
-		$supervisor->name = empty($data->names->preferred_name) ? '' : $data->names->preferred_name;
-		$supervisor->net_id = empty($data->identifiers->net_id) ? '' : $data->identifiers->net_id;
-		$supervisor->phone = empty($data->contact_information->work_phone) ? '' : $data->contact_information->work_phone;
-		if (!empty($data->contact_information->work_email_address)) {
-			$supervisor->email = $data->contact_information->work_email_address;
-		} else {
-			$supervisor->email = empty($data->contact_information->email_address) ? '' : $data->contact_information->email_address;
+		$supervisor->name = empty($data->basic->preferred_name->value) ? '' : $data->basic->preferred_name->value;
+		$supervisor->net_id = empty($data->basic->net_id->value) ? '' : $data->basic->net_id->value;
+		for($i = 0; $i < sizeof($data->phones->values); $i++) {
+			if($data->phones->values[$i]->work_flag->value) {
+				$supervisor->phone = $data->phones->values[$i]->phone_number->value;
+				break;
+			}
 		}
-		$supervisor->job_title = empty($data->employee_information->job_title) ? '' : $data->employee_information->job_title;
-		$supervisor->department = empty($data->employee_information->department) ? '' : $data->employee_information->department;
+		for($i = 0; $i < sizeof($data->email_addresses->values); $i++) {
+			if($data->email_addresses->values[$i]->email_address_type->value == "PERSONAL") {
+				$psEmailPersonal = $data->email_addresses->values[$i]->email_address->value;
+			} else if($data->email_addresses->values[$i]->email_address_type->value == "WORK") {
+				$psWorkEmail = $data->email_addresses->values[$i]->email_address->value;
+			}
+		}
+		if(isset($psWorkEmail)) {
+			$supervisor->email = $psWorkEmail;
+		} else if(isset($psEmailPersonal)){
+			$supervisor->email = $psEmailPersonal;
+		}
+		$supervisor->job_title = empty($data->employee_summary->job_code->description) ? '' : $data->employee_summary->job_code->description;
+		$supervisor->department = empty($data->employee_summary->department->value) ? '' : $data->employee_summary->department->value;
 		return $supervisor;
 	}
 

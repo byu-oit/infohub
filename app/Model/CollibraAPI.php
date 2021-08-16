@@ -158,6 +158,8 @@ class CollibraAPI extends Model {
 			$this->errors[] = "Collibra info not found for Net ID {$netId}";
 			return false;
 		}
+		$this->errors[] = "This is no longer supported";
+		return false;
 
 		if (!empty($byuInfo->contact_information->work_email_address)) {
 			if (empty($collibraInfo->UserEmailaddress) || html_entity_decode($collibraInfo->UserEmailaddress) != $byuInfo->contact_information->work_email_address) {
@@ -2437,9 +2439,9 @@ class CollibraAPI extends Model {
 			$arrNewAttr = [];
 			$arrCollaborators = [];
 			foreach ($results[0]->attributes as $attr) {
-				if ($attr->attrSignifier === 'Requester Net Id') {
+				if ($attr->attrSignifier === 'Requester Net Id') {					
 					$person = ClassRegistry::init('BYUAPI')->personalSummary($attr->attrValue);
-					unset($person->person_summary_line, $person->personal_information, $person->student_information, $person->relationships);
+					unset($person->links, $person->metadata, $person->group_memberships, $person->phones, $person->addresses, $person->family_phones);
 					$person->attrInfo = $attr;
 					array_push($arrCollaborators, $person);
 					continue;
@@ -2488,14 +2490,13 @@ class CollibraAPI extends Model {
 			foreach ($results[0]->attributes as $attr) {
 				if ($attr->attrSignifier === 'Requester Net Id') {
 					$person = ClassRegistry::init('BYUAPI')->personalSummary($attr->attrValue);
-					unset($person->person_summary_line, $person->personal_information, $person->student_information, $person->relationships);
+					unset($person->links, $person->metadata, $person->group_memberships, $person->phones, $person->addresses, $person->family_phones);
 					$person->attrInfo = $attr;
 					array_push($arrCollaborators, $person);
 					continue;
 				}
 				$arrNewAttr[$attr->attrSignifier] = $attr;
 			}
-
 			return [$arrNewAttr, $arrCollaborators];
 		}
 		return [null, null];
