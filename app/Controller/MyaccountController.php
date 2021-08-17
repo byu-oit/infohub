@@ -138,23 +138,17 @@ class MyaccountController extends AppController {
 		$psName = '';
 		$psRole = 'N/A';
 		$psDepartment = 'N/A';
-		$psEmail = '';
 		$psNetID = $netID;
-		if(isset($byuUser->names->preferred_name)){
-			$psName = $byuUser->names->preferred_name;
+		if(isset($byuUser->basic->preferred_name->value)){
+			$psName = $byuUser->basic->preferred_name->value;
 		}
-		if(isset($byuUser->employee_information->job_title)){
-			$psRole = $byuUser->employee_information->job_title;
+		if(isset($byuUser->employee_summary->job_code->description)){
+			$psRole = $byuUser->employee_summary->job_code->description;
 		}
-		if(isset($byuUser->employee_information->department)){
-			$psDepartment = $byuUser->employee_information->department;
+		if(isset($byuUser->employee_summary->department->value)){
+			$psDepartment = $byuUser->employee_summary->department->value;
 		}
-		if(isset($byuUser->contact_information->work_email_address)) {
-			$psEmail = $byuUser->contact_information->work_email_address;
-		} else if(isset($byuUser->contact_information->email_address)){
-			$psEmail = $byuUser->contact_information->email_address;
-		}
-		$this->set(compact('expand', 'psName', 'psRole', 'psDepartment', 'psEmail', 'psNetID'));
+		$this->set(compact('expand', 'psName', 'psRole', 'psDepartment', 'psNetID'));
 		$this->set('requestStatuses', $sortedRequests);
 	}
 }

@@ -11,11 +11,11 @@ class DirectoryController extends AppController {
 		}
 
 		$arrPeople = $this->BYUAPI->directorySearch($this->request->query['term'], 5);
-
 		$arrReturn = [];
 		foreach ($arrPeople as $person) {
-			$html = '<div class="collaborators-search-result" person-id="'.$person->person_id.'">'.ucwords(strtolower($person->sort_name));
-			if (!empty($person->department)) $html .= ' - '.$person->department;
+			//Using netId to work better with personalSummary function when they are added to the list
+			$html = '<div class="collaborators-search-result" person-id="'.$person->basic->net_id->value.'">'.ucwords(strtolower($person->basic->name_lnf->value));
+			if (!empty($person->employee_summary->department->value)) $html .= ' - '.$person->employee_summary->department->value;
 			$html .= "</div>";
 			array_push($arrReturn, $html);
 		}
@@ -32,6 +32,7 @@ class DirectoryController extends AppController {
 
 		$netId = $this->request->query['netId'];
 		$requester = $this->BYUAPI->personalSummary($netId);
+		
 		if (empty($requester)) {
 			return json_encode(['success' => 0, 'message' => 'We can\'t find a user with that Net ID.']);
 		}
@@ -53,15 +54,27 @@ class DirectoryController extends AppController {
 			]
 		];
 
-		if (isset($requester->names->preferred_name)) $arrReturn['requester']['name'] = $requester->names->preferred_name;
-		if (isset($requester->contact_information->work_phone)) $arrReturn['requester']['phone'] = $requester->contact_information->work_phone;
-		if (isset($requester->employee_information->job_title)) $arrReturn['requester']['role'] = $requester->employee_information->job_title;
-		if (isset($requester->contact_information->work_email_address)) {
-			$arrReturn['requester']['email'] = $requester->contact_information->work_email_address;
-		} else if (isset($requester->contact_information->email_address)) {
-			$arrReturn['requester']['email'] = $requester->contact_information->email_address;
+		if (isset($requester->basic->preferred_name->value)) $arrReturn['requester']['name'] = $requester->basic->preferred_name->value;
+		for($i = 0; $i < sizeof($requester->phones->values); $i++) {
+			if($requester->phones->values[$i]->work_flag->value) {
+				$arrReturn['requester']['phone'] = $requester->phones->values[$i]->phone_number->value;
+				break;
+			}
 		}
-		if (isset($requester->employee_information->department)) $arrReturn['requester']['department'] = $requester->employee_information->department;
+		for($i = 0; $i < sizeof($requester->email_addresses->values); $i++) {
+			if($requester->email_addresses->values[$i]->email_address_type->value == "PERSONAL") {
+				$psEmailPersonal = $requester->email_addresses->values[$i]->email_address->value;
+			} else if($requester->email_addresses->values[$i]->email_address_type->value == "WORK") {
+				$psWorkEmail = $requester->email_addresses->values[$i]->email_address->value;
+			}
+		}
+		if (isset($requester->employee_summary->job_code->description)) $arrReturn['requester']['role'] = $requester->employee_summary->job_code->description;
+		if (isset($psWorkEmail)) {
+			$arrReturn['requester']['email'] = $psWorkEmail;
+		} else if (isset($psEmailPersonal)) {
+			$arrReturn['requester']['email'] = $psEmailPersonal;
+		}
+		if (isset($requester->employee_summary->department->value)) $arrReturn['requester']['department'] = $requester->employee_summary->department->value;
 
 		$supervisor = $this->BYUAPI->supervisorLookup($netId);
 		if (empty($supervisor)) {

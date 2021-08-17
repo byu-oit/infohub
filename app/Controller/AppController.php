@@ -46,12 +46,12 @@ class AppController extends Controller {
 			if(empty($_SESSION["byuUsername"])){
 				$this->loadModel('BYUAPI');
 				$byuUser = $this->BYUAPI->personalSummary($netID);
-				if(isset($byuUser->names->preferred_name)){
-					$byuUsername = $byuUser->names->preferred_name;
+				if(isset($byuUser->basic->preferred_name->value)){
+					$byuUsername = $byuUser->basic->preferred_name->value;
 					$_SESSION["byuUsername"] = $byuUsername;
 				}
-				if(isset($byuUser->employee_information->department)){
-					$byuUserDepartment = $byuUser->employee_information->department;
+				if(isset($byuUser->employee_summary->department->value)){
+					$byuUserDepartment = $byuUser->employee_summary->department->value;
 					$_SESSION["byuUserDepartment"] = $byuUserDepartment;
 				}
 			}else{

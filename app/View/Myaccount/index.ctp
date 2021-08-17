@@ -402,16 +402,23 @@
 				<div class="clear"></div>
 				<div class="attrValue collaborators-view">
 					<?php foreach ($req->collaborators as $col) {
-						$title = !isset($col->employee_information->job_title) ? $col->employee_information->employee_role : $col->employee_information->job_title;
-						echo '<strong>'.$col->names->preferred_name.':</strong> '.
+						$title = !isset($col->employee_summary->job_code->description) ? $col->employee_summary->department->value : $col->employee_summary->job_code->description;
+						echo '<strong>'.$col->basic->preferred_name->value.':</strong> '.
 							$title.', ';
-						if (isset($col->contact_information->work_email_address)) {
-							echo $col->contact_information->work_email_address;
+						for($i = 0; $i < sizeof($col->email_addresses->values); $i++) {
+							if($col->email_addresses->values[$i]->email_address_type->value == "PERSONAL") {
+								$personEmail = $col->email_addresses->values[$i]->email_address->value;
+							} else if($col->email_addresses->values[$i]->email_address_type->value == "WORK") {
+								$workEmail = $col->email_addresses->values[$i]->email_address->value;
+							}
+						}
+						if (isset($workEmail)) {
+							echo $workEmail;
 						} else {
-							echo $col->contact_information->email_address;
+							echo $personEmail;
 						}
 						echo str_repeat("&nbsp;", 4);
-						echo '<div class="remove hidden" data-assetid="'.$req->id.'" data-netid="'.$col->identifiers->net_id.'">X</div><br>';
+						echo '<div class="remove hidden" data-assetid="'.$req->id.'" data-netid="'.$col->basic->net_id->value.'">X</div><br>';
 					}
 					?>
 				</div>
