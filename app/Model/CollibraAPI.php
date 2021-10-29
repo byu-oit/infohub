@@ -1757,7 +1757,7 @@ class CollibraAPI extends Model {
 			['method' => 'DELETE']);
 	}
 
-	public function getSubcommunity($community) {
+	public function getSubcommunityData($community) {
 		$fullUrl = substr($this->settings['url'], 0, -7) . '2.0/outputModule/export/json';
 		$results = $this->postJSON(
 			$fullUrl,
