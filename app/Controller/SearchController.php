@@ -239,9 +239,10 @@ class SearchController extends AppController {
 
 		if(!Configure::read('allowUnapprovedTerms')){
 		}
-		$resp = $this->CollibraAPI->getCommunityData($community);
+		$communityData = $this->CollibraAPI->getSubcommunityData($community);
+		$vocabularyData = $this->CollibraAPI->getCommunityVocabularies($community);
 
-		return $resp;
+		return [$communityData, $vocabularyData];
 	}
 
 	// called on results page's more details tab
