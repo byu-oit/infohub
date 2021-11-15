@@ -90,7 +90,8 @@ class CollibraAPI extends Model {
 	}
 
 	public function dataTable($config) {
-		$response = $this->postJSON("output/data_table", json_encode($config));
+		$fullUrl = substr($this->settings['url'], 0, -7) . '2.0/outputModule/export/json';
+		$response = $this->postJSON($fullUrl, json_encode($config), [], TRUE);
 		if (!($response && $response->isOk())) {
 			return null;
 		}
