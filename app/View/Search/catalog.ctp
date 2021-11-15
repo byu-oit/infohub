@@ -23,8 +23,8 @@
                 var objDomains = JSON.parse(data);
                 var html = '';
                 // create community elements
-                for(i=0; i<objDomains.aaData[0].Subcommunities.length; i++){
-                    var comm = objDomains.aaData[0].Subcommunities[i];
+                for(i=0; i<objDomains[0].aaData[0].Subcommunities.length; i++){
+                    var comm = objDomains[0].aaData[0].Subcommunities[i];
                     html += '<li class="catalogItem" id="c'+comm.subcommunityid+'">';
                     if(comm.hasNonMetaChildren=='true'){
                         html += '   <a href="#" class="hasChildren">'+comm.subcommunity+'</a>'+
@@ -38,9 +38,9 @@
                 }
 
                 // create vocabulary elements
-                if(objDomains.aaData.length>1){
-                    for(i=0; i<objDomains.aaData[1].Vocabularies.length; i++){
-                        var vocab = objDomains.aaData[1].Vocabularies[i];
+                if(objDomains.length>1){
+                    for(i=0; i<objDomains[1].aaData[0].Vocabularies.length; i++){
+                        var vocab = objDomains[1].aaData[0].Vocabularies[i];
                         html += '<li class="catalogItem">'+
                             '   <a class="vocab" href="/search/listTerms/'+vocab.vocabularyid+'">'+vocab.vocabulary+'</a>'+
                             '</li>';

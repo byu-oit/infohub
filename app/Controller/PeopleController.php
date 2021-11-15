@@ -76,6 +76,7 @@ class PeopleController extends AppController {
 		$users = $this->CollibraAPI->getUserData();
 		usort($users, 'self::sortUsers');
 		$communities = $this->CollibraAPI->getAllCommunities();
+		$vocabs = $this->CollibraAPI->getAllVocabularies();
 
 		$arrUserData = [];
 		$letterGroup = '0';
@@ -116,7 +117,7 @@ class PeopleController extends AppController {
 				//get vocabularyid for steward and custodian roles
 				foreach($arrUserData[$group][$r->userrid]['stewardRoles'] as $roleKey => $role){
 					if($role->hasNonMetaChildren == 'true'){
-						foreach($communities[1]->Vocabularies as $vocab){
+						foreach($vocabs[0]->Vocabularies as $vocab){
 							if($role->subcommunityid == $vocab->vocabularyParentCommunityId && strpos($vocab->vocabulary, 'Glossary') !== false){
 								$role->vocabulary = $vocab->vocabulary;
 								$role->vocabularyid = $vocab->vocabularyid;
@@ -130,7 +131,7 @@ class PeopleController extends AppController {
 				}
 				foreach($arrUserData[$group][$r->userrid]['custodianRoles'] as $roleKey => $role){
 					if($role->hasNonMetaChildren == 'true'){
-						foreach($communities[1]->Vocabularies as $vocab){
+						foreach($vocabs[0]->Vocabularies as $vocab){
 							if($role->subcommunityid == $vocab->vocabularyParentCommunityId && strpos($vocab->vocabulary, 'Glossary') !== false){
 								$role->vocabulary = $vocab->vocabulary;
 								$role->vocabularyid = $vocab->vocabularyid;
@@ -198,6 +199,7 @@ class PeopleController extends AppController {
 			}
 
 			$communities = $this->CollibraAPI->getAllCommunities();
+			$vocabs = $this->CollibraAPI->getAllVocabularies();
 			$users = $this->CollibraAPI->getUserData();
 
 			$arrUserData = [];
@@ -239,7 +241,7 @@ class PeopleController extends AppController {
 						//get vocabularyid for steward and custodian roles
 						foreach($arrUserData[$group][$r->userrid]['stewardRoles'] as $roleKey => $role){
 							if($role->hasNonMetaChildren == 'true'){
-								foreach($communities[1]->Vocabularies as $vocab){
+								foreach($vocabs[0]->Vocabularies as $vocab){
 									if($role->subcommunityid == $vocab->vocabularyParentCommunityId && strpos($vocab->vocabulary, 'Glossary') !== false){
 										$role->vocabulary = $vocab->vocabulary;
 										$role->vocabularyid = $vocab->vocabularyid;
@@ -253,7 +255,7 @@ class PeopleController extends AppController {
 						}
 						foreach($arrUserData[$group][$r->userrid]['custodianRoles'] as $roleKey => $role){
 							if($role->hasNonMetaChildren == 'true'){
-								foreach($communities[1]->Vocabularies as $vocab){
+								foreach($vocabs[0]->Vocabularies as $vocab){
 									if($role->subcommunityid == $vocab->vocabularyParentCommunityId && strpos($vocab->vocabulary, 'Glossary') !== false){
 										$role->vocabulary = $vocab->vocabulary;
 										$role->vocabularyid = $vocab->vocabularyid;
@@ -347,6 +349,7 @@ class PeopleController extends AppController {
 		}
 
 		$communities = $this->CollibraAPI->getAllCommunities();
+		$vocabs = $this->CollibraAPI->getAllVocabularies();
 
 		// run through recursive function to return array with only the sub communities for the selected community
 		$arrCommunities = $this->getSubCommunities($communities, $community);
@@ -417,7 +420,7 @@ class PeopleController extends AppController {
 					}
 				}
 			}
-			foreach($communities[1]->Vocabularies as $vocab){
+			foreach($vocabs[0]->Vocabularies as $vocab){
 				if($arrDomainData[$i]['id'] == $vocab->vocabularyParentCommunityId && strpos($vocab->vocabulary, 'Glossary') !== false){
 					$arrDomainData[$i]['vocabulary'] = $vocab->vocabulary;
 					$arrDomainData[$i]['vocabularyid'] = $vocab->vocabularyid;
