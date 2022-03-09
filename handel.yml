@@ -48,7 +48,7 @@ environments:
   prd:
     dns:
       type: route53zone
-      name: infohub.byu.edu
+      name: infohub-old.byu.edu
     app:
       type: ecs
       containers:
@@ -71,7 +71,7 @@ environments:
         type: https
         https_certificate: 2245e5cf-9fa5-431f-b78d-8c409d240945
         dns_names:
-          - infohub.byu.edu
+          - infohub-old.byu.edu
       dependencies:
       - db
       - storage
