@@ -312,7 +312,7 @@ if (!function_exists('denv')) {
  * will override the automatic detection of full base URL and can be
  * useful when generating links from the CLI (e.g. sending emails)
  */
-	Configure::write('App.fullBaseUrl', denv('CAKE_FULL_BASE_URL', 'https://infohub.byu.edu'));
+	Configure::write('App.fullBaseUrl', denv('CAKE_FULL_BASE_URL', 'https://infohub-old.byu.edu'));
 
 /**
  * Web path to the public images directory under webroot.

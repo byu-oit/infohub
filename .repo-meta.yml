@@ -42,7 +42,7 @@ software:
             software:
         urls:
           physical_url:
-          product_page: https://infohub.byu.edu
+          product_page: https://infohub-old.byu.edu
           virtual_url:
     technologies_used:
       - Travis-ci.com
