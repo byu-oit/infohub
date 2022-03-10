@@ -69,7 +69,7 @@ environments:
         instance_type: t3.medium
       load_balancer:
         type: https
-        https_certificate: 2245e5cf-9fa5-431f-b78d-8c409d240945
+        https_certificate: 83b03bce-73c0-4a56-bef0-ced304fd7899
         dns_names:
           - infohub-old.byu.edu
       dependencies:
